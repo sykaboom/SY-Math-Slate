@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>수학 판서 도구 v9.9.9 (Constant Speed)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=Urbanist:wght@700&display=swap" rel="stylesheet">
+    <script>
+    window.MathJax = {
+        tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']] },
+        svg: { fontCache: 'global' },
+        startup: { typeset: false }
+    };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    
+</head>
+<body data-theme="dark">
+
+<div id="viewport">
+    <div id="board-scaler">
+        <div id="board-container">
+            <div id="content-area" class="cols-1">
+                <span id="cursor" class="cursor-blink"></span>
+            </div>
+            <canvas id="drawing-canvas"></canvas>
+            <canvas id="laser-canvas"></canvas>
+        </div>
+    </div>
+</div>
+
+<div id="paste-helper-modal" class="modal-overlay">
+    <div style="color:#FFA500; margin-bottom:10px; font-weight:bold;">태블릿 붙여넣기 도우미</div>
+    <div class="paste-box" contenteditable="true" id="paste-target">여기를 길게 터치하여<br>'붙여넣기'를 선택하세요.</div>
+    <button id="btn-paste-close" style="padding:10px 30px; background:#555;">닫기</button>
+</div>
+
+<div id="rich-editor-modal" class="modal-overlay">
+    <div class="editor-container">
+        <div class="editor-toolbar">
+            <span style="color:#FFA500; font-weight:bold;">서식:</span>
+            <button id="btn-style-bold"><b>B</b></button>
+            <button id="btn-style-clear">🧹</button>
+            <div class="divider"></div>
+            <button id="btn-style-step" style="color:#FFFF00;">Step</button>
+            <button id="btn-style-highlight" style="color:#FF4500;">주황</button>
+            <button id="btn-style-accent" style="color:#00FFFF;">하늘</button>
+            <button id="btn-style-neon-green" style="color:#39FF14;">초록</button>
+            <div class="divider"></div>
+            <label style="font-size:0.8rem; color:#aaa;">Size:</label>
+            <input type="number" id="font-size-input" value="1.3" step="0.1" min="0.5" max="5.0" style="width:50px; height:30px;">
+        </div>
+        <div class="block-list" id="editor-block-list"></div>
+        <div id="selection-lasso" class="selection-lasso"></div>
+        <div id="bulk-toolbar">
+            <span style="color:#00FFFF; font-weight:bold;" id="selected-count">0개</span>
+            <button id="btn-bulk-delete" style="background:#d00; border:none; color:white;">삭제</button>
+            <label style="font-size:0.8rem; color:#aaa;">일괄 Size:</label>
+            <input type="number" id="bulk-font-size" value="1.3" step="0.1" style="width:50px; height:30px;">
+        </div>
+        <div class="modal-footer" style="padding:15px; background:#2c2c2c; display:flex; justify-content:space-between;">
+            <div style="display:flex; gap:10px;">
+                <button id="btn-add-block" style="background:#444;">+ 줄 추가</button>
+                <button id="btn-delete-all" style="background:#8B0000;">🗑️ 전체 삭제</button>
+            </div>
+            <div style="display:flex; gap:10px;">
+                <button id="btn-editor-cancel" style="background:#333;">취소</button>
+                <button id="btn-editor-save" style="background:#006400; border-color:#00FF00; font-weight:bold;">저장</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="del-confirm-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:3000; justify-content:center; align-items:center;">
+    <div style="background:#333; border:1px solid #FF4500; padding:20px; border-radius:8px; text-align:center; min-width:250px; color:#fff;">
+        <p id="del-msg" style="margin-bottom:20px; font-size:1.1rem;">삭제하시겠습니까?</p>
+        <div style="display:flex; gap:10px; justify-content:center;">
+            <button id="btn-row-delete" style="background:#d00; color:#fff;">삭제</button>
+            <button id="btn-row-cancel" style="background:#555; color:#fff;">취소</button>
+        </div>
+    </div>
+</div>
+
+<div id="ui-layer">
+    <div id="pen-options">
+        <div style="display:flex; gap:8px; border-right:1px solid #666; padding-right:15px;">
+            <button id="type-fountain" class="pen-type-btn" title="만년필">✒️</button>
+            <button id="type-pencil" class="pen-type-btn" title="연필">✏️</button>
+            <button id="type-highlighter" class="pen-type-btn active" title="형광펜">🖍️</button>
+        </div>
+        <div style="display:flex; align-items:center; gap:8px;">
+            <label>색상</label>
+            <button class="color-preset" data-pen-color="#FFFF00" style="background:#FFFF00;"></button>
+            <button class="color-preset" data-pen-color="#39FF14" style="background:#39FF14;"></button>
+            <button class="color-preset" data-pen-color="#FF10F0" style="background:#FF10F0;"></button>
+            <button class="color-preset" data-pen-color="#00FFFF" style="background:#00FFFF;"></button>
+            <button class="color-preset" data-pen-color="#ffffff" style="background:#ffffff; border:1px solid #aaa;"></button>
+            <input type="color" id="pen-color" value="#FFFF00">
+        </div>
+        <div style="display:flex; flex-direction:column; gap:5px;">
+            <div style="display:flex; align-items:center; gap:5px;">
+                <label style="font-size:0.8rem; width:40px;">두께</label>
+                <input type="range" id="pen-width" min="1" max="50" value="20">
+            </div>
+            <div style="display:flex; align-items:center; gap:5px;">
+                <label style="font-size:0.8rem; width:40px;">투명</label>
+                <input type="range" id="pen-alpha" min="10" max="100" value="30">
+            </div>
+        </div>
+    </div>
+
+    <div id="laser-options">
+        <div style="display:flex; gap:8px; border-right:1px solid #666; padding-right:15px;">
+            <button id="laser-type-standard" class="pen-type-btn active" title="기본 레이저">🔴</button>
+            <button id="laser-type-highlighter" class="pen-type-btn" title="형광 레이저">🖍️</button>
+        </div>
+        <div style="display:flex; align-items:center; gap:8px;">
+            <label>색상</label>
+            <button class="color-preset" data-laser-color="#FF0000" style="background:#FF0000;"></button>
+            <button class="color-preset" data-laser-color="#FFFF00" style="background:#FFFF00;"></button>
+            <button class="color-preset" data-laser-color="#00FFFF" style="background:#00FFFF;"></button>
+            <input type="color" id="laser-color" value="#FF0000">
+        </div>
+        <div style="display:flex; flex-direction:column; gap:5px;">
+            <div style="display:flex; align-items:center; gap:5px;">
+                <label style="font-size:0.8rem; width:40px;">두께</label>
+                <input type="range" id="laser-width" min="5" max="80" value="10">
+            </div>
+            <div style="display:flex; align-items:center; gap:5px;">
+                <label style="font-size:0.8rem; width:40px;">투명</label>
+                <input type="range" id="laser-alpha" min="10" max="100" value="80">
+            </div>
+        </div>
+    </div>
+
+    <div id="controls">
+        <button id="tool-zoom-in">🔍+</button>
+        <button id="tool-zoom-out">🔍-</button>
+        <button id="tool-pan">✋</button>
+        <button id="btn-reset-view">1:1</button>
+        
+        <div style="display:flex; align-items:center; margin-left:5px; gap:5px; background:#222; padding:2px 8px; border-radius:4px; border:1px solid #444;">
+            <span style="font-size:0.8rem; color:#aaa;">Speed:</span>
+            <input type="number" id="typing-speed" value="1" min="0" step="1" title="값이 클수록 느려짐 (일정 속도)" style="width:45px;">
+        </div>
+        
+        <div class="divider"></div>
+        <button id="tool-pen" title="펜 도구">🖊️ 펜</button>
+        <button id="tool-eraser" title="지우개">🧹</button>
+        <button id="tool-laser" title="레이저">🔴</button>
+
+        <button id="btn-undo">↩</button>
+        <button id="btn-clear-canvas">🗑️</button>
+        <div class="divider"></div>
+        
+        <button id="btn-columns-dec">-</button>
+        <span id="col-display" style="font-weight:bold; color:#FFD700; padding:5px;">1단</span>
+        <button id="btn-columns-inc">+</button>
+        <div class="divider"></div>
+        
+        <input type="file" id="file-input" accept=".txt">
+        <button id="btn-open-file" title="txt 파일 불러오기">📂 열기</button>
+        <input type="file" id="image-input" accept="image/*" style="display: none;">
+        <button id="btn-open-image" title="이미지 파일 선택">🖼️ 파일</button>
+        <button id="btn-open-paste" title="클립보드 붙여넣기" style="border-color:#00FFFF; color:#00FFFF;">📋 붙여넣기</button>
+        
+        <button id="btn-insert-blank" title="빈 줄">↵</button>
+        <button id="btn-insert-break">⇥</button>
+        <button id="btn-open-editor" style="border-color:#FFA500; color:#FFA500;">📝 편집</button>
+        <div class="divider"></div>
+        
+        <button id="btn-theme">🌓</button>
+        <button id="btn-fullscreen" title="전체화면">🔲</button>
+        
+        <button id="btn-prev-step">◀</button>
+        <button id="btn-next-step" style="background:#005000; border-color:#00FF00; font-weight:bold;">▶ 진행</button>
+        <div class="divider"></div>
+        
+        <div class="page-badge" id="page-indicator">P.1</div>
+        <button id="btn-prev-page">◀</button>
+        <button id="btn-next-page">▶</button>
+    </div>
+
+    <div id="prompter">
+        <span style="color:#FFA500; margin-right:10px; font-weight:bold;">Next:</span>
+        <span id="prompter-text">준비...</span>
+    </div>
+</div>
+
+<script type="module" src="/src/main.js"></script>
+</body>
+</html>

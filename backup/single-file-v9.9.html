@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>수학 판서 도구 v9.9.9 (Constant Speed)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=Urbanist:wght@700&display=swap" rel="stylesheet">
+    <script>
+    window.MathJax = {
+        tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']] },
+        svg: { fontCache: 'global' },
+        startup: { typeset: false }
+    };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        /* 1. 기본 환경 */
+        :root {
+            --bg-color: #000000;
+            --text-color: #ffffff;
+            --border-color: #333;
+            --panel-bg: rgba(30, 30, 30, 0.95);
+            --btn-bg: #444;
+            --btn-text: #fff;
+            --btn-border: #666;
+            --img-invert: 1;
+            
+            --step-color: #FFFF00;
+            --highlight-color: #FF4500;
+            --accent-color: #00FFFF;
+            --neon-green: #39FF14;
+            --neon-pink: #FF10F0;
+        }
+
+        [data-theme="light"] {
+            --bg-color: #ffffff;
+            --text-color: #000000;
+            --border-color: #ccc;
+            --panel-bg: rgba(240, 240, 240, 0.95);
+            --btn-bg: #fff;
+            --btn-text: #333;
+            --btn-border: #aaa;
+            --img-invert: 0;
+
+            --step-color: #D4AC0D;
+            --highlight-color: #D32F2F;
+            --accent-color: #0097A7;
+            --neon-green: #2E7D32;
+            --neon-pink: #C2185B;
+        }
+
+        body {
+            background-color: #111;
+            margin: 0;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            color: var(--text-color);
+            font-family: 'Noto Sans KR', sans-serif;
+            touch-action: none;
+            user-select: none;
+            transition: background-color 0.3s;
+        }
+
+        /* 2. 뷰포트 */
+        #viewport {
+            width: 100%; height: 100%; overflow: hidden; position: relative;
+            display: flex; justify-content: center; align-items: center; cursor: default;
+            touch-action: none;
+        }
+
+        #board-scaler {
+            transform-origin: 0 0; position: absolute; top: 0; left: 0; will-change: transform;
+            touch-action: none;
+        }
+
+        /* 3. 칠판 */
+        #board-container {
+            width: 177.78vh; height: 100vh; max-width: 100vw; max-height: 56.25vw;
+            background-color: var(--bg-color);
+            box-shadow: 0 0 50px rgba(0,0,0,0.5);
+            border: 1px solid var(--border-color);
+            position: relative; overflow: hidden;
+            transition: background-color 0.3s;
+        }
+
+        /* 4. 콘텐츠 영역 */
+        #content-area {
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0; padding: 40px;
+            column-gap: 50px; column-rule: 1px dashed var(--border-color);
+            column-fill: auto; height: 100%; z-index: 10; box-sizing: border-box;
+            color: var(--text-color);
+        }
+
+        /* 5. 캔버스 */
+        #drawing-canvas { 
+            position: absolute; top: 0; left: 0; z-index: 20; 
+            pointer-events: none; touch-action: none;
+        }
+        #laser-canvas {
+            position: absolute; top: 0; left: 0; z-index: 25;
+            pointer-events: none; touch-action: none;
+        }
+
+        /* 6. 아이템 스타일 */
+        .item { break-inside: avoid; margin-bottom: 20px; position: relative; white-space: pre-wrap; }
+        .force-break { break-before: column; height: 0; margin: 0; }
+        .text-item { font-size: 1.3rem; line-height: 1.6; display: inline-block; width: 100%; color: var(--text-color); }
+        .cursor-blink { display: inline-block; width: 12px; height: 1.3rem; background-color: #FFA500; vertical-align: text-bottom; animation: blink 1s step-end infinite; margin-left: 2px; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+        .step-num { color: var(--step-color); font-weight: 900; margin-right: 8px; font-size: 1.2rem; }
+        .highlight { color: var(--highlight-color); font-weight: 900; }
+        .accent { color: var(--accent-color); font-weight: 900; }
+        .neon-green { color: var(--neon-green); font-weight: 900; }
+        .neon-pink { color: var(--neon-pink); font-weight: 900; }
+        .math-reveal { display: inline-block !important; vertical-align: middle; clip-path: inset(0 100% 0 0); }
+
+        .img-item { width: 100%; display: block; margin: 10px 0; background: transparent; }
+        .img-wrapper { display: inline-block; position: relative; width: 100%; border: 2px solid transparent; touch-action: none; }
+        .img-wrapper img { width: 100%; height: auto; display: block; filter: invert(var(--img-invert)); transition: filter 0.3s; pointer-events: none; }
+        .img-wrapper.selected { border-color: #00FFFF; }
+        .resize-handle { position: absolute; bottom: -10px; right: -10px; width: 40px; height: 40px; background: rgba(255, 255, 0, 0.8); cursor: nwse-resize; border-radius: 50%; border: 2px solid #fff; z-index: 30; display: none; touch-action: none; }
+        .img-wrapper.selected .resize-handle { display: block; }
+        .delete-handle { position: absolute; top: -15px; right: -15px; width: 35px; height: 35px; background: #FF4500; color: white; border-radius: 50%; border: 2px solid #fff; display: none; justify-content: center; align-items: center; font-weight: bold; cursor: pointer; z-index: 31; box-shadow: 0 2px 5px rgba(0,0,0,0.5); }
+        .img-wrapper.selected .delete-handle { display: flex; }
+        .invert-handle { position: absolute; top: -15px; left: -15px; width: 35px; height: 35px; background: #444; color: white; border-radius: 50%; border: 2px solid #fff; display: none; justify-content: center; align-items: center; font-size: 0.9rem; cursor: pointer; z-index: 31; box-shadow: 0 2px 5px rgba(0,0,0,0.5); }
+        .img-wrapper.selected .invert-handle { display: flex; }
+
+        /* 7. 하단 제어판 */
+        #ui-layer { position: fixed; bottom: 0; left: 0; width: 100%; z-index: 1000; display: flex; flex-direction: column; align-items: center; pointer-events: none; }
+
+        #pen-options, #laser-options {
+            background: var(--panel-bg); border: 1px solid var(--btn-border);
+            border-radius: 8px; padding: 15px 20px; margin-bottom: 10px;
+            display: none; gap: 20px; align-items: center; pointer-events: auto;
+            color: var(--text-color);
+        }
+
+        .pen-type-btn { width: 40px; height: 40px; padding: 0; justify-content: center; font-size: 1.4rem; border-radius: 8px; background: #333; border: 1px solid #666; }
+        .pen-type-btn.active { background: #FFD700; color: #000; border: 2px solid #fff; transform: scale(1.1); }
+        
+        .color-preset { width: 32px; height: 32px; border-radius: 50%; border: 2px solid #888; cursor: pointer; padding: 0; }
+        .color-preset:hover { transform: scale(1.1); }
+        input[type="color"] { border: none; width: 40px; height: 40px; cursor: pointer; background: none; padding: 0;}
+        input[type="range"] { width: 100px; height: 20px; vertical-align: middle; cursor: pointer; }
+        
+        input[type="number"] {
+            background: #222; color: #fff; border: 1px solid #555;
+            text-align: center; border-radius: 4px; height: 25px;
+            font-family: 'Noto Sans KR', sans-serif;
+            outline: none;
+        }
+        input[type="number"]:focus { border-color: #FFA500; }
+
+        #controls {
+            pointer-events: auto; background: var(--panel-bg);
+            border: 1px solid var(--btn-border); border-bottom: none;
+            border-radius: 12px 12px 0 0; padding: 12px 15px;
+            display: flex; gap: 10px; box-shadow: 0 -5px 20px rgba(0,0,0,0.2);
+            flex-wrap: wrap; justify-content: center; align-items: center;
+        }
+
+        #prompter {
+            pointer-events: auto; width: 100%; height: 30px; background: #000;
+            border-top: 1px solid #333; display: flex;
+            justify-content: center; align-items: center;
+            color: #888; font-size: 0.9rem;
+        }
+
+        button {
+            background: var(--btn-bg); color: var(--btn-text); border: 1px solid var(--btn-border);
+            padding: 8px 16px; cursor: pointer; font-size: 1rem;
+            border-radius: 6px; font-family: 'Noto Sans KR';
+            display: flex; align-items: center; gap: 6px; white-space: nowrap; min-height: 40px; 
+        }
+        button:active { filter: brightness(0.9); transform: scale(0.98); }
+        button.active { background: #FFD700; color: #000; border-color: #fff; font-weight: bold; box-shadow: 0 0 10px rgba(255, 215, 0, 0.6); }
+        
+        .divider { width: 1px; height: 28px; background: #888; margin: 0 4px; }
+        .page-badge { background: var(--btn-bg); border: 1px solid var(--btn-border); color: var(--btn-text); padding: 4px 10px; border-radius: 4px; font-size: 0.9rem; }
+
+        /* 모달 스타일 유지 */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; justify-content: center; align-items: center; pointer-events: auto; }
+        #rich-editor-modal .editor-container { width: 95%; height: 90%; background: #1e1e1e; border: 2px solid #FFA500; border-radius: 10px; display: flex; flex-direction: column; overflow: hidden; }
+        .editor-toolbar { padding: 10px; background: #2c2c2c; border-bottom: 1px solid #444; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+        .block-list { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 10px; background: #111; touch-action: pan-y; }
+        .editor-block-row { display: flex; align-items: flex-start; gap: 10px; border: 2px solid transparent; border-radius: 5px; padding: 5px; }
+        .editor-block-row.selected { background-color: rgba(0, 255, 255, 0.1); border-color: #00FFFF; }
+        .editor-block-content { flex: 1; min-height: 3rem; padding: 12px; background: #000; border: 1px solid #444; border-radius: 5px; color: #ddd; font-size: 1.1rem; line-height: 1.5; outline: none; white-space: pre-wrap; user-select: text; }
+        #paste-helper-modal { flex-direction: column; }
+        .paste-box { width: 300px; height: 150px; background: #222; border: 2px dashed #00FFFF; color: #fff; display: flex; justify-content: center; align-items: center; text-align: center; outline: none; border-radius: 10px; margin-bottom: 20px; font-size: 1.1rem; line-height: 1.6; cursor: text; }
+        .paste-box:focus { background: #333; box-shadow: 0 0 15px rgba(0,255,255,0.3); }
+        #file-input, #image-input { display: none; }
+        .selection-lasso { position: absolute; background: rgba(0, 255, 255, 0.2); border: 1px dashed #00FFFF; z-index: 2500; pointer-events: none; display: none; }
+        #bulk-toolbar { display: none; position: absolute; bottom: 80px; left: 50%; transform: translateX(-50%); background: #333; border: 2px solid #00FFFF; padding: 12px 25px; border-radius: 30px; z-index: 2500; box-shadow: 0 5px 15px rgba(0,0,0,0.5); gap: 15px; align-items: center; }
+    </style>
+</head>
+<body data-theme="dark">
+
+<div id="viewport">
+    <div id="board-scaler">
+        <div id="board-container">
+            <div id="content-area" class="cols-1">
+                <span id="cursor" class="cursor-blink"></span>
+            </div>
+            <canvas id="drawing-canvas"></canvas>
+            <canvas id="laser-canvas"></canvas>
+        </div>
+    </div>
+</div>
+
+<div id="paste-helper-modal" class="modal-overlay">
+    <div style="color:#FFA500; margin-bottom:10px; font-weight:bold;">태블릿 붙여넣기 도우미</div>
+    <div class="paste-box" contenteditable="true" id="paste-target">여기를 길게 터치하여<br>'붙여넣기'를 선택하세요.</div>
+    <button onclick="closePasteModal()" style="padding:10px 30px; background:#555;">닫기</button>
+</div>
+
+<div id="rich-editor-modal" class="modal-overlay">
+    <div class="editor-container">
+        <div class="editor-toolbar">
+            <span style="color:#FFA500; font-weight:bold;">서식:</span>
+            <button onclick="execStyle('bold')"><b>B</b></button>
+            <button onclick="clearFormat()">🧹</button>
+            <div class="divider"></div>
+            <button onclick="applyClass('step-num')" style="color:#FFFF00;">Step</button>
+            <button onclick="applyClass('highlight')" style="color:#FF4500;">주황</button>
+            <button onclick="applyClass('accent')" style="color:#00FFFF;">하늘</button>
+            <button onclick="applyClass('neon-green')" style="color:#39FF14;">초록</button>
+            <div class="divider"></div>
+            <label style="font-size:0.8rem; color:#aaa;">Size:</label>
+            <input type="number" id="font-size-input" value="1.3" step="0.1" min="0.5" max="5.0" style="width:50px; height:30px;">
+        </div>
+        <div class="block-list" id="editor-block-list"></div>
+        <div id="selection-lasso" class="selection-lasso"></div>
+        <div id="bulk-toolbar">
+            <span style="color:#00FFFF; font-weight:bold;" id="selected-count">0개</span>
+            <button onclick="bulkDelete()" style="background:#d00; border:none; color:white;">삭제</button>
+            <label style="font-size:0.8rem; color:#aaa;">일괄 Size:</label>
+            <input type="number" id="bulk-font-size" value="1.3" step="0.1" style="width:50px; height:30px;">
+        </div>
+        <div class="modal-footer" style="padding:15px; background:#2c2c2c; display:flex; justify-content:space-between;">
+            <div style="display:flex; gap:10px;">
+                <button onclick="addNewBlock()" style="background:#444;">+ 줄 추가</button>
+                <button onclick="deleteAllBlocks()" style="background:#8B0000;">🗑️ 전체 삭제</button>
+            </div>
+            <div style="display:flex; gap:10px;">
+                <button onclick="closeEditor()" style="background:#333;">취소</button>
+                <button onclick="saveRichData()" style="background:#006400; border-color:#00FF00; font-weight:bold;">저장</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="del-confirm-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:3000; justify-content:center; align-items:center;">
+    <div style="background:#333; border:1px solid #FF4500; padding:20px; border-radius:8px; text-align:center; min-width:250px; color:#fff;">
+        <p id="del-msg" style="margin-bottom:20px; font-size:1.1rem;">삭제하시겠습니까?</p>
+        <div style="display:flex; gap:10px; justify-content:center;">
+            <button onclick="confirmDeleteRow()" style="background:#d00; color:#fff;">삭제</button>
+            <button onclick="cancelDeleteRow()" style="background:#555; color:#fff;">취소</button>
+        </div>
+    </div>
+</div>
+
+<div id="ui-layer">
+    <div id="pen-options">
+        <div style="display:flex; gap:8px; border-right:1px solid #666; padding-right:15px;">
+            <button id="type-fountain" class="pen-type-btn" onclick="setPenType('fountain')" title="만년필">✒️</button>
+            <button id="type-pencil" class="pen-type-btn" onclick="setPenType('pencil')" title="연필">✏️</button>
+            <button id="type-highlighter" class="pen-type-btn active" onclick="setPenType('highlighter')" title="형광펜">🖍️</button>
+        </div>
+        <div style="display:flex; align-items:center; gap:8px;">
+            <label>색상</label>
+            <button class="color-preset" style="background:#FFFF00;" onclick="setPenColor('#FFFF00')"></button>
+            <button class="color-preset" style="background:#39FF14;" onclick="setPenColor('#39FF14')"></button>
+            <button class="color-preset" style="background:#FF10F0;" onclick="setPenColor('#FF10F0')"></button>
+            <button class="color-preset" style="background:#00FFFF;" onclick="setPenColor('#00FFFF')"></button>
+            <button class="color-preset" style="background:#ffffff; border:1px solid #aaa;" onclick="setPenColor('#ffffff')"></button>
+            <input type="color" id="pen-color" value="#FFFF00" onchange="setPenColor(this.value)">
+        </div>
+        <div style="display:flex; flex-direction:column; gap:5px;">
+            <div style="display:flex; align-items:center; gap:5px;">
+                <label style="font-size:0.8rem; width:40px;">두께</label>
+                <input type="range" id="pen-width" min="1" max="50" value="20">
+            </div>
+            <div style="display:flex; align-items:center; gap:5px;">
+                <label style="font-size:0.8rem; width:40px;">투명</label>
+                <input type="range" id="pen-alpha" min="10" max="100" value="30">
+            </div>
+        </div>
+    </div>
+
+    <div id="laser-options">
+        <div style="display:flex; gap:8px; border-right:1px solid #666; padding-right:15px;">
+            <button id="laser-type-standard" class="pen-type-btn active" onclick="setLaserType('standard')" title="기본 레이저">🔴</button>
+            <button id="laser-type-highlighter" class="pen-type-btn" onclick="setLaserType('highlighter')" title="형광 레이저">🖍️</button>
+        </div>
+        <div style="display:flex; align-items:center; gap:8px;">
+            <label>색상</label>
+            <button class="color-preset" style="background:#FF0000;" onclick="setLaserColor('#FF0000')"></button>
+            <button class="color-preset" style="background:#FFFF00;" onclick="setLaserColor('#FFFF00')"></button>
+            <button class="color-preset" style="background:#00FFFF;" onclick="setLaserColor('#00FFFF')"></button>
+            <input type="color" id="laser-color" value="#FF0000" onchange="setLaserColor(this.value)">
+        </div>
+        <div style="display:flex; flex-direction:column; gap:5px;">
+            <div style="display:flex; align-items:center; gap:5px;">
+                <label style="font-size:0.8rem; width:40px;">두께</label>
+                <input type="range" id="laser-width" min="5" max="80" value="10">
+            </div>
+            <div style="display:flex; align-items:center; gap:5px;">
+                <label style="font-size:0.8rem; width:40px;">투명</label>
+                <input type="range" id="laser-alpha" min="10" max="100" value="80">
+            </div>
+        </div>
+    </div>
+
+    <div id="controls">
+        <button id="tool-zoom-in" onclick="setTool('zoom-in')">🔍+</button>
+        <button id="tool-zoom-out" onclick="setTool('zoom-out')">🔍-</button>
+        <button id="tool-pan" onclick="setTool('pan')">✋</button>
+        <button onclick="resetView()">1:1</button>
+        
+        <div style="display:flex; align-items:center; margin-left:5px; gap:5px; background:#222; padding:2px 8px; border-radius:4px; border:1px solid #444;">
+            <span style="font-size:0.8rem; color:#aaa;">Speed:</span>
+            <input type="number" id="typing-speed" value="1" min="0" step="1" title="값이 클수록 느려짐 (일정 속도)" style="width:45px;">
+        </div>
+        
+        <div class="divider"></div>
+        <button id="tool-pen" onclick="setTool('pen')" title="펜 도구">🖊️ 펜</button>
+        <button id="tool-eraser" onclick="setTool('eraser')" title="지우개">🧹</button>
+        <button id="tool-laser" onclick="setTool('laser')" title="레이저">🔴</button>
+
+        <button onclick="undoStroke()">↩</button>
+        <button onclick="clearCanvas()">🗑️</button>
+        <div class="divider"></div>
+        
+        <button onclick="adjustColumns(-1)">-</button>
+        <span id="col-display" style="font-weight:bold; color:#FFD700; padding:5px;">1단</span>
+        <button onclick="adjustColumns(1)">+</button>
+        <div class="divider"></div>
+        
+        <input type="file" id="file-input" accept=".txt">
+        <button onclick="document.getElementById('file-input').click()" title="txt 파일 불러오기">📂 열기</button>
+        <input type="file" id="image-input" accept="image/*" style="display: none;">
+        <button onclick="document.getElementById('image-input').click()" title="이미지 파일 선택">🖼️ 파일</button>
+        <button onclick="openPasteModal()" title="클립보드 붙여넣기" style="border-color:#00FFFF; color:#00FFFF;">📋 붙여넣기</button>
+        
+        <button onclick="insertBlankLine()" title="빈 줄">↵</button>
+        <button onclick="insertColumnBreak()">⇥</button>
+        <button onclick="openEditor()" style="border-color:#FFA500; color:#FFA500;">📝 편집</button>
+        <div class="divider"></div>
+        
+        <button onclick="toggleTheme()" id="btn-theme">🌓</button>
+        <button onclick="toggleFullscreen()" id="btn-fullscreen" title="전체화면">🔲</button>
+        
+        <button onclick="prevStep()">◀</button>
+        <button onclick="nextStep()" style="background:#005000; border-color:#00FF00; font-weight:bold;">▶ 진행</button>
+        <div class="divider"></div>
+        
+        <div class="page-badge" id="page-indicator">P.1</div>
+        <button onclick="prevPage()">◀</button>
+        <button onclick="nextPage()">▶</button>
+    </div>
+
+    <div id="prompter">
+        <span style="color:#FFA500; margin-right:10px; font-weight:bold;">Next:</span>
+        <span id="prompter-text">준비...</span>
+    </div>
+</div>
+
+<script>
+    let solutionData = ["<span class='step-num'>Step 1.</span> 준비 완료"];
+    
+    const state = {
+        currentLine: 0, currentPage: 0, pages: [[]],
+        zoom: 1.0, panX: 0, panY: 0, tool: null,
+        inkStrokes: [[]], actionStack: [[]], typing: false,
+        penColor: '#FFFF00', columnCount: 1, theme: 'dark',
+        penType: 'highlighter',
+        laserType: 'standard', laserColor: '#FF0000', laserPath: []
+    };
+
+    const els = {
+        scaler: document.getElementById('board-scaler'),
+        content: document.getElementById('content-area'),
+        canvas: document.getElementById('drawing-canvas'),
+        ctx: document.getElementById('drawing-canvas').getContext('2d'),
+        laserCanvas: document.getElementById('laser-canvas'),
+        laserCtx: document.getElementById('laser-canvas').getContext('2d'),
+        prompter: document.getElementById('prompter-text'),
+        penOptions: document.getElementById('pen-options'),
+        laserOptions: document.getElementById('laser-options'),
+        cursor: document.getElementById('cursor'),
+        viewport: document.getElementById('viewport'),
+        pageInd: document.getElementById('page-indicator'),
+        colDisplay: document.getElementById('col-display'),
+        editorModal: document.getElementById('rich-editor-modal'),
+        pasteModal: document.getElementById('paste-helper-modal'),
+        pasteTarget: document.getElementById('paste-target'),
+        blockList: document.getElementById('editor-block-list'),
+        delModal: document.getElementById('del-confirm-overlay'),
+        lasso: document.getElementById('selection-lasso'),
+        bulkToolbar: document.getElementById('bulk-toolbar'),
+        themeBtn: document.getElementById('btn-theme'),
+        speedInput: document.getElementById('typing-speed')
+    };
+
+    function setLaserType(type) {
+        state.laserType = type;
+        document.querySelectorAll('#laser-options .pen-type-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(`laser-type-${type}`).classList.add('active');
+        const w = document.getElementById('laser-width'); const a = document.getElementById('laser-alpha');
+        if(type === 'standard') { w.value = 10; a.value = 90; setLaserColor('#FF0000'); } else { w.value = 40; a.value = 40; setLaserColor('#FFFF00'); }
+    }
+    function setLaserColor(color) { state.laserColor = color; document.getElementById('laser-color').value = color; }
+
+    function setPenType(type) {
+        state.penType = type;
+        document.querySelectorAll('#pen-options .pen-type-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(`type-${type}`).classList.add('active');
+        const w = document.getElementById('pen-width'); const a = document.getElementById('pen-alpha');
+        if (type === 'fountain') { w.value = 3; a.value = 100; setPenColor('#ffffff'); }
+        else if (type === 'pencil') { w.value = 2; a.value = 80; setPenColor('#cccccc'); }
+        else if (type === 'highlighter') { w.value = 20; a.value = 30; setPenColor('#FFFF00'); }
+    }
+    
+    let evCache = []; let prevDiff = -1; let isPanning = false; let isDrawing = false; let currentPath = []; let panStartX = 0, panStartY = 0; 
+    function getCanvasPoint(cx, cy) { const rect = els.canvas.getBoundingClientRect(); return { x: (cx - rect.left) * (els.canvas.width / rect.width), y: (cy - rect.top) * (els.canvas.height / rect.height) }; }
+
+    els.viewport.addEventListener('pointerdown', handlePointerDown);
+    els.viewport.addEventListener('pointermove', handlePointerMove);
+    els.viewport.addEventListener('pointerup', handlePointerUp);
+    els.viewport.addEventListener('pointercancel', handlePointerUp);
+    els.viewport.addEventListener('pointerout', handlePointerUp);
+    els.viewport.addEventListener('pointerleave', handlePointerUp);
+
+    function handlePointerDown(e) {
+        if(e.target.closest('#ui-layer') || e.target.closest('.resize-handle') || e.target.closest('.delete-handle') || e.target.closest('.invert-handle') || e.target.closest('.paste-box')) return;
+        if(!e.target.closest('.img-wrapper')) deselectAllImages();
+        evCache.push(e);
+        if ((state.tool === 'pen' || state.tool === 'eraser') && evCache.length === 1) { isDrawing = true; els.canvas.setPointerCapture(e.pointerId); const pt = getCanvasPoint(e.clientX, e.clientY); currentPath = [pt]; renderCanvas(); }
+        else if (state.tool === 'laser' && evCache.length === 1) { els.laserCanvas.setPointerCapture(e.pointerId); const pt = getCanvasPoint(e.clientX, e.clientY); state.laserPath = [{x: pt.x, y: pt.y, time: Date.now()}]; if(!laserLoopRunning) { laserLoopRunning = true; requestAnimationFrame(laserLoop); } }
+        else if (state.tool === 'pan' || evCache.length === 2) { isPanning = true; isDrawing = false; if(evCache.length === 1) { panStartX = e.clientX - state.panX; panStartY = e.clientY - state.panY; } els.viewport.setPointerCapture(e.pointerId); }
+    }
+
+    function handlePointerMove(e) {
+        const index = evCache.findIndex(cachedEv => cachedEv.pointerId === e.pointerId); if (index > -1) evCache[index] = e;
+        if (evCache.length === 2) { const dx = evCache[0].clientX - evCache[1].clientX; const dy = evCache[0].clientY - evCache[1].clientY; const curDiff = Math.hypot(dx, dy); if (prevDiff > 0) { const zoomDelta = (curDiff - prevDiff) * 0.005; state.zoom = Math.min(Math.max(state.zoom + zoomDelta, 0.5), 5.0); updateTransform(); } prevDiff = curDiff; }
+        else if (isPanning && evCache.length === 1) { state.panX = e.clientX - panStartX; state.panY = e.clientY - panStartY; updateTransform(); }
+        else if (state.tool === 'laser' && evCache.length === 1) { const pt = getCanvasPoint(e.clientX, e.clientY); state.laserPath.push({x: pt.x, y: pt.y, time: Date.now()}); }
+        else if (isDrawing && evCache.length === 1) {
+            const pt = getCanvasPoint(e.clientX, e.clientY); currentPath.push(pt); const ctx = els.ctx; ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+            if (state.tool === 'pen') { ctx.globalCompositeOperation = 'source-over'; const alpha = document.getElementById('pen-alpha').value / 100; const color = state.penColor; const r = parseInt(color.substr(1,2), 16); const g = parseInt(color.substr(3,2), 16); const b = parseInt(color.substr(5,2), 16); ctx.strokeStyle = `rgba(${r},${g},${b},${alpha})`; ctx.lineWidth = document.getElementById('pen-width').value; if (state.penType === 'pencil') { ctx.shadowBlur = 2; ctx.shadowColor = ctx.strokeStyle; } else { ctx.shadowBlur = 0; } } else { ctx.globalCompositeOperation = 'destination-out'; ctx.lineWidth = 40; ctx.strokeStyle = 'rgba(0,0,0,1)'; ctx.shadowBlur = 0; }
+            if (currentPath.length > 1) { const p1 = currentPath[currentPath.length-2]; const p2 = currentPath[currentPath.length-1]; ctx.beginPath(); ctx.moveTo(p1.x, p1.y); ctx.lineTo(p2.x, p2.y); ctx.stroke(); } ctx.globalCompositeOperation = 'source-over';
+        }
+    }
+
+    function handlePointerUp(e) {
+        const index = evCache.findIndex(cachedEv => cachedEv.pointerId === e.pointerId); if (index > -1) evCache.splice(index, 1); if (evCache.length < 2) prevDiff = -1;
+        if (isDrawing && evCache.length === 0) { isDrawing = false; if (state.tool === 'pen') { state.inkStrokes[state.currentPage].push({ type: 'pen', penType: state.penType, path: currentPath, color: state.penColor, width: document.getElementById('pen-width').value, alpha: document.getElementById('pen-alpha').value / 100 }); } else if (state.tool === 'eraser') { state.inkStrokes[state.currentPage].push({ type: 'eraser', path: currentPath, width: 40 }); } renderCanvas(); }
+        if (evCache.length === 0) isPanning = false;
+    }
+
+    let laserLoopRunning = false;
+    function laserLoop() {
+        if (state.laserPath.length === 0) { els.laserCtx.clearRect(0, 0, els.laserCanvas.width, els.laserCanvas.height); laserLoopRunning = false; return; }
+        const now = Date.now(); const maxLife = 1500; state.laserPath = state.laserPath.filter(p => now - p.time < maxLife);
+        const ctx = els.laserCtx; ctx.clearRect(0, 0, els.laserCanvas.width, els.laserCanvas.height);
+        if (state.laserPath.length > 1) {
+            ctx.lineJoin = 'round'; ctx.lineCap = 'round'; const width = document.getElementById('laser-width').value; const alphaVal = document.getElementById('laser-alpha').value / 100; const color = state.laserColor;
+            if (state.laserType === 'standard') { ctx.shadowBlur = 10; ctx.shadowColor = color; ctx.globalCompositeOperation = 'source-over'; for(let i=1; i<state.laserPath.length; i++) { const p1 = state.laserPath[i-1]; const p2 = state.laserPath[i]; const age = now - p2.time; const opacity = Math.max(0, 1 - age/maxLife) * alphaVal; ctx.beginPath(); ctx.strokeStyle = color; ctx.globalAlpha = opacity; ctx.lineWidth = width; ctx.moveTo(p1.x, p1.y); ctx.lineTo(p2.x, p2.y); ctx.stroke(); } ctx.globalAlpha = 1.0; ctx.shadowBlur = 0; } 
+            else if (state.laserType === 'highlighter') { ctx.shadowBlur = 0; ctx.globalCompositeOperation = 'source-over'; ctx.beginPath(); ctx.moveTo(state.laserPath[0].x, state.laserPath[0].y); for(let i=1; i<state.laserPath.length; i++) { ctx.lineTo(state.laserPath[i].x, state.laserPath[i].y); } const r = parseInt(color.substr(1,2), 16); const g = parseInt(color.substr(3,2), 16); const b = parseInt(color.substr(5,2), 16); ctx.strokeStyle = `rgb(${r},${g},${b})`; ctx.lineWidth = width; ctx.globalAlpha = alphaVal; ctx.stroke(); ctx.globalAlpha = 1.0; }
+        }
+        if (state.laserPath.length > 0) requestAnimationFrame(laserLoop); else laserLoopRunning = false;
+    }
+
+    function toggleTheme() { state.theme = state.theme === 'dark' ? 'light' : 'dark'; document.body.setAttribute('data-theme', state.theme); els.themeBtn.innerText = state.theme === 'dark' ? '🌓' : '☀️'; }
+    function updateTransform() { els.scaler.style.transform = `translate(${state.panX}px, ${state.panY}px) scale(${state.zoom})`; }
+    function resetView() { state.zoom = 1.0; state.panX = 0; state.panY = 0; updateTransform(); }
+
+    function setTool(toolName) {
+        if (state.tool === toolName) state.tool = null; else state.tool = toolName;
+        document.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+        if (state.tool) { const btn = document.getElementById(`tool-${state.tool}`); if(btn) btn.classList.add('active'); }
+        els.penOptions.style.display = 'none'; els.laserOptions.style.display = 'none';
+        if (state.tool === 'pen') { els.canvas.style.pointerEvents = 'auto'; els.laserCanvas.style.pointerEvents = 'none'; els.penOptions.style.display = 'flex'; }
+        else if (state.tool === 'laser') { els.canvas.style.pointerEvents = 'none'; els.laserCanvas.style.pointerEvents = 'auto'; els.laserOptions.style.display = 'flex'; }
+        else if (state.tool === 'eraser') { els.canvas.style.pointerEvents = 'auto'; els.laserCanvas.style.pointerEvents = 'none'; }
+        else { els.canvas.style.pointerEvents = 'none'; els.laserCanvas.style.pointerEvents = 'none'; }
+    }
+
+    function setPenColor(color) { state.penColor = color; document.getElementById('pen-color').value = color; }
+    function renderCanvas() { const ctx = els.ctx; ctx.clearRect(0, 0, els.canvas.width, els.canvas.height); state.inkStrokes[state.currentPage].forEach(s => { ctx.beginPath(); ctx.lineJoin = 'round'; ctx.lineCap = 'round'; if (s.type === 'eraser') { ctx.globalCompositeOperation = 'destination-out'; ctx.lineWidth = s.width; ctx.strokeStyle = 'rgba(0,0,0,1)'; ctx.shadowBlur = 0; } else { ctx.globalCompositeOperation = 'source-over'; const r = parseInt(s.color.substr(1,2), 16); const g = parseInt(s.color.substr(3,2), 16); const b = parseInt(s.color.substr(5,2), 16); ctx.strokeStyle = `rgba(${r},${g},${b},${s.alpha})`; ctx.lineWidth = s.width; if (s.penType === 'pencil') { ctx.shadowBlur = 2; ctx.shadowColor = `rgba(${r},${g},${b},${s.alpha})`; } else { ctx.shadowBlur = 0; } } if (s.path.length > 0) { ctx.moveTo(s.path[0].x, s.path[0].y); for (let i=1; i<s.path.length; i++) ctx.lineTo(s.path[i].x, s.path[i].y); } ctx.stroke(); }); ctx.globalCompositeOperation = 'source-over'; }
+    function undoStroke() { if (state.inkStrokes[state.currentPage].length > 0) { state.inkStrokes[state.currentPage].pop(); renderCanvas(); } }
+    function clearCanvas() { state.inkStrokes[state.currentPage] = []; renderCanvas(); }
+
+    function insertImage(file) { const reader = new FileReader(); reader.onload = function(e) { const div = document.createElement('div'); div.className = 'item img-item'; const wrapper = document.createElement('div'); wrapper.className = 'img-wrapper'; const img = document.createElement('img'); img.src = e.target.result; const handle = document.createElement('div'); handle.className = 'resize-handle'; const delBtn = document.createElement('div'); delBtn.className = 'delete-handle'; delBtn.innerText = 'X'; delBtn.onclick = (ev) => { ev.stopPropagation(); div.remove(); }; const invertBtn = document.createElement('div'); invertBtn.className = 'invert-handle'; invertBtn.innerText = '🌓'; invertBtn.onpointerdown = (ev) => { ev.stopPropagation(); const current = img.style.filter; if(current === 'invert(1)') img.style.filter = 'invert(0)'; else if(current === 'invert(0)') img.style.filter = 'invert(1)'; else { const isDark = document.body.getAttribute('data-theme') === 'dark'; img.style.filter = isDark ? 'invert(0)' : 'invert(1)'; } }; wrapper.addEventListener('pointerdown', (ev) => { if(ev.target === handle || ev.target === delBtn || ev.target === invertBtn) return; ev.stopPropagation(); deselectAllImages(); wrapper.classList.add('selected'); }); let startX, startW; handle.addEventListener('pointerdown', (ev) => { ev.stopPropagation(); ev.preventDefault(); startX = ev.clientX; startW = wrapper.offsetWidth; handle.setPointerCapture(ev.pointerId); const onMove = (mv) => { wrapper.style.width = (startW + (mv.clientX - startX) / state.zoom) + 'px'; }; const onUp = () => { handle.removeEventListener('pointermove', onMove); handle.removeEventListener('pointerup', onUp); }; handle.addEventListener('pointermove', onMove); handle.addEventListener('pointerup', onUp); }); wrapper.appendChild(img); wrapper.appendChild(handle); wrapper.appendChild(delBtn); wrapper.appendChild(invertBtn); div.appendChild(wrapper); safeInsert(div); state.pages[state.currentPage].push(div); state.actionStack[state.currentPage].push({ type: 'image' }); }; reader.readAsDataURL(file); }
+    function deselectAllImages() { document.querySelectorAll('.img-wrapper.selected').forEach(el => el.classList.remove('selected')); }
+    function loadTextData(text) { const lines = text.split(/\r\n|\r|\n/); const newData = []; for (let line of lines) { if(line.trim() === "") newData.push(" "); else newData.push(line); } if (newData.length > 0) { solutionData = newData; state.currentLine = 0; state.currentPage = 0; state.pages = [[]]; state.inkStrokes = [[]]; state.actionStack = [[]]; els.content.innerHTML = ''; els.content.appendChild(els.cursor); renderCanvas(); updatePageUI(); updatePrompter(); alert("파일 로드 완료"); } }
+    
+    let isSelecting = false; let selectStartX = 0, selectStartY = 0; let selectedBlocks = new Set();
+    function startSelection(e) { if (e.target.closest('.editor-block-content') || e.target.tagName === 'BUTTON') return; isSelecting = true; const rect = els.blockList.getBoundingClientRect(); selectStartX = e.clientX - rect.left + els.blockList.scrollLeft; selectStartY = e.clientY - rect.top + els.blockList.scrollTop; els.lasso.style.left = selectStartX + 'px'; els.lasso.style.top = selectStartY + 'px'; els.lasso.style.display = 'block'; els.blockList.setPointerCapture(e.pointerId); if (!e.shiftKey) clearSelection(); els.blockList.addEventListener('pointermove', updateSelection); els.blockList.addEventListener('pointerup', endSelection); }
+    function updateSelection(e) { if (!isSelecting) return; e.preventDefault(); const rect = els.blockList.getBoundingClientRect(); const currentX = e.clientX - rect.left + els.blockList.scrollLeft; const currentY = e.clientY - rect.top + els.blockList.scrollTop; const left = Math.min(selectStartX, currentX); const top = Math.min(selectStartY, currentY); const width = Math.abs(currentX - selectStartX); const height = Math.abs(currentY - selectStartY); els.lasso.style.left = left + 'px'; els.lasso.style.top = top + 'px'; els.lasso.style.width = width + 'px'; els.lasso.style.height = height + 'px'; Array.from(els.blockList.children).forEach(row => { if (checkIntersection(row, left, top, width, height)) { row.classList.add('selected'); selectedBlocks.add(row); } }); }
+    function endSelection(e) { isSelecting = false; els.lasso.style.display = 'none'; els.blockList.removeEventListener('pointermove', updateSelection); els.blockList.removeEventListener('pointerup', endSelection); updateBulkToolbar(); }
+    function checkIntersection(row, lx, ly, lw, lh) { const rx = row.offsetLeft; const ry = row.offsetTop; const rw = row.offsetWidth; const rh = row.offsetHeight; return (lx < rx + rw && lx + lw > rx && ly < ry + rh && ly + lh > ry); }
+    function clearSelection() { selectedBlocks.forEach(row => row.classList.remove('selected')); selectedBlocks.clear(); updateBulkToolbar(); }
+    function updateBulkToolbar() { els.bulkToolbar.style.display = selectedBlocks.size > 0 ? 'flex' : 'none'; if(selectedBlocks.size>0) document.getElementById('selected-count').innerText = `${selectedBlocks.size}개`; }
+    function createBlockElement(text, index) { const row = document.createElement('div'); row.className = 'editor-block-row'; row.dataset.index = index; const content = document.createElement('div'); content.className = 'editor-block-content'; content.contentEditable = true; content.innerHTML = text; row.appendChild(content); els.blockList.appendChild(row); return row; }
+    function renderBlockList() { els.blockList.innerHTML = ''; selectedBlocks.clear(); updateBulkToolbar(); solutionData.forEach((text, index) => { createBlockElement(text, index); }); }
+    function openEditor() { renderBlockList(); els.editorModal.style.display = 'flex'; els.blockList.addEventListener('pointerdown', startSelection); }
+    function closeEditor() { els.editorModal.style.display = 'none'; }
+    function saveRichData() { const blocks = document.querySelectorAll('.editor-block-content'); const newData = []; blocks.forEach(b => newData.push(b.innerHTML)); solutionData = newData; state.currentLine = 0; state.currentPage = 0; state.pages = [[]]; state.inkStrokes = [[]]; state.actionStack = [[]]; els.content.innerHTML = ''; els.content.appendChild(els.cursor); renderCanvas(); updatePageUI(); updatePrompter(); closeEditor(); }
+    function safeInsert(element) { const parent = els.cursor.parentNode; if (parent !== els.content && parent !== null) { if (parent.nextSibling) els.content.insertBefore(els.cursor, parent.nextSibling); else els.content.appendChild(els.cursor); } els.content.insertBefore(element, els.cursor); }
+    function checkOverflowAndPaginate(newElement) { if (els.content.scrollWidth > els.content.clientWidth + 10) { newElement.remove(); nextPage(); safeInsert(newElement); return true; } return false; }
+    
+    // [MODIFIED] 애니메이션 로직: 너비 기반 일정 속도 구현
+    async function typeNode(target, node) {
+        const isMath = node.tagName && (node.tagName.toLowerCase().startsWith('mjx-') || node.classList.contains('mjx-container'));
+        if (isMath) {
+            const element = node.cloneNode(true); 
+            element.classList.add('math-reveal');
+            target.insertBefore(element, els.cursor); 
+            
+            // Reflow 강제하여 너비 계산 준비
+            void element.offsetWidth;
+            
+            // 수식 너비 가져오기 (px)
+            const width = element.offsetWidth;
+            const speedVal = parseInt(els.speedInput.value); // 사용자 입력값 (1 ~ ...)
+            
+            // duration 계산: (너비 * 입력값) / 상수
+            // 상수 500은 튜닝값 (Speed 1일 때, 500px 너비를 1초에 그림)
+            let duration = (width * speedVal) / 500;
+            
+            // 너무 짧으면 어색하므로 최소 0.1초 보장
+            if (duration < 0.1) duration = 0.1;
+
+            element.style.transition = `clip-path ${duration}s linear`; 
+            element.style.clipPath = 'inset(0 0 0 0)';
+            
+            await new Promise(r => setTimeout(r, duration * 1000));
+            if (element.nextSibling) target.insertBefore(els.cursor, element.nextSibling); else target.appendChild(els.cursor);
+        } else if (node.nodeType === Node.TEXT_NODE) {
+            const text = node.textContent; const speed = parseInt(els.speedInput.value);
+            for (let i = 0; i < text.length; i++) { target.insertBefore(document.createTextNode(text[i]), els.cursor); await new Promise(r => setTimeout(r, speed * 2)); }
+        } else if (node.nodeType === Node.ELEMENT_NODE) {
+            const element = node.cloneNode(false); target.insertBefore(element, els.cursor); element.appendChild(els.cursor);
+            const children = Array.from(node.childNodes); for (const child of children) await typeNode(element, child);
+            if (element.nextSibling) target.insertBefore(els.cursor, element.nextSibling); else target.appendChild(els.cursor);
+        }
+    }
+
+    async function typeText(div, html) {
+        state.typing = true; 
+        const tempDiv = document.createElement('div'); tempDiv.style.visibility = 'hidden'; tempDiv.style.position = 'absolute'; document.body.appendChild(tempDiv); tempDiv.innerHTML = html;
+        if (window.MathJax) await MathJax.typesetPromise([tempDiv]);
+        div.appendChild(els.cursor);
+        const nodes = Array.from(tempDiv.childNodes); for (const node of nodes) { await typeNode(div, node); }
+        document.body.removeChild(tempDiv); state.typing = false; 
+    }
+
+    async function nextStep() {
+        if (state.typing || state.currentLine >= solutionData.length) return;
+        const div = document.createElement('div'); div.className = 'item text-item'; safeInsert(div);
+        if (checkOverflowAndPaginate(div)) {}
+        state.pages[state.currentPage].push(div); state.actionStack[state.currentPage].push({ type: 'text', index: state.currentLine });
+        await typeText(div, solutionData[state.currentLine]); 
+        state.currentLine++; updatePrompter();
+    }
+    
+    function insertBlankLine() { if (state.typing) return; const div = document.createElement('div'); div.className = 'item text-item'; div.innerHTML = '&nbsp;'; safeInsert(div); state.pages[state.currentPage].push(div); state.actionStack[state.currentPage].push({ type: 'blank' }); }
+    function insertColumnBreak() { if (state.typing) return; const div = document.createElement('div'); div.className = 'force-break'; safeInsert(div); state.pages[state.currentPage].push(div); state.actionStack[state.currentPage].push({ type: 'break' }); }
+    function prevStep() { if (state.typing) return; const stack = state.actionStack[state.currentPage]; if (stack.length === 0) { if(state.currentPage > 0) prevPage(); return; } const action = stack.pop(); const pageContent = state.pages[state.currentPage]; const el = pageContent.pop(); if (el) el.remove(); const lastEl = pageContent.length > 0 ? pageContent[pageContent.length-1] : null; if (lastEl && lastEl.classList.contains('text-item')) lastEl.appendChild(els.cursor); else els.content.appendChild(els.cursor); if (action.type === 'text') state.currentLine = action.index; updatePrompter(); }
+    function updatePageUI() { els.content.innerHTML = ''; state.pages[state.currentPage].forEach(el => els.content.appendChild(el)); const pageContent = state.pages[state.currentPage]; if (pageContent.length > 0) { const lastEl = pageContent[pageContent.length - 1]; if (lastEl.classList.contains('text-item')) lastEl.appendChild(els.cursor); else els.content.appendChild(els.cursor); } else els.content.appendChild(els.cursor); renderCanvas(); els.pageInd.innerText = `P.${state.currentPage + 1}`; }
+    function nextPage() { if (state.currentPage === state.pages.length - 1) { state.pages.push([]); state.inkStrokes.push([]); state.actionStack.push([]); } state.currentPage++; updatePageUI(); }
+    function prevPage() { if (state.currentPage > 0) { state.currentPage--; updatePageUI(); } }
+    function updatePrompter() { if (state.currentLine >= solutionData.length) els.prompter.innerText = "(끝)"; else els.prompter.innerText = solutionData[state.currentLine].replace(/(<([^>]+)>)/gi, "") || "(공백)"; }
+    function adjustColumns(delta) { let newCount = state.columnCount + delta; if (newCount < 1) newCount = 1; if (newCount > 4) newCount = 4; state.columnCount = newCount; els.content.style.columnCount = state.columnCount; els.colDisplay.innerText = `${state.columnCount}단`; }
+    function resizeCanvas() { els.canvas.width = 3000; els.canvas.height = 1688; els.laserCanvas.width = 3000; els.laserCanvas.height = 1688; }
+    setTimeout(resizeCanvas, 100);
+
+    document.getElementById('file-input').addEventListener('change', function(e) { const file = e.target.files[0]; if (!file) return; const reader = new FileReader(); reader.onload = function(e) { loadTextData(e.target.result); }; reader.readAsText(file); e.target.value = ''; });
+    document.getElementById('image-input').addEventListener('change', function(e) { const file = e.target.files[0]; if (!file) return; if (file.type.startsWith('image/')) { insertImage(file); } else { alert("이미지 파일만 선택 가능합니다."); } e.target.value = ''; });
+    document.addEventListener('keydown', e => { if (document.activeElement.isContentEditable || document.activeElement.tagName === 'INPUT') return; if (e.key === 'ArrowRight' || e.key === ' ') { nextStep(); e.preventDefault(); } if (e.key === 'ArrowLeft') { prevStep(); e.preventDefault(); } });
+    document.body.addEventListener('dragover', e => e.preventDefault());
+    document.body.addEventListener('drop', e => { e.preventDefault(); if (e.dataTransfer.files.length > 0) { const file = e.dataTransfer.files[0]; if (file.type === 'text/plain' || file.name.endsWith('.txt')) { const reader = new FileReader(); reader.onload = e => loadTextData(e.target.result); reader.readAsText(file); } else if (file.type.startsWith('image/')) { insertImage(file); } } });
+    
+    document.addEventListener('paste', e => { if (els.editorModal.style.display === 'flex' && els.pasteModal.style.display !== 'flex') return; const items = (e.clipboardData || e.originalEvent.clipboardData).items; let imageFound = false; for (let i of items) { if (i.type.indexOf("image") === 0) { insertImage(i.getAsFile()); imageFound = true; } } if (imageFound) { e.preventDefault(); if (els.pasteModal.style.display === 'flex') closePasteModal(); } });
+    function openPasteModal() { els.pasteModal.style.display = 'flex'; els.pasteTarget.innerHTML = "여기를 길게 터치하여<br>'붙여넣기'를 선택하세요."; els.pasteTarget.focus(); }
+    function closePasteModal() { els.pasteModal.style.display = 'none'; }
+
+    updatePrompter(); updatePageUI();
+</script>
+</body>
+</html>
