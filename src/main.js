@@ -37,6 +37,84 @@ let solutionData = ["<span class='step-num'>Step 1.</span> 준비 완료"];
     };
 
     let pendingDeleteRow = null;
+    const inputConfig = {
+        smoothing: { minAlpha: 0.35, maxAlpha: 0.85, maxSpeed: 1.2, minDistance: 0.4 },
+        palmReject: { minWidth: 25, minHeight: 25 },
+        pressure: { min: 0.1, max: 1.0 }
+    };
+    let activeStroke = null;
+    let activePointerType = null;
+    let lastRawPoint = null;
+    let lastSmoothPoint = null;
+    let lastDrawPoint = null;
+
+    function clamp(value, min, max) {
+        return Math.min(Math.max(value, min), max);
+    }
+
+    function isPalmTouch(e) {
+        if (e.pointerType !== 'touch') return false;
+        const w = e.width || 0;
+        const h = e.height || 0;
+        return w >= inputConfig.palmReject.minWidth && h >= inputConfig.palmReject.minHeight;
+    }
+
+    function getPointerPressure(e) {
+        if (e.pointerType !== 'pen') return 0.5;
+        const pressure = typeof e.pressure === 'number' ? e.pressure : 0.5;
+        return clamp(pressure, inputConfig.pressure.min, inputConfig.pressure.max);
+    }
+
+    function getCoalescedEvents(e) {
+        if (typeof e.getCoalescedEvents === 'function') {
+            const events = e.getCoalescedEvents();
+            if (events && events.length > 0) return events;
+        }
+        return [e];
+    }
+
+    function toRgba(color, alpha) {
+        const r = parseInt(color.substr(1,2), 16);
+        const g = parseInt(color.substr(3,2), 16);
+        const b = parseInt(color.substr(5,2), 16);
+        return `rgba(${r},${g},${b},${alpha})`;
+    }
+
+    function getStrokeWidth(baseWidth, pressure, penType, pointerType) {
+        if (pointerType !== 'pen') return baseWidth;
+        const p = clamp(pressure ?? 0.5, inputConfig.pressure.min, inputConfig.pressure.max);
+        let minFactor = 0.35;
+        let maxFactor = 1.25;
+        if (penType === 'pencil') { minFactor = 0.5; maxFactor = 1.1; }
+        if (penType === 'highlighter') { minFactor = 0.9; maxFactor = 1.05; }
+        return baseWidth * (minFactor + (maxFactor - minFactor) * p);
+    }
+
+    function makePoint(e) {
+        const pt = getCanvasPoint(e.clientX, e.clientY);
+        return { x: pt.x, y: pt.y, p: getPointerPressure(e), t: e.timeStamp || performance.now() };
+    }
+
+    function smoothPoint(rawPoint) {
+        if (!lastSmoothPoint || !lastRawPoint) return rawPoint;
+        const dt = Math.max(1, rawPoint.t - lastRawPoint.t);
+        const dx = rawPoint.x - lastRawPoint.x;
+        const dy = rawPoint.y - lastRawPoint.y;
+        const dist = Math.hypot(dx, dy);
+        const speed = dist / dt;
+        const t = Math.min(speed / inputConfig.smoothing.maxSpeed, 1);
+        const alpha = inputConfig.smoothing.minAlpha + (inputConfig.smoothing.maxAlpha - inputConfig.smoothing.minAlpha) * t;
+        return {
+            x: lastSmoothPoint.x + (rawPoint.x - lastSmoothPoint.x) * alpha,
+            y: lastSmoothPoint.y + (rawPoint.y - lastSmoothPoint.y) * alpha,
+            p: rawPoint.p,
+            t: rawPoint.t
+        };
+    }
+
+    function shouldAcceptDrawInput(e) {
+        return e.pointerType !== 'touch';
+    }
 
     function execStyle(command) {
         document.execCommand(command, false, null);
@@ -87,7 +165,7 @@ let solutionData = ["<span class='step-num'>Step 1.</span> 준비 완료"];
         else if (type === 'highlighter') { w.value = 20; a.value = 30; setPenColor('#FFFF00'); }
     }
     
-    let evCache = []; let prevDiff = -1; let isPanning = false; let isDrawing = false; let currentPath = []; let panStartX = 0, panStartY = 0; 
+    let evCache = []; let prevDiff = -1; let isPanning = false; let isDrawing = false; let currentPath = []; let panStartX = 0, panStartY = 0;
     function getCanvasPoint(cx, cy) { const rect = els.canvas.getBoundingClientRect(); return { x: (cx - rect.left) * (els.canvas.width / rect.width), y: (cy - rect.top) * (els.canvas.height / rect.height) }; }
 
     els.viewport.addEventListener('pointerdown', handlePointerDown);
@@ -99,10 +177,40 @@ let solutionData = ["<span class='step-num'>Step 1.</span> 준비 완료"];
 
     function handlePointerDown(e) {
         if(e.target.closest('#ui-layer') || e.target.closest('.resize-handle') || e.target.closest('.delete-handle') || e.target.closest('.invert-handle') || e.target.closest('.paste-box')) return;
+        if (isPalmTouch(e)) return;
         if(!e.target.closest('.img-wrapper')) deselectAllImages();
         evCache.push(e);
-        if ((state.tool === 'pen' || state.tool === 'eraser') && evCache.length === 1) { isDrawing = true; els.canvas.setPointerCapture(e.pointerId); const pt = getCanvasPoint(e.clientX, e.clientY); currentPath = [pt]; renderCanvas(); }
-        else if (state.tool === 'laser' && evCache.length === 1) { els.laserCanvas.setPointerCapture(e.pointerId); const pt = getCanvasPoint(e.clientX, e.clientY); state.laserPath = [{x: pt.x, y: pt.y, time: Date.now()}]; if(!laserLoopRunning) { laserLoopRunning = true; requestAnimationFrame(laserLoop); } }
+        if ((state.tool === 'pen' || state.tool === 'eraser') && evCache.length === 1 && shouldAcceptDrawInput(e)) {
+            isDrawing = true;
+            activePointerType = e.pointerType;
+            els.canvas.setPointerCapture(e.pointerId);
+            const pt = makePoint(e);
+            currentPath = [pt];
+            lastRawPoint = pt;
+            lastSmoothPoint = pt;
+            lastDrawPoint = pt;
+            if (state.tool === 'pen') {
+                const alpha = document.getElementById('pen-alpha').value / 100;
+                activeStroke = {
+                    type: 'pen',
+                    penType: state.penType,
+                    color: state.penColor,
+                    rgba: toRgba(state.penColor, alpha),
+                    width: Number(document.getElementById('pen-width').value),
+                    alpha,
+                    pointerType: activePointerType
+                };
+            } else {
+                activeStroke = { type: 'eraser', width: 40 };
+            }
+            renderCanvas();
+        }
+        else if (state.tool === 'laser' && evCache.length === 1 && shouldAcceptDrawInput(e)) {
+            els.laserCanvas.setPointerCapture(e.pointerId);
+            const pt = getCanvasPoint(e.clientX, e.clientY);
+            state.laserPath = [{x: pt.x, y: pt.y, time: Date.now()}];
+            if(!laserLoopRunning) { laserLoopRunning = true; requestAnimationFrame(laserLoop); }
+        }
         else if (state.tool === 'pan' || evCache.length === 2) { isPanning = true; isDrawing = false; if(evCache.length === 1) { panStartX = e.clientX - state.panX; panStartY = e.clientY - state.panY; } els.viewport.setPointerCapture(e.pointerId); }
     }
 
@@ -110,17 +218,81 @@ let solutionData = ["<span class='step-num'>Step 1.</span> 준비 완료"];
         const index = evCache.findIndex(cachedEv => cachedEv.pointerId === e.pointerId); if (index > -1) evCache[index] = e;
         if (evCache.length === 2) { const dx = evCache[0].clientX - evCache[1].clientX; const dy = evCache[0].clientY - evCache[1].clientY; const curDiff = Math.hypot(dx, dy); if (prevDiff > 0) { const zoomDelta = (curDiff - prevDiff) * 0.005; state.zoom = Math.min(Math.max(state.zoom + zoomDelta, 0.5), 5.0); updateTransform(); } prevDiff = curDiff; }
         else if (isPanning && evCache.length === 1) { state.panX = e.clientX - panStartX; state.panY = e.clientY - panStartY; updateTransform(); }
-        else if (state.tool === 'laser' && evCache.length === 1) { const pt = getCanvasPoint(e.clientX, e.clientY); state.laserPath.push({x: pt.x, y: pt.y, time: Date.now()}); }
-        else if (isDrawing && evCache.length === 1) {
-            const pt = getCanvasPoint(e.clientX, e.clientY); currentPath.push(pt); const ctx = els.ctx; ctx.lineJoin = 'round'; ctx.lineCap = 'round';
-            if (state.tool === 'pen') { ctx.globalCompositeOperation = 'source-over'; const alpha = document.getElementById('pen-alpha').value / 100; const color = state.penColor; const r = parseInt(color.substr(1,2), 16); const g = parseInt(color.substr(3,2), 16); const b = parseInt(color.substr(5,2), 16); ctx.strokeStyle = `rgba(${r},${g},${b},${alpha})`; ctx.lineWidth = document.getElementById('pen-width').value; if (state.penType === 'pencil') { ctx.shadowBlur = 2; ctx.shadowColor = ctx.strokeStyle; } else { ctx.shadowBlur = 0; } } else { ctx.globalCompositeOperation = 'destination-out'; ctx.lineWidth = 40; ctx.strokeStyle = 'rgba(0,0,0,1)'; ctx.shadowBlur = 0; }
-            if (currentPath.length > 1) { const p1 = currentPath[currentPath.length-2]; const p2 = currentPath[currentPath.length-1]; ctx.beginPath(); ctx.moveTo(p1.x, p1.y); ctx.lineTo(p2.x, p2.y); ctx.stroke(); } ctx.globalCompositeOperation = 'source-over';
+        else if (state.tool === 'laser' && evCache.length === 1) {
+            const events = getCoalescedEvents(e);
+            for (const ev of events) {
+                const pt = getCanvasPoint(ev.clientX, ev.clientY);
+                state.laserPath.push({x: pt.x, y: pt.y, time: Date.now()});
+            }
+        }
+        else if (isDrawing && evCache.length === 1 && activeStroke) {
+            const ctx = els.ctx;
+            ctx.lineJoin = 'round';
+            ctx.lineCap = 'round';
+            const events = getCoalescedEvents(e);
+            for (const ev of events) {
+                const rawPoint = makePoint(ev);
+                const smooth = smoothPoint(rawPoint);
+                if (lastDrawPoint) {
+                    const dist = Math.hypot(smooth.x - lastDrawPoint.x, smooth.y - lastDrawPoint.y);
+                    if (dist < inputConfig.smoothing.minDistance) {
+                        lastRawPoint = rawPoint;
+                        continue;
+                    }
+                    if (activeStroke.type === 'pen') {
+                        ctx.globalCompositeOperation = 'source-over';
+                        ctx.strokeStyle = activeStroke.rgba;
+                        const pressure = (lastDrawPoint.p + smooth.p) / 2;
+                        ctx.lineWidth = getStrokeWidth(activeStroke.width, pressure, activeStroke.penType, activeStroke.pointerType);
+                        if (activeStroke.penType === 'pencil') { ctx.shadowBlur = 2; ctx.shadowColor = activeStroke.rgba; } else { ctx.shadowBlur = 0; }
+                        ctx.beginPath();
+                        ctx.moveTo(lastDrawPoint.x, lastDrawPoint.y);
+                        ctx.lineTo(smooth.x, smooth.y);
+                        ctx.stroke();
+                    } else {
+                        ctx.globalCompositeOperation = 'destination-out';
+                        ctx.lineWidth = activeStroke.width;
+                        ctx.strokeStyle = 'rgba(0,0,0,1)';
+                        ctx.shadowBlur = 0;
+                        ctx.beginPath();
+                        ctx.moveTo(lastDrawPoint.x, lastDrawPoint.y);
+                        ctx.lineTo(smooth.x, smooth.y);
+                        ctx.stroke();
+                    }
+                }
+                currentPath.push(smooth);
+                lastRawPoint = rawPoint;
+                lastSmoothPoint = smooth;
+                lastDrawPoint = smooth;
+            }
+            ctx.globalCompositeOperation = 'source-over';
         }
     }
 
     function handlePointerUp(e) {
         const index = evCache.findIndex(cachedEv => cachedEv.pointerId === e.pointerId); if (index > -1) evCache.splice(index, 1); if (evCache.length < 2) prevDiff = -1;
-        if (isDrawing && evCache.length === 0) { isDrawing = false; if (state.tool === 'pen') { state.inkStrokes[state.currentPage].push({ type: 'pen', penType: state.penType, path: currentPath, color: state.penColor, width: document.getElementById('pen-width').value, alpha: document.getElementById('pen-alpha').value / 100 }); } else if (state.tool === 'eraser') { state.inkStrokes[state.currentPage].push({ type: 'eraser', path: currentPath, width: 40 }); } renderCanvas(); }
+        if (isDrawing && evCache.length === 0 && activeStroke) {
+            isDrawing = false;
+            if (activeStroke.type === 'pen') {
+                state.inkStrokes[state.currentPage].push({
+                    type: 'pen',
+                    penType: activeStroke.penType,
+                    path: currentPath,
+                    color: activeStroke.color,
+                    width: activeStroke.width,
+                    alpha: activeStroke.alpha,
+                    pointerType: activeStroke.pointerType
+                });
+            } else {
+                state.inkStrokes[state.currentPage].push({ type: 'eraser', path: currentPath, width: activeStroke.width });
+            }
+            activeStroke = null;
+            activePointerType = null;
+            lastRawPoint = null;
+            lastSmoothPoint = null;
+            lastDrawPoint = null;
+            renderCanvas();
+        }
         if (evCache.length === 0) isPanning = false;
     }
 
@@ -160,7 +332,47 @@ let solutionData = ["<span class='step-num'>Step 1.</span> 준비 완료"];
     }
 
     function setPenColor(color) { state.penColor = color; document.getElementById('pen-color').value = color; }
-    function renderCanvas() { const ctx = els.ctx; ctx.clearRect(0, 0, els.canvas.width, els.canvas.height); state.inkStrokes[state.currentPage].forEach(s => { ctx.beginPath(); ctx.lineJoin = 'round'; ctx.lineCap = 'round'; if (s.type === 'eraser') { ctx.globalCompositeOperation = 'destination-out'; ctx.lineWidth = s.width; ctx.strokeStyle = 'rgba(0,0,0,1)'; ctx.shadowBlur = 0; } else { ctx.globalCompositeOperation = 'source-over'; const r = parseInt(s.color.substr(1,2), 16); const g = parseInt(s.color.substr(3,2), 16); const b = parseInt(s.color.substr(5,2), 16); ctx.strokeStyle = `rgba(${r},${g},${b},${s.alpha})`; ctx.lineWidth = s.width; if (s.penType === 'pencil') { ctx.shadowBlur = 2; ctx.shadowColor = `rgba(${r},${g},${b},${s.alpha})`; } else { ctx.shadowBlur = 0; } } if (s.path.length > 0) { ctx.moveTo(s.path[0].x, s.path[0].y); for (let i=1; i<s.path.length; i++) ctx.lineTo(s.path[i].x, s.path[i].y); } ctx.stroke(); }); ctx.globalCompositeOperation = 'source-over'; }
+    function drawStoredStroke(ctx, stroke) {
+        const path = stroke.path || [];
+        if (path.length < 2) return;
+        ctx.lineJoin = 'round';
+        ctx.lineCap = 'round';
+        if (stroke.type === 'eraser') {
+            ctx.globalCompositeOperation = 'destination-out';
+            ctx.strokeStyle = 'rgba(0,0,0,1)';
+            ctx.shadowBlur = 0;
+            for (let i = 1; i < path.length; i++) {
+                const p1 = path[i - 1];
+                const p2 = path[i];
+                ctx.lineWidth = stroke.width;
+                ctx.beginPath();
+                ctx.moveTo(p1.x, p1.y);
+                ctx.lineTo(p2.x, p2.y);
+                ctx.stroke();
+            }
+            return;
+        }
+        const rgba = stroke.rgba || toRgba(stroke.color, stroke.alpha);
+        ctx.globalCompositeOperation = 'source-over';
+        ctx.strokeStyle = rgba;
+        if (stroke.penType === 'pencil') { ctx.shadowBlur = 2; ctx.shadowColor = rgba; } else { ctx.shadowBlur = 0; }
+        for (let i = 1; i < path.length; i++) {
+            const p1 = path[i - 1];
+            const p2 = path[i];
+            const pressure = ((p1.p ?? 0.5) + (p2.p ?? 0.5)) / 2;
+            ctx.lineWidth = getStrokeWidth(stroke.width, pressure, stroke.penType, stroke.pointerType);
+            ctx.beginPath();
+            ctx.moveTo(p1.x, p1.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.stroke();
+        }
+    }
+    function renderCanvas() {
+        const ctx = els.ctx;
+        ctx.clearRect(0, 0, els.canvas.width, els.canvas.height);
+        state.inkStrokes[state.currentPage].forEach(s => drawStoredStroke(ctx, s));
+        ctx.globalCompositeOperation = 'source-over';
+    }
     function undoStroke() { if (state.inkStrokes[state.currentPage].length > 0) { state.inkStrokes[state.currentPage].pop(); renderCanvas(); } }
     function clearCanvas() { state.inkStrokes[state.currentPage] = []; renderCanvas(); }
 
