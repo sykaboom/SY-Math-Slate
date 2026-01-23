@@ -1,4 +1,5 @@
 import './style.css';
+import { sanitizeHTML } from './utils/sanitizer.js';
 
 let solutionData = ["<span class='step-num'>Step 1.</span> 준비 완료"];
     
@@ -460,7 +461,7 @@ let solutionData = ["<span class='step-num'>Step 1.</span> 준비 완료"];
 
     async function typeText(div, html) {
         state.typing = true; 
-        const tempDiv = document.createElement('div'); tempDiv.style.visibility = 'hidden'; tempDiv.style.position = 'absolute'; document.body.appendChild(tempDiv); tempDiv.innerHTML = html;
+        const tempDiv = document.createElement('div'); tempDiv.style.visibility = 'hidden'; tempDiv.style.position = 'absolute'; document.body.appendChild(tempDiv); tempDiv.innerHTML = sanitizeHTML(html);
         if (window.MathJax) await MathJax.typesetPromise([tempDiv]);
         div.appendChild(els.cursor);
         const nodes = Array.from(tempDiv.childNodes); for (const node of nodes) { await typeNode(div, node); }
