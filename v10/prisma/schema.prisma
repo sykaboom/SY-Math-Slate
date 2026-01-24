@@ -1,0 +1,29 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Board {
+  id        String   @id @default(uuid())
+  title     String   @default("Untitled Board")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  pages     Page[]
+}
+
+model Page {
+  id      String @id @default(uuid())
+  boardId String
+  board   Board  @relation(fields: [boardId], references: [id], onDelete: Cascade)
+  order   Int
+  content String
+
+  @@unique([boardId, order])
+}
