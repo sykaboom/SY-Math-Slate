@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ko" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task 012 Overview Draft (Seamless)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        "slate-app": "#111111",
+                        "neon-yellow": "#FFFF00",
+                        "neon-cyan": "#00FFFF",
+                        "neon-pink": "#FF10F0",
+                        "neon-green": "#39FF14",
+                    },
+                    fontFamily: {
+                        sans: ['Noto Sans KR', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .horizontal-scroll-area {
+            display: flex;
+            gap: 0; /* SEAMLESS: No gap */
+            padding: 50px;
+            width: max-content;
+        }
+        .page-board {
+            /* 16:9 Ratio Base: width 1600px, height 900px */
+            width: 1600px;
+            height: 900px;
+            background-color: #1a1a1a;
+            position: relative;
+            /* Seamless Texture: Borders are removed to blend perfectly */
+            /* Continuous Grid Pattern */
+            background-image: 
+                linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+        /* No border between pages */
+        .page-board:not(:last-child) {
+            border-right: none; 
+        }
+    </style>
+</head>
+<body class="bg-[#0a0a0a] text-white min-h-screen overflow-hidden font-sans">
+
+    <!-- Header -->
+    <div class="fixed top-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 px-4 py-2 rounded-full bg-slate-900/80 border border-white/10 backdrop-blur-md">
+        <span class="text-xs font-bold tracking-widest uppercase text-neon-cyan">Seamless Overview</span>
+        <div class="h-4 w-px bg-white/20"></div>
+        <span class="text-xs text-white/50">One Giant Board</span>
+    </div>
+
+    <!-- Main Viewport (Horizontal Scrollable) -->
+    <div class="w-full h-screen overflow-x-auto overflow-y-hidden flex items-center bg-[#050505] cursor-grab active:cursor-grabbing">
+        
+        <!-- The Stitched Board -->
+        <div class="horizontal-scroll-area" style="transform: scale(0.6); transform-origin: left center;">
+            
+            <!-- Page 1 -->
+            <div class="page-board p-16">
+                <!-- Page Number (Subtle) -->
+                <div class="absolute top-4 left-4 text-white/10 text-4xl font-black">01</div>
+                
+                <h1 class="text-6xl font-bold mb-12 text-white">1. 함수의 극한</h1>
+                <div class="text-4xl text-gray-300 leading-relaxed">
+                    $x \to a$일 때 $f(x)$의 목표 지점을 찾는다.
+                </div>
+                <!-- Simulated Ink -->
+                <svg class="absolute top-40 left-20 w-96 h-64 pointer-events-none text-neon-yellow" style="filter: drop-shadow(0 0 5px rgba(255,255,0,0.5));">
+                    <path d="M10,10 Q100,100 200,10" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round"/>
+                </svg>
+                
+                <!-- Content spanning across pages? (Visual Trick) -->
+                <div class="absolute right-0 top-1/2 transform translate-x-1/2 w-64 h-1 bg-neon-cyan opacity-50"></div>
+            </div>
+
+            <!-- Page 2 (Perfectly attached) -->
+            <div class="page-board p-16">
+                <div class="absolute top-4 left-4 text-white/10 text-4xl font-black">02</div>
+                
+                <h1 class="text-6xl font-bold mb-12 text-white">2. 연속성</h1>
+                <div class="text-4xl text-gray-300 leading-relaxed">
+                    좌극한 = 우극한 = 함숫값
+                </div>
+                <div class="w-1/2 h-64 border-4 border-dashed border-white/20 flex items-center justify-center bg-white/5 mt-12 text-white/30 text-2xl">
+                    Graph
+                </div>
+            </div>
+
+            <!-- Page 3 -->
+            <div class="page-board p-16">
+                <div class="absolute top-4 left-4 text-white/10 text-4xl font-black">03</div>
+                
+                <h1 class="text-6xl font-bold mb-12 text-white">3. 미분가능성</h1>
+                <div class="text-4xl text-gray-300 leading-relaxed">
+                    부드럽게 이어져야 미분 가능하다.
+                </div>
+                <!-- Laser Overlay -->
+                <svg class="absolute inset-0 pointer-events-none text-red-500 opacity-80">
+                    <circle cx="200" cy="450" r="300" fill="none" stroke="currentColor" stroke-width="8" stroke-dasharray="20,10" style="filter: drop-shadow(0 0 10px red);"/>
+                </svg>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Bottom Controls -->
+    <div class="fixed bottom-8 left-1/2 -translate-x-1/2 flex gap-4">
+        <div class="px-6 py-3 rounded-full bg-slate-800 border border-white/10 flex gap-4 items-center shadow-2xl">
+            <span class="text-xs text-white/50 uppercase tracking-wider">Scroll or Drag to Pan</span>
+        </div>
+    </div>
+
+</body>
+</html>

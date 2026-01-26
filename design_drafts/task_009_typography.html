@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ko" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task 009 Typography Draft (Left Aligned)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        "slate-app": "#111111",
+                        "neon-yellow": "#FFFF00",
+                        "neon-cyan": "#00FFFF",
+                        "neon-pink": "#FF10F0",
+                        "neon-green": "#39FF14",
+                    },
+                    fontFamily: {
+                        sans: ['Noto Sans KR', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom Highlight Utilities */
+        .hl-yellow {
+            background: linear-gradient(120deg, transparent 0%, transparent 100%);
+            box-shadow: inset 0 -0.5em 0 rgba(255, 255, 0, 0.3);
+            color: #FFFF00;
+            font-weight: 700;
+        }
+        .hl-cyan {
+            color: #00FFFF;
+            text-shadow: 0 0 5px rgba(0, 255, 255, 0.3);
+            font-weight: 700;
+        }
+        .step-badge {
+            color: #FFFF00;
+            font-weight: 900;
+            margin-right: 0.5rem;
+        }
+        /* Prompter Glassmorphism */
+        .prompter-glass {
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(8px);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-slate-app text-white min-h-screen flex flex-col font-sans overflow-hidden">
+
+    <!-- Header Mockup -->
+    <header class="h-14 border-b border-white/10 flex items-center px-6 text-white/50 text-sm">
+        Header Area (Task 002)
+    </header>
+
+    <!-- Main Content Area (2-Column Layout Example) - LEFT ALIGNED -->
+    <main class="flex-1 p-8 relative">
+        <!-- Changed: max-w-6xl mx-auto -> w-full (Fill width) -->
+        <div class="w-full h-full grid grid-cols-2 gap-12 border-l border-r border-white/5 px-12 relative">
+            
+            <!-- Column 1 -->
+            <div class="space-y-8">
+                <!-- Text Block Item -->
+                <div class="text-xl leading-relaxed text-gray-200">
+                    <span class="step-badge">Step 1.</span>
+                    함수의 극한에 대한 기본 성질을 이해하고, 이를 이용하여 극한값을 구할 수 있다. (좌측 상단부터 시작)
+                </div>
+
+                <div class="text-xl leading-relaxed text-gray-200">
+                    <span class="step-badge">Step 2.</span>
+                    다음 등식이 성립함을 증명하여라. <br/>
+                    <span class="hl-cyan">좌변</span>과 <span class="hl-yellow">우변</span>을 각각 정리하면 다음과 같다.
+                </div>
+            </div>
+
+            <!-- Column 2 -->
+            <div class="space-y-8">
+                <div class="text-xl leading-relaxed text-gray-200">
+                    <span class="step-badge">Step 3.</span>
+                    따라서, <span class="text-neon-pink font-bold">샌드위치 정리</span>에 의하여 극한값은 1로 수렴한다.
+                </div>
+                
+                <!-- Placeholder for Image -->
+                <div class="border-2 border-dashed border-white/20 rounded-lg h-48 flex items-center justify-center text-white/30 bg-white/5">
+                    Image Placeholder (Task 010)
+                </div>
+            </div>
+
+            <!-- Grid Helper (Visual Aid) -->
+            <div class="absolute inset-y-0 left-1/2 w-px bg-white/10 border-l border-dashed border-white/20 h-full"></div>
+        </div>
+    </main>
+
+    <!-- Prompter UI (Task 009 Target) -->
+    <div class="prompter-glass fixed bottom-24 left-0 right-0 py-3 px-6 flex justify-center items-center z-40">
+        <div class="flex items-center gap-3 text-sm">
+            <span class="text-neon-yellow font-bold uppercase tracking-wider text-xs">Next</span>
+            <span class="text-gray-400 truncate max-w-md">Step 4. 예제 2번 문제 풀이 시작...</span>
+        </div>
+    </div>
+
+    <!-- Toolbar Mockup -->
+    <div class="fixed bottom-6 left-1/2 -translate-x-1/2 w-96 h-12 bg-gray-800 rounded-full opacity-50"></div>
+
+</body>
+</html>

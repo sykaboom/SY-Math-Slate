@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ko" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task 013 Spec Visualization</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Board Context (Scaled) */
+        #board-stage {
+            width: 800px;
+            height: 600px;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            position: relative;
+            transform-origin: top left;
+            transform: scale(1.0); /* Dynamic Scale Sim */
+            margin: 50px;
+            overflow: hidden;
+        }
+
+        /* Chalk Actor */
+        #chalk-actor {
+            position: absolute; /* Absolute to Board */
+            width: 40px; 
+            height: 40px;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white"><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>') no-repeat center/contain;
+            pointer-events: none;
+            z-index: 100;
+            transition: left 0.1s linear, top 0.1s linear;
+            margin-top: -30px; /* Offset to align tip to center */
+            margin-left: 0px; 
+        }
+        #chalk-actor.bobbing {
+            animation: bob 0.15s infinite alternate;
+        }
+        @keyframes bob {
+            from { transform: rotate(0deg) translateY(0); }
+            to { transform: rotate(5deg) translateY(-2px); }
+        }
+
+        /* Target Point (Debug) */
+        .debug-dot {
+            position: absolute;
+            width: 4px; height: 4px;
+            background: red;
+            border-radius: 50%;
+            z-index: 99;
+            transform: translate(-50%, -50%);
+        }
+
+        /* Text Item */
+        .text-item {
+            position: absolute;
+            font-family: 'Noto Sans KR';
+            color: white;
+            font-size: 24px;
+            line-height: 1.5;
+        }
+        .char { opacity: 0.2; }
+        .char.visible { opacity: 1; }
+
+        /* Sound Indicator */
+        #sfx-indicator {
+            position: fixed; bottom: 20px; right: 20px;
+            padding: 10px 20px;
+            background: #333; color: #0f0;
+            border-radius: 20px;
+            opacity: 0; transition: opacity 0.2s;
+        }
+        #sfx-indicator.playing { opacity: 1; }
+    </style>
+</head>
+<body class="bg-black text-white">
+
+    <div id="board-stage">
+        <!-- Sample Text Item -->
+        <div class="text-item" style="left: 100px; top: 100px;">
+            <span class="char">H</span><span class="char">e</span><span class="char">l</span><span class="char">l</span><span class="char">o</span>
+            <span class="char"> </span>
+            <span class="char">W</span><span class="char">o</span><span class="char">r</span><span class="char">l</span><span class="char">d</span>
+        </div>
+
+        <!-- The Actor lives INSIDE the board -->
+        <div id="chalk-actor"></div>
+        <div id="debug-layer"></div>
+    </div>
+
+    <div id="sfx-indicator">🔊 Playing: chalk.mp3</div>
+
+    <div class="fixed top-5 left-5 space-y-2">
+        <button onclick="setScale(0.5)" class="bg-gray-700 px-3 py-1 rounded">Scale 0.5x</button>
+        <button onclick="setScale(1.0)" class="bg-gray-700 px-3 py-1 rounded">Scale 1.0x</button>
+        <button onclick="playSeq()" class="bg-blue-600 px-3 py-1 rounded">Play Sequence</button>
+    </div>
+
+    <script>
+        const board = document.getElementById('board-stage');
+        const actor = document.getElementById('chalk-actor');
+        const sfx = document.getElementById('sfx-indicator');
+        let currentScale = 1.0;
+
+        function setScale(s) {
+            currentScale = s;
+            board.style.transform = `scale(${s})`;
+        }
+
+        function getBoardPoint(rect) {
+            // Screen -> Board Logic (Simulated)
+            const boardRect = board.getBoundingClientRect();
+            
+            // Center of the element rect (Screen Space)
+            const screenCx = rect.left + rect.width / 2;
+            const screenCy = rect.top + rect.height / 2;
+
+            // Convert to Board Space
+            const x = (screenCx - boardRect.left) / currentScale;
+            const y = (screenCy - boardRect.top) / currentScale;
+            
+            return { x, y };
+        }
+
+        async function playSeq() {
+            const chars = document.querySelectorAll('.char');
+            actor.classList.add('bobbing');
+            sfx.classList.add('playing');
+
+            for (let span of chars) {
+                // 1. Get Target (Center)
+                const rect = span.getBoundingClientRect();
+                const pos = getBoardPoint(rect);
+
+                // Debug Visual
+                const dot = document.createElement('div');
+                dot.className = 'debug-dot';
+                dot.style.left = pos.x + 'px';
+                dot.style.top = pos.y + 'px';
+                document.getElementById('debug-layer').appendChild(dot);
+
+                // 2. Move Actor
+                actor.style.left = pos.x + 'px';
+                actor.style.top = pos.y + 'px';
+
+                // 3. Reveal
+                await new Promise(r => setTimeout(r, 50)); // Move time
+                span.classList.add('visible');
+                
+                await new Promise(r => setTimeout(r, 100)); // Write time
+            }
+
+            actor.classList.remove('bobbing');
+            sfx.classList.remove('playing');
+        }
+    </script>
+</body>
+</html>

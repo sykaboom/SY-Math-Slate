@@ -1,0 +1,291 @@
+# AI_READ_ME (v10 Deep Map)
+
+This file is the **single source** for AI agents. It is intentionally verbose and explicit.
+
+## Read Order (SSOT)
+1) `GEMINI_CODEX_PROTOCOL.md`  
+2) `PROJECT_BLUEPRINT.md` + `PROJECT_CONTEXT.md`  
+3) Task spec in `codex_tasks/`
+
+---
+
+## Layer Rules (Hard Boundaries)
+**Allowed imports**
+- `core` imports: **only** other `core` modules
+- `features` imports: `core` + `ui` only
+- `ui` imports: **only** `ui` + `core` (no `features`)
+- `app` can import `features` and `ui`
+
+**Forbidden patterns**
+- No `window` globals.
+- No `eval` / `new Function`.
+- No `src/lib` (deprecated).
+- No Prisma client or generated code inside `src/`.
+- HTML must be sanitized when using `innerHTML`.
+
+**Aliases**
+- `@core/*` → `v10/src/core/*`
+- `@features/*` → `v10/src/features/*`
+- `@ui/*` → `v10/src/ui/*`
+- `@/*` → `v10/src/*`
+
+---
+
+## Directory Map (v10/src)
+```
+core/
+  config/        (boardSpec, capabilities)
+  export/        (export pipeline scaffold)
+  extensions/    (manifest, registry, connectors, runtime scaffold)
+  math/          (MathJax loader/render)
+  migrations/    (migrateToV2)
+  themes/        (chalk theme)
+  types/         (canvas data types)
+features/
+  canvas/        (rendering layers, actors)
+  hooks/         (useSequence, usePersistence, useFileIO, useAudioPlayer, ...)
+  layout/        (AppLayout, autoLayout, overview)
+  store/         (zustand state)
+  toolbar/       (toolbar + panels)
+ui/
+  components/    (pure UI building blocks)
+app/
+  globals.css
+  page.tsx
+```
+
+---
+
+## Data Model (Core Concepts)
+**Global steps**
+- Step indices are **global**, not per-page.
+- `currentStep` always references the global step index.
+
+**StepBlocks**
+- Ordered blocks used to build layout.
+- `kind` can be `content`, `line-break`, `column-break`, `page-break`.
+- Break blocks **do not** increment step index.
+
+**AnchorMap**
+- `AnchorMap: Record<pageId, Record<stepIndex, AnchorPosition[]>>`
+- Used by playback cursor (anchor indicator).
+
+**audioByStep**
+- Optional audio mapped by **global step index**.
+
+**PersistedSlateDoc**
+- Document-only payload for storage/export (no session fields).
+
+---
+
+## Store Schemas (Zustand)
+
+### useCanvasStore (state essentials)
+- `pages: Record<pageId, CanvasItem[]>`
+- `pageOrder: string[]`
+- `currentPageId: string` (session)
+- `currentStep: number` (session)
+- `pageColumnCounts: Record<pageId, number>`
+- `stepBlocks: StepBlock[]`
+- `anchorMap: AnchorMap | null`
+- `audioByStep: Record<number, StepAudio>`
+- `insertionIndex: number`
+- `currentStroke: StrokeItem | null`
+- `selectedItemId: string | null`
+- `layoutSnapshot: PersistedCanvasV2 | null`
+
+**Session reset behavior**
+- `hydrate(PersistedSlateDoc)` always sets:
+  - `currentStep = 0`
+  - `currentPageId = first page`
+
+### useUIStore (state essentials)
+- Tooling: `activeTool`, `penColor`, `penWidth`, `penOpacity`, `penType`
+- Laser: `laserType`, `laserColor`, `laserWidth`
+- Panels: `isPanelOpen`, `openPanel`, `isDataInputOpen`, `isPasteHelperOpen`
+- Playback: `isAutoPlay`, `playSignal`, `playbackSpeed`, `autoPlayDelayMs`, `isPaused`, `skipSignal`, `stopSignal`, `isAnimating`
+- Overview: `isOverviewMode`, `overviewZoom`, `overviewViewportRatio`
+- Sound: `isSoundEnabled`
+- Capabilities: `capabilityProfile`, `isCapabilityEnabled(...)`
+- Guides: `guides` (alignment snaps)
+
+---
+
+## Key Flows (Explicit)
+
+### Data Input → Layout
+1) Data panel edits `stepBlocks`.
+2) `autoLayout` converts blocks into:
+   - `pages`
+   - `anchorMap`
+   - `pageColumnCounts`
+3) Result applied via `useCanvasStore.applyAutoLayout(...)`.
+
+### Playback (Global Step)
+1) `useSequence` uses `currentStep` + `currentPageId`.
+2) Filters items by `stepIndex === currentStep`.
+3) If `audioByStep[currentStep]` exists:
+   - start audio via `useAudioPlayer`
+   - start animation
+   - wait for **both** to complete
+4) If no audio:
+   - wait for animation
+5) Delay `autoPlayDelayMs`, then `nextStep()`.
+
+### Persistence (Doc-only)
+- Local autosave and `.slate` export **store doc only**.
+- Session fields are never saved.
+
+---
+
+## Dependency Map (Practical)
+**High-level dependency direction**
+```
+core  -> (no deps outside core)
+ui    -> core
+features -> core + ui
+app   -> features + ui
+```
+
+**Concrete dependency hotspots**
+- `features/layout/autoLayout.ts`
+  - `@core/config/boardSpec`
+  - `@core/math/loader`
+  - `@core/math/render`
+  - `@core/types/canvas`
+- `features/hooks/usePersistence.ts`
+  - `@core/migrations/migrateToV2`
+  - `@core/config/boardSpec`
+  - `@features/store/useCanvasStore`
+  - `@features/store/useUIStore`
+- `features/hooks/useFileIO.ts`
+  - `@core/migrations/migrateToV2`
+  - `@features/store/useCanvasStore`
+- `features/hooks/useSequence.ts`
+  - `@features/store/useCanvasStore`
+  - `@features/hooks/useAudioPlayer`
+  - `@features/hooks/useSFX`
+- `features/store/useCanvasStore.ts`
+  - `@core/types/canvas`
+
+---
+
+## Algorithm Notes (Implementation-Level)
+
+### autoLayout (features/layout/autoLayout.ts)
+1) Create **hidden container** with column CSS.
+2) For each `StepBlock`:
+   - `page-break`: reset container, new page.
+   - `line-break` / `column-break`: append spacer (`line-break-spacer` / `force-break`), then continue.
+   - `content`: build DOM nodes, typeset MathJax, check overflow.
+3) If overflow: new page, re-append current content.
+4) `measureStep` → produce **absolute CanvasItems** + **AnchorPositions**.
+5) Output `{ pages, pageOrder, pageColumnCounts, anchorMap }`.
+
+### Playback (features/hooks/useSequence.ts)
+1) Collect items where `item.stepIndex === currentStep`.
+2) If `audioByStep[currentStep]` exists:
+   - play audio (useAudioPlayer)
+   - run text animation (useSequence loop)
+   - await **both** to finish
+3) If no audio:
+   - run animation only
+4) Delay `autoPlayDelayMs`, then `nextStep()`.
+
+### Migration (core/migrations/migrateToV2.ts)
+1) Normalize pages (`pages`, `pageOrder`).
+2) Normalize items (stroke/text/image/math/unknown).
+3) Ensure at least 1 page exists.
+4) Return **doc-only** payload (no session fields).
+
+### Persistence (features/hooks/usePersistence.ts)
+1) `saveSnapshot` filters **image items** for local storage.
+2) Saves **PersistedSlateDoc** only.
+3) `hydrate` always resets `currentStep=0` + first page.
+4) Autosave is debounce-based on store changes.
+
+### File I/O (.slate) (features/hooks/useFileIO.ts)
+**Export**
+1) Collect image assets → map to `assets/images/*`
+2) Rewrite `image.src` to asset path
+3) Write `manifest.json` + `board.json` (doc-only)
+**Import**
+1) Load `board.json` → `migrateToV2`
+2) Map `assets/*` to Blob URLs
+3) Hydrate store with doc-only data
+
+---
+
+## Store Mutators (Summary)
+
+### useCanvasStore (selected actions)
+- `addStroke`, `addItem`, `updateItem`, `deleteItem`: mutate `pages` items.
+- `importStepBlocks`: rebuilds `pages` + `anchorMap` from blocks, resets `currentStep=0`.
+- `insertBreak`: inserts break block at target index, rebuilds layout.
+- `applyAutoLayout`: apply `{ pages, pageOrder, anchorMap }`, reset step.
+- `setStepAudio / clearStepAudio`: mutate `audioByStep`.
+- `nextStep / prevStep / goToStep / resetStep`: session-only step navigation.
+- `nextPage / prevPage`: session-only page navigation.
+- `captureLayoutSnapshot / restoreLayoutSnapshot`: doc snapshot + restore.
+
+### useUIStore (selected actions)
+- `triggerPlay / triggerStop / triggerSkip`: increments signal counters.
+- `setAutoPlay / setPaused`: playback controls.
+- `setPlaybackSpeed / setAutoPlayDelay`: timing controls.
+- `openDataInput / closeDataInput`: data panel visibility.
+
+---
+
+## Persistence: Doc vs Session
+
+**PersistedSlateDoc (saved/exported)**
+```json
+{
+  "version": 2,
+  "pages": { "page-1": [] },
+  "pageOrder": ["page-1"],
+  "pageColumnCounts": { "page-1": 2 },
+  "stepBlocks": [],
+  "anchorMap": {},
+  "audioByStep": {}
+}
+```
+
+**Session state (runtime only)**
+```json
+{
+  "currentPageId": "page-1",
+  "currentStep": 0
+}
+```
+
+---
+
+## Extension Scaffolding (No Execution Yet)
+Located in `core/extensions/`:
+- `manifest.ts`: permissions, triggers, UI placement
+- `registry.ts`: register/list only
+- `connectors.ts`: external API connector interface
+- `runtime.ts`: script manifest + trigger registry (no execution)
+
+**Permission scope examples**
+- `canvas:read`, `canvas:write`, `net:http`, `llm:invoke`
+
+---
+
+## Invariants (Do Not Break)
+- **Global Step**: never reset per-page.
+- **Doc-only persistence**: never store session fields.
+- **Sanitize HTML**: any `innerHTML` must be DOMPurify-sanitized.
+- **Layer boundaries**: `core` must not import `features` or `ui`.
+- **JSON-safe persistence**: no DOM/Function in persisted payloads.
+
+---
+
+## Common Entry Points
+- Layout root: `features/layout/AppLayout.tsx`
+- Playback engine: `features/hooks/useSequence.ts`
+- Persistence: `features/hooks/usePersistence.ts`
+- File I/O: `features/hooks/useFileIO.ts`
+- Data input panel: `features/layout/DataInputPanel.tsx`
+- Auto layout: `features/layout/autoLayout.ts`

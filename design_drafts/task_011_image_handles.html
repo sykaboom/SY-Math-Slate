@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ko" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task 011 Image Handles Draft</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        "slate-app": "#111111",
+                        "neon-yellow": "#FFFF00",
+                        "neon-cyan": "#00FFFF",
+                        "neon-pink": "#FF10F0",
+                        "neon-green": "#39FF14",
+                    },
+                    fontFamily: {
+                        sans: ['Noto Sans KR', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Touch Friendly Handles */
+        .resize-handle {
+            width: 12px;
+            height: 12px;
+            background-color: #00FFFF;
+            border: 2px solid white;
+            border-radius: 50%;
+            position: absolute;
+            z-index: 50;
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+            /* Invisible Hit Area expansion */
+            padding: 10px; /* Expands clickable area */
+            background-clip: content-box; /* Only show the small dot */
+        }
+        .resize-handle:hover {
+            transform: scale(1.2);
+            background-color: #FFFF00;
+            box-shadow: 0 0 15px rgba(255, 255, 0, 0.8);
+            cursor: nwse-resize;
+        }
+
+        /* Selection Border */
+        .image-selected {
+            outline: 2px solid #00FFFF;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+        }
+
+        /* Mini Context Toolbar */
+        .context-toolbar {
+            position: absolute;
+            top: -50px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(30, 30, 30, 0.9);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 9999px;
+            padding: 4px 12px;
+            display: flex;
+            gap: 8px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            animation: popIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes popIn {
+            from { opacity: 0; transform: translateX(-50%) translateY(10px) scale(0.9); }
+            to { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
+        }
+
+        .ctx-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        .ctx-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #00FFFF;
+        }
+        .ctx-btn.danger:hover {
+            background: rgba(255, 0, 0, 0.2);
+            color: #FF4500;
+        }
+    </style>
+</head>
+<body class="bg-slate-app text-white min-h-screen flex items-center justify-center font-sans overflow-hidden relative">
+
+    <!-- Grid Background -->
+    <div class="absolute inset-0 opacity-10 pointer-events-none" 
+         style="background-image: radial-gradient(#ffffff 1px, transparent 1px); background-size: 20px 20px;">
+    </div>
+
+    <!-- Image Wrapper (Selected State) -->
+    <div class="relative group" style="width: 400px; height: 300px; transform: rotate(-2deg);">
+        
+        <!-- Context Toolbar (Floating above) -->
+        <div class="context-toolbar">
+            <button class="ctx-btn" title="Invert Color">🌓</button>
+            <button class="ctx-btn" title="Layer Up">▲</button>
+            <button class="ctx-btn" title="Layer Down">▼</button>
+            <div class="w-px h-4 bg-white/20 my-auto"></div>
+            <button class="ctx-btn danger" title="Delete">🗑️</button>
+        </div>
+
+        <!-- The Image -->
+        <img src="https://picsum.photos/400/300" alt="Sample" class="w-full h-full object-cover rounded-sm image-selected select-none pointer-events-none">
+
+        <!-- Resize Handles -->
+        <!-- TL -->
+        <div class="resize-handle" style="top: -6px; left: -6px; cursor: nwse-resize;"></div>
+        <!-- TR -->
+        <div class="resize-handle" style="top: -6px; right: -6px; cursor: nesw-resize;"></div>
+        <!-- BR -->
+        <div class="resize-handle" style="bottom: -6px; right: -6px; cursor: nwse-resize;"></div>
+        <!-- BL -->
+        <div class="resize-handle" style="bottom: -6px; left: -6px; cursor: nesw-resize;"></div>
+
+        <!-- Rotate Handle (Top Center stick) -->
+        <div class="absolute -top-8 left-1/2 -translate-x-1/2 w-px h-8 bg-neon-cyan"></div>
+        <div class="resize-handle" style="top: -38px; left: 50%; transform: translateX(-50%); cursor: grab; background-color: white; border-color: #00FFFF;">
+            <div style="font-size: 10px; color: black; font-weight: bold; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">↻</div>
+        </div>
+
+    </div>
+
+    <div class="absolute bottom-10 text-white/30 text-sm">
+        Task 011 Draft: Image Selection & Handles
+    </div>
+
+</body>
+</html>

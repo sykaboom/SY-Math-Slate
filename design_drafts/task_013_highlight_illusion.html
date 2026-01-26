@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ko" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task 013 Highlighter Draft</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Board Context */
+        #board-stage {
+            width: 800px; height: 600px;
+            background: #1a1a1a; border: 1px solid #333;
+            position: relative; transform-origin: top left;
+            margin: 50px; overflow: hidden;
+        }
+
+        /* Highlighter Actor */
+        #hl-actor {
+            position: absolute;
+            width: 50px; height: 50px;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23FFFF00"><path d="M14.06 2.94a2.5 2.5 0 0 1 3.53 3.53L7.5 16.5l-4 1 1-4 10.56-10.56z"/></svg>') no-repeat center/contain;
+            pointer-events: none; z-index: 100;
+            transform: rotate(180deg); /* Flip icon */
+            transform-origin: center;
+            margin-top: -35px; /* Offset to align tip to center */
+            margin-left: 0px; 
+            transition: left 0.05s linear, top 0.05s linear;
+            opacity: 0;
+        }
+        #hl-actor.active { opacity: 1; }
+        #hl-actor.drawing {
+            animation: draw-bob 0.2s infinite alternate ease-in-out;
+        }
+        @keyframes draw-bob {
+            from { transform: rotate(180deg) translateX(0); }
+            to { transform: rotate(175deg) translateX(-2px); }
+        }
+
+        /* Highlight Target */
+        .hl-target {
+            background-image: linear-gradient(rgba(255,255,0,0.3), rgba(255,255,0,0.3));
+            background-repeat: no-repeat;
+            background-size: 0% 100%; /* Start hidden */
+            transition: none; /* JS driven */
+            font-size: 24px; color: white;
+            position: absolute; top: 200px; left: 100px;
+        }
+
+        #sfx-indicator {
+            position: fixed; bottom: 20px; right: 20px;
+            padding: 10px 20px; background: #333; color: #ff0;
+            border-radius: 20px; opacity: 0;
+        }
+        #sfx-indicator.playing { opacity: 1; }
+    </style>
+</head>
+<body class="bg-black text-white">
+
+    <div id="board-stage">
+        <div id="target-text" class="hl-target">중요한 개념입니다.</div>
+        <div id="hl-actor"></div>
+    </div>
+
+    <div id="sfx-indicator">🔊 Playing: marker.mp3</div>
+
+    <div class="fixed top-5 left-5 space-y-2">
+        <button onclick="playHighlight()" class="bg-yellow-600 px-3 py-1 rounded text-black font-bold">Play Highlight</button>
+    </div>
+
+    <script>
+        const actor = document.getElementById('hl-actor');
+        const target = document.getElementById('target-text');
+        const sfx = document.getElementById('sfx-indicator');
+        const board = document.getElementById('board-stage');
+
+        function getBoardPoint(rect) {
+            const boardRect = board.getBoundingClientRect();
+            // Center Logic
+            const x = (rect.left + rect.width / 2) - boardRect.left;
+            const y = (rect.top + rect.height / 2) - boardRect.top;
+            return { x, y };
+        }
+
+        async function playHighlight() {
+            // Reset
+            target.style.backgroundSize = '0% 100%';
+            
+            // 1. Move to Start
+            const rect = target.getBoundingClientRect();
+            // Start position (Left-Center)
+            const startRect = { ...rect, width: 0, left: rect.left }; 
+            const startPos = getBoardPoint(startRect);
+            
+            actor.style.left = startPos.x + 'px';
+            actor.style.top = startPos.y + 'px';
+            actor.classList.add('active');
+
+            await new Promise(r => setTimeout(r, 500)); // Wait before draw
+
+            // 2. Draw Loop
+            actor.classList.add('drawing');
+            sfx.classList.add('playing');
+
+            const steps = 30;
+            for(let i=1; i<=steps; i++) {
+                const progress = i/steps;
+                
+                // Update Background
+                target.style.backgroundSize = `${progress * 100}% 100%`;
+
+                // Move Actor (Interpolate from Left to Right)
+                // Target is current progress point center
+                const currentW = rect.width * progress;
+                const currentRect = { ...rect, width: 0, left: rect.left + currentW };
+                const pos = getBoardPoint(currentRect);
+                
+                actor.style.left = pos.x + 'px';
+                actor.style.top = pos.y + 'px';
+
+                await new Promise(r => setTimeout(r, 30));
+            }
+
+            actor.classList.remove('drawing');
+            sfx.classList.remove('playing');
+            
+            // Fade out actor
+            setTimeout(() => actor.classList.remove('active'), 500);
+        }
+    </script>
+</body>
+</html>

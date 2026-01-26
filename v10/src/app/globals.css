@@ -64,6 +64,7 @@
     --accent-color: #00ffff;
     --neon-green: #39ff14;
     --neon-pink: #ff10f0;
+    --math-inline-shift: -0.08em;
 
     --radius: 0.625rem;
     --background: oklch(1 0 0);
@@ -156,5 +157,190 @@
   body {
     @apply bg-background text-foreground;
     font-family: var(--font-sans), "Noto Sans KR", sans-serif;
+  }
+
+  .text-layer {
+    column-fill: auto;
+  }
+
+  .text-item {
+    @apply text-xl leading-relaxed text-gray-200;
+  }
+
+  mjx-container {
+    display: inline-block !important;
+    vertical-align: middle !important;
+    margin: 0 2px;
+    cursor: text;
+    user-select: text;
+    -webkit-user-select: text;
+    color: inherit !important;
+  }
+
+  mjx-container[display="false"] {
+    padding-right: 0.1em;
+    transform: translateY(var(--math-inline-shift, 0em));
+  }
+
+  mjx-container svg {
+    overflow: visible;
+  }
+
+  mjx-container svg path,
+  mjx-container svg polygon {
+    fill: currentColor !important;
+    stroke: none !important;
+    stroke-width: 0 !important;
+  }
+
+  mjx-container svg rect:not([data-bgcolor]) {
+    fill: currentColor;
+    stroke: none;
+  }
+
+  mjx-container svg .mjx-boxed rect {
+    fill: none !important;
+    stroke: currentColor !important;
+    vector-effect: non-scaling-stroke;
+  }
+
+  mjx-container svg line {
+    stroke: currentColor !important;
+  }
+
+  .step-badge {
+    color: var(--step-color);
+    font-weight: 900;
+    margin-right: 0.5rem;
+  }
+
+  .hl-yellow {
+    color: #ffff00;
+    font-weight: 700;
+    box-shadow: inset 0 -0.5em 0 rgba(255, 255, 0, 0.3);
+  }
+
+  .hl-cyan {
+    color: #00ffff;
+    font-weight: 700;
+    text-shadow: 0 0 5px rgba(0, 255, 255, 0.3);
+  }
+
+  .hl-temporary .hl-yellow,
+  .hl-temporary .hl-cyan {
+    color: inherit;
+    box-shadow: none;
+    text-shadow: none;
+  }
+
+  .tw-char[data-highlight="1"][data-hl-active="1"] {
+    color: #ffff00;
+    box-shadow: inset 0 -0.5em 0 rgba(255, 255, 0, 0.3);
+  }
+
+  .tw-char[data-highlight="1"][data-highlight-color="cyan"][data-hl-active="1"] {
+    color: #00ffff;
+    text-shadow: 0 0 5px rgba(0, 255, 255, 0.3);
+  }
+
+  .force-break {
+    display: block;
+    break-before: column;
+    height: 1px;
+    margin: 0;
+    padding: 0;
+  }
+
+  .line-break-spacer {
+    display: block;
+    height: 1lh;
+    min-height: 1lh;
+    line-height: inherit;
+    margin: 0;
+    padding: 0;
+  }
+
+  .editing-breaks .line-break-spacer {
+    border-bottom: 1px dashed rgba(255, 255, 255, 0.25);
+  }
+
+  .editing-breaks .force-break {
+    height: 1lh;
+    border-left: 1px dashed rgba(255, 255, 255, 0.25);
+  }
+
+  .prompter-glass {
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(8px);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .tw-char {
+    opacity: 0;
+  }
+
+  .tw-char.tw-visible {
+    opacity: 1;
+  }
+
+  .end-marker {
+    position: relative;
+    display: inline-block;
+    width: var(--chalk-marker-width);
+    height: var(--chalk-marker-height);
+    margin-left: var(--chalk-marker-margin-left);
+    vertical-align: baseline;
+  }
+
+  .end-marker::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 2px;
+    width: var(--chalk-marker-holder-width);
+    height: var(--chalk-marker-holder-height);
+    border-radius: var(--chalk-marker-holder-radius);
+    border: 1px solid var(--chalk-marker-holder-border);
+    background: var(--chalk-marker-holder-bg);
+    box-shadow: var(--chalk-marker-holder-shadow);
+  }
+
+  .end-marker::after {
+    content: "";
+    position: absolute;
+    left: var(--chalk-marker-chalk-offset-x);
+    top: var(--chalk-marker-chalk-offset-y);
+    width: var(--chalk-marker-chalk-width);
+    height: var(--chalk-marker-chalk-height);
+    border-radius: 999px;
+    transform: rotate(var(--chalk-marker-chalk-rotate));
+    background: var(--chalk-marker-chalk-gradient);
+    box-shadow: var(--chalk-marker-chalk-glow);
+  }
+
+  @keyframes actor-bob {
+    0% {
+      transform: translate(-8px, -10px) rotate(-10deg);
+    }
+    50% {
+      transform: translate(8px, 6px) rotate(10deg);
+    }
+    100% {
+      transform: translate(-6px, -8px) rotate(-8deg);
+    }
+  }
+
+  .actor-bob {
+    animation: actor-bob var(--chalk-actor-bob-duration) infinite ease-in-out;
+  }
+}
+
+@layer utilities {
+  .step-label {
+    color: var(--step-color);
+  }
+
+  .break-label {
+    color: var(--neon-pink);
   }
 }

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ko" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task 014 Text Editing Draft</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        "slate-app": "#111111",
+                        "neon-yellow": "#FFFF00",
+                        "neon-cyan": "#00FFFF",
+                    },
+                    fontFamily: {
+                        sans: ['Noto Sans KR', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Editable Area Style */
+        .editable-box {
+            outline: 2px dashed rgba(255, 255, 255, 0.2);
+            padding: 8px;
+            min-width: 100px;
+            transition: outline-color 0.2s;
+            cursor: text;
+        }
+        .editable-box:focus {
+            outline: 2px solid #00FFFF;
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        /* Bubble Toolbar */
+        .bubble-menu {
+            position: absolute;
+            background: #1e1e1e;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 4px;
+            display: flex;
+            gap: 4px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+            /* Triangle Arrow */
+            transform: translateX(-50%);
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.1s, transform 0.1s;
+            bottom: 100%;
+            left: 50%;
+            margin-bottom: 8px;
+        }
+        .bubble-menu.visible {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateX(-50%) translateY(0);
+        }
+        
+        .bubble-btn {
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            color: #aaa;
+            transition: all 0.1s;
+        }
+        .bubble-btn:hover {
+            background: #333;
+            color: white;
+        }
+        .bubble-btn.active {
+            color: #00FFFF;
+            background: rgba(0, 255, 255, 0.1);
+        }
+        .separator { width: 1px; background: #333; margin: 0 2px; }
+    </style>
+</head>
+<body class="bg-slate-app text-white min-h-screen flex items-center justify-center p-10 font-sans" onclick="deselect()">
+
+    <!-- Context: A Text Item on Canvas -->
+    <div class="relative group" onclick="event.stopPropagation()">
+        
+        <!-- Bubble Menu (Floating above text) -->
+        <div id="bubble" class="bubble-menu visible">
+            <button class="bubble-btn active" title="Bold"><i data-lucide="bold" width="14"></i></button>
+            <button class="bubble-btn" title="Italic"><i data-lucide="italic" width="14"></i></button>
+            <div class="separator"></div>
+            <button class="bubble-btn text-neon-yellow" title="Color"><div class="w-3 h-3 rounded-full bg-neon-yellow"></div></button>
+            <button class="bubble-btn" title="Size Up"><i data-lucide="a-large-small" width="14"></i></button>
+            <div class="separator"></div>
+            <button class="bubble-btn" title="Math Mode"><i data-lucide="sigma" width="14"></i></button>
+            <button class="bubble-btn text-red-400 hover:text-red-500" title="Delete"><i data-lucide="trash-2" width="14"></i></button>
+        </div>
+
+        <!-- Content Editable Area -->
+        <div id="editor" contenteditable="true" class="editable-box text-xl leading-relaxed text-gray-200" onfocus="showMenu()">
+            함수의 <span class="font-bold text-neon-cyan">극한</span>에 대하여 설명하시오.
+        </div>
+
+    </div>
+
+    <div class="fixed bottom-10 text-center w-full text-gray-500 text-sm">
+        Task 014 Draft: Click text to edit, click outside to close.
+    </div>
+
+    <script>
+        lucide.createIcons();
+        
+        const bubble = document.getElementById('bubble');
+        
+        function showMenu() {
+            bubble.classList.add('visible');
+        }
+        function deselect() {
+            bubble.classList.remove('visible');
+            document.getElementById('editor').blur();
+        }
+    </script>
+
+</body>
+</html>
