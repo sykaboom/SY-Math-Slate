@@ -18,7 +18,12 @@ Out of scope:
 
 ## Dependencies / constraints
 - New dependencies allowed? (default: NO)
-- B:contentReference[oaicite:17]{index=17}
+- Boundary rules (e.g. core cannot import features)
+
+## Documentation Update Check
+- [ ] 구조 변경(파일/폴더 추가·이동·삭제) 발생 시: `node scripts/gen_ai_read_me_map.mjs` 실행하여 `v10/AI_READ_ME_MAP.md` 갱신 여부 확인
+- [ ] 규칙/의미 변경(레이어 규칙, 불변조건, 핵심 플로우 등) 발생 시: `v10/AI_READ_ME.md` 갱신 여부 확인
+
 ## Acceptance criteria (must be testable)
 - [ ] ...
 - [ ] ...
