@@ -1,0 +1,29 @@
+name: ai-readme-map
+
+on:
+  pull_request:
+    paths:
+      - "v10/**"
+      - "scripts/gen_ai_read_me_map.mjs"
+      - ".github/workflows/ai-readme-map.yml"
+  push:
+    branches:
+      - main
+    paths:
+      - "v10/**"
+      - "scripts/gen_ai_read_me_map.mjs"
+      - ".github/workflows/ai-readme-map.yml"
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Check AI_READ_ME_MAP
+        run: node scripts/gen_ai_read_me_map.mjs --check

@@ -5,10 +5,13 @@
 - Follow GEMINI_CODEX_PROTOCOL.md exactly.
 
 ## Read-first order (every task)
+0) AGENTS.md (this file)
 1) GEMINI_CODEX_PROTOCOL.md
 2) PROJECT_BLUEPRINT.md and PROJECT_CONTEXT.md (SSOT)
 3) The task spec in codex_tasks/ (if one exists)
-4) Then inspect relevant code files
+4) v10/AI_READ_ME.md (when working in v10/)
+5) v10/AI_READ_ME_MAP.md (when structure/layout mapping is needed)
+Then inspect relevant code files
 
 If no task spec exists for the requested work:
 - Ask the user to create a spec in codex_tasks/ (or ask the user to provide scope + acceptance criteria).

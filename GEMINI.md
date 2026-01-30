@@ -32,16 +32,14 @@ When responding, output ONLY:
   - `v10/`: active Next.js 16 + TypeScript app (primary target)
 - v10 stack: Next.js 16 (App Router), TypeScript, Tailwind v4, Zustand, MathJax v3, Prisma(SQLite), LocalStorage + ZIP export
 
-## Where things live (v10)
-- `v10/src/app/` pages/layouts
-- `v10/src/components/` components
-- `v10/src/hooks/` hooks
-- `v10/src/lib/` utilities (MathJax loader, migration, specs)
-- `v10/src/store/` zustand stores
-- `v10/src/types/` shared TS types (SSOT)
-- `v10/prisma/` prisma schema
+## Knowledge Hierarchy (Read Order)
+1. **`GEMINI_CODEX_PROTOCOL.md`**: Collaboration rules.
+2. **`PROJECT_BLUEPRINT.md`** & **`PROJECT_CONTEXT.md`**: Architectural constitution & Project vision.
+3. **`v10/AI_READ_ME.md`**: Architectural rules, layers, and semantic map.
+4. **`v10/AI_READ_ME_MAP.md`**: Auto-generated directory/file tree (Freshness checked by CI).
+5. **`codex_tasks/`**: Current task context.
 
 ## Commands (reference only; do not run unless asked)
+- `node scripts/gen_ai_read_me_map.mjs` (Update v10 map)
 - `cd v10`
 - `npm run dev` / `npm run build` / `npm run lint`
-- `npx prisma studio` (if configured)
