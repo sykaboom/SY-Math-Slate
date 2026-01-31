@@ -16,6 +16,7 @@ import {
   ChevronsRight,
   Eraser,
   Hand,
+  HelpCircle,
   Image as ImageIcon,
   Minus,
   MoreHorizontal,
@@ -55,7 +56,6 @@ export function FloatingToolbar() {
     setOverviewViewportRatio,
     isDataInputOpen,
     toggleDataInput,
-    setViewMode,
     isCapabilityEnabled,
     capabilityProfile,
     setCapabilityProfile,
@@ -92,7 +92,7 @@ export function FloatingToolbar() {
   const displayStep =
     totalSteps === 0 ? 0 : Math.min(currentStep + 1, totalSteps);
   const canOverview = isCapabilityEnabled("overview.mode");
-  const canProExport = isCapabilityEnabled("export.pro");
+  const canAdvancedExport = isCapabilityEnabled("export.advanced");
   const profileOptions = [
     {
       value: "basic",
@@ -103,11 +103,6 @@ export function FloatingToolbar() {
       value: "advanced",
       title: "Advanced",
       description: "고급 제어 포함",
-    },
-    {
-      value: "pro",
-      title: "Pro",
-      description: "확장 기능 준비",
     },
   ] as const;
   const menuButtonClass =
@@ -271,6 +266,12 @@ export function FloatingToolbar() {
           onClick={handleImagePicker}
           disabled={isOverviewMode}
         />
+        <ToolButton
+          icon={HelpCircle}
+          label="붙여넣기 도움말"
+          onClick={handlePasteHelper}
+          disabled={isOverviewMode}
+        />
         <PlaybackControls />
         <div className="flex items-center gap-1 rounded-full border border-white/10 bg-white/5 px-2 py-1 text-[11px] text-white/70">
           <button
@@ -357,13 +358,13 @@ export function FloatingToolbar() {
                   >
                     파일 저장
                   </button>
-                  {canProExport && (
+                  {canAdvancedExport && (
                     <button
                       type="button"
-                      className={cn(menuButtonClass, "col-span-2 text-white/40")}
-                      disabled
+                      className={cn(menuButtonClass, "col-span-2")}
+                      onClick={() => window.alert("준비 중입니다.")}
                     >
-                      Export (Pro)
+                      Export
                     </button>
                   )}
                 </div>
@@ -399,30 +400,6 @@ export function FloatingToolbar() {
                     onClick={handleSoundToggle}
                   >
                     {isSoundEnabled ? "사운드 끄기" : "사운드 켜기"}
-                  </button>
-                </div>
-              </div>
-
-              <div className="grid gap-2">
-                <span className="text-[10px] uppercase tracking-wide text-white/40">
-                  Mode
-                </span>
-                <div className="grid grid-cols-2 gap-2">
-                  <button
-                    type="button"
-                    className={menuButtonClass}
-                    onClick={handlePasteHelper}
-                    disabled={isOverviewMode}
-                  >
-                    붙여넣기 도움말
-                  </button>
-                  <button
-                    type="button"
-                    className={menuButtonClass}
-                    onClick={() => setViewMode("presentation")}
-                    disabled={isOverviewMode}
-                  >
-                    발표 모드
                   </button>
                 </div>
               </div>

@@ -95,7 +95,7 @@ export const useUIStore = create<UIState>((set, get) => ({
   overviewZoom: 0.4,
   overviewViewportRatio: "16:9",
   viewMode: "edit",
-  capabilityProfile: "basic",
+  capabilityProfile: "advanced",
   guides: [],
   isAutoPlay: false,
   playSignal: 0,
