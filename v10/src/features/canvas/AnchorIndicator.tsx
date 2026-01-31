@@ -5,7 +5,7 @@ import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { cn } from "@core/utils";
 import { useCanvasStore } from "@features/store/useCanvasStore";
 import { useUIStore } from "@features/store/useUIStore";
-import { getBoardSize } from "@core/config/boardSpec";
+import { getBoardPadding, getBoardSize } from "@core/config/boardSpec";
 import { useBoardTransform } from "@features/hooks/useBoardTransform";
 import { chalkCssVars, chalkTheme } from "@core/themes/chalkTheme";
 
@@ -55,7 +55,7 @@ export function AnchorIndicator({ isAnimating }: AnchorIndicatorProps) {
 
   const fallbackAnchor = useMemo(() => {
     const board = getBoardSize(overviewViewportRatio);
-    const padding = 48;
+    const padding = getBoardPadding();
     return {
       x: padding,
       y: padding + FALLBACK_BASELINE_OFFSET,
@@ -127,12 +127,15 @@ export function AnchorIndicator({ isAnimating }: AnchorIndicatorProps) {
   }, [isAnimating, suppress]);
 
   const maxStep = useMemo(() => {
+    if (stepBlocks.length > 0) return stepBlocks.length - 1;
     const items = pages[currentPageId] ?? [];
     return getMaxTextStep(items);
-  }, [pages, currentPageId]);
+  }, [pages, currentPageId, stepBlocks]);
 
   const isHidden = isAnimating || suppress || playPending;
   const hasValidFlowAnchor = flowAnchor?.step === currentStep;
+  const currentBlock = stepBlocks[currentStep];
+  const isBreakAnchor = Boolean(currentBlock?.kind && currentBlock.kind !== "content");
 
   if (isOverviewMode) return null;
 
@@ -157,13 +160,14 @@ export function AnchorIndicator({ isAnimating }: AnchorIndicatorProps) {
   return (
     <div
       className={cn(
-        "pointer-events-none absolute z-[14] transition-opacity duration-200",
+        "pointer-events-none absolute transition-opacity duration-200",
         isHidden ? "opacity-0" : "opacity-100"
       )}
       style={{
         transform: `translate(${resolvedAnchor.x - TIP_OFFSET.x}px, ${
           resolvedAnchor.y - TIP_OFFSET.y
         }px)`,
+        zIndex: "var(--z-indicator)",
       }}
     >
       <style>
@@ -173,9 +177,9 @@ export function AnchorIndicator({ isAnimating }: AnchorIndicatorProps) {
             50% { transform: translate(2px, -2px); }
             100% { transform: translate(0, 0); }
           }
-          .chalk-anchor-wobble {
+          /* .chalk-anchor-wobble {
             animation: chalkWobble var(--chalk-wobble-duration) ease-in-out infinite;
-          }
+          } */
         `}
       </style>
       <div className="chalk-anchor-wobble relative flex items-center">
@@ -187,7 +191,10 @@ export function AnchorIndicator({ isAnimating }: AnchorIndicatorProps) {
             borderRadius: chalkTheme.indicator.holder.radius,
             border: `1px solid ${chalkTheme.colors.holderBorder}`,
             background: chalkTheme.colors.holderBackground,
-            boxShadow: chalkTheme.colors.holderShadow,
+            boxShadow: isBreakAnchor
+              ? `${chalkTheme.colors.holderShadow}, 0 0 15px var(--neon-pink)`
+              : chalkTheme.colors.holderShadow,
+            opacity: isBreakAnchor ? 0.8 : 1,
           }}
         >
           <div

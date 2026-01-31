@@ -33,17 +33,15 @@ export function OverviewStage() {
   return (
     <div
       ref={containerRef}
-      className="relative flex flex-1 overflow-auto"
+      className="relative flex flex-1 overflow-auto bg-black"
       data-overview-stage
     >
-      <div className="pointer-events-none absolute inset-0 z-0 bg-[radial-gradient(circle_at_top,_rgba(0,255,255,0.08),_transparent_45%)]" />
-      <div className="pointer-events-none absolute inset-0 z-0 bg-[radial-gradient(circle_at_bottom,_rgba(255,16,240,0.08),_transparent_40%)]" />
       <div
         className="relative origin-top-left z-10"
         style={{ transform: `scale(${overviewZoom})` }}
       >
         <div className="relative">
-          <div className={cn("grid", "relative")} style={gridStyle}>
+          <div className={cn("grid", "relative z-10")} style={gridStyle}>
             {pageOrder.map((pageId) => {
               const items = pages[pageId] ?? [];
               const hasContent = items.length > 0;

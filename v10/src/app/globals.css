@@ -64,6 +64,13 @@
     --accent-color: #00ffff;
     --neon-green: #39ff14;
     --neon-pink: #ff10f0;
+    --neon-pink-rgb: 255, 16, 240;
+    --neon-cyan-rgb: 0, 255, 255;
+    --z-content: 12;
+    --z-indicator: 14;
+    --z-guide: 14;
+    --z-actor: 15;
+    --z-modal: 60;
     --math-inline-shift: -0.08em;
 
     --radius: 0.625rem;
@@ -318,7 +325,7 @@
     box-shadow: var(--chalk-marker-chalk-glow);
   }
 
-  @keyframes actor-bob {
+  /* @keyframes actor-bob {
     0% {
       transform: translate(-8px, -10px) rotate(-10deg);
     }
@@ -332,7 +339,7 @@
 
   .actor-bob {
     animation: actor-bob var(--chalk-actor-bob-duration) infinite ease-in-out;
-  }
+  } */
 }
 
 @layer utilities {

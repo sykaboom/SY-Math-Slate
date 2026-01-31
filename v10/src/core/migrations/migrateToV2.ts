@@ -225,6 +225,15 @@ const normalizeColumnCounts = (input: unknown, pageOrder: string[]) => {
   return result;
 };
 
+const normalizeVersion = (value: unknown) => {
+  if (isNumber(value)) return value;
+  if (typeof value === "string") {
+    const parsed = Number.parseFloat(value);
+    if (Number.isFinite(parsed)) return parsed;
+  }
+  return 2;
+};
+
 export function migrateToV2(data: unknown): PersistedSlateDoc {
   if (!isRecord(data)) {
     const pageId = createPageId();
@@ -245,9 +254,11 @@ export function migrateToV2(data: unknown): PersistedSlateDoc {
     pageOrder = [fallbackId];
   }
   const pageColumnCounts = normalizeColumnCounts(data.pageColumnCounts, pageOrder);
+  const docVersion = normalizeVersion(data.version);
+  const resolvedVersion = docVersion >= 2.1 ? 2.1 : 2;
 
   return {
-    version: 2,
+    version: resolvedVersion as PersistedSlateDoc["version"],
     pages,
     pageOrder,
     pageColumnCounts,

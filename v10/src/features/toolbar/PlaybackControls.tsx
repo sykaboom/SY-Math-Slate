@@ -33,8 +33,9 @@ export function PlaybackControls() {
     setPaused,
     isCapabilityEnabled,
   } = useUIStore();
-  const { pages, currentStep, goToStep } = useCanvasStore();
+  const { pages, currentStep, goToStep, stepBlocks } = useCanvasStore();
   const maxStep = useMemo(() => {
+    if (stepBlocks.length > 0) return stepBlocks.length - 1;
     return Object.values(pages).reduce((max, items) => {
       return items.reduce((innerMax, item) => {
         if (item.type !== "text" && item.type !== "image") return innerMax;
@@ -43,7 +44,7 @@ export function PlaybackControls() {
         return Math.max(innerMax, stepIndex);
       }, max);
     }, -1);
-  }, [pages]);
+  }, [pages, stepBlocks]);
   const totalSteps = Math.max(maxStep + 1, 0);
 
   const speedLabel = useMemo(() => playbackSpeed.toFixed(2), [playbackSpeed]);

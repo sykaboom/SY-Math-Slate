@@ -15,7 +15,7 @@ import { useSnap } from "@features/hooks/useSnap";
 type ResizeCorner = "nw" | "ne" | "sw" | "se";
 
 const HANDLE_CLASS =
-  "absolute h-3 w-3 rounded-full bg-cyan-300 border-2 border-white shadow-[0_0_10px_rgba(0,255,255,0.5)]";
+  "absolute h-3 w-3 rounded-full bg-cyan-300 border-2 border-white shadow-[0_0_10px_rgba(var(--neon-cyan-rgb,0,255,255),0.5)]";
 
 export function ImageBlock({
   item,

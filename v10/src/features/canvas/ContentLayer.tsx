@@ -7,6 +7,7 @@ import type { CSSProperties } from "react";
 import { useCanvasStore } from "@features/store/useCanvasStore";
 import { useUIStore } from "@features/store/useUIStore";
 import type { CanvasItem, ImageItem, TextItem } from "@core/types/canvas";
+import { getBoardPadding } from "@core/config/boardSpec";
 import { cn } from "@core/utils";
 import { MathTextBlock } from "@features/canvas/MathTextBlock";
 import { ImageBlock } from "@features/canvas/objects/ImageBlock";
@@ -185,11 +186,15 @@ export function ContentLayer({
     <>
       <div
         className={cn(
-          "absolute inset-0 z-10 p-12 text-layer",
+          "absolute inset-0 z-10 text-layer",
           isDataInputOpen && "editing-breaks",
           readOnly && "pointer-events-none"
         )}
-        style={{ columnCount, columnGap: "3rem" }}
+        style={{
+          columnCount,
+          columnGap: "3rem",
+          padding: `${getBoardPadding()}px`,
+        }}
       >
         {visibleFlowItems.map((item) => {
           if (isTextItem(item)) {
@@ -381,9 +386,10 @@ export function ContentLayer({
       </div>
       <div
         className={cn(
-          "absolute inset-0 z-[12]",
+          "absolute inset-0",
           !canEdit && "pointer-events-none"
         )}
+        style={{ zIndex: "var(--z-content)" }}
       >
         {absoluteImageItems.map((item) => {
           if (!shouldShowMedia(item.stepIndex)) return null;

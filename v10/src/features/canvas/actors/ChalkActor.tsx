@@ -16,9 +16,10 @@ export function ChalkActor({ x, y, visible, isMoving }: ChalkActorProps) {
   if (!visible) return null;
   return (
     <div
-      className="pointer-events-none absolute left-0 top-0 z-[15] transition-transform duration-100 ease-linear"
+      className="pointer-events-none absolute left-0 top-0 transition-transform duration-100 ease-linear"
       style={{
         transform: `translate(${x - TIP_OFFSET.x}px, ${y - TIP_OFFSET.y}px)`,
+        zIndex: "var(--z-actor)",
       }}
     >
       <div

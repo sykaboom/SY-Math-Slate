@@ -10,6 +10,9 @@ import type {
   StepSegment,
   StrokeItem,
 } from "@core/types/canvas";
+import { getBoardPadding } from "@core/config/boardSpec";
+import { runAutoLayout } from "@features/layout/autoLayout";
+import { useUIStore } from "@features/store/useUIStore";
 
 export type StrokeInput = Omit<
   StrokeItem,
@@ -110,7 +113,11 @@ const getMaxStepIndex = (items: CanvasItem[]) => {
   }, -1);
 };
 
-const getGlobalMaxStep = (pages: Record<string, CanvasItem[]>) => {
+const getGlobalMaxStep = (
+  pages: Record<string, CanvasItem[]>,
+  blocks: StepBlock[]
+) => {
+  if (blocks.length > 0) return blocks.length - 1;
   return Object.values(pages).reduce((max, items) => {
     return Math.max(max, getMaxStepIndex(items));
   }, -1);
@@ -118,8 +125,15 @@ const getGlobalMaxStep = (pages: Record<string, CanvasItem[]>) => {
 
 const findPageForStep = (
   pages: Record<string, CanvasItem[]>,
+  anchorMap: AnchorMap | null,
   stepIndex: number
 ) => {
+  if (anchorMap) {
+    for (const [pageId, steps] of Object.entries(anchorMap)) {
+      const anchors = steps[stepIndex];
+      if (anchors && anchors.length > 0) return pageId;
+    }
+  }
   for (const [pageId, items] of Object.entries(pages)) {
     const hasStep = items.some((item) => {
       if (item.type !== "text" && item.type !== "image") return false;
@@ -131,6 +145,19 @@ const findPageForStep = (
     if (hasStep) return pageId;
   }
   return null;
+};
+
+const hasBreakAnchors = (
+  anchorMap: AnchorMap | null | undefined,
+  blocks: StepBlock[]
+) => {
+  if (!anchorMap) return false;
+  return blocks.every((block, index) => {
+    if (!isBreakBlock(block)) return true;
+    return Object.values(anchorMap).some((pageAnchors) =>
+      pageAnchors[index]?.some((anchor) => anchor.segmentId === block.id)
+    );
+  });
 };
 
 const createStrokeItem = (
@@ -153,7 +180,7 @@ const createStrokeItem = (
   };
 };
 
-const CONTENT_PADDING = 48;
+const CONTENT_PADDING = getBoardPadding();
 const COLUMN_GAP = 48;
 
 const createBreakBlock = (
@@ -171,18 +198,23 @@ const getColumnWidth = (columnCount: number) => {
   return Math.max(1, (innerWidth - gap) / columnCount);
 };
 
+const normalizeDocVersion = (value: unknown) => {
+  if (typeof value === "number" && Number.isFinite(value)) return value;
+  if (typeof value === "string") {
+    const parsed = Number.parseFloat(value);
+    if (Number.isFinite(parsed)) return parsed;
+  }
+  return 2;
+};
+
 const isContentBlock = (block: StepBlock) =>
   !block.kind || block.kind === "content";
 
+const isBreakBlock = (block: StepBlock) =>
+  Boolean(block.kind) && block.kind !== "content";
+
 const findBlockIndexForStep = (blocks: StepBlock[], stepIndex: number) => {
-  let contentIndex = 0;
-  for (let i = 0; i < blocks.length; i += 1) {
-    const block = blocks[i];
-    if (!isContentBlock(block)) continue;
-    if (contentIndex === stepIndex) return i;
-    contentIndex += 1;
-  }
-  return blocks.length;
+  return Math.max(0, Math.min(stepIndex, blocks.length));
 };
 
 const findBlockIndexForSegment = (
@@ -278,16 +310,14 @@ const buildPagesFromBlocks = (
       pageOrder.push(currentPageId);
       pageColumnCounts[currentPageId] = baseColumns;
       zIndexByPage.set(currentPageId, 0);
+      stepIndex += 1;
       return;
     }
-    const isBreakBlock = Boolean(block.kind) && block.kind !== "content";
-    if (!isBreakBlock) {
+    if (!isBreakBlock(block)) {
       contentPlacements.set(contentIndex, { pageId: currentPageId, stepIndex });
       contentIndex += 1;
-    }
-    if (isBreakBlock) {
+    } else {
       const zIndex = zIndexByPage.get(currentPageId) ?? 0;
-      const breakStepIndex = Math.max(stepIndex - 1, -1);
       const html =
         block.kind === "column-break"
           ? '<div class="force-break"></div>'
@@ -297,13 +327,15 @@ const buildPagesFromBlocks = (
         type: "text",
         content: html,
         layoutMode: "flow",
-        stepIndex: breakStepIndex,
+        stepIndex,
         x: 0,
         y: 0,
         zIndex,
         style: { fontSize: "28px", color: "#ffffff" },
+        segmentId: block.id,
       });
       zIndexByPage.set(currentPageId, zIndex + 1);
+      stepIndex += 1;
       return;
     }
     const sorted = [...block.segments].sort(
@@ -352,7 +384,7 @@ const buildPagesFromBlocks = (
   return { pages, pageOrder, pageColumnCounts, contentPlacements };
 };
 
-export const useCanvasStore = create<CanvasState>((set) => {
+export const useCanvasStore = create<CanvasState>((set, get) => {
   const initial = createInitialState();
 
   return {
@@ -542,7 +574,7 @@ export const useCanvasStore = create<CanvasState>((set) => {
       set((state) => {
         const built = buildPagesFromBlocks(blocks, state);
         const firstStepPage =
-          findPageForStep(built.pages, 0) ?? built.pageOrder[0];
+          findPageForStep(built.pages, null, 0) ?? built.pageOrder[0];
         return {
           pages: built.pages,
           pageOrder: built.pageOrder,
@@ -606,7 +638,8 @@ export const useCanvasStore = create<CanvasState>((set) => {
     applyAutoLayout: (payload) =>
       set((state) => {
         const firstStepPage =
-          findPageForStep(payload.pages, 0) ?? payload.pageOrder[0];
+          findPageForStep(payload.pages, payload.anchorMap, 0) ??
+          payload.pageOrder[0];
         return {
           pages: payload.pages,
           pageOrder: payload.pageOrder,
@@ -650,11 +683,13 @@ export const useCanvasStore = create<CanvasState>((set) => {
       }),
     nextStep: () =>
       set((state) => {
-        const maxStep = getGlobalMaxStep(state.pages);
+        const maxStep = getGlobalMaxStep(state.pages, state.stepBlocks);
         if (state.currentStep > maxStep) return {};
         const next = state.currentStep + 1;
         const nextPage =
-          next <= maxStep ? findPageForStep(state.pages, next) : null;
+          next <= maxStep
+            ? findPageForStep(state.pages, state.anchorMap, next)
+            : null;
         return {
           currentStep: next,
           currentPageId: nextPage ?? state.currentPageId,
@@ -664,7 +699,7 @@ export const useCanvasStore = create<CanvasState>((set) => {
       set((state) => {
         if (state.currentStep <= 0) return {};
         const next = state.currentStep - 1;
-        const nextPage = findPageForStep(state.pages, next);
+        const nextPage = findPageForStep(state.pages, state.anchorMap, next);
         return {
           currentStep: next,
           currentPageId: nextPage ?? state.currentPageId,
@@ -672,10 +707,12 @@ export const useCanvasStore = create<CanvasState>((set) => {
       }),
     goToStep: (step) =>
       set((state) => {
-        const maxStep = getGlobalMaxStep(state.pages);
+        const maxStep = getGlobalMaxStep(state.pages, state.stepBlocks);
         const next = Math.max(0, Math.min(step, maxStep + 1));
         const nextPage =
-          next <= maxStep ? findPageForStep(state.pages, next) : null;
+          next <= maxStep
+            ? findPageForStep(state.pages, state.anchorMap, next)
+            : null;
         return {
           currentStep: next,
           currentPageId: nextPage ?? state.currentPageId,
@@ -721,30 +758,67 @@ export const useCanvasStore = create<CanvasState>((set) => {
       set((state) => ({
         currentStep: 0,
         currentPageId:
-          findPageForStep(state.pages, 0) ?? state.currentPageId,
+          findPageForStep(state.pages, state.anchorMap, 0) ??
+          state.currentPageId,
       })),
-    hydrate: (data) =>
-      set(() => {
-        const pageOrder = data.pageOrder.length > 0
-          ? data.pageOrder
-          : Object.keys(data.pages);
-        const firstPageId = pageOrder[0] ?? Object.keys(data.pages)[0] ?? createPageId();
-        return {
-          version: 2,
-          pages: data.pages,
-          pageOrder,
-          currentPageId: firstPageId,
-          currentStep: 0,
-          pageColumnCounts: data.pageColumnCounts ?? {},
-          currentStroke: null,
-          selectedItemId: null,
-          stepBlocks: data.stepBlocks ?? [],
-          audioByStep: data.audioByStep ?? {},
-          insertionIndex: (data.stepBlocks ?? []).length,
-          anchorMap: data.anchorMap ?? null,
-          layoutSnapshot: null,
-        };
-      }),
+    hydrate: (data) => {
+      const pageOrder =
+        data.pageOrder.length > 0 ? data.pageOrder : Object.keys(data.pages);
+      const firstPageId =
+        pageOrder[0] ?? Object.keys(data.pages)[0] ?? createPageId();
+      const stepBlocks = data.stepBlocks ?? [];
+      const docVersion = normalizeDocVersion(data.version);
+      const hasLegacyBreaks = stepBlocks.some(isBreakBlock);
+      const breakAnchorsReady = hasBreakAnchors(
+        data.anchorMap ?? null,
+        stepBlocks
+      );
+      const shouldRelayout =
+        docVersion < 2.1 && hasLegacyBreaks && !breakAnchorsReady;
+
+      if (shouldRelayout) {
+        if (data.audioByStep && Object.keys(data.audioByStep).length > 0) {
+          console.warn(
+            "[slate] Legacy v2.0 audio detected. Break re-indexing may shift audio alignment."
+          );
+        }
+        queueMicrotask(() => {
+          if (typeof document === "undefined") return;
+          const ratio = useUIStore.getState().overviewViewportRatio;
+          const columnCount = data.pageColumnCounts?.[firstPageId] ?? 2;
+          runAutoLayout(stepBlocks, {
+            ratio,
+            columnCount,
+            basePageId: firstPageId,
+          })
+            .then((result) => {
+              get().applyAutoLayout({ ...result, stepBlocks });
+              set(() => ({
+                version: 2.1 as PersistedCanvasV2["version"],
+              }));
+            })
+            .catch((error) => {
+              console.error("[slate] Legacy auto-layout migration failed", error);
+            });
+        });
+      }
+
+      set(() => ({
+        version: (docVersion >= 2.1 ? 2.1 : 2) as PersistedCanvasV2["version"],
+        pages: data.pages,
+        pageOrder,
+        currentPageId: firstPageId,
+        currentStep: 0,
+        pageColumnCounts: data.pageColumnCounts ?? {},
+        currentStroke: null,
+        selectedItemId: null,
+        stepBlocks,
+        audioByStep: data.audioByStep ?? {},
+        insertionIndex: stepBlocks.length,
+        anchorMap: data.anchorMap ?? null,
+        layoutSnapshot: null,
+      }));
+    },
   };
 });
 

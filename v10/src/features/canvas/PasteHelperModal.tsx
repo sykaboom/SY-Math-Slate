@@ -36,7 +36,10 @@ export function PasteHelperModal() {
   };
 
   return createPortal(
-    <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/70 backdrop-blur-sm">
+    <div
+      className="fixed inset-0 flex items-center justify-center bg-black/70 backdrop-blur-sm"
+      style={{ zIndex: "var(--z-modal)" }}
+    >
       <div className="w-[360px] max-w-[90vw] rounded-2xl border border-white/10 bg-slate-900/95 p-6 text-center text-white shadow-xl">
         <p className="text-sm font-semibold text-amber-300">태블릿 붙여넣기 도우미</p>
         <p className="mt-2 text-xs text-white/60">

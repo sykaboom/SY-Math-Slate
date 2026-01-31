@@ -16,9 +16,10 @@ export function CanvasGuides() {
 
   return (
     <svg
-      className="pointer-events-none absolute inset-0 z-[14]"
+      className="pointer-events-none absolute inset-0"
       width="100%"
       height="100%"
+      style={{ zIndex: "var(--z-guide)" }}
       viewBox={`0 0 ${boardSize.width} ${boardSize.height}`}
     >
       {guides.map((guide, index) => {

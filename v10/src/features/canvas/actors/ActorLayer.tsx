@@ -14,7 +14,10 @@ export type ActorState = {
 export function ActorLayer({ actor }: { actor: ActorState }) {
   if (!actor.visible) return null;
   return (
-    <div className="pointer-events-none absolute inset-0 z-[15]">
+    <div
+      className="pointer-events-none absolute inset-0"
+      style={{ zIndex: "var(--z-actor)" }}
+    >
       {actor.type === "marker" ? (
         <HighlighterActor
           x={actor.x}

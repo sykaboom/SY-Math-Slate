@@ -2,7 +2,11 @@
 
 import DOMPurify from "dompurify";
 
-import { getBoardSize, type BoardRatio } from "@core/config/boardSpec";
+import {
+  getBoardPadding,
+  getBoardSize,
+  type BoardRatio,
+} from "@core/config/boardSpec";
 import { loadMathJax } from "@core/math/loader";
 import { typesetElement } from "@core/math/render";
 import type {
@@ -13,7 +17,7 @@ import type {
   StepSegment,
 } from "@core/types/canvas";
 
-const CONTENT_PADDING = 48;
+const CONTENT_PADDING = getBoardPadding();
 const COLUMN_GAP = 48;
 const DEFAULT_FONT_SIZE = "28px";
 const DEFAULT_LINE_HEIGHT = "1.6";
@@ -278,6 +282,56 @@ const measureStep = (
   return { items, anchors, nextZIndex: zIndex };
 };
 
+const measureBreakAnchor = (
+  element: HTMLElement,
+  container: HTMLElement,
+  stepIndex: number,
+  pageId: string,
+  columnWidth: number,
+  columnCount: number,
+  segmentId: string
+): AnchorPosition => {
+  const containerRect = container.getBoundingClientRect();
+  const rect = element.getBoundingClientRect();
+  const relativeLeft = rect.left - containerRect.left;
+  const column = Math.max(
+    0,
+    Math.min(
+      columnCount - 1,
+      Math.floor(relativeLeft / (columnWidth + COLUMN_GAP))
+    )
+  );
+  return {
+    segmentId,
+    orderIndex: 0,
+    stepIndex,
+    pageId,
+    column,
+    x: relativeLeft + CONTENT_PADDING,
+    y: rect.top - containerRect.top + CONTENT_PADDING,
+    width: rect.width,
+    height: rect.height,
+  };
+};
+
+const createPageBreakAnchor = (
+  stepIndex: number,
+  pageId: string,
+  segmentId: string
+): AnchorPosition => {
+  return {
+    segmentId,
+    orderIndex: 0,
+    stepIndex,
+    pageId,
+    column: 0,
+    x: CONTENT_PADDING,
+    y: CONTENT_PADDING,
+    width: 1,
+    height: 1,
+  };
+};
+
 export const runAutoLayout = async (
   blocks: StepBlock[],
   context: LayoutContext
@@ -325,6 +379,10 @@ export const runAutoLayout = async (
       anchorMap[currentPageId] = {};
       pageOrder.push(currentPageId);
       pageColumnCounts[currentPageId] = context.columnCount;
+      anchorMap[currentPageId][currentStepIndex] = [
+        createPageBreakAnchor(currentStepIndex, currentPageId, block.id),
+      ];
+      currentStepIndex += 1;
       continue;
     }
     if (block.kind === "line-break" || block.kind === "column-break") {
@@ -333,6 +391,18 @@ export const runAutoLayout = async (
         block.kind === "column-break" ? "force-break" : "line-break-spacer";
       container.appendChild(spacer);
       await nextFrame();
+      anchorMap[currentPageId][currentStepIndex] = [
+        measureBreakAnchor(
+          spacer,
+          container,
+          currentStepIndex,
+          currentPageId,
+          columnWidth,
+          context.columnCount,
+          block.id
+        ),
+      ];
+      currentStepIndex += 1;
       continue;
     }
     const built = buildStepElement(block, columnWidth);

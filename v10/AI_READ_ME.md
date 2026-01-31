@@ -66,15 +66,16 @@ app/
 **Global steps**
 - Step indices are **global**, not per-page.
 - `currentStep` always references the global step index.
+- `stepBlocks` is **1:1** with global steps (block index == step index).
 
 **StepBlocks**
 - Ordered blocks used to build layout.
 - `kind` can be `content`, `line-break`, `column-break`, `page-break`.
-- Break blocks **do not** increment step index.
+- Every block (including breaks) increments the step index.
 
 **AnchorMap**
 - `AnchorMap: Record<pageId, Record<stepIndex, AnchorPosition[]>>`
-- Used by playback cursor (anchor indicator).
+- Used by playback cursor (anchor indicator); includes anchors for break blocks.
 
 **audioByStep**
 - Optional audio mapped by **global step index**.
@@ -181,8 +182,8 @@ app   -> features + ui
 ### autoLayout (features/layout/autoLayout.ts)
 1) Create **hidden container** with column CSS.
 2) For each `StepBlock`:
-   - `page-break`: reset container, new page.
-   - `line-break` / `column-break`: append spacer (`line-break-spacer` / `force-break`), then continue.
+   - `page-break`: reset container, new page, create anchor at padding origin (48,48).
+   - `line-break` / `column-break`: append spacer (`line-break-spacer` / `force-break`), measure anchor.
    - `content`: build DOM nodes, typeset MathJax, check overflow.
 3) If overflow: new page, re-append current content.
 4) `measureStep` → produce **absolute CanvasItems** + **AnchorPositions**.
@@ -202,7 +203,7 @@ app   -> features + ui
 1) Normalize pages (`pages`, `pageOrder`).
 2) Normalize items (stroke/text/image/math/unknown).
 3) Ensure at least 1 page exists.
-4) Return **doc-only** payload (no session fields).
+4) Normalize version (2 or 2.1), return **doc-only** payload (no session fields).
 
 ### Persistence (features/hooks/usePersistence.ts)
 1) `saveSnapshot` filters **image items** for local storage.
@@ -226,7 +227,7 @@ app   -> features + ui
 
 ### useCanvasStore (selected actions)
 - `addStroke`, `addItem`, `updateItem`, `deleteItem`: mutate `pages` items.
-- `importStepBlocks`: rebuilds `pages` + `anchorMap` from blocks, resets `currentStep=0`.
+- `importStepBlocks`: rebuilds `pages`, clears `anchorMap`, resets `currentStep=0`.
 - `insertBreak`: inserts break block at target index, rebuilds layout.
 - `applyAutoLayout`: apply `{ pages, pageOrder, anchorMap }`, reset step.
 - `setStepAudio / clearStepAudio`: mutate `audioByStep`.

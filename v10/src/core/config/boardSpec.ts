@@ -11,4 +11,4 @@ export const getBoardSize = (ratio: BoardRatio): BoardSize => {
   return BOARD_SIZES[ratio];
 };
 
-export const getBoardPadding = () => 80;
+export const getBoardPadding = () => 48;
