@@ -22,8 +22,7 @@ v10/
 |-- prisma.config.ts
 |-- README.md
 |-- tailwind.config.ts
-|-- tsconfig.json
-\-- tsconfig.tsbuildinfo
+\-- tsconfig.json
 ```
 
 ## v10/src/
