@@ -110,7 +110,7 @@ export function MathRevealBlock({
       rafRef.current = 0;
       if (progress >= 1) {
         el.style.clipPath = "";
-        (el.style as CSSStyleDeclaration).webkitClipPath = "";
+        el.style.setProperty("-webkit-clip-path", "");
         onDone();
       }
     }
@@ -124,14 +124,12 @@ export function MathRevealBlock({
     const rect = el.getBoundingClientRect();
     const contentRect = getContentRect(el);
     const contentLeft = contentRect.left - rect.left;
-    el.style.clipPath = `inset(0 ${rect.width}px 0 ${Math.max(
+    const initialClip = `inset(0 ${rect.width}px 0 ${Math.max(
       0,
       contentLeft
     )}px)`;
-    (el.style as CSSStyleDeclaration).webkitClipPath = `inset(0 ${rect.width}px 0 ${Math.max(
-      0,
-      contentLeft
-    )}px)`;
+    el.style.clipPath = initialClip;
+    el.style.setProperty("-webkit-clip-path", initialClip);
 
     if (!pausedRef.current) {
       startRef.current = performance.now();
@@ -142,7 +140,7 @@ export function MathRevealBlock({
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
       rafRef.current = 0;
       el.style.clipPath = "";
-      (el.style as CSSStyleDeclaration).webkitClipPath = "";
+      el.style.setProperty("-webkit-clip-path", "");
     };
   }, [isActive, onDone, onMove, toBoardPoint]);
 
@@ -158,7 +156,7 @@ export function MathRevealBlock({
     if (rafRef.current) cancelAnimationFrame(rafRef.current);
     rafRef.current = 0;
     el.style.clipPath = "";
-    (el.style as CSSStyleDeclaration).webkitClipPath = "";
+    el.style.setProperty("-webkit-clip-path", "");
     progressRef.current = 1;
     onDone();
   }, [isActive, onDone, skipSignal]);
@@ -175,7 +173,7 @@ export function MathRevealBlock({
     if (rafRef.current) cancelAnimationFrame(rafRef.current);
     rafRef.current = 0;
     el.style.clipPath = "";
-    (el.style as CSSStyleDeclaration).webkitClipPath = "";
+    el.style.setProperty("-webkit-clip-path", "");
   }, [isActive, stopSignal]);
 
   return (
