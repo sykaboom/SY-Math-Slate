@@ -22,8 +22,12 @@ const isImageItem = (item: CanvasItem): item is ImageItem => item.type === "imag
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
 
-const getStepIndex = (item: { stepIndex?: number }) =>
-  typeof item.stepIndex === "number" ? item.stepIndex : 0;
+const getStepIndex = (item: CanvasItem) => {
+  if ("stepIndex" in item && typeof item.stepIndex === "number") {
+    return item.stepIndex;
+  }
+  return 0;
+};
 
 const getMaxStep = (items: CanvasItem[]) =>
   items.reduce((max, item) => {
