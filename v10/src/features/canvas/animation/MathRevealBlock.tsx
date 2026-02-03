@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { CSSProperties } from "react";
 
 import { useBoardTransform } from "@features/hooks/useBoardTransform";
@@ -22,6 +22,9 @@ type MathRevealBlockProps = {
 
 const DURATION_MS = 1200;
 const BASELINE_OFFSET = 6;
+const WIDTH_REFERENCE = 320;
+const MIN_WEIGHT = 0.8;
+const MAX_WEIGHT = 2.4;
 
 export function MathRevealBlock({
   html,
@@ -44,11 +47,15 @@ export function MathRevealBlock({
   const pausedRef = useRef(isPaused);
   const skipRef = useRef(skipSignal);
   const stopRef = useRef(stopSignal);
+  const [typesetReady, setTypesetReady] = useState(false);
   const mergedStyle: CSSProperties = {
     display: "inline-block",
     maxWidth: "100%",
     ...style,
   };
+  const handleTypeset = useCallback(() => {
+    setTypesetReady(true);
+  }, []);
 
   const getContentRect = (el: HTMLDivElement) => {
     try {
@@ -62,33 +69,48 @@ export function MathRevealBlock({
     return el.getBoundingClientRect();
   };
 
+  const getDurationMs = (el: HTMLDivElement) => {
+    const contentRect = getContentRect(el);
+    const width = contentRect.width;
+    const weight =
+      width > 0
+        ? Math.max(MIN_WEIGHT, Math.min(width / WIDTH_REFERENCE, MAX_WEIGHT))
+        : 1;
+    return (DURATION_MS * weight) / Math.max(0.1, speedRef.current);
+  };
+
   useEffect(() => {
     speedRef.current = speed;
     if (!isActive) return;
-    const duration = DURATION_MS / Math.max(0.1, speed);
+    const el = ref.current;
+    if (!el || !typesetReady) return;
+    const duration = getDurationMs(el);
     startRef.current = performance.now() - progressRef.current * duration;
-  }, [isActive, speed]);
+  }, [isActive, speed, typesetReady]);
 
   useEffect(() => {
     pausedRef.current = isPaused;
     if (!isPaused && isActive && rafRef.current === 0) {
-      const duration = DURATION_MS / Math.max(0.1, speedRef.current);
+      const el = ref.current;
+      if (!el || !typesetReady) return;
+      const duration = getDurationMs(el);
       startRef.current = performance.now() - progressRef.current * duration;
       rafRef.current = requestAnimationFrame(animateFrame);
     }
-  }, [isActive, isPaused]);
+  }, [isActive, isPaused, typesetReady]);
 
   const animateFrame = (now: number) => {
     const el = ref.current;
     if (!el) return;
-    const duration = DURATION_MS / Math.max(0.1, speedRef.current);
+    const duration = getDurationMs(el);
     const progress = Math.min(1, (now - startRef.current) / duration);
     progressRef.current = progress;
 
     const wrapperRect = el.getBoundingClientRect();
     const contentRect = getContentRect(el);
     if (contentRect.width > 0 || contentRect.height > 0) {
-      const x = contentRect.left + contentRect.width * progress;
+      const lead = Math.max(8, Math.min(contentRect.width * 0.05, 14));
+      const x = contentRect.left + contentRect.width * progress + lead;
       const y = contentRect.bottom - BASELINE_OFFSET;
       const boardPos = toBoardPoint(x, y);
       onMove(boardPos, "chalk");
@@ -118,7 +140,7 @@ export function MathRevealBlock({
 
   useEffect(() => {
     const el = ref.current;
-    if (!el || !isActive) return;
+    if (!el || !isActive || !typesetReady) return;
 
     progressRef.current = 0;
     const rect = el.getBoundingClientRect();
@@ -142,7 +164,11 @@ export function MathRevealBlock({
       el.style.clipPath = "";
       el.style.setProperty("-webkit-clip-path", "");
     };
-  }, [isActive, onDone, onMove, toBoardPoint]);
+  }, [isActive, onDone, onMove, toBoardPoint, typesetReady]);
+
+  useEffect(() => {
+    setTypesetReady(false);
+  }, [html]);
 
   useEffect(() => {
     if (!isActive) {
@@ -178,7 +204,7 @@ export function MathRevealBlock({
 
   return (
     <div ref={ref} className={cn(className)} style={mergedStyle}>
-      <MathTextBlock html={html} />
+      <MathTextBlock html={html} onTypeset={handleTypeset} />
     </div>
   );
 }

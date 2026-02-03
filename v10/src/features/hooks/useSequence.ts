@@ -1,21 +1,24 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import type { RefObject } from "react";
 
 import { useCanvasStore } from "@features/store/useCanvasStore";
 import { useUIStore } from "@features/store/useUIStore";
 import type { CanvasItem, TextItem } from "@core/types/canvas";
 import { useAudioPlayer } from "@features/hooks/useAudioPlayer";
 import { useSFX } from "@features/hooks/useSFX";
+import { chalkTheme } from "@core/themes/chalkTheme";
 import type { ActorState } from "@features/canvas/actors/ActorLayer";
 
 const isTextItem = (item: CanvasItem): item is TextItem => item.type === "text";
 const isImageItem = (item: CanvasItem) => item.type === "image";
 const hasMathToken = (value: string) => value.includes("$");
 
+const MARKER_TIP_OFFSET = { x: 10, y: 18 };
+const CHALK_TIP_OFFSET = chalkTheme.tipOffset;
+
 const idleActor: ActorState = {
-  x: 0,
-  y: 0,
   visible: false,
   isMoving: false,
   type: "chalk",
@@ -34,7 +37,13 @@ export type AnimationState = {
   actor: ActorState;
 };
 
-export function useSequence({ enabled }: { enabled: boolean }): AnimationState {
+export function useSequence({
+  enabled,
+  actorRef,
+}: {
+  enabled: boolean;
+  actorRef?: RefObject<HTMLDivElement | null>;
+}): AnimationState {
   const {
     pages,
     currentPageId,
@@ -70,6 +79,20 @@ export function useSequence({ enabled }: { enabled: boolean }): AnimationState {
   const itemsRef = useRef<TextItem[]>([]);
   const lastSoundToolRef = useRef<"chalk" | "marker" | null>(null);
   const autoTimerRef = useRef<number | null>(null);
+
+  const moveActor = useCallback(
+    (pos: { x: number; y: number }, tool?: "chalk" | "marker") => {
+      const el = actorRef?.current;
+      if (!el) return;
+      const resolvedTool = tool ?? "chalk";
+      const offset =
+        resolvedTool === "marker" ? MARKER_TIP_OFFSET : CHALK_TIP_OFFSET;
+      el.style.transform = `translate3d(${pos.x - offset.x}px, ${
+        pos.y - offset.y
+      }px, 0)`;
+    },
+    [actorRef]
+  );
 
   const itemsForStep = useMemo(() => {
     const items = pages[currentPageId] ?? [];
@@ -108,20 +131,20 @@ export function useSequence({ enabled }: { enabled: boolean }): AnimationState {
 
   const onMove = useCallback(
     (pos: { x: number; y: number }, tool?: "chalk" | "marker") => {
-      if (tool && tool !== lastSoundToolRef.current) {
-        lastSoundToolRef.current = tool;
-        play(tool);
+      const resolvedTool = tool ?? "chalk";
+      moveActor(pos, resolvedTool);
+      if (resolvedTool !== lastSoundToolRef.current) {
+        lastSoundToolRef.current = resolvedTool;
+        play(resolvedTool);
       }
       setActor((prev) => ({
         ...prev,
-        x: pos.x,
-        y: pos.y,
         visible: true,
         isMoving: true,
-        type: tool ?? prev.type,
+        type: resolvedTool,
       }));
     },
-    [play]
+    [moveActor, play]
   );
 
   const onDone = useCallback(() => {

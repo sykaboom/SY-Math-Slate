@@ -12,9 +12,15 @@ type MathTextBlockProps = {
   html: string;
   className?: string;
   style?: CSSProperties;
+  onTypeset?: () => void;
 };
 
-export function MathTextBlock({ html, className, style }: MathTextBlockProps) {
+export function MathTextBlock({
+  html,
+  className,
+  style,
+  onTypeset,
+}: MathTextBlockProps) {
   const ref = useRef<HTMLDivElement | null>(null);
   const renderId = useRef(0);
   const lastHtmlRef = useRef<string | null>(null);
@@ -26,7 +32,10 @@ export function MathTextBlock({ html, className, style }: MathTextBlockProps) {
       el.innerHTML = html;
       lastHtmlRef.current = html;
     }
-    if (!hasMathToken(html)) return;
+    if (!hasMathToken(html)) {
+      onTypeset?.();
+      return;
+    }
     renderId.current += 1;
     const current = renderId.current;
 
@@ -36,10 +45,11 @@ export function MathTextBlock({ html, className, style }: MathTextBlockProps) {
       const el = ref.current;
       if (!el) return;
       await typesetElement(el);
+      onTypeset?.();
     };
 
     run();
-  }, [html]);
+  }, [html, onTypeset]);
 
   return <div ref={ref} className={className} style={style} />;
 }

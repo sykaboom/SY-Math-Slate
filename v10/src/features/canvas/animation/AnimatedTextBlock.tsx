@@ -170,9 +170,21 @@ export function AnimatedTextBlock({
           const span = highlightSpans[highlightIndex];
           span.dataset.hlActive = "1";
           const rect = span.getBoundingClientRect();
-          if (rect.width > 0 || rect.height > 0) {
+          const nextSpan = highlightSpans[highlightIndex + 1];
+          const nextRect = nextSpan?.getBoundingClientRect();
+          const hasNextRect =
+            nextRect && (nextRect.width > 0 || nextRect.height > 0);
+          if (hasNextRect) {
             const boardPos = toBoardPoint(
-              rect.left + rect.width / 2,
+              nextRect.left + nextRect.width / 2,
+              nextRect.bottom - BASELINE_OFFSET
+            );
+            lastPosRef.current = boardPos;
+            onMove(boardPos, "marker");
+          } else if (rect.width > 0 || rect.height > 0) {
+            const lead = Math.max(6, Math.min(rect.width, 14));
+            const boardPos = toBoardPoint(
+              rect.left + rect.width / 2 + lead,
               rect.bottom - BASELINE_OFFSET
             );
             lastPosRef.current = boardPos;
@@ -193,9 +205,21 @@ export function AnimatedTextBlock({
       const span = spans[index];
       span.classList.add("tw-visible");
       const rect = span.getBoundingClientRect();
-      if (rect.width > 0 || rect.height > 0) {
+      const nextSpan = spans[index + 1];
+      const nextRect = nextSpan?.getBoundingClientRect();
+      const hasNextRect =
+        nextRect && (nextRect.width > 0 || nextRect.height > 0);
+      if (hasNextRect) {
         const boardPos = toBoardPoint(
-          rect.left + rect.width / 2,
+          nextRect.left + nextRect.width / 2,
+          nextRect.bottom - BASELINE_OFFSET
+        );
+        lastPosRef.current = boardPos;
+        onMove(boardPos, "chalk");
+      } else if (rect.width > 0 || rect.height > 0) {
+        const lead = Math.max(6, Math.min(rect.width, 14));
+        const boardPos = toBoardPoint(
+          rect.left + rect.width / 2 + lead,
           rect.bottom - BASELINE_OFFSET
         );
         lastPosRef.current = boardPos;

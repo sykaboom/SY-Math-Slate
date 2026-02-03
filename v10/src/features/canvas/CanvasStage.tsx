@@ -39,6 +39,7 @@ function NormalCanvasStage({
   ratio: "16:9" | "4:3";
 }) {
   const dropRef = useRef<HTMLDivElement | null>(null);
+  const actorRef = useRef<HTMLDivElement | null>(null);
   const { selectItem, pageColumnCounts, currentPageId } = useCanvasStore();
   const {
     isPasteHelperOpen,
@@ -50,6 +51,7 @@ function NormalCanvasStage({
   const columnCount = pageColumnCounts?.[currentPageId] ?? 2;
   const animationState = useSequence({
     enabled: !isOverviewMode,
+    actorRef,
   });
 
   const handleDragOver = (event: DragEvent<HTMLDivElement>) => {
@@ -136,7 +138,7 @@ function NormalCanvasStage({
         />
         <CanvasGuides />
         <AnchorIndicator isAnimating={animationState.isAnimating} />
-        <ActorLayer actor={animationState.actor} />
+        <ActorLayer actor={animationState.actor} actorRef={actorRef} />
         <CanvasLayer />
         {children && (
           <div className="relative z-30 w-full text-center text-white/70">
