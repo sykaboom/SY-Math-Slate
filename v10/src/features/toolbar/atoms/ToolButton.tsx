@@ -1,8 +1,7 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, type HTMLMotionProps } from "framer-motion";
 import type { LucideIcon } from "lucide-react";
-import type { ButtonHTMLAttributes } from "react";
 
 import { buttonVariants } from "@ui/components/button";
 import { cn } from "@core/utils";
@@ -14,7 +13,7 @@ type ToolButtonProps = {
   icon: LucideIcon;
   label: string;
   active?: boolean;
-} & ButtonHTMLAttributes<HTMLButtonElement>;
+} & Omit<HTMLMotionProps<"button">, "children">;
 
 export function ToolButton({
   icon: Icon,

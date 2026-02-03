@@ -571,15 +571,10 @@ export function FloatingToolbar() {
                 <div
                   className={cn(
                     "text-[11px]",
-                    saveStatus === "error"
-                      ? "text-red-300"
-                      : saveStatus === "saved"
-                      ? "text-amber-200"
-                      : "text-white/50"
+                    saveStatus === "error" ? "text-red-300" : "text-white/50"
                   )}
                 >
                   {saveStatus === "saving" && "저장 중..."}
-                  {saveStatus === "saved" && "임시 저장됨"}
                   {saveStatus === "error" && "저장 오류"}
                 </div>
               )}

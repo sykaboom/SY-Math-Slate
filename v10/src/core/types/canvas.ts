@@ -77,7 +77,7 @@ export type PersistedSlateDoc = {
   pageOrder: string[];
   pageColumnCounts?: Record<string, number>;
   stepBlocks?: StepBlock[];
-  anchorMap?: AnchorMap;
+  anchorMap?: AnchorMap | null;
   audioByStep?: Record<number, StepAudio>;
 };
 

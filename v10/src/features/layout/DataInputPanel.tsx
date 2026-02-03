@@ -450,6 +450,8 @@ export function DataInputPanel() {
     const range = getActiveRange(id);
     if (!range) return;
     if (!host.contains(range.commonAncestorContainer)) return;
+    const selection = window.getSelection();
+    if (!selection) return;
     const contents = range.extractContents();
     const span = document.createElement("span");
     span.className = "hl-yellow";
@@ -468,6 +470,8 @@ export function DataInputPanel() {
     const range = getActiveRange(id);
     if (!range) return;
     if (!host.contains(range.commonAncestorContainer)) return;
+    const selection = window.getSelection();
+    if (!selection) return;
     const contents = range.extractContents();
     const text = contents.textContent ?? "";
     const node = document.createTextNode(`$$${text}$$`);
