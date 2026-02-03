@@ -10,7 +10,7 @@ import { Prompter } from "@features/layout/Prompter";
 import { PlayerBar } from "@features/layout/PlayerBar";
 import { Button } from "@ui/components/button";
 import { useUIStore } from "@features/store/useUIStore";
-import { Minus, Plus, ZoomIn } from "lucide-react";
+import { Minus, MonitorPlay, Plus, ZoomIn } from "lucide-react";
 
 const FloatingToolbar = dynamic(
   () =>
@@ -31,6 +31,7 @@ export function AppLayout({ children }: AppLayoutProps) {
     overviewZoom,
     setOverviewZoom,
     toggleOverviewMode,
+    setViewMode,
   } = useUIStore();
   const isPresentation = viewMode === "presentation";
   const zoomLabel = isOverviewMode ? Math.round(overviewZoom * 100) : 100;
@@ -76,6 +77,17 @@ export function AppLayout({ children }: AppLayoutProps) {
                   <Plus className="h-4 w-4" />
                 </Button>
               </div>
+              <Button
+                variant="outline"
+                size="icon"
+                className="border-white/15 bg-white/5 text-white/70 hover:bg-white/10 hover:text-white disabled:text-white/30"
+                onClick={() => setViewMode("presentation")}
+                disabled={isOverviewMode}
+                aria-label="발표 모드"
+                title="발표 모드"
+              >
+                <MonitorPlay className="h-4 w-4" />
+              </Button>
               <Button
                 variant="outline"
                 className="border-white/15 bg-white/5 text-white/70 hover:bg-white/10 hover:text-white"

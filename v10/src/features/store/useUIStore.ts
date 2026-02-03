@@ -110,7 +110,7 @@ export const useUIStore = create<UIState>((set, get) => ({
   viewport: { zoomLevel: 1, panOffset: { x: 0, y: 0 } },
   isViewportInteracting: false,
   viewMode: "edit",
-  capabilityProfile: "basic",
+  capabilityProfile: "advanced",
   guides: [],
   isAutoPlay: false,
   playSignal: 0,
