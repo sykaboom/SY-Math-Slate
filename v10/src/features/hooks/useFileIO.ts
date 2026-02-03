@@ -148,9 +148,9 @@ export function useFileIO() {
           .map(async (path) => {
             const entry = zip.file(path);
             if (!entry) return;
-            const bytes = await entry.async("uint8array");
+            const buffer = await entry.async("arraybuffer");
             const ext = path.split(".").pop() || "png";
-            const blob = new Blob([bytes], { type: guessMimeFromExt(ext) });
+            const blob = new Blob([buffer], { type: guessMimeFromExt(ext) });
             const url = URL.createObjectURL(blob);
             assetMap.set(path, url);
           })
