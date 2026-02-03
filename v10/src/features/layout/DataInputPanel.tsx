@@ -15,7 +15,13 @@ import { useCanvasStore } from "@features/store/useCanvasStore";
 import { useUIStore } from "@features/store/useUIStore";
 import { cn } from "@core/utils";
 import { Button } from "@ui/components/button";
-import type { StepBlock, StepSegment, StepSegmentType } from "@core/types/canvas";
+import type {
+  ImageItem,
+  StepBlock,
+  StepSegment,
+  StepSegmentType,
+  TextItem,
+} from "@core/types/canvas";
 import { runAutoLayout } from "@features/layout/autoLayout";
 import {
   ChevronDown,
@@ -94,15 +100,17 @@ export function DataInputPanel() {
 
   const flowItems = useMemo(() => {
     const items = pages[currentPageId] ?? [];
-    return items.filter((item) => {
-      if (item.type === "text") {
-        return (item.layoutMode ?? "flow") === "flow";
+    return items.filter(
+      (item): item is TextItem | ImageItem => {
+        if (item.type === "text") {
+          return (item.layoutMode ?? "flow") === "flow";
+        }
+        if (item.type === "image") {
+          return (item.layoutMode ?? "flow") === "flow";
+        }
+        return false;
       }
-      if (item.type === "image") {
-        return (item.layoutMode ?? "flow") === "flow";
-      }
-      return false;
-    });
+    );
   }, [pages, currentPageId]);
 
   const rawLines = useMemo(() => rawText.split(/\r?\n/), [rawText]);
