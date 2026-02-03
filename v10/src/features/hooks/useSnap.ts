@@ -78,9 +78,9 @@ export function useSnap() {
         trySnapY(otherCenterY - bounds.h / 2, otherCenterY, "edge");
       });
 
-      const guides = [guideX, guideY].filter(
-        (guide): guide is AlignmentGuide => Boolean(guide)
-      );
+      const guides: AlignmentGuide[] = [];
+      if (guideX) guides.push(guideX);
+      if (guideY) guides.push(guideY);
 
       return { x: nextX, y: nextY, guides };
     },
