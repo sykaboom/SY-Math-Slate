@@ -11,6 +11,7 @@ import { PageGuides } from "@features/canvas/PageGuides";
 import { CanvasGuides } from "@features/canvas/CanvasGuides";
 import { ActorLayer } from "@features/canvas/actors/ActorLayer";
 import { AnchorIndicator } from "@features/canvas/AnchorIndicator";
+import { useViewportInteraction } from "@features/canvas/viewport/useViewportInteraction";
 import { useCanvasStore } from "@features/store/useCanvasStore";
 import { useUIStore } from "@features/store/useUIStore";
 import { useImageInsert } from "@features/hooks/useImageInsert";
@@ -44,6 +45,7 @@ function NormalCanvasStage({
     isOverviewMode,
     viewMode,
   } = useUIStore();
+  const viewportBind = useViewportInteraction(dropRef);
   const { insertImageFile } = useImageInsert();
   const columnCount = pageColumnCounts?.[currentPageId] ?? 2;
   const animationState = useSequence({
@@ -117,6 +119,7 @@ function NormalCanvasStage({
       onDragOver={handleDragOver}
       onDrop={handleDrop}
       onPointerDown={handleBackgroundPointer}
+      {...viewportBind}
     >
       <div className="pointer-events-none absolute inset-0 z-0 bg-[radial-gradient(circle_at_top,_rgba(var(--neon-cyan-rgb,0,255,255),0.04),_transparent_75%)]" />
       <div className="pointer-events-none absolute inset-0 z-0 bg-[radial-gradient(circle_at_bottom,_rgba(var(--neon-pink-rgb),0.025),_transparent_75%)]" />

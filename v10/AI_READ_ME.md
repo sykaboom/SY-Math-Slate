@@ -112,6 +112,7 @@ app/
 - Panels: `isPanelOpen`, `openPanel`, `isDataInputOpen`, `isPasteHelperOpen`
 - Playback: `isAutoPlay`, `playSignal`, `playbackSpeed`, `autoPlayDelayMs`, `isPaused`, `skipSignal`, `stopSignal`, `isAnimating`
 - Overview: `isOverviewMode`, `overviewZoom`, `overviewViewportRatio`
+- Viewport: `viewport` (zoomLevel, panOffset), `isViewportInteracting`
 - Sound: `isSoundEnabled`
 - Capabilities: `capabilityProfile`, `isCapabilityEnabled(...)`
 - Guides: `guides` (alignment snaps)

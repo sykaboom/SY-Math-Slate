@@ -56,6 +56,7 @@ export function FloatingToolbar() {
     isDataInputOpen,
     toggleDataInput,
     setViewMode,
+    resetViewport,
     isCapabilityEnabled,
     capabilityProfile,
     setCapabilityProfile,
@@ -423,6 +424,21 @@ export function FloatingToolbar() {
                     disabled={isOverviewMode}
                   >
                     발표 모드
+                  </button>
+                </div>
+              </div>
+
+              <div className="grid gap-2">
+                <span className="text-[10px] uppercase tracking-wide text-white/40">
+                  View
+                </span>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    className={cn(menuButtonClass, "col-span-2")}
+                    onClick={resetViewport}
+                  >
+                    Reset View (100%)
                   </button>
                 </div>
               </div>

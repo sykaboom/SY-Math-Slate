@@ -74,8 +74,6 @@ const getStrokeWidth = (
   return baseWidth * (minFactor + (maxFactor - minFactor) * p);
 };
 
-const shouldAcceptDrawInput = (pointerType: string) => pointerType !== "touch";
-
 const createStrokeId = () => {
   if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
     return crypto.randomUUID();
@@ -115,6 +113,7 @@ export function useCanvas() {
     laserColor,
     laserWidth,
     overviewViewportRatio,
+    isViewportInteracting,
   } = useUIStore();
   const { pages, currentPageId, addStroke, setCurrentStroke } =
     useCanvasStore();
@@ -258,6 +257,24 @@ export function useCanvas() {
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   }, []);
 
+  const cancelActiveStroke = useCallback(() => {
+    if (isLaserRef.current) {
+      isLaserRef.current = false;
+      laserPointsRef.current = [];
+      clearLaserCanvas();
+    }
+    if (isDrawingRef.current || activeStrokeRef.current) {
+      isDrawingRef.current = false;
+      activeStrokeRef.current = null;
+      pointsRef.current = [];
+      lastRawPointRef.current = null;
+      lastSmoothPointRef.current = null;
+      lastDrawPointRef.current = null;
+      setCurrentStroke(null);
+      renderAll();
+    }
+  }, [clearLaserCanvas, renderAll, setCurrentStroke]);
+
   const scheduleLaserFrame = useCallback(() => {
     if (laserRafRef.current !== null) return;
 
@@ -331,7 +348,7 @@ export function useCanvas() {
   const handlePointerDown = useCallback(
     (event: ReactPointerEvent<HTMLDivElement>) => {
       const nativeEvent = event.nativeEvent as PointerEvent;
-      if (!shouldAcceptDrawInput(nativeEvent.pointerType)) return;
+      if (isViewportInteracting) return;
       if (activeTool !== "pen" && activeTool !== "eraser" && activeTool !== "laser") {
         return;
       }
@@ -378,6 +395,7 @@ export function useCanvas() {
     [
       activeTool,
       getCanvasPoint,
+      isViewportInteracting,
       items,
       makePoint,
       penColor,
@@ -393,7 +411,7 @@ export function useCanvas() {
   const handlePointerMove = useCallback(
     (event: ReactPointerEvent<HTMLDivElement>) => {
       const nativeEvent = event.nativeEvent as PointerEvent;
-      if (!shouldAcceptDrawInput(nativeEvent.pointerType)) return;
+      if (isViewportInteracting) return;
       if (activeTool === "laser" && isLaserRef.current) {
         const events = getCoalescedEvents(nativeEvent);
         for (const ev of events) {
@@ -478,6 +496,7 @@ export function useCanvas() {
       activeTool,
       getCanvasPoint,
       getCoalescedEvents,
+      isViewportInteracting,
       makePoint,
       penColor,
       penOpacity,
@@ -488,6 +507,10 @@ export function useCanvas() {
 
   const handlePointerUp = useCallback(
     () => {
+      if (isViewportInteracting) {
+        cancelActiveStroke();
+        return;
+      }
       if (isLaserRef.current) {
         isLaserRef.current = false;
         return;
@@ -507,7 +530,7 @@ export function useCanvas() {
       lastSmoothPointRef.current = null;
       lastDrawPointRef.current = null;
     },
-    [addStroke, renderAll, strokes]
+    [addStroke, cancelActiveStroke, isViewportInteracting, renderAll, strokes]
   );
 
   useEffect(() => {
@@ -570,6 +593,12 @@ export function useCanvas() {
   useEffect(() => {
     renderAll();
   }, [renderAll]);
+
+  useEffect(() => {
+    if (isViewportInteracting) {
+      cancelActiveStroke();
+    }
+  }, [cancelActiveStroke, isViewportInteracting]);
 
   useEffect(() => {
     if (activeTool !== "laser") {

@@ -14,6 +14,13 @@ export type { PenType };
 
 export type PanelId = "pen" | "laser" | null;
 export type ViewMode = "edit" | "presentation";
+export type ViewportState = {
+  zoomLevel: number;
+  panOffset: { x: number; y: number };
+};
+
+const clamp = (value: number, min: number, max: number) =>
+  Math.min(Math.max(value, min), max);
 
 interface UIState {
   activeTool: Tool;
@@ -30,6 +37,8 @@ interface UIState {
   isOverviewMode: boolean;
   overviewZoom: number;
   overviewViewportRatio: "16:9" | "4:3";
+  viewport: ViewportState;
+  isViewportInteracting: boolean;
   viewMode: ViewMode;
   capabilityProfile: CapabilityProfileName;
   guides: AlignmentGuide[];
@@ -59,6 +68,10 @@ interface UIState {
   setOverviewViewportRatio: (ratio: "16:9" | "4:3") => void;
   setViewMode: (mode: ViewMode) => void;
   toggleViewMode: () => void;
+  setViewportZoom: (level: number) => void;
+  setViewportPan: (x: number, y: number) => void;
+  resetViewport: () => void;
+  setViewportInteracting: (value: boolean) => void;
   setCapabilityProfile: (profile: CapabilityProfileName) => void;
   isCapabilityEnabled: (key: CapabilityKey) => boolean;
   setGuides: (guides: AlignmentGuide[]) => void;
@@ -94,6 +107,8 @@ export const useUIStore = create<UIState>((set, get) => ({
   isOverviewMode: false,
   overviewZoom: 0.4,
   overviewViewportRatio: "16:9",
+  viewport: { zoomLevel: 1, panOffset: { x: 0, y: 0 } },
+  isViewportInteracting: false,
   viewMode: "edit",
   capabilityProfile: "basic",
   guides: [],
@@ -165,6 +180,27 @@ export const useUIStore = create<UIState>((set, get) => ({
     set(() => ({ overviewZoom: Math.min(1, Math.max(0.2, zoom)) })),
   setOverviewViewportRatio: (ratio) =>
     set(() => ({ overviewViewportRatio: ratio })),
+  setViewportZoom: (level) =>
+    set((state) => ({
+      viewport: {
+        ...state.viewport,
+        zoomLevel: clamp(level, 0.1, 5),
+      },
+    })),
+  setViewportPan: (x, y) =>
+    set((state) => ({
+      viewport: {
+        ...state.viewport,
+        panOffset: { x, y },
+      },
+    })),
+  resetViewport: () =>
+    set(() => ({
+      viewport: { zoomLevel: 1, panOffset: { x: 0, y: 0 } },
+      isViewportInteracting: false,
+    })),
+  setViewportInteracting: (value) =>
+    set(() => ({ isViewportInteracting: value })),
   setViewMode: (mode) => set(() => ({ viewMode: mode })),
   toggleViewMode: () =>
     set((state) => ({

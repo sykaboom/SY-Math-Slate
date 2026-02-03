@@ -65,6 +65,8 @@ v10/src/
 |   |   |   \-- MathRevealBlock.tsx
 |   |   |-- objects/
 |   |   |   \-- ImageBlock.tsx
+|   |   |-- viewport/
+|   |   |   \-- useViewportInteraction.ts
 |   |   |-- AnchorIndicator.tsx
 |   |   |-- CanvasGuides.tsx
 |   |   |-- CanvasLayer.tsx

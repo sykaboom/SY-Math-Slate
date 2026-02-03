@@ -13,6 +13,8 @@
 5) v10/AI_READ_ME_MAP.md (when structure/layout mapping is needed)
 Then inspect relevant code files
 
+Do NOT read `GEMINI.md`.
+
 If no task spec exists for the requested work:
 - Ask the user to create a spec in codex_tasks/ (or ask the user to provide scope + acceptance criteria).
 
@@ -57,6 +59,10 @@ After coding:
   - list changed files
   - note commands run (if any)
   - include manual verification notes (this repo currently has no automated tests)
+
+## Review requirements (mandatory)
+- On every review request, re-check `v10/AI_READ_ME.md`, `v10/AI_READ_ME_MAP.md`, and the relevant code files directly (do not rely on memory).
+- Reviews must be grounded in current codebase state, even if similar reviews were done earlier.
 
 ## Hotfix exception (user-approved)
 - For urgent, small-scope fixes, Codex may proceed without a spec **only** if the user explicitly approves in chat.

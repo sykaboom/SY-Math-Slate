@@ -5,6 +5,7 @@ import type { ReactNode } from "react";
 
 import { cn } from "@core/utils";
 import { getBoardSize, type BoardRatio } from "@core/config/boardSpec";
+import { useUIStore } from "@features/store/useUIStore";
 
 type PageViewportProps = {
   ratio: BoardRatio;
@@ -24,6 +25,7 @@ export function PageViewport({
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [scale, setScale] = useState(1);
   const boardSize = useMemo(() => getBoardSize(ratio), [ratio]);
+  const viewport = useUIStore((state) => state.viewport);
   const paddingTopValue =
     typeof paddingTop === "number" ? `${paddingTop}px` : paddingTop;
   const paddingBottomValue =
@@ -89,15 +91,23 @@ export function PageViewport({
         }}
       >
         <div
-          data-board-root
-          className={cn("absolute left-0 top-0 origin-top-left", className)}
+          data-viewport-transform
+          className="absolute left-0 top-0 h-full w-full origin-top-left"
           style={{
-            width: `${boardSize.width}px`,
-            height: `${boardSize.height}px`,
-            transform: `scale(${scale})`,
+            transform: `translate(${viewport.panOffset.x}px, ${viewport.panOffset.y}px) scale(${viewport.zoomLevel})`,
           }}
         >
-          {children}
+          <div
+            data-board-root
+            className={cn("absolute left-0 top-0 origin-top-left", className)}
+            style={{
+              width: `${boardSize.width}px`,
+              height: `${boardSize.height}px`,
+              transform: `scale(${scale})`,
+            }}
+          >
+            {children}
+          </div>
         </div>
       </div>
     </div>

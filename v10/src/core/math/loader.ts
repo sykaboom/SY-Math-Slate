@@ -5,7 +5,12 @@ const MATHJAX_SRC = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js";
 
 export type MathJaxApi = {
   tex2svgPromise?: (tex: string, options?: { display?: boolean }) => Promise<HTMLElement>;
-  startup?: { defaultPageReady?: () => Promise<void>; promise?: Promise<void> };
+  startup?: {
+    typeset?: boolean;
+    pageReady?: () => Promise<void>;
+    defaultPageReady?: () => Promise<void>;
+    promise?: Promise<void>;
+  };
 };
 
 declare global {
