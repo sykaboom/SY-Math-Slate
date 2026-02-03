@@ -14,6 +14,7 @@ v10/
 |-- AI_READ_ME.md
 |-- components.json
 |-- eslint.config.mjs
+|-- next-env.d.ts
 |-- next.config.ts
 |-- package-lock.json
 |-- package.json
@@ -21,7 +22,8 @@ v10/
 |-- prisma.config.ts
 |-- README.md
 |-- tailwind.config.ts
-\-- tsconfig.json
+|-- tsconfig.json
+\-- tsconfig.tsbuildinfo
 ```
 
 ## v10/src/
@@ -63,6 +65,7 @@ v10/src/
 |   |   |-- animation/
 |   |   |   |-- AnimatedTextBlock.tsx
 |   |   |   \-- MathRevealBlock.tsx
+|   |   |-- editing/
 |   |   |-- objects/
 |   |   |   \-- ImageBlock.tsx
 |   |   |-- viewport/
@@ -109,6 +112,10 @@ v10/src/
 |       |-- PageNavigator.tsx
 |       |-- PenControls.tsx
 |       \-- PlaybackControls.tsx
+|-- generated/
+|   \-- prisma/
+|       |-- internal/
+|       \-- models/
 \-- ui/
     \-- components/
         |-- button.tsx

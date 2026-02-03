@@ -1,6 +1,6 @@
 # Task 061: Vercel Deployment for Tablet UX
 
-**Status:** PENDING
+**Status:** COMPLETED
 **Priority:** P1 (Infrastructure / Testing)
 **Assignee:** Codex CLI / User (Vercel Dashboard)
 **Dependencies:** v10 Next.js App
@@ -52,3 +52,8 @@ We need to test Touch UX (Task 060) on real tablet devices. Localhost tunneling 
 
 ## Notes
 - If server-side data/persistence becomes necessary, create a new task spec (do not extend this one).
+
+## Completion Notes
+- **Changed files:** None (Vercel deployment only).
+- **Commands run:** None locally (Vercel build executed on Vercel).
+- **Manual verification:** Deployment confirmed live; tablet UX validation pending per user testing.
