@@ -70,19 +70,14 @@ export const typesetElement = async (
   options: { cache?: Map<string, Element> } = {}
 ) => {
   if (!element) return;
-  const walker = document.createTreeWalker(
-    element,
-    NodeFilter.SHOW_TEXT,
-    {
-      acceptNode: (node) => {
-        if (!(node instanceof Text)) return NodeFilter.FILTER_REJECT;
-        if (isInsideMathNode(node)) return NodeFilter.FILTER_REJECT;
-        if (!node.nodeValue || !node.nodeValue.includes("$")) return NodeFilter.FILTER_REJECT;
-        return NodeFilter.FILTER_ACCEPT;
-      },
+  const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT, {
+    acceptNode: (node) => {
+      if (!(node instanceof Text)) return NodeFilter.FILTER_REJECT;
+      if (isInsideMathNode(node)) return NodeFilter.FILTER_REJECT;
+      if (!node.nodeValue || !node.nodeValue.includes("$")) return NodeFilter.FILTER_REJECT;
+      return NodeFilter.FILTER_ACCEPT;
     },
-    false
-  );
+  });
 
   const textNodes: Text[] = [];
   while (walker.nextNode()) {
