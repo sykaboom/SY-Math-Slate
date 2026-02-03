@@ -76,7 +76,9 @@ const getTouchCenter = (touches: TouchList, container: HTMLElement | null) => {
   return getViewportPoint(container, x, y);
 };
 
-export function useViewportInteraction(containerRef: RefObject<HTMLDivElement>) {
+export function useViewportInteraction(
+  containerRef: RefObject<HTMLDivElement | null>
+) {
   const spacePressedRef = useRef(false);
   const panStateRef = useRef<PanState>({
     active: false,
