@@ -100,8 +100,9 @@ export function MathRevealBlock({
       wrapperRect.width - (contentLeft + revealWidth)
     );
     const leftClip = Math.max(0, contentLeft);
-    el.style.clipPath = `inset(0 ${rightClip}px 0 ${leftClip}px)`;
-    (el.style as CSSStyleDeclaration).webkitClipPath = `inset(0 ${rightClip}px 0 ${leftClip}px)`;
+    const clipValue = `inset(0 ${rightClip}px 0 ${leftClip}px)`;
+    el.style.clipPath = clipValue;
+    el.style.setProperty("-webkit-clip-path", clipValue);
 
     if (progress < 1 && !pausedRef.current) {
       rafRef.current = requestAnimationFrame(animateFrame);
