@@ -18,6 +18,7 @@ import { Button } from "@ui/components/button";
 import type {
   ImageItem,
   StepBlock,
+  StepBlockKind,
   StepSegment,
   StepSegmentType,
   TextItem,
@@ -26,6 +27,9 @@ import { runAutoLayout } from "@features/layout/autoLayout";
 import {
   ChevronDown,
   ChevronUp,
+  Columns,
+  CornerDownLeft,
+  FilePlus,
   GripVertical,
   ImagePlus,
   Minus,
@@ -436,6 +440,20 @@ export function DataInputPanel() {
     });
   };
 
+  const insertBreakBlock = (kind: StepBlockKind) => {
+    const safeIndex = Math.max(0, Math.min(insertionIndex, blocks.length));
+    setBlocks((prev) => {
+      const next = [...prev];
+      next.splice(safeIndex, 0, {
+        id: createBlockId(),
+        kind,
+        segments: [],
+      });
+      return next;
+    });
+    setInsertionIndex(Math.min(safeIndex + 1, blocks.length + 1));
+  };
+
   const getActiveRange = (id: string) => {
     const stored = selectionRef.current[id];
     if (stored) return stored;
@@ -764,6 +782,32 @@ export function DataInputPanel() {
             <span className="text-[11px] text-white/40">
               {blocks.length}개
             </span>
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            <Button
+              variant="outline"
+              className="h-8 px-2 text-xs"
+              onClick={() => insertBreakBlock("line-break")}
+            >
+              <CornerDownLeft className="mr-1 h-3 w-3" />
+              줄바꿈
+            </Button>
+            <Button
+              variant="outline"
+              className="h-8 px-2 text-xs"
+              onClick={() => insertBreakBlock("column-break")}
+            >
+              <Columns className="mr-1 h-3 w-3" />
+              단나눔
+            </Button>
+            <Button
+              variant="outline"
+              className="h-8 px-2 text-xs"
+              onClick={() => insertBreakBlock("page-break")}
+            >
+              <FilePlus className="mr-1 h-3 w-3" />
+              페이지
+            </Button>
           </div>
           <div className="flex flex-col gap-3 pr-1">
             {(() => {

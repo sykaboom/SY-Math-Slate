@@ -40,6 +40,10 @@ interface CanvasState extends PersistedCanvasV2 {
   setColumnCount: (count: number) => void;
   increaseColumns: () => void;
   decreaseColumns: () => void;
+  addPage: () => void;
+  deletePage: (pageId?: string) => void;
+  goToPage: (pageId: string) => void;
+  isPageEmpty: (pageId: string) => boolean;
   undo: () => void;
   clear: () => void;
   importStepBlocks: (blocks: StepBlock[]) => void;
@@ -236,6 +240,24 @@ const getContentIndexAtBlockIndex = (
     if (isContentBlock(blocks[i])) contentIndex += 1;
   }
   return contentIndex;
+};
+
+const pageHasAnchors = (
+  anchorMap: AnchorMap | null | undefined,
+  pageId: string
+) => {
+  if (!anchorMap) return false;
+  const pageAnchors = anchorMap[pageId];
+  if (!pageAnchors) return false;
+  return Object.values(pageAnchors).some((anchors) => anchors.length > 0);
+};
+
+const pageHasItems = (
+  pages: Record<string, CanvasItem[]>,
+  pageId: string
+) => {
+  const items = pages[pageId] ?? [];
+  return items.length > 0;
 };
 
 const resolveTargetIndex = (
@@ -540,6 +562,77 @@ export const useCanvasStore = create<CanvasState>((set, get) => {
           },
         };
       }),
+    addPage: () =>
+      set((state) => {
+        const newPageId = createPageId();
+        const currentColumns =
+          state.pageColumnCounts?.[state.currentPageId] ?? 2;
+        return {
+          pages: {
+            ...state.pages,
+            [newPageId]: [],
+          },
+          pageOrder: [...state.pageOrder, newPageId],
+          currentPageId: newPageId,
+          pageColumnCounts: {
+            ...(state.pageColumnCounts ?? {}),
+            [newPageId]: currentColumns,
+          },
+        };
+      }),
+    deletePage: (pageId) =>
+      set((state) => {
+        const targetId = pageId ?? state.currentPageId;
+        if (!state.pageOrder.includes(targetId)) return {};
+        if (!state.pageOrder || state.pageOrder.length <= 1) return {};
+
+        const hasItems = pageHasItems(state.pages, targetId);
+        const hasAnchors = pageHasAnchors(state.anchorMap, targetId);
+        if (hasItems || hasAnchors) return {};
+
+        const nextPages = { ...state.pages };
+        delete nextPages[targetId];
+
+        const nextOrder = state.pageOrder.filter((id) => id !== targetId);
+        const nextColumns = { ...(state.pageColumnCounts ?? {}) };
+        delete nextColumns[targetId];
+
+        const nextAnchorMap = state.anchorMap
+          ? { ...state.anchorMap }
+          : null;
+        if (nextAnchorMap) {
+          delete nextAnchorMap[targetId];
+        }
+
+        let nextCurrent = state.currentPageId;
+        if (targetId === state.currentPageId) {
+          const targetIndex = state.pageOrder.indexOf(targetId);
+          nextCurrent =
+            nextOrder[targetIndex] ??
+            nextOrder[targetIndex - 1] ??
+            nextOrder[0];
+        }
+
+        return {
+          pages: nextPages,
+          pageOrder: nextOrder,
+          currentPageId: nextCurrent ?? state.currentPageId,
+          pageColumnCounts: nextColumns,
+          anchorMap: nextAnchorMap,
+        };
+      }),
+    goToPage: (pageId) =>
+      set((state) => {
+        if (!state.pageOrder.includes(pageId)) return {};
+        return { currentPageId: pageId };
+      }),
+    isPageEmpty: (pageId) => {
+      const state = get();
+      return (
+        !pageHasItems(state.pages, pageId) &&
+        !pageHasAnchors(state.anchorMap, pageId)
+      );
+    },
     undo: () =>
       set((state) => {
         const pageId = state.currentPageId;

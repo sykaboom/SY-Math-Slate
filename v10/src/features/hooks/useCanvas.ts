@@ -84,6 +84,51 @@ const createStrokeId = () => {
 const isStrokeItem = (item: CanvasItem): item is StrokeItem =>
   item.type === "stroke";
 
+const ERASER_WIDTH = 40;
+const ERASER_RADIUS = ERASER_WIDTH / 2;
+
+const distanceToSegment = (point: Point, a: Point, b: Point) => {
+  const dx = b.x - a.x;
+  const dy = b.y - a.y;
+  if (dx === 0 && dy === 0) {
+    return Math.hypot(point.x - a.x, point.y - a.y);
+  }
+  const t = ((point.x - a.x) * dx + (point.y - a.y) * dy) / (dx * dx + dy * dy);
+  const clamped = Math.max(0, Math.min(1, t));
+  const px = a.x + clamped * dx;
+  const py = a.y + clamped * dy;
+  return Math.hypot(point.x - px, point.y - py);
+};
+
+const segmentDistance = (a1: Point, a2: Point, b1: Point, b2: Point) => {
+  return Math.min(
+    distanceToSegment(a1, b1, b2),
+    distanceToSegment(a2, b1, b2),
+    distanceToSegment(b1, a1, a2),
+    distanceToSegment(b2, a1, a2)
+  );
+};
+
+const strokeIntersectsSegment = (
+  stroke: StrokeItem,
+  from: Point,
+  to: Point,
+  radius: number
+) => {
+  const path = stroke.path ?? [];
+  if (path.length === 0) return false;
+  const threshold = radius + (stroke.width ?? 0) / 2;
+  if (path.length === 1) {
+    return distanceToSegment(path[0], from, to) <= threshold;
+  }
+  for (let i = 1; i < path.length; i += 1) {
+    if (segmentDistance(from, to, path[i - 1], path[i]) <= threshold) {
+      return true;
+    }
+  }
+  return false;
+};
+
 export function useCanvas() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const laserCanvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -91,10 +136,12 @@ export function useCanvas() {
   const laserCtxRef = useRef<CanvasRenderingContext2D | null>(null);
 
   const isDrawingRef = useRef(false);
+  const isErasingRef = useRef(false);
   const isLaserRef = useRef(false);
   const pointsRef = useRef<Point[]>([]);
   const laserPointsRef = useRef<LaserPoint[]>([]);
   const activeStrokeRef = useRef<StrokeItem | null>(null);
+  const erasedStrokeIdsRef = useRef<Set<string>>(new Set());
   const lastRawPointRef = useRef<Point | null>(null);
   const lastSmoothPointRef = useRef<Point | null>(null);
   const lastDrawPointRef = useRef<Point | null>(null);
@@ -115,7 +162,7 @@ export function useCanvas() {
     overviewViewportRatio,
     isViewportInteracting,
   } = useUIStore();
-  const { pages, currentPageId, addStroke, setCurrentStroke } =
+  const { pages, currentPageId, addStroke, setCurrentStroke, deleteItem } =
     useCanvasStore();
   const { toBoardPoint } = useBoardTransform();
   const items = useMemo(
@@ -247,6 +294,30 @@ export function useCanvas() {
     ctx.globalCompositeOperation = "source-over";
   }, [drawStoredStroke, strokes]);
 
+  const eraseStrokesAtSegment = useCallback(
+    (from: Point, to: Point) => {
+      const erased = erasedStrokeIdsRef.current;
+      let didErase = false;
+      const remaining: StrokeItem[] = [];
+
+      strokes.forEach((stroke) => {
+        if (erased.has(stroke.id)) return;
+        if (strokeIntersectsSegment(stroke, from, to, ERASER_RADIUS)) {
+          erased.add(stroke.id);
+          deleteItem(stroke.id);
+          didErase = true;
+          return;
+        }
+        remaining.push(stroke);
+      });
+
+      if (didErase) {
+        renderAll(remaining);
+      }
+    },
+    [deleteItem, renderAll, strokes]
+  );
+
   const clearLaserCanvas = useCallback(() => {
     const ctx = laserCtxRef.current;
     const canvas = laserCanvasRef.current;
@@ -263,9 +334,11 @@ export function useCanvas() {
       laserPointsRef.current = [];
       clearLaserCanvas();
     }
-    if (isDrawingRef.current || activeStrokeRef.current) {
+    if (isDrawingRef.current || activeStrokeRef.current || isErasingRef.current) {
       isDrawingRef.current = false;
+      isErasingRef.current = false;
       activeStrokeRef.current = null;
+      erasedStrokeIdsRef.current.clear();
       pointsRef.current = [];
       lastRawPointRef.current = null;
       lastSmoothPointRef.current = null;
@@ -364,7 +437,23 @@ export function useCanvas() {
         return;
       }
 
+      if (activeTool === "eraser") {
+        isDrawingRef.current = true;
+        isErasingRef.current = true;
+        erasedStrokeIdsRef.current.clear();
+        event.currentTarget.setPointerCapture(event.pointerId);
+
+        const point = makePoint(nativeEvent);
+        pointsRef.current = [point];
+        lastRawPointRef.current = point;
+        lastSmoothPointRef.current = point;
+        lastDrawPointRef.current = point;
+        eraseStrokesAtSegment(point, point);
+        return;
+      }
+
       isDrawingRef.current = true;
+      isErasingRef.current = false;
       event.currentTarget.setPointerCapture(event.pointerId);
 
       const point = makePoint(nativeEvent);
@@ -377,11 +466,11 @@ export function useCanvas() {
       const newStroke: StrokeItem = {
         id: createStrokeId(),
         type: "stroke",
-        tool: activeTool === "eraser" ? "eraser" : "pen",
-        penType: activeTool === "eraser" ? "ink" : penType,
-        color: activeTool === "eraser" ? "#000000" : penColor,
-        width: activeTool === "eraser" ? 40 : penWidth,
-        alpha: activeTool === "eraser" ? 1 : penOpacity / 100,
+        tool: "pen",
+        penType,
+        color: penColor,
+        width: penWidth,
+        alpha: penOpacity / 100,
         pointerType: nativeEvent.pointerType,
         path: [point],
         x: 0,
@@ -394,6 +483,7 @@ export function useCanvas() {
     },
     [
       activeTool,
+      eraseStrokesAtSegment,
       getCanvasPoint,
       isViewportInteracting,
       items,
@@ -426,7 +516,33 @@ export function useCanvas() {
         return;
       }
 
-      if (!isDrawingRef.current || !activeStrokeRef.current) return;
+      if (!isDrawingRef.current) return;
+
+      if (isErasingRef.current) {
+        const events = getCoalescedEvents(nativeEvent);
+        for (const ev of events) {
+          const rawPoint = makePoint(ev);
+          const smooth = smoothPoint(rawPoint);
+          const lastDrawPoint = lastDrawPointRef.current;
+          if (lastDrawPoint) {
+            const dist = Math.hypot(
+              smooth.x - lastDrawPoint.x,
+              smooth.y - lastDrawPoint.y
+            );
+            if (dist >= inputConfig.smoothing.minDistance) {
+              eraseStrokesAtSegment(lastDrawPoint, smooth);
+              lastDrawPointRef.current = smooth;
+            }
+          } else {
+            lastDrawPointRef.current = smooth;
+          }
+          lastRawPointRef.current = rawPoint;
+          lastSmoothPointRef.current = smooth;
+        }
+        return;
+      }
+
+      if (!activeStrokeRef.current) return;
       const ctx = ctxRef.current;
       if (!ctx) return;
 
@@ -494,6 +610,7 @@ export function useCanvas() {
     },
     [
       activeTool,
+      eraseStrokesAtSegment,
       getCanvasPoint,
       getCoalescedEvents,
       isViewportInteracting,
@@ -516,7 +633,20 @@ export function useCanvas() {
         return;
       }
 
-      if (!isDrawingRef.current || !activeStrokeRef.current) return;
+      if (!isDrawingRef.current) return;
+
+      if (isErasingRef.current) {
+        isDrawingRef.current = false;
+        isErasingRef.current = false;
+        erasedStrokeIdsRef.current.clear();
+        pointsRef.current = [];
+        lastRawPointRef.current = null;
+        lastSmoothPointRef.current = null;
+        lastDrawPointRef.current = null;
+        return;
+      }
+
+      if (!activeStrokeRef.current) return;
       isDrawingRef.current = false;
       const finishedStroke = {
         ...activeStrokeRef.current,

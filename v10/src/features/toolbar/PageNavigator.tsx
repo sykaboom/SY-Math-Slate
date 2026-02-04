@@ -1,15 +1,46 @@
 "use client";
 
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Minus, Plus, Trash2 } from "lucide-react";
 
 import { useCanvasStore } from "@features/store/useCanvasStore";
+import { useUIStore } from "@features/store/useUIStore";
+import { Popover, PopoverTrigger } from "@ui/components/popover";
+import { Slider } from "@ui/components/slider";
 
 import { ToolButton } from "./atoms/ToolButton";
+import { ToolbarPanel } from "./atoms/ToolbarPanel";
 
 export function PageNavigator() {
-  const { pageOrder, currentPageId, prevPage, nextPage } = useCanvasStore();
+  const {
+    pageOrder,
+    currentPageId,
+    pageColumnCounts,
+    prevPage,
+    nextPage,
+    addPage,
+    deletePage,
+    goToPage,
+    isPageEmpty,
+    setColumnCount,
+  } = useCanvasStore();
+  const { isOverviewMode } = useUIStore();
   const totalPages = pageOrder.length || 1;
   const currentIndex = Math.max(0, pageOrder.indexOf(currentPageId));
+  const columnCount = pageColumnCounts?.[currentPageId] ?? 2;
+  const canDelete = isPageEmpty(currentPageId) && pageOrder.length > 1;
+  const canDecrease = columnCount > 1;
+  const canIncrease = columnCount < 4;
+  const canPageJump = totalPages > 1;
+  const pageSliderValue = Math.min(currentIndex + 1, totalPages);
+
+  const handleJump = (value: number) => {
+    const target = Math.round(value);
+    const clamped = Math.max(1, Math.min(totalPages, target));
+    const nextId = pageOrder[clamped - 1];
+    if (nextId) {
+      goToPage(nextId);
+    }
+  };
 
   return (
     <div className="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-2 py-1 text-xs text-white/60">
@@ -17,18 +48,77 @@ export function PageNavigator() {
         icon={ChevronLeft}
         label="Previous Page"
         onClick={prevPage}
-        disabled={currentIndex === 0}
-        className="h-8 w-8"
+        disabled={currentIndex === 0 || isOverviewMode}
+        className="h-7 w-7"
       />
-      <span className="whitespace-nowrap">
-        Page {currentIndex + 1} / {totalPages}
-      </span>
+      <Popover>
+        <PopoverTrigger asChild>
+          <button
+            type="button"
+            className="whitespace-nowrap rounded-full px-2 py-1 text-[11px] text-white/70 hover:text-white disabled:text-white/40"
+            disabled={isOverviewMode || !canPageJump}
+          >
+            Page {currentIndex + 1} / {totalPages}
+          </button>
+        </PopoverTrigger>
+        {canPageJump && (
+          <ToolbarPanel side="top" align="center" sideOffset={18}>
+            <div className="flex w-48 items-center gap-3">
+              <Slider
+                value={[pageSliderValue]}
+                min={1}
+                max={totalPages}
+                step={1}
+                onValueChange={(value) => handleJump(value[0])}
+              />
+              <span className="w-10 text-right text-xs text-white/80">
+                {currentIndex + 1}/{totalPages}
+              </span>
+            </div>
+          </ToolbarPanel>
+        )}
+      </Popover>
       <ToolButton
         icon={ChevronRight}
         label="Next Page"
         onClick={nextPage}
-        className="h-8 w-8"
+        disabled={currentIndex >= totalPages - 1 || isOverviewMode}
+        className="h-7 w-7"
       />
+      <ToolButton
+        icon={Plus}
+        label="Add Page"
+        onClick={addPage}
+        disabled={isOverviewMode}
+        className="h-7 w-7"
+      />
+      <ToolButton
+        icon={Trash2}
+        label="Delete Page"
+        onClick={() => deletePage()}
+        disabled={!canDelete || isOverviewMode}
+        className="h-7 w-7"
+      />
+      <span className="h-4 w-px bg-white/10" />
+      <div className="flex items-center gap-1 rounded-full border border-white/10 bg-white/5 px-1 py-0.5">
+        <ToolButton
+          icon={Minus}
+          label="Decrease Columns"
+          onClick={() => setColumnCount(columnCount - 1)}
+          disabled={!canDecrease || isOverviewMode}
+          className="h-6 w-6"
+        />
+        <span className="min-w-[36px] text-center text-[11px] text-white/70">
+          {columnCount}단
+        </span>
+        <ToolButton
+          icon={Plus}
+          label="Increase Columns"
+          onClick={() => setColumnCount(columnCount + 1)}
+          disabled={!canIncrease || isOverviewMode}
+          className="h-6 w-6"
+        />
+      </div>
     </div>
   );
 }

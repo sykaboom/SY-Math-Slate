@@ -62,6 +62,13 @@ app/
 
 ---
 
+## Canvas Layering (Notes)
+- `features/canvas/PageViewport.tsx` exposes an `overlay` slot for screen-space layers (rendered outside the zoom/pan transform).
+- `features/canvas/PageGuides.tsx` uses screen-space coordinates and expands its SVG viewport to avoid clipping while panning/zooming.
+- `features/canvas/CanvasGuides.tsx` remains inside the transformed board space (alignment guides).
+
+---
+
 ## Data Model (Core Concepts)
 **Global steps**
 - Step indices are **global**, not per-page.
@@ -115,7 +122,7 @@ app/
 - Viewport: `viewport` (zoomLevel, panOffset), `isViewportInteracting`
 - Sound: `isSoundEnabled`
 - Capabilities: `capabilityProfile`, `isCapabilityEnabled(...)`
-- Guides: `guides` (alignment snaps)
+- Guides: `guides` (alignment snaps), `showBreakGuides`, `showCanvasBorder`
 
 ---
 
@@ -231,6 +238,8 @@ app   -> features + ui
 - `importStepBlocks`: rebuilds `pages`, clears `anchorMap`, resets `currentStep=0`.
 - `insertBreak`: inserts break block at target index, rebuilds layout.
 - `applyAutoLayout`: apply `{ pages, pageOrder, anchorMap }`, reset step.
+- `setColumnCount / increaseColumns / decreaseColumns`: adjust per-page column counts.
+- `addPage / deletePage / goToPage / isPageEmpty`: page management helpers.
 - `setStepAudio / clearStepAudio`: mutate `audioByStep`.
 - `nextStep / prevStep / goToStep / resetStep`: session-only step navigation.
 - `nextPage / prevPage`: session-only page navigation.
@@ -238,6 +247,7 @@ app   -> features + ui
 
 ### useUIStore (selected actions)
 - `triggerPlay / triggerStop / triggerSkip`: increments signal counters.
+- `toggleBreakGuides / toggleCanvasBorder`: layout guide visibility toggles.
 - `setAutoPlay / setPaused`: playback controls.
 - `setPlaybackSpeed / setAutoPlayDelay`: timing controls.
 - `openDataInput / closeDataInput`: data panel visibility.

@@ -52,6 +52,8 @@ interface UIState {
   isAnimating: boolean;
   isSoundEnabled: boolean;
   isDataInputOpen: boolean;
+  showBreakGuides: boolean;
+  showCanvasBorder: boolean;
   setTool: (tool: Tool) => void;
   setColor: (color: string) => void;
   setPenWidth: (width: number) => void;
@@ -90,6 +92,8 @@ interface UIState {
   openDataInput: () => void;
   closeDataInput: () => void;
   toggleDataInput: () => void;
+  toggleBreakGuides: () => void;
+  toggleCanvasBorder: () => void;
 }
 
 export const useUIStore = create<UIState>((set, get) => ({
@@ -122,6 +126,8 @@ export const useUIStore = create<UIState>((set, get) => ({
   isAnimating: false,
   isSoundEnabled: false,
   isDataInputOpen: false,
+  showBreakGuides: true,
+  showCanvasBorder: true,
   setTool: (tool) =>
     set(() => ({
       activeTool: tool,
@@ -236,4 +242,8 @@ export const useUIStore = create<UIState>((set, get) => ({
   closeDataInput: () => set(() => ({ isDataInputOpen: false })),
   toggleDataInput: () =>
     set((state) => ({ isDataInputOpen: !state.isDataInputOpen })),
+  toggleBreakGuides: () =>
+    set((state) => ({ showBreakGuides: !state.showBreakGuides })),
+  toggleCanvasBorder: () =>
+    set((state) => ({ showCanvasBorder: !state.showCanvasBorder })),
 }));

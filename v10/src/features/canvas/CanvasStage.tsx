@@ -18,14 +18,23 @@ import { useImageInsert } from "@features/hooks/useImageInsert";
 import { useSequence } from "@features/hooks/useSequence";
 
 export function CanvasStage({ children }: { children?: ReactNode }) {
-  const { isOverviewMode, overviewViewportRatio } = useUIStore();
+  const {
+    isOverviewMode,
+    overviewViewportRatio,
+    showBreakGuides,
+    showCanvasBorder,
+  } = useUIStore();
 
   if (isOverviewMode) {
     return <OverviewStage />;
   }
 
   return (
-    <NormalCanvasStage ratio={overviewViewportRatio}>
+    <NormalCanvasStage
+      ratio={overviewViewportRatio}
+      showBreakGuides={showBreakGuides}
+      showCanvasBorder={showCanvasBorder}
+    >
       {children}
     </NormalCanvasStage>
   );
@@ -34,9 +43,13 @@ export function CanvasStage({ children }: { children?: ReactNode }) {
 function NormalCanvasStage({
   children,
   ratio,
+  showBreakGuides,
+  showCanvasBorder,
 }: {
   children?: ReactNode;
   ratio: "16:9" | "4:3";
+  showBreakGuides: boolean;
+  showCanvasBorder: boolean;
 }) {
   const dropRef = useRef<HTMLDivElement | null>(null);
   const actorRef = useRef<HTMLDivElement | null>(null);
@@ -130,8 +143,14 @@ function NormalCanvasStage({
         className="overflow-hidden"
         paddingTop={paddingTop}
         paddingBottom={paddingBottom}
+        overlay={
+          <PageGuides
+            columnCount={columnCount}
+            showBreakGuides={showBreakGuides}
+            showCanvasBorder={showCanvasBorder}
+          />
+        }
       >
-        <PageGuides columnCount={columnCount} />
         <ContentLayer
           animationState={animationState}
           readOnly={viewMode === "presentation"}

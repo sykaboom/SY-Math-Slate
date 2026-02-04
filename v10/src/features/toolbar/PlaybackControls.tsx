@@ -1,20 +1,24 @@
 "use client";
 
 import { useMemo } from "react";
-import type { WheelEvent } from "react";
 
 import { Popover, PopoverTrigger } from "@ui/components/popover";
 import { Slider } from "@ui/components/slider";
 import { cn } from "@core/utils";
 import { useUIStore } from "@features/store/useUIStore";
 import { useCanvasStore } from "@features/store/useCanvasStore";
-import { Pause, Play, Repeat, SkipForward, Square } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  Pause,
+  Play,
+  Repeat,
+  Settings2,
+  Square,
+} from "lucide-react";
 
 import { ToolButton } from "./atoms/ToolButton";
 import { ToolbarPanel } from "./atoms/ToolbarPanel";
-
-const clamp = (value: number, min: number, max: number) =>
-  Math.max(min, Math.min(max, value));
 
 export function PlaybackControls() {
   const {
@@ -23,7 +27,6 @@ export function PlaybackControls() {
     triggerPlay,
     togglePause,
     triggerStop,
-    triggerSkip,
     playbackSpeed,
     autoPlayDelayMs,
     setPlaybackSpeed,
@@ -33,7 +36,8 @@ export function PlaybackControls() {
     setPaused,
     isCapabilityEnabled,
   } = useUIStore();
-  const { pages, currentStep, goToStep, stepBlocks } = useCanvasStore();
+  const { pages, currentStep, prevStep, nextStep, goToStep, stepBlocks } =
+    useCanvasStore();
   const maxStep = useMemo(() => {
     if (stepBlocks.length > 0) return stepBlocks.length - 1;
     return Object.values(pages).reduce((max, items) => {
@@ -46,6 +50,13 @@ export function PlaybackControls() {
     }, -1);
   }, [pages, stepBlocks]);
   const totalSteps = Math.max(maxStep + 1, 0);
+  const displayStep =
+    totalSteps === 0 ? 0 : Math.min(currentStep + 1, totalSteps);
+  const canStepPrev = currentStep > 0;
+  const canStepNext = currentStep <= maxStep;
+  const canStepJump = totalSteps > 1;
+  const stepSliderMax = Math.max(maxStep + 1, 0);
+  const stepSliderValue = Math.min(currentStep, stepSliderMax);
 
   const speedLabel = useMemo(() => playbackSpeed.toFixed(2), [playbackSpeed]);
   const delayLabel = useMemo(
@@ -54,19 +65,18 @@ export function PlaybackControls() {
   );
   const canAutoPlay = isCapabilityEnabled("playback.autoplay");
   const canTiming = isCapabilityEnabled("playback.timing");
+  const showSettings = canAutoPlay || canTiming;
 
-  const handlePlay = () => {
+  const handlePlayToggle = () => {
+    if (isAnimating) {
+      togglePause();
+      return;
+    }
     if (isPaused) {
       setPaused(false);
     }
     if (currentStep > maxStep) return;
     triggerPlay();
-  };
-
-  const handleStepJump = (value: number) => {
-    const target = Math.round(value);
-    if (target < 0 || target > maxStep + 1) return;
-    goToStep(target);
   };
 
   const handleAutoToggle = () => {
@@ -82,185 +92,132 @@ export function PlaybackControls() {
     triggerPlay();
   };
 
-  const handleSpeedWheel = (event: WheelEvent) => {
-    event.preventDefault();
-    event.stopPropagation();
-    const direction = event.deltaY < 0 ? 1 : -1;
-    const next = clamp(playbackSpeed + direction * 0.05, 0.1, 2);
-    setPlaybackSpeed(next);
-  };
-
-  const handleDelayWheel = (event: WheelEvent) => {
-    event.preventDefault();
-    event.stopPropagation();
-    const direction = event.deltaY < 0 ? 1 : -1;
-    const next = clamp(autoPlayDelayMs + direction * 100, 300, 3000);
-    setAutoPlayDelay(next);
-  };
-
-  const handleStepWheel = (event: WheelEvent) => {
-    event.preventDefault();
-    event.stopPropagation();
-    if (maxStep < 0) return;
-    const direction = event.deltaY < 0 ? 1 : -1;
-    const next = clamp(currentStep + direction, 0, maxStep + 1);
-    goToStep(next);
-  };
-
-  const handleWheelCapture = (event: WheelEvent<HTMLDivElement>) => {
-    const target = event.target as HTMLElement | null;
-    if (!target) return;
-    if (target.closest("[data-speed-wheel]")) {
-      handleSpeedWheel(event);
-      return;
-    }
-    if (target.closest("[data-step-wheel]")) {
-      handleStepWheel(event);
-      return;
-    }
-    if (target.closest("[data-delay-wheel]")) {
-      handleDelayWheel(event);
-    }
+  const handleStepJump = (value: number) => {
+    const target = Math.round(value);
+    if (target < 0 || target > maxStep + 1) return;
+    goToStep(target);
   };
 
   return (
-    <div
-      className="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-2 py-1 text-xs text-white/60"
-      onWheelCapture={handleWheelCapture}
-    >
+    <div className="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-2 py-1 text-xs text-white/60">
       <ToolButton
-        icon={Play}
-        label="Play"
-        onClick={handlePlay}
-        disabled={isAnimating && !isPaused}
-        className="h-8 w-8"
-      />
-      <ToolButton
-        icon={isPaused ? Play : Pause}
-        label={isPaused ? "Resume" : "Pause"}
-        onClick={togglePause}
-        disabled={!isAnimating}
+        icon={isAnimating && !isPaused ? Pause : Play}
+        label={isAnimating ? (isPaused ? "Resume" : "Pause") : "Play"}
+        onClick={handlePlayToggle}
         className="h-8 w-8"
       />
       <ToolButton
         icon={Square}
         label="Stop"
         onClick={triggerStop}
-        disabled={!isAnimating}
+        disabled={!isAnimating && !isPaused}
         className="h-8 w-8"
       />
-      <ToolButton
-        icon={SkipForward}
-        label="Skip"
-        onClick={triggerSkip}
-        disabled={!isAnimating}
-        className="h-8 w-8"
-      />
-      {canAutoPlay && (
+      <div className="flex items-center gap-1 rounded-full border border-white/10 bg-white/5 px-2 py-1">
         <ToolButton
-          icon={Repeat}
-          label="Auto Play"
-          active={isAutoPlay}
-          onClick={handleAutoToggle}
-          className="h-8 w-8"
+          icon={ChevronLeft}
+          label="Previous Step"
+          onClick={prevStep}
+          disabled={!canStepPrev}
+          className="h-7 w-7"
         />
-      )}
-
-      {canTiming && (
         <Popover>
           <PopoverTrigger asChild>
             <button
               type="button"
-              data-speed-wheel
-              onWheel={handleSpeedWheel}
-              onWheelCapture={handleSpeedWheel}
-              onDoubleClick={() => setPlaybackSpeed(1)}
-              className={cn(
-                "rounded-full border border-white/10 bg-white/5 px-2 py-1 text-[11px] text-white/70",
-                "hover:text-white focus:outline-none focus:ring-2 focus:ring-white/30"
-              )}
-              title="Speed"
+              className="whitespace-nowrap rounded-full px-2 py-1 text-[11px] text-white/70 hover:text-white disabled:text-white/40"
+              disabled={!canStepJump}
             >
-              Speed {speedLabel}x
+              Step {displayStep}/{totalSteps}
             </button>
           </PopoverTrigger>
-          <ToolbarPanel side="top" align="center" sideOffset={18}>
-            <div className="flex w-48 items-center gap-3">
-              <Slider
-                value={[playbackSpeed]}
-                min={0.1}
-                max={2}
-                step={0.05}
-                onValueChange={(value) => setPlaybackSpeed(value[0])}
-              />
-              <span className="w-10 text-right text-xs text-white/80">
-                {speedLabel}x
-              </span>
-            </div>
-          </ToolbarPanel>
+          {canStepJump && (
+            <ToolbarPanel side="top" align="center" sideOffset={18}>
+              <div className="flex w-48 items-center gap-3">
+                <Slider
+                  value={[stepSliderValue]}
+                  min={0}
+                  max={stepSliderMax}
+                  step={1}
+                  onValueChange={(value) => handleStepJump(value[0])}
+                />
+                <span className="w-10 text-right text-xs text-white/80">
+                  {displayStep}/{totalSteps}
+                </span>
+              </div>
+            </ToolbarPanel>
+          )}
         </Popover>
-      )}
+        <ToolButton
+          icon={ChevronRight}
+          label="Next Step"
+          onClick={nextStep}
+          disabled={!canStepNext}
+          className="h-7 w-7"
+        />
+      </div>
 
-      <Popover>
-        <PopoverTrigger asChild>
-          <button
-            type="button"
-            data-step-wheel
-            className={cn(
-              "rounded-full border border-white/10 bg-white/5 px-2 py-1 text-[11px] text-white/70",
-              "hover:text-white focus:outline-none focus:ring-2 focus:ring-white/30"
-            )}
-            title="Jump to Step"
-          >
-            Step {Math.min(currentStep + 1, totalSteps)}/{totalSteps}
-          </button>
-        </PopoverTrigger>
-        <ToolbarPanel side="top" align="center" sideOffset={18}>
-          <div className="flex w-48 items-center gap-3" data-step-wheel>
-            <Slider
-              value={[Math.min(currentStep, maxStep + 1)]}
-              min={0}
-              max={Math.max(maxStep + 1, 0)}
-              step={1}
-              onValueChange={(value) => handleStepJump(value[0])}
-            />
-            <span className="w-10 text-right text-xs text-white/80">
-              {Math.min(currentStep + 1, totalSteps)}/{totalSteps}
-            </span>
-          </div>
-        </ToolbarPanel>
-      </Popover>
-
-      {canTiming && canAutoPlay && (
+      {showSettings && (
         <Popover>
           <PopoverTrigger asChild>
-            <button
-              type="button"
-              data-delay-wheel
-              onWheel={handleDelayWheel}
-              onWheelCapture={handleDelayWheel}
-              onDoubleClick={() => setAutoPlayDelay(1200)}
-              className={cn(
-                "rounded-full border border-white/10 bg-white/5 px-2 py-1 text-[11px] text-white/70",
-                "hover:text-white focus:outline-none focus:ring-2 focus:ring-white/30"
-              )}
-              title="Auto-play Delay"
-            >
-              Delay {delayLabel}s
-            </button>
+            <ToolButton
+              icon={Settings2}
+              label="Playback Settings"
+              className="h-8 w-8"
+            />
           </PopoverTrigger>
-          <ToolbarPanel side="top" align="center" sideOffset={18}>
-            <div className="flex w-48 items-center gap-3">
-              <Slider
-                value={[autoPlayDelayMs]}
-                min={300}
-                max={3000}
-                step={100}
-                onValueChange={(value) => setAutoPlayDelay(value[0])}
-              />
-              <span className="w-10 text-right text-xs text-white/80">
-                {delayLabel}s
-              </span>
+          <ToolbarPanel side="top" align="end" sideOffset={18} className="w-56">
+            <div className="grid gap-3 text-[11px] text-white/70">
+              {canAutoPlay && (
+                <button
+                  type="button"
+                  className={cn(
+                    "flex items-center justify-between gap-3 rounded-md border px-2 py-1 transition",
+                    isAutoPlay
+                      ? "border-white/40 bg-white/15 text-white"
+                      : "border-white/10 text-white/70 hover:border-white/30"
+                  )}
+                  onClick={handleAutoToggle}
+                >
+                  <span className="flex items-center gap-2">
+                    <Repeat className="h-3.5 w-3.5" />
+                    Auto Play
+                  </span>
+                  <span>{isAutoPlay ? "On" : "Off"}</span>
+                </button>
+              )}
+
+              {canTiming && (
+                <div className="grid gap-2">
+                  <div className="flex items-center justify-between text-white/70">
+                    <span>Speed</span>
+                    <span className="text-white/80">{speedLabel}x</span>
+                  </div>
+                  <Slider
+                    value={[playbackSpeed]}
+                    min={0.1}
+                    max={2}
+                    step={0.05}
+                    onValueChange={(value) => setPlaybackSpeed(value[0])}
+                  />
+                </div>
+              )}
+
+              {canTiming && canAutoPlay && (
+                <div className="grid gap-2">
+                  <div className="flex items-center justify-between text-white/70">
+                    <span>Delay</span>
+                    <span className="text-white/80">{delayLabel}s</span>
+                  </div>
+                  <Slider
+                    value={[autoPlayDelayMs]}
+                    min={300}
+                    max={3000}
+                    step={100}
+                    onValueChange={(value) => setAutoPlayDelay(value[0])}
+                  />
+                </div>
+              )}
             </div>
           </ToolbarPanel>
         </Popover>

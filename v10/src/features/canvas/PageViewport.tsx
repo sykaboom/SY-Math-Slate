@@ -1,15 +1,28 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import type { ReactNode } from "react";
 
 import { cn } from "@core/utils";
 import { getBoardSize, type BoardRatio } from "@core/config/boardSpec";
 import { useUIStore } from "@features/store/useUIStore";
 
+const PageScaleContext = createContext(1);
+
+export const usePageScale = () => useContext(PageScaleContext);
+
 type PageViewportProps = {
   ratio: BoardRatio;
   children: ReactNode;
+  overlay?: ReactNode;
   className?: string;
   paddingTop?: number | string;
   paddingBottom?: number | string;
@@ -18,6 +31,7 @@ type PageViewportProps = {
 export function PageViewport({
   ratio,
   children,
+  overlay,
   className,
   paddingTop = 24,
   paddingBottom = 24,
@@ -31,7 +45,7 @@ export function PageViewport({
   const paddingBottomValue =
     typeof paddingBottom === "number" ? `${paddingBottom}px` : paddingBottom;
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const container = containerRef.current;
     if (!container) return;
 
@@ -90,25 +104,28 @@ export function PageViewport({
           height: `${boardSize.height * scale}px`,
         }}
       >
-        <div
-          data-viewport-transform
-          className="absolute left-0 top-0 h-full w-full origin-top-left"
-          style={{
-            transform: `translate(${viewport.panOffset.x}px, ${viewport.panOffset.y}px) scale(${viewport.zoomLevel})`,
-          }}
-        >
+        <PageScaleContext.Provider value={scale}>
+          {overlay}
           <div
-            data-board-root
-            className={cn("absolute left-0 top-0 origin-top-left", className)}
+            data-viewport-transform
+            className="absolute left-0 top-0 h-full w-full origin-top-left"
             style={{
-              width: `${boardSize.width}px`,
-              height: `${boardSize.height}px`,
-              transform: `scale(${scale})`,
+              transform: `translate(${viewport.panOffset.x}px, ${viewport.panOffset.y}px) scale(${viewport.zoomLevel})`,
             }}
           >
-            {children}
+            <div
+              data-board-root
+              className={cn("absolute left-0 top-0 origin-top-left", className)}
+              style={{
+                width: `${boardSize.width}px`,
+                height: `${boardSize.height}px`,
+                transform: `scale(${scale})`,
+              }}
+            >
+              {children}
+            </div>
           </div>
-        </div>
+        </PageScaleContext.Provider>
       </div>
     </div>
   );

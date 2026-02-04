@@ -330,7 +330,7 @@ export function useViewportInteraction(
       onPointerMoveCapture: handlePointerMoveCapture,
       onPointerUpCapture: handlePointerUpCapture,
       onPointerCancelCapture: handlePointerUpCapture,
-      onPointerLeaveCapture: handlePointerUpCapture,
+      onPointerLeave: handlePointerUpCapture,
     }),
     [
       handlePointerDownCapture,

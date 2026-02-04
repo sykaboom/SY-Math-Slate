@@ -6,7 +6,7 @@ As part of the ongoing Tablet environment improvements, certain core features ar
 ## Goal
 Extract "Presentation Mode" and "Paste Helper" from the "More" menu and place them as dedicated icons in the primary UI for immediate access.
 
-## Status: PENDING
+## Status: COMPLETED
 
 ## Scope
 - `v10/src/features/layout/AppLayout.tsx` (Top Header)
@@ -45,3 +45,9 @@ Extract "Presentation Mode" and "Paste Helper" from the "More" menu and place th
 ## Files to Change (by Codex)
 - `v10/src/features/layout/AppLayout.tsx`
 - `v10/src/features/toolbar/FloatingToolbar.tsx`
+
+## Closeout Notes
+- Changed files: `v10/src/features/layout/AppLayout.tsx`
+- Changed files: `v10/src/features/toolbar/FloatingToolbar.tsx`
+- Commands run: none
+- Manual verification: not run (user reported implemented)

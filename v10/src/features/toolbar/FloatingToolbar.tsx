@@ -14,14 +14,15 @@ import { useUIStore, type Tool } from "@features/store/useUIStore";
 import {
   ChevronsLeft,
   ChevronsRight,
+  ClipboardList,
+  Columns,
+  CornerDownLeft,
   Eraser,
+  FilePlus,
   Hand,
-  HelpCircle,
   Image as ImageIcon,
-  Minus,
   MoreHorizontal,
   PenLine,
-  Plus,
   Redo2,
   Type,
   Undo2,
@@ -57,6 +58,10 @@ export function FloatingToolbar() {
     isDataInputOpen,
     toggleDataInput,
     resetViewport,
+    showBreakGuides,
+    showCanvasBorder,
+    toggleBreakGuides,
+    toggleCanvasBorder,
     isCapabilityEnabled,
     capabilityProfile,
     setCapabilityProfile,
@@ -68,16 +73,12 @@ export function FloatingToolbar() {
     currentStep,
     nextStep,
     prevStep,
-    pageColumnCounts,
-    increaseColumns,
-    decreaseColumns,
     insertBreak,
   } = useCanvasStore();
 
   const isPenOpen = openPanel === "pen";
   const isLaserOpen = openPanel === "laser";
   const currentItems = pages[currentPageId] ?? [];
-  const columnCount = pageColumnCounts?.[currentPageId] ?? 2;
   const canUndo = currentItems.some((item) => item.type === "stroke");
   const maxStep = Object.values(pages).reduce((max, items) => {
     return items.reduce((innerMax, item) => {
@@ -268,40 +269,35 @@ export function FloatingToolbar() {
           disabled={isOverviewMode}
         />
         <ToolButton
-          icon={HelpCircle}
+          icon={ClipboardList}
           label="붙여넣기 도움말"
           onClick={handlePasteHelper}
           disabled={isOverviewMode}
         />
         <PlaybackControls />
+        <PageNavigator />
         <div className="flex items-center gap-1 rounded-full border border-white/10 bg-white/5 px-2 py-1 text-[11px] text-white/70">
-          <button
-            type="button"
-            className="rounded-full px-2 py-1 hover:text-white disabled:text-white/40"
+          <ToolButton
+            icon={CornerDownLeft}
+            label="Line Break"
             onClick={() => insertBreak("line", { panelOpen: isDataInputOpen })}
             disabled={isOverviewMode}
-            title="줄 추가"
-          >
-            줄추가
-          </button>
-          <button
-            type="button"
-            className="rounded-full px-2 py-1 hover:text-white disabled:text-white/40"
+            className="h-8 w-8"
+          />
+          <ToolButton
+            icon={Columns}
+            label="Column Break"
             onClick={() => insertBreak("column", { panelOpen: isDataInputOpen })}
             disabled={isOverviewMode}
-            title="단 이동"
-          >
-            단이동
-          </button>
-          <button
-            type="button"
-            className="rounded-full px-2 py-1 hover:text-white disabled:text-white/40"
+            className="h-8 w-8"
+          />
+          <ToolButton
+            icon={FilePlus}
+            label="Page Break"
             onClick={() => insertBreak("page", { panelOpen: isDataInputOpen })}
             disabled={isOverviewMode}
-            title="페이지 이동"
-          >
-            페이지이동
-          </button>
+            className="h-8 w-8"
+          />
         </div>
         <Popover>
           <PopoverTrigger asChild>
@@ -419,6 +415,42 @@ export function FloatingToolbar() {
                   </button>
                 </div>
               </div>
+
+              <div className="grid gap-2">
+                <span className="text-[10px] uppercase tracking-wide text-white/40">
+                  Layout
+                </span>
+                <div className="grid gap-2">
+                  <button
+                    type="button"
+                    className={cn(
+                      menuButtonClass,
+                      "flex items-center justify-between",
+                      !showCanvasBorder && "text-white/40"
+                    )}
+                    onClick={toggleCanvasBorder}
+                  >
+                    <span>캔버스 경계선</span>
+                    <span className="text-[10px] uppercase tracking-wide">
+                      {showCanvasBorder ? "표시" : "숨김"}
+                    </span>
+                  </button>
+                  <button
+                    type="button"
+                    className={cn(
+                      menuButtonClass,
+                      "flex items-center justify-between",
+                      !showBreakGuides && "text-white/40"
+                    )}
+                    onClick={toggleBreakGuides}
+                  >
+                    <span>단 구분선</span>
+                    <span className="text-[10px] uppercase tracking-wide">
+                      {showBreakGuides ? "표시" : "숨김"}
+                    </span>
+                  </button>
+                </div>
+              </div>
               {canOverview && (
                 <div className="grid gap-2">
                   <span className="text-[10px] uppercase tracking-wide text-white/40">
@@ -482,38 +514,6 @@ export function FloatingToolbar() {
                   </div>
                 </div>
               )}
-
-              <div className="grid gap-2">
-                <span className="text-[10px] uppercase tracking-wide text-white/40">
-                  Layout
-                </span>
-                <div className="grid gap-2">
-                  <div className="flex items-center justify-between">
-                    <span>페이지</span>
-                    <PageNavigator />
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span>단 개수</span>
-                    <div className="flex items-center gap-2">
-                      <ToolButton
-                        icon={Minus}
-                        label="Decrease Columns"
-                        onClick={decreaseColumns}
-                        disabled={columnCount <= 1 || isOverviewMode}
-                        className="h-8 w-8"
-                      />
-                      <span>{columnCount}단</span>
-                      <ToolButton
-                        icon={Plus}
-                        label="Increase Columns"
-                        onClick={increaseColumns}
-                        disabled={columnCount >= 4 || isOverviewMode}
-                        className="h-8 w-8"
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
 
               <div className="grid gap-2">
                 <span className="text-[10px] uppercase tracking-wide text-white/40">

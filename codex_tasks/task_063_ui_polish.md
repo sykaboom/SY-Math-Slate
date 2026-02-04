@@ -1,6 +1,6 @@
 # Task 063: UI Polish — Playback, Prompter, Layout & Eraser
 
-**Status:** PENDING
+**Status:** COMPLETED
 **Priority:** P2 (UI/UX)
 **Assignee:** Codex CLI
 **Dependencies:** Task 062 (can run in parallel)
@@ -19,6 +19,7 @@ Multiple UI areas feel "debug-like" or cluttered. The user requested specific im
 ## Scope (Files)
 - `v10/src/features/toolbar/PlaybackControls.tsx`
 - `v10/src/features/toolbar/PageNavigator.tsx` (New/Update)
+- `v10/src/features/toolbar/FloatingToolbar.tsx`
 - `v10/src/features/layout/Prompter.tsx`
 - `v10/src/features/layout/DataInputPanel.tsx`
 - `v10/src/features/store/useCanvasStore.ts` (For `isPageEmpty` logic)
@@ -74,3 +75,15 @@ Multiple UI areas feel "debug-like" or cluttered. The user requested specific im
 - [ ] **Empty Detection:** Erasing all ink + removing all text makes the page "empty" and unlock deletion.
 - [ ] **Prompter:** Subtitle style, no scroll list.
 - [ ] **Eraser:** Standard eraser deletes whole strokes on intersection.
+
+## Closeout Notes
+- Changed files:
+  - `v10/src/features/toolbar/PlaybackControls.tsx`
+  - `v10/src/features/toolbar/PageNavigator.tsx`
+  - `v10/src/features/toolbar/FloatingToolbar.tsx`
+  - `v10/src/features/layout/Prompter.tsx`
+  - `v10/src/features/layout/DataInputPanel.tsx`
+  - `v10/src/features/store/useCanvasStore.ts`
+  - `v10/src/features/hooks/useCanvas.ts`
+- Commands run: none
+- Manual verification: not run (per user)
