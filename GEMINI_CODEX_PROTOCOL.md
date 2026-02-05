@@ -19,11 +19,13 @@ Two-agent collaboration rule: PROJECT_BLUEPRINT.md > PROJECT_CONTEXT.md > codex_
 ## 3) Responsibilities
 ### Gemini (Architect / Reviewer)
 - Read-only for existing production code.
-- Writes/updates task specs in `codex_tasks/`.
+- Writes initial task spec drafts in `codex_tasks/`.
 - For design-heavy NEW frontend features: may create self-contained drafts in `design_drafts/` only.
 - Must not edit existing production files.
 
 ### Codex (Implementer / Integrator)
+- Reviews and may edit task specs after receiving the Gemini draft.
+- Any spec edits must be reviewed by the user before implementation.
 - Implements tasks in production code.
 - Validates spec quality BEFORE coding.
 - Touches only the files explicitly listed in the spec.
@@ -31,9 +33,9 @@ Two-agent collaboration rule: PROJECT_BLUEPRINT.md > PROJECT_CONTEXT.md > codex_
 - Commits/pushes only when explicitly asked.
 
 ## 4) Workflow (mandatory)
-1) Spec (Gemini): `codex_tasks/task_<id>_<desc>.md` with status = PENDING
-2) Validate (Codex): review spec; if missing scope/acceptance/touched files -> ask and pause
-3) Implement (Codex): minimal changes within scope
+1) Spec Draft (Gemini): `codex_tasks/task_<id>_<desc>.md` with status = PENDING
+2) Review + Edit (Codex): review spec; if missing scope/acceptance/touched files -> edit the spec and request user review/approval
+3) Implement (Codex): minimal changes within approved scope
 4) Closeout (Codex): update the SAME spec file status = COMPLETED, include:
    - changed files
    - commands run (if any)
@@ -51,7 +53,7 @@ A spec must include:
 - Scope: explicit touched file list (or directories)
 - Acceptance criteria / manual verification steps
 - Risks / roll-back notes (when relevant)
-If any item is missing => pause and ask.
+If any item is missing => update the spec and request user review/approval before coding.
 
 ## 6) Safety / Quality guardrails
 - No eval / new Function

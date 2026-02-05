@@ -23,10 +23,22 @@ const defaultTransform: BoardTransform = {
 
 export function useBoardTransform() {
   const ratio = useUIStore((state) => state.overviewViewportRatio);
+  const viewport = useUIStore((state) => state.viewport);
   const transformRef = useRef<BoardTransform>(defaultTransform);
+  const rafRef = useRef<number | null>(null);
+  const boardRef = useRef<HTMLElement | null>(null);
+
+  const resolveBoard = useCallback(() => {
+    if (boardRef.current && document.contains(boardRef.current)) {
+      return boardRef.current;
+    }
+    const board = document.querySelector<HTMLElement>("[data-board-root]");
+    boardRef.current = board;
+    return board;
+  }, []);
 
   const updateTransform = useCallback(() => {
-    const board = document.querySelector<HTMLElement>("[data-board-root]");
+    const board = resolveBoard();
     if (!board) return;
     const rect = board.getBoundingClientRect();
     const { width, height } = getBoardSize(ratio);
@@ -39,13 +51,21 @@ export function useBoardTransform() {
       width,
       height,
     };
-  }, [ratio]);
+  }, [ratio, resolveBoard]);
+
+  const scheduleUpdate = useCallback(() => {
+    if (rafRef.current) return;
+    rafRef.current = window.requestAnimationFrame(() => {
+      rafRef.current = null;
+      updateTransform();
+    });
+  }, [updateTransform]);
 
   useEffect(() => {
-    updateTransform();
-    const handle = () => updateTransform();
-    const observer = new ResizeObserver(updateTransform);
-    const board = document.querySelector<HTMLElement>("[data-board-root]");
+    scheduleUpdate();
+    const handle = () => scheduleUpdate();
+    const observer = new ResizeObserver(handle);
+    const board = resolveBoard();
     if (board) observer.observe(board);
 
     window.addEventListener("resize", handle);
@@ -55,13 +75,24 @@ export function useBoardTransform() {
       window.removeEventListener("resize", handle);
       window.removeEventListener("scroll", handle, true);
       observer.disconnect();
+      if (rafRef.current) {
+        window.cancelAnimationFrame(rafRef.current);
+        rafRef.current = null;
+      }
     };
-  }, [updateTransform]);
+  }, [resolveBoard, scheduleUpdate]);
+
+  useEffect(() => {
+    scheduleUpdate();
+  }, [scheduleUpdate, viewport.panOffset.x, viewport.panOffset.y, viewport.zoomLevel]);
 
   const toBoardPoint = useCallback(
     (clientX: number, clientY: number) => {
-      updateTransform();
-      const { scale, offsetX, offsetY } = transformRef.current;
+      let { scale, offsetX, offsetY } = transformRef.current;
+      if (!Number.isFinite(scale) || scale === 0) {
+        updateTransform();
+        ({ scale, offsetX, offsetY } = transformRef.current);
+      }
       if (!Number.isFinite(scale) || scale === 0) {
         return { x: clientX, y: clientY };
       }

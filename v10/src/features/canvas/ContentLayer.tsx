@@ -12,7 +12,7 @@ import { cn } from "@core/utils";
 import { MathTextBlock } from "@features/canvas/MathTextBlock";
 import { ImageBlock } from "@features/canvas/objects/ImageBlock";
 import { AnimatedTextBlock } from "@features/canvas/animation/AnimatedTextBlock";
-import { MathRevealBlock } from "@features/canvas/animation/MathRevealBlock";
+import { MixedRevealBlock } from "@features/canvas/animation/MixedRevealBlock";
 import type { AnimationState } from "@features/hooks/useSequence";
 import { PlayCircle } from "lucide-react";
 
@@ -44,14 +44,6 @@ const findTextItemByStep = (items: CanvasItem[], step: number) =>
   items.find((item) => isTextItem(item) && getStepIndex(item) === step) as
     | TextItem
     | undefined;
-
-const getLastTextItemId = (items: CanvasItem[], step: number) => {
-  const candidates = items.filter(
-    (item) => isTextItem(item) && getStepIndex(item) === step
-  );
-  if (candidates.length === 0) return null;
-  return candidates[candidates.length - 1].id;
-};
 
 const sanitizeHtml = (value: string) => {
   return DOMPurify.sanitize(value, {
@@ -176,16 +168,6 @@ export function ContentLayer({
     return { html: `${marker}${sanitized}` };
   }, [cursorProbe, currentStep]);
 
-  const lastStepFlowItemId = useMemo(() => {
-    if (maxStep < 0) return null;
-    return getLastTextItemId(flowItems, maxStep);
-  }, [flowItems, maxStep]);
-
-  const lastStepAbsoluteItemId = useMemo(() => {
-    if (maxStep < 0) return null;
-    return getLastTextItemId(absoluteTextItems, maxStep);
-  }, [absoluteTextItems, maxStep]);
-
   return (
     <>
       <div
@@ -203,19 +185,13 @@ export function ContentLayer({
         {visibleFlowItems.map((item) => {
           if (isTextItem(item)) {
             const sanitized = sanitizeHtml(item.content);
-            const shouldAttachEndMarker =
-              isAfterLastStep &&
-              item.id === (lastStepFlowItemId ?? lastStepAbsoluteItemId);
-            const renderedHtml = shouldAttachEndMarker
-              ? `${sanitized}<span class="end-marker" aria-hidden="true"></span>`
-              : sanitized;
             const style = isRecord(item.style)
               ? (item.style as CSSProperties)
               : undefined;
             if (isAnimating && item.id === activeItemId && !isOverviewMode) {
               if (sanitized.includes("$")) {
                 return (
-                  <MathRevealBlock
+                  <MixedRevealBlock
                     key={item.id}
                     className={cn(
                       "text-item mb-8 break-inside-avoid pointer-events-none"
@@ -260,7 +236,7 @@ export function ContentLayer({
                 <MathTextBlock
                   className="pointer-events-none"
                   style={style}
-                  html={renderedHtml}
+                  html={sanitized}
                 />
               </div>
             );
@@ -312,36 +288,30 @@ export function ContentLayer({
         {absoluteTextItems.map((item) => {
           if (!shouldShowText(item) && item.id !== activeItemId) return null;
           const sanitized = sanitizeHtml(item.content);
-          const shouldAttachEndMarker =
-            isAfterLastStep &&
-            item.id === (lastStepAbsoluteItemId ?? lastStepFlowItemId);
-          const renderedHtml = shouldAttachEndMarker
-            ? `${sanitized}<span class="end-marker" aria-hidden="true"></span>`
-            : sanitized;
           const style = isRecord(item.style)
             ? (item.style as CSSProperties)
             : undefined;
-          if (isAnimating && item.id === activeItemId && !isOverviewMode) {
-            if (sanitized.includes("$")) {
-              return (
-                <MathRevealBlock
-                  key={item.id}
-                  className="text-item absolute"
-                  style={{
-                    transform: `translate(${item.x}px, ${item.y}px)`,
-                    ...style,
-                  }}
-                  html={sanitized}
-                  isActive
-                  speed={animationState?.speed ?? 1}
-                  isPaused={animationState?.isPaused ?? false}
-                  skipSignal={animationState?.skipSignal ?? 0}
-                  stopSignal={animationState?.stopSignal ?? 0}
-                  onMove={animationState?.onMove ?? (() => {})}
-                  onDone={animationState?.onDone ?? (() => {})}
-                />
-              );
-            }
+            if (isAnimating && item.id === activeItemId && !isOverviewMode) {
+              if (sanitized.includes("$")) {
+                return (
+                  <MixedRevealBlock
+                    key={item.id}
+                    className="text-item absolute"
+                    style={{
+                      transform: `translate(${item.x}px, ${item.y}px)`,
+                      ...style,
+                    }}
+                    html={sanitized}
+                    isActive
+                    speed={animationState?.speed ?? 1}
+                    isPaused={animationState?.isPaused ?? false}
+                    skipSignal={animationState?.skipSignal ?? 0}
+                    stopSignal={animationState?.stopSignal ?? 0}
+                    onMove={animationState?.onMove ?? (() => {})}
+                    onDone={animationState?.onDone ?? (() => {})}
+                  />
+                );
+              }
             return (
               <AnimatedTextBlock
                 key={item.id}
@@ -371,7 +341,7 @@ export function ContentLayer({
               }}
               data-text-item
             >
-              <MathTextBlock className="pointer-events-none" html={renderedHtml} />
+              <MathTextBlock className="pointer-events-none" html={sanitized} />
             </div>
           );
         })}

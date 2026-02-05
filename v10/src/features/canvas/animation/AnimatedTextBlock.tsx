@@ -19,11 +19,29 @@ type AnimatedTextBlockProps = {
   onDone: () => void;
 };
 
-const CHAR_INTERVAL_MS = 28;
-const MIN_INTERVAL_MS = 8;
-const HIGHLIGHT_INTERVAL_MS = 20;
-const HIGHLIGHT_MIN_INTERVAL_MS = 10;
+const DURATION_PER_CHAR_MS = 26;
+const MIN_DURATION_MS = 320;
+const MAX_DURATION_MS = 7000;
+const HIGHLIGHT_PER_CHAR_MS = 42;
+const MIN_HIGHLIGHT_MS = 420;
+const MAX_HIGHLIGHT_MS = 12000;
 const BASELINE_OFFSET = 4;
+const CLIP_OVERSCAN_PX = 2;
+
+const clamp = (value: number, min: number, max: number) =>
+  Math.min(max, Math.max(min, value));
+
+const getContentRect = (el: HTMLDivElement) => {
+  try {
+    const range = document.createRange();
+    range.selectNodeContents(el);
+    const rect = range.getBoundingClientRect();
+    if (rect.width > 0 || rect.height > 0) return rect;
+  } catch {
+    // ignore
+  }
+  return el.getBoundingClientRect();
+};
 
 const getHighlightColor = (node: Node) => {
   let current = node.parentElement;
@@ -69,8 +87,6 @@ const buildCharSpans = (root: HTMLElement) => {
     }
     textNode.parentNode?.replaceChild(fragment, textNode);
   });
-
-  return index;
 };
 
 export function AnimatedTextBlock({
@@ -86,167 +102,228 @@ export function AnimatedTextBlock({
   onDone,
 }: AnimatedTextBlockProps) {
   const ref = useRef<HTMLDivElement | null>(null);
-  const lastPosRef = useRef<{ x: number; y: number } | null>(null);
-  const timeoutRef = useRef<number | null>(null);
-  const stepRef = useRef<(() => void) | null>(null);
+  const rafRef = useRef(0);
+  const startRef = useRef(0);
+  const elapsedRef = useRef(0);
   const speedRef = useRef(speed);
   const pausedRef = useRef(isPaused);
   const skipRef = useRef(skipSignal);
   const stopRef = useRef(stopSignal);
   const highlightSpansRef = useRef<HTMLElement[]>([]);
+  const highlightIndexRef = useRef(0);
+  const lastHighlightPosRef = useRef<{ x: number; y: number } | null>(null);
   const { toBoardPoint } = useBoardTransform();
+  const mergedStyle: CSSProperties = {
+    display: "inline-block",
+    maxWidth: "100%",
+    ...style,
+  };
 
-  const revealAll = useCallback(() => {
-    const el = ref.current;
-    if (!el) return;
-    const spans = Array.from(el.querySelectorAll<HTMLElement>("[data-char-index]"));
-    spans.forEach((span) => span.classList.add("tw-visible"));
-    highlightSpansRef.current.forEach((span) => {
-      span.dataset.hlActive = "1";
-    });
+  const getRevealDurationMs = useCallback((el: HTMLDivElement) => {
+    const length = el.textContent?.length ?? 0;
+    if (length === 0) return 0;
+    const base = length * DURATION_PER_CHAR_MS;
+    return clamp(
+      base / Math.max(0.1, speedRef.current),
+      MIN_DURATION_MS,
+      MAX_DURATION_MS
+    );
   }, []);
+
+  const getHighlightDurationMs = useCallback((count: number) => {
+    if (count === 0) return 0;
+    const base = count * HIGHLIGHT_PER_CHAR_MS;
+    return clamp(
+      base / Math.max(0.1, speedRef.current),
+      MIN_HIGHLIGHT_MS,
+      MAX_HIGHLIGHT_MS
+    );
+  }, []);
+
+  const animateFrame = useCallback(
+    (now: number) => {
+      const el = ref.current;
+      if (!el) return;
+      const revealDuration = getRevealDurationMs(el);
+      const highlightSpans = highlightSpansRef.current;
+      const highlightDuration = getHighlightDurationMs(highlightSpans.length);
+      const totalDuration = revealDuration + highlightDuration;
+      if (totalDuration <= 0) {
+        el.style.clipPath = "";
+        el.style.setProperty("-webkit-clip-path", "");
+        onDone();
+        return;
+      }
+
+      const elapsed = Math.min(totalDuration, now - startRef.current);
+      elapsedRef.current = elapsed;
+
+      if (revealDuration > 0) {
+        const revealProgress = Math.min(1, elapsed / revealDuration);
+        const wrapperRect = el.getBoundingClientRect();
+        const contentRect = getContentRect(el);
+        if (contentRect.width > 0 || contentRect.height > 0) {
+          const lead = Math.max(6, Math.min(contentRect.width * 0.05, 14));
+          const x = contentRect.left + contentRect.width * revealProgress + lead;
+          const y = contentRect.bottom - BASELINE_OFFSET;
+          const boardPos = toBoardPoint(x, y);
+          onMove(boardPos, "chalk");
+        }
+        const contentLeft = contentRect.left - wrapperRect.left;
+        const revealWidth = contentRect.width * revealProgress;
+        const leftClip = Math.max(
+          0,
+          Math.floor(contentLeft) - CLIP_OVERSCAN_PX
+        );
+        const rightClip = Math.max(
+          0,
+          Math.ceil(wrapperRect.width - (contentLeft + revealWidth)) -
+            CLIP_OVERSCAN_PX
+        );
+        const clipValue = `inset(0 ${rightClip}px 0 ${leftClip}px)`;
+        el.style.clipPath = clipValue;
+        el.style.setProperty("-webkit-clip-path", clipValue);
+      }
+
+      if (highlightSpans.length > 0 && elapsed >= revealDuration) {
+        const highlightElapsed = elapsed - revealDuration;
+        const highlightProgress =
+          highlightDuration > 0
+            ? Math.min(1, highlightElapsed / highlightDuration)
+            : 1;
+        const exactIndex = highlightProgress * highlightSpans.length;
+        const targetIndex = Math.min(
+          Math.floor(exactIndex),
+          highlightSpans.length
+        );
+        for (let i = highlightIndexRef.current; i < targetIndex; i += 1) {
+          highlightSpans[i].dataset.hlActive = "1";
+        }
+        highlightIndexRef.current = targetIndex;
+        const activeIndex = Math.min(
+          Math.max(Math.floor(exactIndex), 0),
+          highlightSpans.length - 1
+        );
+        const intra = Math.min(
+          1,
+          Math.max(0, exactIndex - activeIndex)
+        );
+        const activeSpan = highlightSpans[activeIndex];
+        if (activeSpan) {
+          const rect = activeSpan.getBoundingClientRect();
+          if (rect.width > 0 || rect.height > 0) {
+            const lead = Math.max(4, Math.min(rect.width, 10));
+            const boardPos = toBoardPoint(
+              rect.left + rect.width * intra + lead,
+              rect.bottom - BASELINE_OFFSET
+            );
+            lastHighlightPosRef.current = boardPos;
+            onMove(boardPos, "marker");
+          } else if (lastHighlightPosRef.current) {
+            onMove(lastHighlightPosRef.current, "marker");
+          }
+        }
+      }
+
+      if (elapsed < totalDuration && !pausedRef.current) {
+        rafRef.current = requestAnimationFrame(animateFrame);
+      } else {
+        rafRef.current = 0;
+        el.style.clipPath = "";
+        el.style.setProperty("-webkit-clip-path", "");
+        if (highlightSpans.length > 0) {
+          highlightSpans.forEach((span) => {
+            span.dataset.hlActive = "1";
+          });
+        }
+        onDone();
+      }
+    },
+    [getHighlightDurationMs, getRevealDurationMs, onDone, onMove, toBoardPoint]
+  );
 
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
     el.innerHTML = html;
-    buildCharSpans(el);
-    highlightSpansRef.current = Array.from(
-      el.querySelectorAll<HTMLElement>("[data-highlight='1']")
-    );
-    if (!isActive) {
-      revealAll();
+
+    const hasHighlight = Boolean(el.querySelector(".hl-yellow, .hl-cyan"));
+    if (hasHighlight) {
+      buildCharSpans(el);
+      const spans = Array.from(
+        el.querySelectorAll<HTMLElement>("[data-char-index]")
+      );
+      spans.forEach((span) => span.classList.add("tw-visible"));
+      highlightSpansRef.current = Array.from(
+        el.querySelectorAll<HTMLElement>("[data-highlight='1']")
+      );
+    } else {
+      highlightSpansRef.current = [];
     }
-  }, [html, isActive, revealAll]);
+  }, [html]);
 
   useEffect(() => {
     speedRef.current = speed;
-  }, [speed]);
+    if (!isActive) return;
+    const el = ref.current;
+    if (!el) return;
+    const revealDuration = getRevealDurationMs(el);
+    const highlightDuration = getHighlightDurationMs(
+      highlightSpansRef.current.length
+    );
+    const totalDuration = revealDuration + highlightDuration;
+    startRef.current = performance.now() - elapsedRef.current;
+    if (elapsedRef.current > totalDuration) {
+      elapsedRef.current = totalDuration;
+    }
+  }, [getHighlightDurationMs, getRevealDurationMs, isActive, speed]);
 
   useEffect(() => {
     pausedRef.current = isPaused;
-    if (!isPaused && isActive && stepRef.current && timeoutRef.current === null) {
-      stepRef.current();
+    if (!isPaused && isActive && rafRef.current === 0) {
+      const el = ref.current;
+      if (!el) return;
+      startRef.current = performance.now() - elapsedRef.current;
+      rafRef.current = requestAnimationFrame(animateFrame);
     }
-  }, [isPaused, isActive]);
+  }, [animateFrame, isActive, isPaused]);
 
   useEffect(() => {
     const el = ref.current;
     if (!el || !isActive) return;
 
-    const spans = Array.from(el.querySelectorAll<HTMLElement>("[data-char-index]"));
-    spans.forEach((span) => span.classList.remove("tw-visible"));
+    elapsedRef.current = 0;
+    highlightIndexRef.current = 0;
+    lastHighlightPosRef.current = null;
+
     highlightSpansRef.current.forEach((span) => {
       delete span.dataset.hlActive;
     });
 
-    let index = 0;
-    let cancelled = false;
+    const rect = el.getBoundingClientRect();
+    const contentRect = getContentRect(el);
+    const contentLeft = contentRect.left - rect.left;
+    const initialLeftClip = Math.max(
+      0,
+      Math.floor(contentLeft) - CLIP_OVERSCAN_PX
+    );
+    const initialRightClip = Math.ceil(rect.width + CLIP_OVERSCAN_PX * 2);
+    const initialClip = `inset(0 ${initialRightClip}px 0 ${initialLeftClip}px)`;
+    el.style.clipPath = initialClip;
+    el.style.setProperty("-webkit-clip-path", initialClip);
 
-    const step = () => {
-      if (cancelled) return;
-      if (pausedRef.current) {
-        timeoutRef.current = null;
-        return;
-      }
-      if (index >= spans.length) {
-        const highlightSpans = highlightSpansRef.current;
-        if (highlightSpans.length === 0) {
-          revealAll();
-          onDone();
-          return;
-        }
-        let highlightIndex = 0;
-        const highlightStep = () => {
-          if (cancelled) return;
-          if (pausedRef.current) {
-            timeoutRef.current = null;
-            return;
-          }
-          if (highlightIndex >= highlightSpans.length) {
-            onDone();
-            return;
-          }
-          const span = highlightSpans[highlightIndex];
-          span.dataset.hlActive = "1";
-          const rect = span.getBoundingClientRect();
-          const nextSpan = highlightSpans[highlightIndex + 1];
-          const nextRect = nextSpan?.getBoundingClientRect();
-          const hasNextRect =
-            nextRect && (nextRect.width > 0 || nextRect.height > 0);
-          if (hasNextRect) {
-            const boardPos = toBoardPoint(
-              nextRect.left + nextRect.width / 2,
-              nextRect.bottom - BASELINE_OFFSET
-            );
-            lastPosRef.current = boardPos;
-            onMove(boardPos, "marker");
-          } else if (rect.width > 0 || rect.height > 0) {
-            const lead = Math.max(6, Math.min(rect.width, 14));
-            const boardPos = toBoardPoint(
-              rect.left + rect.width / 2 + lead,
-              rect.bottom - BASELINE_OFFSET
-            );
-            lastPosRef.current = boardPos;
-            onMove(boardPos, "marker");
-          } else if (lastPosRef.current) {
-            onMove(lastPosRef.current, "marker");
-          }
-          highlightIndex += 1;
-          const interval = Math.max(
-            HIGHLIGHT_MIN_INTERVAL_MS,
-            HIGHLIGHT_INTERVAL_MS / Math.max(0.1, speedRef.current)
-          );
-          timeoutRef.current = window.setTimeout(highlightStep, interval);
-        };
-        highlightStep();
-        return;
-      }
-      const span = spans[index];
-      span.classList.add("tw-visible");
-      const rect = span.getBoundingClientRect();
-      const nextSpan = spans[index + 1];
-      const nextRect = nextSpan?.getBoundingClientRect();
-      const hasNextRect =
-        nextRect && (nextRect.width > 0 || nextRect.height > 0);
-      if (hasNextRect) {
-        const boardPos = toBoardPoint(
-          nextRect.left + nextRect.width / 2,
-          nextRect.bottom - BASELINE_OFFSET
-        );
-        lastPosRef.current = boardPos;
-        onMove(boardPos, "chalk");
-      } else if (rect.width > 0 || rect.height > 0) {
-        const lead = Math.max(6, Math.min(rect.width, 14));
-        const boardPos = toBoardPoint(
-          rect.left + rect.width / 2 + lead,
-          rect.bottom - BASELINE_OFFSET
-        );
-        lastPosRef.current = boardPos;
-        onMove(boardPos, "chalk");
-      } else if (lastPosRef.current) {
-        onMove(lastPosRef.current, "chalk");
-      }
-      index += 1;
-      const interval = Math.max(
-        MIN_INTERVAL_MS,
-        CHAR_INTERVAL_MS / Math.max(0.1, speedRef.current)
-      );
-      timeoutRef.current = window.setTimeout(step, interval);
-    };
-
-    stepRef.current = step;
-    step();
+    if (!pausedRef.current) {
+      startRef.current = performance.now();
+      rafRef.current = requestAnimationFrame(animateFrame);
+    }
 
     return () => {
-      cancelled = true;
-      stepRef.current = null;
-      if (timeoutRef.current) {
-        window.clearTimeout(timeoutRef.current);
-        timeoutRef.current = null;
-      }
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      rafRef.current = 0;
+      el.style.clipPath = "";
+      el.style.setProperty("-webkit-clip-path", "");
     };
-  }, [isActive, onDone, onMove, revealAll, toBoardPoint]);
+  }, [animateFrame, isActive]);
 
   useEffect(() => {
     if (!isActive) {
@@ -255,13 +332,17 @@ export function AnimatedTextBlock({
     }
     if (skipSignal === skipRef.current) return;
     skipRef.current = skipSignal;
-    if (timeoutRef.current) {
-      window.clearTimeout(timeoutRef.current);
-      timeoutRef.current = null;
-    }
-    revealAll();
+    const el = ref.current;
+    if (!el) return;
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    rafRef.current = 0;
+    el.style.clipPath = "";
+    el.style.setProperty("-webkit-clip-path", "");
+    highlightSpansRef.current.forEach((span) => {
+      span.dataset.hlActive = "1";
+    });
     onDone();
-  }, [isActive, onDone, revealAll, skipSignal]);
+  }, [isActive, onDone, skipSignal]);
 
   useEffect(() => {
     if (!isActive) {
@@ -270,18 +351,19 @@ export function AnimatedTextBlock({
     }
     if (stopSignal === stopRef.current) return;
     stopRef.current = stopSignal;
-    if (timeoutRef.current) {
-      window.clearTimeout(timeoutRef.current);
-      timeoutRef.current = null;
-    }
-    stepRef.current = null;
+    const el = ref.current;
+    if (!el) return;
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    rafRef.current = 0;
+    el.style.clipPath = "";
+    el.style.setProperty("-webkit-clip-path", "");
   }, [isActive, stopSignal]);
 
   return (
     <div
       ref={ref}
       className={cn(className, isActive && "hl-temporary")}
-      style={style}
+      style={mergedStyle}
     />
   );
 }

@@ -7,7 +7,7 @@ import { useCanvasStore } from "@features/store/useCanvasStore";
 import { useUIStore } from "@features/store/useUIStore";
 import { getBoardPadding, getBoardSize } from "@core/config/boardSpec";
 import { useBoardTransform } from "@features/hooks/useBoardTransform";
-import { chalkCssVars, chalkTheme } from "@core/themes/chalkTheme";
+import { chalkTheme } from "@core/themes/chalkTheme";
 
 type AnchorIndicatorProps = {
   isAnimating: boolean;
@@ -74,7 +74,6 @@ export function AnchorIndicator({ isAnimating }: AnchorIndicatorProps) {
   const lastPlaySignal = useRef(playSignal);
   const sawAnimatingRef = useRef(false);
   const playPending = playSignal !== lastPlaySignal.current;
-  const themeAppliedRef = useRef(false);
 
   useEffect(() => {
     if (playSignal === lastPlaySignal.current) return;
@@ -82,15 +81,6 @@ export function AnchorIndicator({ isAnimating }: AnchorIndicatorProps) {
     setSuppress(true);
     sawAnimatingRef.current = false;
   }, [playSignal]);
-
-  useEffect(() => {
-    if (themeAppliedRef.current) return;
-    themeAppliedRef.current = true;
-    const root = document.documentElement;
-    Object.entries(chalkCssVars).forEach(([key, value]) => {
-      root.style.setProperty(key, value);
-    });
-  }, []);
 
   useLayoutEffect(() => {
     setFlowAnchor(null);
@@ -136,6 +126,9 @@ export function AnchorIndicator({ isAnimating }: AnchorIndicatorProps) {
   const hasValidFlowAnchor = flowAnchor?.step === currentStep;
   const currentBlock = stepBlocks[currentStep];
   const isBreakAnchor = Boolean(currentBlock?.kind && currentBlock.kind !== "content");
+  const holder = chalkTheme.holder;
+  const bodyTop = chalkTheme.tipOffset.y - holder.body.thickness / 2;
+  const totalLength = holder.tip.length + holder.body.length;
 
   if (isOverviewMode) return null;
 
@@ -184,32 +177,76 @@ export function AnchorIndicator({ isAnimating }: AnchorIndicatorProps) {
       </style>
       <div className="chalk-anchor-wobble relative flex items-center">
         <div
-          className="relative flex items-center justify-center"
+          className="relative"
           style={{
-            width: chalkTheme.indicator.holder.width,
-            height: chalkTheme.indicator.holder.height,
-            borderRadius: chalkTheme.indicator.holder.radius,
-            border: `1px solid ${chalkTheme.colors.holderBorder}`,
-            background: chalkTheme.colors.holderBackground,
-            boxShadow: isBreakAnchor
-              ? `${chalkTheme.colors.holderShadow}, 0 0 15px var(--neon-pink)`
-              : chalkTheme.colors.holderShadow,
+            width: holder.frame.size,
+            height: holder.frame.size,
             opacity: isBreakAnchor ? 0.8 : 1,
           }}
         >
           <div
             className="absolute"
             style={{
-              left: chalkTheme.indicator.chalk.offsetX,
-              top: chalkTheme.indicator.chalk.offsetY,
-              width: chalkTheme.indicator.chalk.width,
-              height: chalkTheme.indicator.chalk.height,
-              borderRadius: 999,
-              transform: `rotate(${chalkTheme.indicator.chalk.rotateDeg}deg)`,
-              background: chalkTheme.colors.chalkGradient,
-              boxShadow: chalkTheme.colors.chalkGlow,
+              left: chalkTheme.tipOffset.x,
+              top: bodyTop,
+              width: totalLength,
+              height: holder.body.thickness,
+              transform: `rotate(${holder.angleDeg}deg)`,
+              transformOrigin: "0 50%",
             }}
-          />
+          >
+            <div
+              className="absolute"
+              style={{
+                left: 0,
+                top: (holder.body.thickness - holder.tip.thickness) / 2,
+                width: holder.tip.length,
+                height: holder.tip.thickness,
+                borderRadius: holder.tip.radius,
+                background: chalkTheme.colors.tipGradient,
+                boxShadow: chalkTheme.colors.tipGlow,
+                border: `1px solid ${chalkTheme.colors.tipBorder}`,
+              }}
+            />
+            <div
+              className="absolute"
+              style={{
+                left: holder.tip.length,
+                top: 0,
+                width: holder.body.length,
+                height: holder.body.thickness,
+                borderRadius: holder.body.radius,
+                border: `1px solid ${chalkTheme.colors.holderBorder}`,
+                background: chalkTheme.colors.holderBackground,
+                boxShadow: isBreakAnchor
+                  ? `${chalkTheme.colors.holderShadow}, 0 0 12px var(--neon-pink)`
+                  : chalkTheme.colors.holderShadow,
+              }}
+            >
+              <div
+                className="absolute"
+                style={{
+                  left: holder.body.bandOffset,
+                  top: 0,
+                  width: holder.body.bandWidth,
+                  height: holder.body.thickness,
+                  borderRadius: holder.body.radius,
+                  background: chalkTheme.colors.holderBand,
+                }}
+              />
+              <div
+                className="absolute"
+                style={{
+                  left: holder.body.highlightOffset,
+                  top: (holder.body.thickness - holder.body.highlightThickness) / 2,
+                  width: holder.body.highlightLength,
+                  height: holder.body.highlightThickness,
+                  borderRadius: holder.body.highlightThickness,
+                  background: chalkTheme.colors.holderHighlight,
+                }}
+              />
+            </div>
+          </div>
         </div>
       </div>
     </div>

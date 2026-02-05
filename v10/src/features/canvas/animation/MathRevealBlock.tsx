@@ -26,6 +26,8 @@ const WIDTH_REFERENCE = 320;
 const MIN_WEIGHT = 0.8;
 const MAX_WEIGHT = 2.4;
 
+const easeOutCubic = (value: number) => 1 - Math.pow(1 - value, 3);
+
 export function MathRevealBlock({
   html,
   className,
@@ -106,33 +108,32 @@ export function MathRevealBlock({
     const progress = Math.min(1, (now - startRef.current) / duration);
     progressRef.current = progress;
 
-    const wrapperRect = el.getBoundingClientRect();
     const contentRect = getContentRect(el);
     if (contentRect.width > 0 || contentRect.height > 0) {
-      const lead = Math.max(8, Math.min(contentRect.width * 0.05, 14));
-      const x = contentRect.left + contentRect.width * progress + lead;
+      const x = contentRect.left + contentRect.width * 0.5;
       const y = contentRect.bottom - BASELINE_OFFSET;
       const boardPos = toBoardPoint(x, y);
       onMove(boardPos, "chalk");
     }
-    const contentLeft = contentRect.left - wrapperRect.left;
-    const revealWidth = contentRect.width * progress;
-    const rightClip = Math.max(
-      0,
-      wrapperRect.width - (contentLeft + revealWidth)
-    );
-    const leftClip = Math.max(0, contentLeft);
-    const clipValue = `inset(0 ${rightClip}px 0 ${leftClip}px)`;
-    el.style.clipPath = clipValue;
-    el.style.setProperty("-webkit-clip-path", clipValue);
+    const easeOut = easeOutCubic(progress);
+    const popPhase = progress < 0.7 ? progress / 0.7 : (progress - 0.7) / 0.3;
+    const scale =
+      progress < 0.7 ? 0.98 + 0.04 * popPhase : 1.02 - 0.02 * popPhase;
+    const opacity = Math.min(1, progress * 1.4);
+    const blur = (1 - easeOut) * 2;
+    el.style.opacity = String(opacity);
+    el.style.filter = `blur(${blur.toFixed(2)}px)`;
+    el.style.transform = `scale(${scale.toFixed(4)})`;
 
     if (progress < 1 && !pausedRef.current) {
       rafRef.current = requestAnimationFrame(animateFrame);
     } else {
       rafRef.current = 0;
       if (progress >= 1) {
-        el.style.clipPath = "";
-        el.style.setProperty("-webkit-clip-path", "");
+        el.style.opacity = "1";
+        el.style.filter = "";
+        el.style.transform = "";
+        el.style.transformOrigin = "";
         onDone();
       }
     }
@@ -143,15 +144,12 @@ export function MathRevealBlock({
     if (!el || !isActive || !typesetReady) return;
 
     progressRef.current = 0;
-    const rect = el.getBoundingClientRect();
-    const contentRect = getContentRect(el);
-    const contentLeft = contentRect.left - rect.left;
-    const initialClip = `inset(0 ${rect.width}px 0 ${Math.max(
-      0,
-      contentLeft
-    )}px)`;
-    el.style.clipPath = initialClip;
-    el.style.setProperty("-webkit-clip-path", initialClip);
+    el.style.opacity = "0";
+    el.style.filter = "blur(2px)";
+    el.style.transform = "scale(0.98)";
+    el.style.transformOrigin = "50% 60%";
+    el.style.clipPath = "";
+    el.style.setProperty("-webkit-clip-path", "");
 
     if (!pausedRef.current) {
       startRef.current = performance.now();
@@ -161,6 +159,10 @@ export function MathRevealBlock({
     return () => {
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
       rafRef.current = 0;
+      el.style.opacity = "1";
+      el.style.filter = "";
+      el.style.transform = "";
+      el.style.transformOrigin = "";
       el.style.clipPath = "";
       el.style.setProperty("-webkit-clip-path", "");
     };
@@ -181,6 +183,10 @@ export function MathRevealBlock({
     if (!el) return;
     if (rafRef.current) cancelAnimationFrame(rafRef.current);
     rafRef.current = 0;
+    el.style.opacity = "1";
+    el.style.filter = "";
+    el.style.transform = "";
+    el.style.transformOrigin = "";
     el.style.clipPath = "";
     el.style.setProperty("-webkit-clip-path", "");
     progressRef.current = 1;
@@ -198,6 +204,10 @@ export function MathRevealBlock({
     if (!el) return;
     if (rafRef.current) cancelAnimationFrame(rafRef.current);
     rafRef.current = 0;
+    el.style.opacity = "1";
+    el.style.filter = "";
+    el.style.transform = "";
+    el.style.transformOrigin = "";
     el.style.clipPath = "";
     el.style.setProperty("-webkit-clip-path", "");
   }, [isActive, stopSignal]);

@@ -87,9 +87,13 @@ export function useSequence({
       const resolvedTool = tool ?? "chalk";
       const offset =
         resolvedTool === "marker" ? MARKER_TIP_OFFSET : CHALK_TIP_OFFSET;
-      el.style.transform = `translate3d(${pos.x - offset.x}px, ${
-        pos.y - offset.y
-      }px, 0)`;
+      const rawX = pos.x - offset.x;
+      const rawY = pos.y - offset.y;
+      const dpr =
+        typeof window === "undefined" ? 1 : window.devicePixelRatio || 1;
+      const snappedX = Math.round(rawX * dpr) / dpr;
+      const snappedY = Math.round(rawY * dpr) / dpr;
+      el.style.transform = `translate3d(${snappedX}px, ${snappedY}px, 0)`;
     },
     [actorRef]
   );
@@ -137,12 +141,17 @@ export function useSequence({
         lastSoundToolRef.current = resolvedTool;
         play(resolvedTool);
       }
-      setActor((prev) => ({
-        ...prev,
-        visible: true,
-        isMoving: true,
-        type: resolvedTool,
-      }));
+      setActor((prev) => {
+        if (prev.visible && prev.isMoving && prev.type === resolvedTool) {
+          return prev;
+        }
+        return {
+          ...prev,
+          visible: true,
+          isMoving: true,
+          type: resolvedTool,
+        };
+      });
     },
     [moveActor, play]
   );

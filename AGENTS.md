@@ -16,7 +16,7 @@ Then inspect relevant code files
 Do NOT read `GEMINI.md`.
 
 If no task spec exists for the requested work:
-- Ask the user to create a spec in codex_tasks/ (or ask the user to provide scope + acceptance criteria).
+- Ask the user (or Gemini) to create a draft spec in codex_tasks/ (or ask the user to provide scope + acceptance criteria).
 
 ## Repository map (quick)
 - Root `/`: legacy Vite app (classic HTML/JS/CSS). Source: `src/` (`main.js`, `style.css`).
@@ -47,10 +47,10 @@ v10 (Next.js app):
 Before coding:
 - Open the spec file in `codex_tasks/`.
 - Validate: scope (touched files), acceptance criteria, dependencies.
-- If any are missing/ambiguous: STOP and ask questions.
+- If any are missing/ambiguous: update the spec and request user review/approval before coding.
 
 While coding:
-- Touch ONLY the files listed in the spec.
+- Touch ONLY the files listed in the approved spec.
 - No opportunistic refactors. No extra features.
 
 After coding:
