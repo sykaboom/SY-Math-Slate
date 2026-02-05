@@ -60,8 +60,10 @@ export function FloatingToolbar() {
     resetViewport,
     showBreakGuides,
     showCanvasBorder,
+    showCursors,
     toggleBreakGuides,
     toggleCanvasBorder,
+    toggleCursors,
     isCapabilityEnabled,
     capabilityProfile,
     setCapabilityProfile,
@@ -412,6 +414,28 @@ export function FloatingToolbar() {
                     onClick={resetViewport}
                   >
                     Reset View (100%)
+                  </button>
+                </div>
+              </div>
+
+              <div className="grid gap-2">
+                <span className="text-[10px] uppercase tracking-wide text-white/40">
+                  Cursor
+                </span>
+                <div className="grid gap-2">
+                  <button
+                    type="button"
+                    className={cn(
+                      menuButtonClass,
+                      "flex items-center justify-between",
+                      !showCursors && "text-white/40"
+                    )}
+                    onClick={toggleCursors}
+                  >
+                    <span>쓰기 커서</span>
+                    <span className="text-[10px] uppercase tracking-wide">
+                      {showCursors ? "표시" : "숨김"}
+                    </span>
                   </button>
                 </div>
               </div>

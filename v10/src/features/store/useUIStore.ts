@@ -52,6 +52,7 @@ interface UIState {
   isAnimating: boolean;
   isSoundEnabled: boolean;
   isDataInputOpen: boolean;
+  showCursors: boolean;
   showBreakGuides: boolean;
   showCanvasBorder: boolean;
   setTool: (tool: Tool) => void;
@@ -92,6 +93,7 @@ interface UIState {
   openDataInput: () => void;
   closeDataInput: () => void;
   toggleDataInput: () => void;
+  toggleCursors: () => void;
   toggleBreakGuides: () => void;
   toggleCanvasBorder: () => void;
 }
@@ -126,6 +128,7 @@ export const useUIStore = create<UIState>((set, get) => ({
   isAnimating: false,
   isSoundEnabled: false,
   isDataInputOpen: false,
+  showCursors: false,
   showBreakGuides: true,
   showCanvasBorder: true,
   setTool: (tool) =>
@@ -242,6 +245,7 @@ export const useUIStore = create<UIState>((set, get) => ({
   closeDataInput: () => set(() => ({ isDataInputOpen: false })),
   toggleDataInput: () =>
     set((state) => ({ isDataInputOpen: !state.isDataInputOpen })),
+  toggleCursors: () => set((state) => ({ showCursors: !state.showCursors })),
   toggleBreakGuides: () =>
     set((state) => ({ showBreakGuides: !state.showBreakGuides })),
   toggleCanvasBorder: () =>

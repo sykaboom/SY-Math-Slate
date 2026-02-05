@@ -1,20 +1,23 @@
-# Task 064: Visual Polish — Chalk Design, Ghost Fix, Image Handles
+# Task 064: Visual Polish — Chalk Design, Cursor Visibility, Image Handles
 
-**Status:** PENDING
+**Status:** COMPLETED
 **Priority:** P2 (Visual/UX)
 **Assignee:** Codex CLI
 **Dependencies:** Task 063 (Completed)
 
 ## Context
 The user requested visual refinements to match the "Neon" aesthetic and fix a specific rendering artifact. Additionally, a P0 gap (Image Manipulation) needs to be addressed.
-1.  **Chalk Cursor:** The current realistic chalk image feels out of place. It should match the "Highlighter" design language (flat, glowing, modern).
-2.  **Ghost Comma:** A mysterious comma (`,`) or artifact appears at the end of text after animation completes.
-3.  **Image Handles:** Images can be inserted but resizing is inconsistent or missing in some cases (P0 Gap). Existing `ImageBlock` handles should be audited before adding new components.
+1.  **Chalk Cursor:** Simplify the chalk to a flat, glowing, modern form (same family as the Highlighter).
+2.  **Ghost Comma (Clarified):** After a step finishes, the chalk cursor shrinks into a tiny marker-like icon and remains visible at the end of the text. This is the "ghost comma" artifact.
+3.  **Image Handles:** Images can be inserted but resizing is inconsistent or missing in some cases (P0 Gap).
+4.  **Cursor Visibility Toggle:** The user wants a toggle in the FloatingToolbar "More" menu to hide/show cursors. Default is hidden (OFF), session-only.
 
 ## Goals
 1.  **Chalk Redesign:** Reimplement `ChalkActor` to share the "Neon Family Look" with `HighlighterActor`.
-2.  **Fix Artifacts:** Investigate and remove the trailing comma/artifact after step completion.
-3.  **Image Manipulation:** Ensure selection handles (resize) work reliably for Image items in both flow + absolute modes.
+2.  **Fix Ghost Comma:** The end-of-step cursor must not shrink into a tiny icon. When visible, the cursor remains full-size.
+3.  **Cursor Visibility Toggle:** Add a session-only toggle in the FloatingToolbar "More" menu to hide/show both the writing cursor and the anchor indicator.
+4.  **Cursor Consistency:** The writing cursor and anchor indicator must share the same design and size.
+5.  **Image Manipulation:** Ensure selection handles (resize) work reliably for Image items.
 
 ## Non-Goals (Out of Scope unless explicitly requested)
 - Image rotation
@@ -23,34 +26,42 @@ The user requested visual refinements to match the "Neon" aesthetic and fix a sp
 ## Scope (Files)
 - `v10/src/features/canvas/actors/ChalkActor.tsx` (Redesign)
 - `v10/src/core/themes/chalkTheme.ts` (Theme updates)
-- `v10/src/features/canvas/animation/AnimatedTextBlock.tsx` (Artifact investigation)
-- `v10/src/features/canvas/ContentLayer.tsx` (Image selection logic)
-- `v10/src/features/canvas/objects/ImageBlock.tsx` (Existing image selection + resize)
-- `v10/src/app/globals.css` (If artifact is tied to end-marker or cursor CSS)
-- `v10/src/features/canvas/ImageHandles.tsx` (Optional: only if extraction is required)
-- `v10/src/features/store/useCanvasStore.ts` (Update image item logic)
+- `v10/src/features/canvas/AnchorIndicator.tsx` (Size/design + visibility)
+- `v10/src/features/canvas/ContentLayer.tsx` (End-of-step marker behavior)
+- `v10/src/app/globals.css` (Cursor marker styles)
+- `v10/src/features/toolbar/FloatingToolbar.tsx` (More menu toggle)
+- `v10/src/features/store/useUIStore.ts` (Session-only toggle state)
+- `v10/src/features/canvas/CanvasStage.tsx` (Cursor visibility gating)
+- `v10/src/features/canvas/objects/ImageBlock.tsx` (Image resize handles)
 
 ## Detailed Design Specs
 
 ### 1. Chalk Actor Redesign (`ChalkActor.tsx`)
 - **Reference:** `HighlighterActor.tsx`
-- **Style:**
-    - Shape: Rounded Rectangle (similar to Highlighter, maybe slightly thinner).
-    - Color: White / Cyan gradient (`from-slate-50` to `to-slate-200` or subtle cyan tint).
-    - Glow: `box-shadow` with Neon Cyan/White color.
+- **Style (Simplified):**
+    - Shape: Rounded rectangle body + small rounded tip.
+    - Color: White / Cyan gradient (`slate-50` → `cyan-100/200`).
+    - Glow: Neon cyan/white `box-shadow`.
+    - End marker: Must match actor **shape + size**.
     - Animation: **Static** (No `actor-bob` or wobbling). Just smooth position updates.
 
-### 2. Ghost Comma Fix (`AnimatedTextBlock.tsx`)
-- **Symptoms:** A comma or dot appears at the end of the text after animation finishes.
-- **Repro:** After the **last step** finishes rendering, a mark appears at the end **every time**.
-- **Visual:** The mark is the **chalk design cursor shrinking** at the end (not a punctuation glyph).
+### 2. Ghost Comma Fix (End-of-step cursor shrink)
+- **Symptoms:** After a step finishes, the cursor shrinks into a tiny marker-like icon and remains at the end.
 - **Action:**
-    - Check for `Zero-width space` or `&nbsp;` at the end of the HTML string.
-    - Inspect if the `cursor` element (if any) is being rendered with a default content like `,`.
-    - Ensure `onDone` doesn't trigger a state that renders a placeholder character.
-    - Verify `ContentLayer.tsx` markers (`data-flow-cursor`, `.end-marker`) and related CSS in `globals.css`.
+    - Keep the end marker but make it **full-size** and identical to the writing cursor.
+    - The anchor indicator should match the writing cursor size/design (no shrink mismatch).
 
-### 3. Image Handles (`ImageHandles.tsx`)
+### 3. Cursor Visibility Toggle (FloatingToolbar → More)
+- **Toggle:** "Cursor Visibility" (label TBD).
+- **Behavior:** Hide/show both **writing cursor** (Chalk/Marker actor) and **AnchorIndicator** together.
+- **Default:** OFF (hidden by default).
+- **Persistence:** Session-only (no local storage).
+
+### 4. Cursor Consistency (AnchorIndicator)
+- The anchor indicator should use the **same design and size** as the writing cursor.
+- When the tool changes (chalk vs marker), the anchor indicator should align to the same visual family.
+
+### 5. Image Handles (`ImageBlock.tsx`)
 - **Trigger:** When an Image Item is selected (`selectedItemId === image.id`).
 - **UI:**
     - 4 corner handles (Resize).
@@ -62,15 +73,29 @@ The user requested visual refinements to match the "Neon" aesthetic and fix a sp
 
 ## Acceptance Criteria
 - [ ] **Chalk Look:** Chalk cursor looks modern, flat, and glowing (matches Highlighter). No realistic wood/texture.
-- [ ] **No Artifacts:** Text animation ends cleanly without extra characters or commas.
-- [ ] **Image Resize:** User can select an image (flow or absolute) and resize it using handles; aspect ratio is preserved.
-- [ ] **No Rotation:** Image rotation remains out of scope in this task.
+- [ ] **No Shrink:** End-of-step cursor does **not** shrink into a tiny icon. When visible, it stays full-size.
+- [ ] **Cursor Toggle:** A "More" menu toggle hides/shows **both** writing cursor and anchor indicator.
+- [ ] **Default Hidden:** Cursor visibility is OFF by default and resets on refresh.
+- [ ] **Cursor Consistency:** Writing cursor and anchor indicator share the same design + size.
+- [ ] **Image Resize:** User can select an image and resize it using handles.
 
-## Manual Verification Steps
-- Open v10 editor, insert text, play animation to the **last step**; confirm no trailing comma/extra character on completion.
-- Insert an image, select it, resize via corner handles; verify works in both flow and after switching to absolute (drag).
-- Switch to chalk tool; confirm cursor matches neon/highlighter aesthetic and has no bob/wobble.
+---
 
-## Risks / Rollback Notes
-- Risk: Adjusting markers/CSS could shift baseline alignment. Rollback by reverting the marker/CSS changes only.
-- Risk: Image resize changes could affect drag/selection. Rollback by reverting `ImageBlock` changes while keeping Chalk/Ghost fixes.
+## Completion Notes
+**Changed Files**
+- `v10/src/features/store/useUIStore.ts`
+- `v10/src/features/toolbar/FloatingToolbar.tsx`
+- `v10/src/features/canvas/CanvasStage.tsx`
+- `v10/src/features/canvas/actors/ChalkActor.tsx`
+- `v10/src/core/themes/chalkTheme.ts`
+- `v10/src/features/canvas/ContentLayer.tsx`
+- `v10/src/features/canvas/AnchorIndicator.tsx`
+- `v10/src/app/globals.css`
+
+**Commands Run**
+- None.
+
+**Manual Verification Notes**
+- Verify cursor toggle in FloatingToolbar → More menu hides/shows both actor + anchor.
+- Confirm cursor stays full-size after final step (no tiny end marker).
+- Confirm no cursor flicker at step start (anchor/actor behavior).

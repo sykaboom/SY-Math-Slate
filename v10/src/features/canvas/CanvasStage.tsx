@@ -58,6 +58,7 @@ function NormalCanvasStage({
     isPasteHelperOpen,
     isOverviewMode,
     viewMode,
+    showCursors,
   } = useUIStore();
   const viewportBind = useViewportInteraction(dropRef);
   const { insertImageFile } = useImageInsert();
@@ -156,8 +157,12 @@ function NormalCanvasStage({
           readOnly={viewMode === "presentation"}
         />
         <CanvasGuides />
-        <AnchorIndicator isAnimating={animationState.isAnimating} />
-        <ActorLayer actor={animationState.actor} actorRef={actorRef} />
+        {showCursors && (
+          <AnchorIndicator isAnimating={animationState.isAnimating} />
+        )}
+        {showCursors && (
+          <ActorLayer actor={animationState.actor} actorRef={actorRef} />
+        )}
         <CanvasLayer />
         {children && (
           <div className="relative z-30 w-full text-center text-white/70">

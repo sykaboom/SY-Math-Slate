@@ -1,10 +1,11 @@
-const holderBorder = "rgba(255, 255, 255, 0.1)";
-const holderBackground = "rgba(0, 0, 0, 0.6)";
-const holderShadow = "inset 0 0 6px rgba(0, 0, 0, 0.55)";
-const accentHighlight = "rgba(255, 255, 255, 0.2)";
+const holderBorder = "rgba(224, 242, 254, 0.75)";
+const holderBackground =
+  "linear-gradient(180deg, rgba(248, 250, 252, 0.95), rgba(186, 230, 253, 0.95))";
+const holderShadow = "0 0 10px rgba(56, 189, 248, 0.4)";
+const accentHighlight = "rgba(255, 255, 255, 0.45)";
 
-const chalkGradient = "linear-gradient(to bottom, #ffffff, #e2e8f0, #cbd5f5)";
-const chalkGlow = "0 0 8px rgba(255, 255, 255, 0.35)";
+const chalkGradient = "linear-gradient(180deg, #ffffff, #e0f2fe)";
+const chalkGlow = "0 0 8px rgba(125, 211, 252, 0.6)";
 
 export const chalkTheme = {
   tipOffset: { x: 22, y: 18 },
@@ -25,16 +26,16 @@ export const chalkTheme = {
   },
   indicator: {
     holder: {
-      width: 40,
-      height: 24,
-      radius: 6,
+      width: 48,
+      height: 32,
+      radius: 10,
     },
     chalk: {
-      width: 8,
-      height: 32,
-      offsetX: 20,
-      offsetY: -8,
-      rotateDeg: -20,
+      width: 12,
+      height: 18,
+      offsetX: 16,
+      offsetY: 9,
+      rotateDeg: 0,
     },
     accent: {
       width: 6,
@@ -47,14 +48,14 @@ export const chalkTheme = {
     holder: {
       width: 48,
       height: 32,
-      radius: 6,
+      radius: 10,
     },
     chalk: {
-      width: 8,
-      height: 32,
-      offsetX: 20,
-      offsetY: -12,
-      rotateDeg: -20,
+      width: 12,
+      height: 18,
+      offsetX: 16,
+      offsetY: 9,
+      rotateDeg: 0,
     },
     accent: {
       width: 6,
@@ -64,22 +65,22 @@ export const chalkTheme = {
     },
   },
   marker: {
-    width: 18,
-    height: 12,
+    width: 48,
+    height: 32,
     marginLeft: 6,
-    holderWidth: 12,
-    holderHeight: 8,
-    holderRadius: 4,
+    holderWidth: 48,
+    holderHeight: 32,
+    holderRadius: 10,
     holderBorder,
-    holderBackground: "rgba(0, 0, 0, 0.65)",
+    holderBackground,
     holderShadow,
-    chalkWidth: 4,
-    chalkHeight: 12,
-    chalkOffsetX: 7,
-    chalkOffsetY: -1,
-    chalkRotateDeg: -18,
+    chalkWidth: 12,
+    chalkHeight: 18,
+    chalkOffsetX: 16,
+    chalkOffsetY: 9,
+    chalkRotateDeg: 0,
     chalkGradient,
-    chalkGlow: "0 0 6px rgba(255, 255, 255, 0.35)",
+    chalkGlow,
   },
 } as const;
 

@@ -7,10 +7,10 @@ type ChalkActorProps = {
   isMoving: boolean;
 };
 
-export function ChalkActor({ isMoving }: ChalkActorProps) {
+export function ChalkActor({ isMoving: _isMoving }: ChalkActorProps) {
   return (
     <div
-      className={cn("relative", isMoving && "actor-bob")}
+      className={cn("relative")}
       style={{
         width: chalkTheme.actor.holder.width,
         height: chalkTheme.actor.holder.height,
@@ -31,17 +31,6 @@ export function ChalkActor({ isMoving }: ChalkActorProps) {
           transform: `rotate(${chalkTheme.actor.chalk.rotateDeg}deg)`,
           background: chalkTheme.colors.chalkGradient,
           boxShadow: chalkTheme.colors.chalkGlow,
-        }}
-      />
-      <div
-        className="absolute"
-        style={{
-          left: chalkTheme.actor.accent.offsetX,
-          top: chalkTheme.actor.accent.offsetY,
-          width: chalkTheme.actor.accent.width,
-          height: chalkTheme.actor.accent.height,
-          borderRadius: 999,
-          background: chalkTheme.colors.accentHighlight,
         }}
       />
     </div>

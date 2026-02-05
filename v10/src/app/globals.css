@@ -303,7 +303,7 @@
     content: "";
     position: absolute;
     left: 0;
-    top: 2px;
+    top: 0;
     width: var(--chalk-marker-holder-width);
     height: var(--chalk-marker-holder-height);
     border-radius: var(--chalk-marker-holder-radius);

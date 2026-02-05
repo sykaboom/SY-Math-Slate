@@ -210,17 +210,6 @@ export function AnchorIndicator({ isAnimating }: AnchorIndicatorProps) {
               boxShadow: chalkTheme.colors.chalkGlow,
             }}
           />
-          <div
-            className="absolute"
-            style={{
-              left: chalkTheme.indicator.accent.offsetX,
-              top: chalkTheme.indicator.accent.offsetY,
-              width: chalkTheme.indicator.accent.width,
-              height: chalkTheme.indicator.accent.height,
-              borderRadius: 999,
-              background: chalkTheme.colors.accentHighlight,
-            }}
-          />
         </div>
       </div>
     </div>
