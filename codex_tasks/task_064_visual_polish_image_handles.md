@@ -1,6 +1,6 @@
 # Task 064: Visual Polish — Chalk Design, Cursor Visibility, Image Handles
 
-**Status:** COMPLETED
+**Status:** PENDING
 **Priority:** P2 (Visual/UX)
 **Assignee:** Codex CLI
 **Dependencies:** Task 063 (Completed)
