@@ -84,6 +84,13 @@ After coding:
 - Layout/structure changes require an SVG artifact in `design_drafts/` with a path listed in the task spec.
 - Codex must verify the SVG file exists before implementation; if missing, stop and request it from Gemini.
 
+## Speculative defense guardrails (always)
+- No “just in case” branches without evidence from spec, existing inputs, or real bug reports.
+- If a future-proofing branch is required, it must include:
+  - Evidence (why needed), and
+  - Sunset criteria (when to remove).
+- Security/input validation exceptions are allowed but must be justified in spec.
+
 ## Quality & safety constraints (always)
 - No eval/new Function
 - No window globals

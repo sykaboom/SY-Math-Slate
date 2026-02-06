@@ -22,6 +22,11 @@ Out of scope:
 - [ ] SVG includes `viewBox` with explicit width/height and ratio label
 - [ ] Codex must verify SVG file exists before implementation
 
+## Speculative Defense Check
+- [ ] Any defensive branches added? YES/NO
+- [ ] Evidence provided (real input, spec, or bug report): (required if YES)
+- [ ] Sunset criteria defined (when to remove): (required if YES)
+
 ## Dependencies / constraints
 - New dependencies allowed? (default: NO)
 - Boundary rules (e.g. core cannot import features)
