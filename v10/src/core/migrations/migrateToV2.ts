@@ -15,18 +15,16 @@ import {
   type PenType,
 } from "@core/types/canvas";
 import {
-  ALLOWED_RICH_TEXT_CLASSES,
   createDefaultTextSegmentStyle,
   normalizeTextSegmentStyle,
   toTextItemStyle,
 } from "@core/config/typography";
+import { sanitizeRichTextHtml } from "@core/sanitize/richTextSanitizer";
 
 const DEFAULT_COLOR = "#FFFFFF";
 const DEFAULT_ERASER_COLOR = "#000000";
 const DEFAULT_MEDIA_WIDTH = 320;
 const DEFAULT_MEDIA_HEIGHT = 180;
-const ALLOWED_TAGS = new Set(["span", "br", "b", "strong", "i", "em", "u", "sub", "sup"]);
-const ALLOWED_CLASS_SET = new Set(ALLOWED_RICH_TEXT_CLASSES);
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
@@ -54,74 +52,8 @@ const createPageId = () => {
   return `page-${Date.now()}-${Math.random().toString(16).slice(2)}`;
 };
 
-const sanitizeClassName = (value: string) => {
-  const tokens = value
-    .split(/\s+/)
-    .map((token) => token.trim())
-    .filter((token) => token.length > 0 && ALLOWED_CLASS_SET.has(token));
-  return tokens.join(" ");
-};
-
-const sanitizeHtmlForStep = (value: unknown) => {
-  if (typeof value !== "string") return "&nbsp;";
-  if (value.trim().length === 0) return "&nbsp;";
-  if (typeof document === "undefined") {
-    const escaped = value
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;")
-      .replace(/'/g, "&#39;");
-    return escaped.trim().length > 0 ? escaped : "&nbsp;";
-  }
-
-  const template = document.createElement("template");
-  template.innerHTML = value;
-
-  const walk = (node: Node) => {
-    if (node.nodeType === Node.TEXT_NODE) return;
-    if (node.nodeType !== Node.ELEMENT_NODE) {
-      node.parentNode?.removeChild(node);
-      return;
-    }
-
-    const el = node as HTMLElement;
-    const tag = el.tagName.toLowerCase();
-    if (tag === "script" || tag === "style" || tag === "iframe" || tag === "object") {
-      el.remove();
-      return;
-    }
-    if (!ALLOWED_TAGS.has(tag)) {
-      const parent = el.parentNode;
-      if (!parent) return;
-      while (el.firstChild) {
-        parent.insertBefore(el.firstChild, el);
-      }
-      parent.removeChild(el);
-      return;
-    }
-
-    Array.from(el.attributes).forEach((attr) => {
-      if (attr.name !== "class") {
-        el.removeAttribute(attr.name);
-      }
-    });
-    if (el.className) {
-      const safeClass = sanitizeClassName(el.className);
-      if (safeClass.length > 0) {
-        el.className = safeClass;
-      } else {
-        el.removeAttribute("class");
-      }
-    }
-
-    Array.from(el.childNodes).forEach((child) => walk(child));
-  };
-
-  Array.from(template.content.childNodes).forEach((node) => walk(node));
-  const sanitized = template.innerHTML.trim();
-  return sanitized.length > 0 ? sanitized : "&nbsp;";
-};
+const sanitizeHtmlForStep = (value: unknown) =>
+  sanitizeRichTextHtml(value, { ensureNotEmpty: true });
 
 const asStepBlockKind = (value: unknown): StepBlockKind | undefined => {
   if (

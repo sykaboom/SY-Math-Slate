@@ -11,6 +11,19 @@ Multiple UI areas feel "debug-like" or cluttered. The user requested specific im
 ## Superseded
 - This spec is superseded by `codex_tasks/task_063_ui_polish.md` (consolidated version).
 
+---
+
+## Implementation Log (Codex)
+Status: DEPRECATED
+Changed files:
+- None (deprecated spec)
+
+Commands run:
+- None
+
+Notes:
+- Deprecated in favor of `task_063_ui_polish.md`.
+
 ## Goals
 1.  **Playback Bar:** De-clutter. Merge Play/Pause. Move configuration (Speed/Delay) to a settings popover.
 2.  **Prompter (Step Preview):** Remove the noisy horizontal scroll list. Replace with a focused "Subtitle" style view (Current + Next preview).

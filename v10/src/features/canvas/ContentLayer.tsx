@@ -1,6 +1,4 @@
 "use client";
-
-import DOMPurify from "dompurify";
 import { useMemo } from "react";
 import type { CSSProperties } from "react";
 
@@ -8,6 +6,7 @@ import { useCanvasStore } from "@features/store/useCanvasStore";
 import { useUIStore } from "@features/store/useUIStore";
 import type { CanvasItem, ImageItem, TextItem } from "@core/types/canvas";
 import { getBoardPadding } from "@core/config/boardSpec";
+import { sanitizeRichTextHtml } from "@core/sanitize/richTextSanitizer";
 import { cn } from "@core/utils";
 import { MathTextBlock } from "@features/canvas/MathTextBlock";
 import { ImageBlock } from "@features/canvas/objects/ImageBlock";
@@ -44,12 +43,7 @@ const findTextItemByStep = (items: CanvasItem[], step: number) =>
     | TextItem
     | undefined;
 
-const sanitizeHtml = (value: string) => {
-  return DOMPurify.sanitize(value, {
-    USE_PROFILES: { html: true },
-    ADD_ATTR: ["class"],
-  });
-};
+const sanitizeHtml = (value: string) => sanitizeRichTextHtml(value);
 
 type ContentLayerProps = {
   pageId?: string;

@@ -1,6 +1,4 @@
 "use client";
-
-import DOMPurify from "dompurify";
 import {
   Fragment,
   useEffect,
@@ -18,23 +16,44 @@ import { cn } from "@core/utils";
 import { Button } from "@ui/components/button";
 import type {
   ImageItem,
-  StepBlock,
   StepBlockKind,
   StepSegment,
   StepSegmentType,
   TextItem,
 } from "@core/types/canvas";
 import {
-  ALLOWED_RICH_TEXT_CLASSES,
   DEFAULT_TEXT_LINE_HEIGHT,
   TEXT_FONT_FAMILY_OPTIONS,
   TEXT_INLINE_BOLD_CLASS,
   TEXT_INLINE_COLOR_OPTIONS,
   TEXT_INLINE_SIZE_OPTIONS,
-  createDefaultTextSegmentStyle,
   normalizeTextSegmentStyle,
 } from "@core/config/typography";
 import { runAutoLayout } from "@features/layout/autoLayout";
+import {
+  blocksToRawText,
+  buildBlocksFromFlowItems,
+  createBlockId,
+  createBlocksFromRawText,
+  createMediaSegment,
+  createTextSegment,
+  normalizeBlocksDraft,
+  normalizeSegments,
+  sanitizeDraftHtml,
+} from "@features/layout/dataInput/blockDraft";
+import {
+  captureSelection,
+  wrapSelectionWithClass,
+  wrapSelectionWithHighlight,
+  wrapSelectionWithMath,
+} from "@features/layout/dataInput/segmentCommands";
+import {
+  readImageFile,
+  readImageUrl,
+  readVideoFile,
+  readVideoUrl,
+} from "@features/layout/dataInput/mediaIO";
+import type { StepBlockDraft } from "@features/layout/dataInput/types";
 import {
   ChevronDown,
   ChevronUp,
@@ -49,61 +68,6 @@ import {
   Trash2,
   X,
 } from "lucide-react";
-
-type StepBlockDraft = StepBlock;
-
-const escapeHtml = (value: string) =>
-  value
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/\"/g, "&quot;")
-    .replace(/'/g, "&#39;");
-
-const sanitizeHtml = (value: string) =>
-  DOMPurify.sanitize(value, {
-    USE_PROFILES: { html: true },
-    ALLOWED_ATTR: ["class"],
-  });
-
-const ALLOWED_CLASS_SET = new Set(ALLOWED_RICH_TEXT_CLASSES);
-
-const sanitizeClassList = (value: string) => {
-  const tokens = value
-    .split(/\s+/)
-    .map((token) => token.trim())
-    .filter((token) => token.length > 0 && ALLOWED_CLASS_SET.has(token));
-  return tokens.join(" ");
-};
-
-const sanitizeRichHtml = (value: string) => {
-  const sanitized = sanitizeHtml(value);
-  const template = document.createElement("template");
-  template.innerHTML = sanitized;
-  template.content.querySelectorAll<HTMLElement>("[class]").forEach((node) => {
-    const safeClass = sanitizeClassList(node.className);
-    if (safeClass.length > 0) {
-      node.className = safeClass;
-    } else {
-      node.removeAttribute("class");
-    }
-  });
-  const normalized = template.innerHTML.trim();
-  return normalized.length > 0 ? normalized : "&nbsp;";
-};
-
-const toPlainText = (html: string) => {
-  const div = document.createElement("div");
-  div.innerHTML = html;
-  return (div.textContent ?? "").replace(/\u00a0/g, "");
-};
-
-const createBlockId = () => {
-  if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
-    return crypto.randomUUID();
-  }
-  return `block-${Date.now()}-${Math.random().toString(16).slice(2)}`;
-};
 
 export function DataInputPanel() {
   const {
@@ -161,130 +125,8 @@ export function DataInputPanel() {
     ? "leading-[1.25]"
     : "leading-[1.6]";
 
-  const createSegmentId = () => createBlockId();
-
-  const createTextSegment = (value: string, orderIndex = 0): StepSegment => ({
-    id: createSegmentId(),
-    type: "text",
-    html: value,
-    style: createDefaultTextSegmentStyle(),
-    orderIndex,
-  });
-
-  const createMediaSegment = (
-    type: "image" | "video",
-    src: string,
-    width: number,
-    height: number,
-    orderIndex: number
-  ): StepSegment => ({
-    id: createSegmentId(),
-    type,
-    src,
-    width,
-    height,
-    orderIndex,
-  });
-
-  const normalizeSegments = (segments: StepSegment[]) =>
-    segments.map((segment, index) => ({
-      ...segment,
-      orderIndex: index,
-    }));
-
-  const normalizeSegmentDraft = (segment: StepSegment, index: number): StepSegment => {
-    if (segment.type !== "text") {
-      return {
-        ...segment,
-        orderIndex: index,
-      };
-    }
-    return {
-      ...segment,
-      html: sanitizeRichHtml(segment.html),
-      style: normalizeTextSegmentStyle(segment.style),
-      orderIndex: index,
-    };
-  };
-
-  const normalizeBlocksDraft = (drafts: StepBlockDraft[]): StepBlockDraft[] => {
-    return drafts.map((block) => {
-      if (block.kind && block.kind !== "content") {
-        return {
-          ...block,
-          segments: [],
-        };
-      }
-      const normalizedSegments = block.segments.map((segment, index) =>
-        normalizeSegmentDraft(segment, index)
-      );
-      return {
-        ...block,
-        segments: normalizedSegments,
-      };
-    });
-  };
-
-  const buildBlocksFromFlowItems = () => {
-    const items = flowItems;
-    const grouped = new Map<number, StepSegment[]>();
-    items.forEach((item, index) => {
-      const stepIndex =
-        item.type === "text"
-          ? item.stepIndex
-          : typeof item.stepIndex === "number"
-            ? item.stepIndex
-            : 0;
-      const current = grouped.get(stepIndex) ?? [];
-      if (item.type === "text") {
-        current.push({
-          id: item.segmentId ?? createSegmentId(),
-          type: "text",
-          html: item.content || "&nbsp;",
-          style: normalizeTextSegmentStyle(item.style),
-          orderIndex: index,
-        });
-      } else if (item.type === "image") {
-        current.push({
-          id: item.segmentId ?? createSegmentId(),
-          type: item.mediaType === "video" ? "video" : "image",
-          src: item.src,
-          width: item.w,
-          height: item.h,
-          orderIndex: index,
-        });
-      }
-      grouped.set(stepIndex, current);
-    });
-
-    const sortedSteps = Array.from(grouped.entries())
-      .sort(([a], [b]) => a - b)
-      .map(([, segments]) => ({
-        id: createBlockId(),
-        segments: normalizeSegments(
-          segments.sort((a, b) => a.orderIndex - b.orderIndex)
-        ),
-      }));
-
-    return sortedSteps;
-  };
-
-  const blocksToRawText = (drafts: StepBlockDraft[]) =>
-    drafts
-      .filter((block) => !block.kind || block.kind === "content")
-      .map((block) => {
-        const textSegments = block.segments.filter(
-          (segment) => segment.type === "text"
-        );
-        if (textSegments.length === 0) return "";
-        return textSegments
-          .map((segment) => toPlainText(segment.html))
-          .join(" ");
-      })
-      .join("\n");
-
   const fallbackBlocks = useMemo(
-    () => buildBlocksFromFlowItems(),
+    () => buildBlocksFromFlowItems(flowItems),
     [flowItems]
   );
 
@@ -329,17 +171,8 @@ export function DataInputPanel() {
 
   useEffect(() => {
     if (!isDataInputOpen) return;
-    const handleSelection = () => {
-      const selection = window.getSelection();
-      if (!selection || selection.rangeCount === 0) return;
-      const range = selection.getRangeAt(0);
-      const hostEntry = Object.entries(segmentRefs.current).find(([, el]) =>
-        el ? el.contains(range.commonAncestorContainer) : false
-      );
-      if (!hostEntry) return;
-      const [segmentId] = hostEntry;
-      selectionRef.current[segmentId] = range.cloneRange();
-    };
+    const handleSelection = () =>
+      captureSelection(segmentRefs.current, selectionRef.current);
     document.addEventListener("selectionchange", handleSelection);
     return () => document.removeEventListener("selectionchange", handleSelection);
   }, [isDataInputOpen]);
@@ -384,16 +217,7 @@ export function DataInputPanel() {
   };
 
   const updateBlocksFromRaw = (value: string) => {
-    const lines = value.split(/\r?\n/);
-    const nextBlocks = lines.map((line) => ({
-      id: createBlockId(),
-      segments: [
-        createTextSegment(
-          line.trim() === "" ? "&nbsp;" : escapeHtml(line),
-          0
-        ),
-      ],
-    }));
+    const nextBlocks = createBlocksFromRawText(value);
     setBlocks(nextBlocks);
   };
 
@@ -408,7 +232,7 @@ export function DataInputPanel() {
   };
 
   const updateSegmentHtml = (segmentId: string, html: string) => {
-    const cleaned = sanitizeRichHtml(html);
+    const cleaned = sanitizeDraftHtml(html);
     setBlocks((prev) =>
       prev.map((block) => ({
         ...block,
@@ -548,75 +372,6 @@ export function DataInputPanel() {
     setInsertionIndex(Math.min(safeIndex + 1, blocks.length + 1));
   };
 
-  const getActiveRange = (id: string) => {
-    const stored = selectionRef.current[id];
-    if (stored) return stored;
-    const selection = window.getSelection();
-    if (!selection || selection.rangeCount === 0) return null;
-    return selection.getRangeAt(0);
-  };
-
-  const wrapSelectionWithHighlight = (id: string) => {
-    const host = segmentRefs.current[id];
-    if (!host) return;
-    const range = getActiveRange(id);
-    if (!range) return;
-    if (!host.contains(range.commonAncestorContainer)) return;
-    const selection = window.getSelection();
-    if (!selection) return;
-    const contents = range.extractContents();
-    const span = document.createElement("span");
-    span.className = "hl-yellow";
-    span.appendChild(contents);
-    range.insertNode(span);
-    selection.removeAllRanges();
-    const newRange = document.createRange();
-    newRange.selectNodeContents(span);
-    selection.addRange(newRange);
-    updateSegmentHtml(id, host.innerHTML);
-  };
-
-  const wrapSelectionWithClass = (id: string, className: string) => {
-    const host = segmentRefs.current[id];
-    if (!host) return;
-    const range = getActiveRange(id);
-    if (!range) return;
-    if (range.collapsed) return;
-    if (!host.contains(range.commonAncestorContainer)) return;
-    const selection = window.getSelection();
-    if (!selection) return;
-    const contents = range.extractContents();
-    const span = document.createElement("span");
-    span.className = className;
-    span.appendChild(contents);
-    range.insertNode(span);
-    selection.removeAllRanges();
-    const newRange = document.createRange();
-    newRange.selectNodeContents(span);
-    selection.addRange(newRange);
-    updateSegmentHtml(id, host.innerHTML);
-  };
-
-  const wrapSelectionWithMath = (id: string) => {
-    const host = segmentRefs.current[id];
-    if (!host) return;
-    const range = getActiveRange(id);
-    if (!range) return;
-    if (!host.contains(range.commonAncestorContainer)) return;
-    const selection = window.getSelection();
-    if (!selection) return;
-    const contents = range.extractContents();
-    const text = contents.textContent ?? "";
-    const node = document.createTextNode(`$$${text}$$`);
-    range.insertNode(node);
-    selection.removeAllRanges();
-    const newRange = document.createRange();
-    newRange.setStart(node, node.length);
-    newRange.collapse(true);
-    selection.addRange(newRange);
-    updateSegmentHtml(id, host.innerHTML);
-  };
-
   const handleApply = () => {
     const normalizedBlocks = normalizeBlocksDraft(blocks);
     importStepBlocks(normalizedBlocks);
@@ -631,75 +386,6 @@ export function DataInputPanel() {
     }
   };
 
-  const readImageFile = (file: File) =>
-    new Promise<{ src: string; width: number; height: number }>((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onerror = () => reject(new Error("image read failed"));
-      reader.onload = () => {
-        const src = String(reader.result ?? "");
-        const img = new Image();
-        img.onload = () => {
-          resolve({
-            src,
-            width: img.naturalWidth || 1,
-            height: img.naturalHeight || 1,
-          });
-        };
-        img.onerror = () => reject(new Error("image load failed"));
-        img.src = src;
-      };
-      reader.readAsDataURL(file);
-    });
-
-  const readImageUrl = (src: string) =>
-    new Promise<{ src: string; width: number; height: number }>((resolve, reject) => {
-      const img = new Image();
-      img.crossOrigin = "anonymous";
-      img.onload = () => {
-        resolve({
-          src,
-          width: img.naturalWidth || 1,
-          height: img.naturalHeight || 1,
-        });
-      };
-      img.onerror = () => reject(new Error("image url failed"));
-      img.src = src;
-    });
-
-  const readVideoFile = (file: File) =>
-    new Promise<{ src: string; width: number; height: number }>((resolve, reject) => {
-      const src = URL.createObjectURL(file);
-      const video = document.createElement("video");
-      video.preload = "metadata";
-      video.onloadedmetadata = () => {
-        resolve({
-          src,
-          width: video.videoWidth || 16,
-          height: video.videoHeight || 9,
-        });
-        URL.revokeObjectURL(src);
-      };
-      video.onerror = () => {
-        URL.revokeObjectURL(src);
-        reject(new Error("video load failed"));
-      };
-      video.src = src;
-    });
-
-  const readVideoUrl = (src: string) =>
-    new Promise<{ src: string; width: number; height: number }>((resolve, reject) => {
-      const video = document.createElement("video");
-      video.preload = "metadata";
-      video.onloadedmetadata = () => {
-        resolve({
-          src,
-          width: video.videoWidth || 16,
-          height: video.videoHeight || 9,
-        });
-      };
-      video.onerror = () => reject(new Error("video url failed"));
-      video.src = src;
-    });
 
   const handleImageInput = async (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -1078,7 +764,10 @@ export function DataInputPanel() {
                                             event.preventDefault();
                                             wrapSelectionWithClass(
                                               segment.id,
-                                              TEXT_INLINE_BOLD_CLASS
+                                              TEXT_INLINE_BOLD_CLASS,
+                                              segmentRefs.current,
+                                              selectionRef.current,
+                                              updateSegmentHtml
                                             );
                                           }}
                                         >
@@ -1093,7 +782,10 @@ export function DataInputPanel() {
                                               event.preventDefault();
                                               wrapSelectionWithClass(
                                                 segment.id,
-                                                option.className
+                                                option.className,
+                                                segmentRefs.current,
+                                                selectionRef.current,
+                                                updateSegmentHtml
                                               );
                                             }}
                                           >
@@ -1109,7 +801,10 @@ export function DataInputPanel() {
                                               event.preventDefault();
                                               wrapSelectionWithClass(
                                                 segment.id,
-                                                option.className
+                                                option.className,
+                                                segmentRefs.current,
+                                                selectionRef.current,
+                                                updateSegmentHtml
                                               );
                                             }}
                                           >
@@ -1122,7 +817,12 @@ export function DataInputPanel() {
                                             className="h-7 px-2 text-[11px]"
                                             onMouseDown={(event) => {
                                               event.preventDefault();
-                                              wrapSelectionWithMath(segment.id);
+                                              wrapSelectionWithMath(
+                                                segment.id,
+                                                segmentRefs.current,
+                                                selectionRef.current,
+                                                updateSegmentHtml
+                                              );
                                             }}
                                           >
                                             $$
@@ -1135,7 +835,10 @@ export function DataInputPanel() {
                                             onMouseDown={(event) => {
                                               event.preventDefault();
                                               wrapSelectionWithHighlight(
-                                                segment.id
+                                                segment.id,
+                                                segmentRefs.current,
+                                                selectionRef.current,
+                                                updateSegmentHtml
                                               );
                                             }}
                                           >

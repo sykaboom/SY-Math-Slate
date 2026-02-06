@@ -74,6 +74,16 @@ After coding:
 - Naming: `hotfix_###_slug.md` with sequential numbering (no gaps). New hotfix uses the next number in order.
 - Hotfix files are created by Codex only.
 
+## Forward compatibility & refactor invariants (always)
+- Exchange/tool contracts must remain backward compatible by default.
+- Breaking changes require version bump + migration path.
+- Tool/model-specific logic stays in adapter layers; keep `core` generic.
+- Refactors must preserve behavior, use small batches, and avoid cross-layer coupling/spaghetti.
+
+## SVG layout gate (layout/structure changes)
+- Layout/structure changes require an SVG artifact in `design_drafts/` with a path listed in the task spec.
+- Codex must verify the SVG file exists before implementation; if missing, stop and request it from Gemini.
+
 ## Quality & safety constraints (always)
 - No eval/new Function
 - No window globals

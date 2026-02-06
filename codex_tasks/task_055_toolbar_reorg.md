@@ -1,5 +1,7 @@
 # Task 055: Tablet UX Polish - Icon Exposure
 
+Status: COMPLETED
+
 ## Context
 As part of the ongoing Tablet environment improvements, certain core features are still buried in the "More" menu, making them hard to discover and use on touch devices. Moving these to direct-access icons improves the workflow for educators.
 

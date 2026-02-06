@@ -1,7 +1,5 @@
 "use client";
 
-import DOMPurify from "dompurify";
-
 import {
   getBoardPadding,
   getBoardSize,
@@ -11,6 +9,7 @@ import {
   DEFAULT_TEXT_LINE_HEIGHT,
   toTextItemStyle,
 } from "@core/config/typography";
+import { sanitizeRichTextHtml } from "@core/sanitize/richTextSanitizer";
 import { loadMathJax } from "@core/math/loader";
 import { typesetElement } from "@core/math/render";
 import type {
@@ -59,8 +58,7 @@ const createItemId = () => {
   return `item-${Date.now()}-${Math.random().toString(16).slice(2)}`;
 };
 
-const sanitizeHtml = (value: string) =>
-  DOMPurify.sanitize(value, { USE_PROFILES: { html: true }, ALLOWED_ATTR: ["class"] });
+const sanitizeHtml = (value: string) => sanitizeRichTextHtml(value);
 
 const nextFrame = () =>
   new Promise<void>((resolve) => {

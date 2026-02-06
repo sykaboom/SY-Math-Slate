@@ -27,9 +27,12 @@ This roadmap is the single source for **what to build next**. It assumes v10 ref
 
 1) **Permission Gate**
    - Enforce `permissions` scopes before any script/connector runs.
-2) **Trigger Dispatcher**
+2) **Tool Registry + MCP Readiness**
+   - Define tool registry entries and adapter boundaries.
+   - Prepare MCP gateway for multi-model/tool connectivity.
+3) **Trigger Dispatcher**
    - Emit `onStepStart`, `onExport`, etc.
-3) **Script Runtime (Sandbox)**
+4) **Script Runtime (Sandbox)**
    - Execute scripts with restricted APIs.
 
 ---
@@ -43,11 +46,12 @@ This roadmap is the single source for **what to build next**. It assumes v10 ref
    - AutoLayout and playback timing on low-power devices.
 3) **Regression Snapshots**
    - Manual scenario list to re-test after each phase.
+4) **Contract Regression Checks**
+   - NormalizedContent/ToolResult compatibility checks on upgrades.
 
 ---
 
 ## Suggested Sequence
 1) Track A-1 → A-2 → A-3  
-2) Track B-1 → B-2 → B-3  
+2) Track B-1 → B-2 → B-3 → B-4  
 3) Track C after each milestone
-

@@ -4,6 +4,7 @@ import JSZip from "jszip";
 import { saveAs } from "file-saver";
 
 import { migrateToV2 } from "@core/migrations/migrateToV2";
+import { buildPersistedDoc } from "@core/persistence/buildPersistedDoc";
 import { useCanvasStore } from "@features/store/useCanvasStore";
 import type { ImageItem, PersistedSlateDoc } from "@core/types/canvas";
 
@@ -79,26 +80,27 @@ export function useFileIO() {
         createdAt: new Date().toISOString(),
         title: "Untitled Board",
       };
-      const board: BoardFileData = {
+      const mappedPages = Object.fromEntries(
+        Object.entries(state.pages).map(([pageId, items]) => [
+          pageId,
+          items.map((item) => {
+            if (!isImageItem(item)) return item;
+            const nextSrc = map.get(item.src);
+            if (!nextSrc) return item;
+            return { ...item, src: nextSrc };
+          }),
+        ])
+      );
+      const { doc: board } = buildPersistedDoc({
         version: 2,
-        pages: Object.fromEntries(
-          Object.entries(state.pages).map(([pageId, items]) => [
-            pageId,
-            items.map((item) => {
-              if (!isImageItem(item)) return item;
-              const nextSrc = map.get(item.src);
-              if (!nextSrc) return item;
-              return { ...item, src: nextSrc };
-            }),
-          ])
-        ),
+        pages: mappedPages,
         pageOrder: state.pageOrder,
         pageColumnCounts: state.pageColumnCounts,
         stepBlocks: state.stepBlocks,
         anchorMap: state.anchorMap ?? undefined,
         audioByStep: state.audioByStep,
         animationModInput: state.animationModInput,
-      };
+      });
 
       zip.file("manifest.json", JSON.stringify(manifest, null, 2));
       zip.file("board.json", JSON.stringify(board));

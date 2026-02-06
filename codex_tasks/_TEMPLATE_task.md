@@ -16,6 +16,12 @@ Touched files/directories:
 Out of scope:
 - (explicit list)
 
+## Design Artifacts (required for layout/structure changes)
+- [ ] Layout/structure changes included: YES/NO
+- [ ] SVG path in `design_drafts/`: (required if YES)
+- [ ] SVG includes `viewBox` with explicit width/height and ratio label
+- [ ] Codex must verify SVG file exists before implementation
+
 ## Dependencies / constraints
 - New dependencies allowed? (default: NO)
 - Boundary rules (e.g. core cannot import features)

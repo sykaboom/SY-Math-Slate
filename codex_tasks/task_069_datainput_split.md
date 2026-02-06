@@ -1,6 +1,6 @@
 # Task 069: DataInputPanel Lightweight Split (Behavior-Preserving)
 
-**Status:** PENDING
+**Status:** COMPLETED
 **Priority:** P1 (Maintainability / Developer Velocity)
 **Assignee:** Codex CLI
 **Dependencies:** Task 068 (권장 선행), Task 065 (COMPLETED)
@@ -62,3 +62,20 @@
 5. 줄바꿈/단나눔/페이지 삽입 후 Auto Layout 결과 확인
 6. 저장 후 reload 및 `.slate` import/export 회귀 확인
 
+---
+
+## Implementation Log (Codex)
+Status: COMPLETED
+Changed files:
+- `v10/src/features/layout/DataInputPanel.tsx`
+- `v10/src/features/layout/dataInput/blockDraft.ts`
+- `v10/src/features/layout/dataInput/segmentCommands.ts`
+- `v10/src/features/layout/dataInput/mediaIO.ts`
+- `v10/src/features/layout/dataInput/types.ts`
+- `v10/AI_READ_ME_MAP.md`
+
+Commands run:
+- `node scripts/gen_ai_read_me_map.mjs`
+
+Notes:
+- AI_READ_ME_MAP updated after new dataInput directory added.

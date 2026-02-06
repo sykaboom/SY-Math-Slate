@@ -5,6 +5,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { migrateToV2 } from "@core/migrations/migrateToV2";
 import { getBoardSize } from "@core/config/boardSpec";
 import { toTextItemStyle } from "@core/config/typography";
+import { buildPersistedDoc } from "@core/persistence/buildPersistedDoc";
 import { useCanvasStore } from "@features/store/useCanvasStore";
 import { useUIStore } from "@features/store/useUIStore";
 import type { PersistedSlateDoc } from "@core/types/canvas";
@@ -151,23 +152,9 @@ export function usePersistence(options?: {
         context?: string;
       }
     ) => {
-      let hasImages = false;
-      const filteredPages: PersistedSlateDoc["pages"] = {};
-      Object.entries(data.pages).forEach(([pageId, items]) => {
-        const nextItems = items.filter((item) => item.type !== "image");
-        if (nextItems.length !== items.length) hasImages = true;
-        filteredPages[pageId] = nextItems;
+      const { doc: payload, hasImages } = buildPersistedDoc(data, {
+        includeImages: false,
       });
-      const payload: PersistedSlateDoc = {
-        version: 2,
-        pages: filteredPages,
-        pageOrder: data.pageOrder,
-        pageColumnCounts: data.pageColumnCounts,
-        stepBlocks: data.stepBlocks,
-        anchorMap: data.anchorMap,
-        audioByStep: data.audioByStep,
-        animationModInput: data.animationModInput ?? null,
-      };
       setSaveStatus("saving");
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));

@@ -51,6 +51,10 @@ v10/src/
 |   |   \-- rules.ts
 |   |-- migrations/
 |   |   \-- migrateToV2.ts
+|   |-- persistence/
+|   |   \-- buildPersistedDoc.ts
+|   |-- sanitize/
+|   |   \-- richTextSanitizer.ts
 |   |-- themes/
 |   |   \-- chalkTheme.ts
 |   |-- types/
@@ -80,6 +84,7 @@ v10/src/
 |   |   |   |-- MathRevealBlock.tsx
 |   |   |   |-- MixedRevealBlock.tsx
 |   |   |   \-- RichTextAnimator.tsx
+|   |   |-- editing/
 |   |   |-- objects/
 |   |   |   \-- ImageBlock.tsx
 |   |   |-- viewport/
@@ -107,6 +112,11 @@ v10/src/
 |   |   |-- useSFX.ts
 |   |   \-- useSnap.ts
 |   |-- layout/
+|   |   |-- dataInput/
+|   |   |   |-- blockDraft.ts
+|   |   |   |-- mediaIO.ts
+|   |   |   |-- segmentCommands.ts
+|   |   |   \-- types.ts
 |   |   |-- AppLayout.tsx
 |   |   |-- autoLayout.ts
 |   |   |-- DataInputPanel.tsx
@@ -126,6 +136,10 @@ v10/src/
 |       |-- PageNavigator.tsx
 |       |-- PenControls.tsx
 |       \-- PlaybackControls.tsx
+|-- generated/
+|   \-- prisma/
+|       |-- internal/
+|       \-- models/
 \-- ui/
     \-- components/
         |-- button.tsx
