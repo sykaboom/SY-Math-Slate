@@ -36,7 +36,8 @@ v10/src/
 |-- core/
 |   |-- config/
 |   |   |-- boardSpec.ts
-|   |   \-- capabilities.ts
+|   |   |-- capabilities.ts
+|   |   \-- typography.ts
 |   |-- export/
 |   |   \-- exportPipeline.ts
 |   |-- extensions/
@@ -56,6 +57,19 @@ v10/src/
 |   |   \-- canvas.ts
 |   \-- utils.ts
 |-- features/
+|   |-- animation/
+|   |   |-- modding/
+|   |   |   |-- modContract.ts
+|   |   |   \-- normalizeModProfile.ts
+|   |   |-- model/
+|   |   |   |-- animationProfile.ts
+|   |   |   \-- builtinProfiles.ts
+|   |   |-- plan/
+|   |   |   |-- compileAnimationPlan.ts
+|   |   |   \-- measureAnimationPlan.ts
+|   |   \-- runtime/
+|   |       |-- playAnimationPlan.ts
+|   |       \-- types.ts
 |   |-- canvas/
 |   |   |-- actors/
 |   |   |   |-- ActorLayer.tsx
@@ -63,7 +77,9 @@ v10/src/
 |   |   |   \-- HighlighterActor.tsx
 |   |   |-- animation/
 |   |   |   |-- AnimatedTextBlock.tsx
-|   |   |   \-- MathRevealBlock.tsx
+|   |   |   |-- MathRevealBlock.tsx
+|   |   |   |-- MixedRevealBlock.tsx
+|   |   |   \-- RichTextAnimator.tsx
 |   |   |-- objects/
 |   |   |   \-- ImageBlock.tsx
 |   |   |-- viewport/

@@ -7,6 +7,7 @@ import {
   useMemo,
   useRef,
   useState,
+  type CSSProperties,
   type ChangeEvent,
   type UIEvent,
 } from "react";
@@ -23,6 +24,16 @@ import type {
   StepSegmentType,
   TextItem,
 } from "@core/types/canvas";
+import {
+  ALLOWED_RICH_TEXT_CLASSES,
+  DEFAULT_TEXT_LINE_HEIGHT,
+  TEXT_FONT_FAMILY_OPTIONS,
+  TEXT_INLINE_BOLD_CLASS,
+  TEXT_INLINE_COLOR_OPTIONS,
+  TEXT_INLINE_SIZE_OPTIONS,
+  createDefaultTextSegmentStyle,
+  normalizeTextSegmentStyle,
+} from "@core/config/typography";
 import { runAutoLayout } from "@features/layout/autoLayout";
 import {
   ChevronDown,
@@ -54,6 +65,32 @@ const sanitizeHtml = (value: string) =>
     USE_PROFILES: { html: true },
     ALLOWED_ATTR: ["class"],
   });
+
+const ALLOWED_CLASS_SET = new Set(ALLOWED_RICH_TEXT_CLASSES);
+
+const sanitizeClassList = (value: string) => {
+  const tokens = value
+    .split(/\s+/)
+    .map((token) => token.trim())
+    .filter((token) => token.length > 0 && ALLOWED_CLASS_SET.has(token));
+  return tokens.join(" ");
+};
+
+const sanitizeRichHtml = (value: string) => {
+  const sanitized = sanitizeHtml(value);
+  const template = document.createElement("template");
+  template.innerHTML = sanitized;
+  template.content.querySelectorAll<HTMLElement>("[class]").forEach((node) => {
+    const safeClass = sanitizeClassList(node.className);
+    if (safeClass.length > 0) {
+      node.className = safeClass;
+    } else {
+      node.removeAttribute("class");
+    }
+  });
+  const normalized = template.innerHTML.trim();
+  return normalized.length > 0 ? normalized : "&nbsp;";
+};
 
 const toPlainText = (html: string) => {
   const div = document.createElement("div");
@@ -130,6 +167,7 @@ export function DataInputPanel() {
     id: createSegmentId(),
     type: "text",
     html: value,
+    style: createDefaultTextSegmentStyle(),
     orderIndex,
   });
 
@@ -154,6 +192,39 @@ export function DataInputPanel() {
       orderIndex: index,
     }));
 
+  const normalizeSegmentDraft = (segment: StepSegment, index: number): StepSegment => {
+    if (segment.type !== "text") {
+      return {
+        ...segment,
+        orderIndex: index,
+      };
+    }
+    return {
+      ...segment,
+      html: sanitizeRichHtml(segment.html),
+      style: normalizeTextSegmentStyle(segment.style),
+      orderIndex: index,
+    };
+  };
+
+  const normalizeBlocksDraft = (drafts: StepBlockDraft[]): StepBlockDraft[] => {
+    return drafts.map((block) => {
+      if (block.kind && block.kind !== "content") {
+        return {
+          ...block,
+          segments: [],
+        };
+      }
+      const normalizedSegments = block.segments.map((segment, index) =>
+        normalizeSegmentDraft(segment, index)
+      );
+      return {
+        ...block,
+        segments: normalizedSegments,
+      };
+    });
+  };
+
   const buildBlocksFromFlowItems = () => {
     const items = flowItems;
     const grouped = new Map<number, StepSegment[]>();
@@ -170,6 +241,7 @@ export function DataInputPanel() {
           id: item.segmentId ?? createSegmentId(),
           type: "text",
           html: item.content || "&nbsp;",
+          style: normalizeTextSegmentStyle(item.style),
           orderIndex: index,
         });
       } else if (item.type === "image") {
@@ -225,7 +297,9 @@ export function DataInputPanel() {
     hasInitializedRef.current = true;
     setActiveTab("input");
 
-    const initialBlocks = stepBlocks.length > 0 ? stepBlocks : fallbackBlocks;
+    const initialBlocks = normalizeBlocksDraft(
+      stepBlocks.length > 0 ? stepBlocks : fallbackBlocks
+    );
     setBlocks(initialBlocks);
     setRawText(blocksToRawText(initialBlocks));
     setInsertionIndex(initialBlocks.length);
@@ -242,8 +316,9 @@ export function DataInputPanel() {
       localContent.every((block, index) => block.id === storeContent[index]?.id);
     if (!sameContent) return;
     if (blocks.length === stepBlocks.length) return;
-    setBlocks(stepBlocks);
-    setRawText(blocksToRawText(stepBlocks));
+    const normalized = normalizeBlocksDraft(stepBlocks);
+    setBlocks(normalized);
+    setRawText(blocksToRawText(normalized));
   }, [blocks, isDataInputOpen, stepBlocks]);
 
   useEffect(() => {
@@ -333,7 +408,7 @@ export function DataInputPanel() {
   };
 
   const updateSegmentHtml = (segmentId: string, html: string) => {
-    const cleaned = sanitizeHtml(html);
+    const cleaned = sanitizeRichHtml(html);
     setBlocks((prev) =>
       prev.map((block) => ({
         ...block,
@@ -369,6 +444,25 @@ export function DataInputPanel() {
           ? { ...block, segments: normalizeSegments(updater(block.segments)) }
           : block
       )
+    );
+  };
+
+  const updateTextSegmentStyle = (
+    blockId: string,
+    segmentId: string,
+    partial: Partial<ReturnType<typeof normalizeTextSegmentStyle>>
+  ) => {
+    updateBlockSegments(blockId, (segments) =>
+      segments.map((segment) => {
+        if (segment.id !== segmentId || segment.type !== "text") return segment;
+        return {
+          ...segment,
+          style: normalizeTextSegmentStyle({
+            ...segment.style,
+            ...partial,
+          }),
+        };
+      })
     );
   };
 
@@ -482,6 +576,27 @@ export function DataInputPanel() {
     updateSegmentHtml(id, host.innerHTML);
   };
 
+  const wrapSelectionWithClass = (id: string, className: string) => {
+    const host = segmentRefs.current[id];
+    if (!host) return;
+    const range = getActiveRange(id);
+    if (!range) return;
+    if (range.collapsed) return;
+    if (!host.contains(range.commonAncestorContainer)) return;
+    const selection = window.getSelection();
+    if (!selection) return;
+    const contents = range.extractContents();
+    const span = document.createElement("span");
+    span.className = className;
+    span.appendChild(contents);
+    range.insertNode(span);
+    selection.removeAllRanges();
+    const newRange = document.createRange();
+    newRange.selectNodeContents(span);
+    selection.addRange(newRange);
+    updateSegmentHtml(id, host.innerHTML);
+  };
+
   const wrapSelectionWithMath = (id: string) => {
     const host = segmentRefs.current[id];
     if (!host) return;
@@ -503,21 +618,7 @@ export function DataInputPanel() {
   };
 
   const handleApply = () => {
-    const normalizedBlocks: StepBlockDraft[] = blocks.map((block) => ({
-      ...block,
-      segments: normalizeSegments(
-        block.segments.map((segment) => {
-          if (segment.type === "text") {
-            const cleaned = sanitizeHtml(segment.html);
-            return {
-              ...segment,
-              html: cleaned.trim() === "" ? "&nbsp;" : cleaned,
-            };
-          }
-          return segment;
-        })
-      ),
-    }));
+    const normalizedBlocks = normalizeBlocksDraft(blocks);
     importStepBlocks(normalizedBlocks);
   };
 
@@ -649,21 +750,7 @@ export function DataInputPanel() {
     if (isLayoutRunning) return;
     setIsLayoutRunning(true);
     captureLayoutSnapshot();
-    const normalizedBlocks: StepBlockDraft[] = blocks.map((block) => ({
-      ...block,
-      segments: normalizeSegments(
-        block.segments.map((segment) => {
-          if (segment.type === "text") {
-            const cleaned = sanitizeHtml(segment.html);
-            return {
-              ...segment,
-              html: cleaned.trim() === "" ? "&nbsp;" : cleaned,
-            };
-          }
-          return segment;
-        })
-      ),
-    }));
+    const normalizedBlocks = normalizeBlocksDraft(blocks);
     try {
       const columnCount = pageColumnCounts?.[currentPageId] ?? 2;
       const result = await runAutoLayout(normalizedBlocks, {
@@ -902,6 +989,21 @@ export function DataInputPanel() {
                                 : segment.type === "image"
                                   ? `img${String(++imageIndex).padStart(2, "0")}`
                                   : `play${String(++videoIndex).padStart(2, "0")}`;
+                            const textStyle =
+                              segment.type === "text"
+                                ? normalizeTextSegmentStyle(segment.style)
+                                : null;
+                            const editorStyle: CSSProperties | undefined =
+                              textStyle
+                                ? {
+                                    fontFamily: textStyle.fontFamily,
+                                    fontSize: textStyle.fontSize,
+                                    fontWeight:
+                                      textStyle.fontWeight as CSSProperties["fontWeight"],
+                                    color: textStyle.color,
+                                    lineHeight: DEFAULT_TEXT_LINE_HEIGHT,
+                                  }
+                                : undefined;
                             return (
                               <div
                                 key={segment.id}
@@ -938,6 +1040,7 @@ export function DataInputPanel() {
                                           "min-h-[28px] rounded-md border border-white/10 bg-black/30 px-2 py-1 text-sm text-white/80 outline-none",
                                           "focus-within:border-white/40"
                                         )}
+                                        style={editorStyle}
                                         contentEditable
                                         suppressContentEditableWarning
                                         onBlur={() =>
@@ -947,7 +1050,72 @@ export function DataInputPanel() {
                                           __html: segment.html,
                                         }}
                                       />
-                                      <div className="flex items-center gap-2">
+                                      <div className="flex flex-wrap items-center gap-2">
+                                        <select
+                                          className="h-7 rounded-md border border-white/15 bg-black/40 px-2 text-[11px] text-white/80 outline-none"
+                                          value={textStyle?.fontFamily ?? ""}
+                                          onChange={(event) =>
+                                            updateTextSegmentStyle(
+                                              block.id,
+                                              segment.id,
+                                              { fontFamily: event.target.value }
+                                            )
+                                          }
+                                        >
+                                          {TEXT_FONT_FAMILY_OPTIONS.map((option) => (
+                                            <option
+                                              key={option.value}
+                                              value={option.value}
+                                            >
+                                              {option.label}
+                                            </option>
+                                          ))}
+                                        </select>
+                                        <Button
+                                          variant="outline"
+                                          className="h-7 px-2 text-[11px] font-bold"
+                                          onMouseDown={(event) => {
+                                            event.preventDefault();
+                                            wrapSelectionWithClass(
+                                              segment.id,
+                                              TEXT_INLINE_BOLD_CLASS
+                                            );
+                                          }}
+                                        >
+                                          B
+                                        </Button>
+                                        {TEXT_INLINE_COLOR_OPTIONS.map((option) => (
+                                          <Button
+                                            key={`${segment.id}-${option.className}`}
+                                            variant="outline"
+                                            className="h-7 px-2 text-[11px]"
+                                            onMouseDown={(event) => {
+                                              event.preventDefault();
+                                              wrapSelectionWithClass(
+                                                segment.id,
+                                                option.className
+                                              );
+                                            }}
+                                          >
+                                            {option.label}
+                                          </Button>
+                                        ))}
+                                        {TEXT_INLINE_SIZE_OPTIONS.map((option) => (
+                                          <Button
+                                            key={`${segment.id}-${option.className}`}
+                                            variant="outline"
+                                            className="h-7 px-2 text-[11px]"
+                                            onMouseDown={(event) => {
+                                              event.preventDefault();
+                                              wrapSelectionWithClass(
+                                                segment.id,
+                                                option.className
+                                              );
+                                            }}
+                                          >
+                                            {option.label}
+                                          </Button>
+                                        ))}
                                         {canMath && (
                                           <Button
                                             variant="outline"

@@ -7,6 +7,10 @@ import {
   getBoardSize,
   type BoardRatio,
 } from "@core/config/boardSpec";
+import {
+  DEFAULT_TEXT_LINE_HEIGHT,
+  toTextItemStyle,
+} from "@core/config/typography";
 import { loadMathJax } from "@core/math/loader";
 import { typesetElement } from "@core/math/render";
 import type {
@@ -19,9 +23,6 @@ import type {
 
 const CONTENT_PADDING = getBoardPadding();
 const COLUMN_GAP = 48;
-const DEFAULT_FONT_SIZE = "28px";
-const DEFAULT_LINE_HEIGHT = "1.6";
-const DEFAULT_TEXT_COLOR = "#ffffff";
 const DEFAULT_MEDIA_GAP = 12;
 const DEFAULT_VIDEO_RATIO = 16 / 9;
 
@@ -84,9 +85,22 @@ const getSegmentRatio = (segment: StepSegment) => {
 
 const buildTextSegment = (segment: StepSegment) => {
   const element = document.createElement("div");
-  element.style.fontSize = DEFAULT_FONT_SIZE;
-  element.style.lineHeight = DEFAULT_LINE_HEIGHT;
-  element.style.color = DEFAULT_TEXT_COLOR;
+  const textStyle = toTextItemStyle(segment.type === "text" ? segment.style : undefined);
+  const fontFamily =
+    typeof textStyle.fontFamily === "string" ? textStyle.fontFamily : "";
+  const fontSize = typeof textStyle.fontSize === "string" ? textStyle.fontSize : "";
+  const fontWeight =
+    typeof textStyle.fontWeight === "string" ? textStyle.fontWeight : "";
+  const color = typeof textStyle.color === "string" ? textStyle.color : "";
+  const lineHeight =
+    typeof textStyle.lineHeight === "string"
+      ? textStyle.lineHeight
+      : DEFAULT_TEXT_LINE_HEIGHT;
+  element.style.fontFamily = fontFamily;
+  element.style.fontSize = fontSize;
+  element.style.fontWeight = fontWeight;
+  element.style.lineHeight = lineHeight;
+  element.style.color = color;
   element.style.wordBreak = "break-word";
   element.style.whiteSpace = "normal";
   element.innerHTML = sanitizeHtml(segment.type === "text" ? segment.html : "");
@@ -257,7 +271,7 @@ const measureStep = (
         x,
         y,
         zIndex: zIndex++,
-        style: { fontSize: DEFAULT_FONT_SIZE, color: DEFAULT_TEXT_COLOR },
+        style: toTextItemStyle(segment.style),
         segmentId: segment.id,
       });
       return;

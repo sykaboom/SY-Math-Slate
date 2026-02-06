@@ -13,7 +13,6 @@ import type { ActorState } from "@features/canvas/actors/ActorLayer";
 
 const isTextItem = (item: CanvasItem): item is TextItem => item.type === "text";
 const isImageItem = (item: CanvasItem) => item.type === "image";
-const hasMathToken = (value: string) => value.includes("$");
 
 const MARKER_TIP_OFFSET = { x: 10, y: 18 };
 const CHALK_TIP_OFFSET = chalkTheme.tipOffset;
@@ -26,7 +25,6 @@ const idleActor: ActorState = {
 
 export type AnimationState = {
   activeItemId: string | null;
-  activeMode: "text" | "math" | null;
   isAnimating: boolean;
   speed: number;
   isPaused: boolean;
@@ -69,7 +67,6 @@ export function useSequence({
   const { play: playAudio, stop: stopAudio } = useAudioPlayer();
 
   const [activeItemId, setActiveItemId] = useState<string | null>(null);
-  const [activeMode, setActiveMode] = useState<"text" | "math" | null>(null);
   const [actor, setActor] = useState<ActorState>(idleActor);
 
   const runIdRef = useRef(0);
@@ -203,9 +200,7 @@ export function useSequence({
       if (items.length === 0) return;
       for (const item of items) {
         if (runIdRef.current !== runId) return;
-        const mode = hasMathToken(item.content) ? "math" : "text";
         setActiveItemId(item.id);
-        setActiveMode(mode);
         lastSoundToolRef.current = null;
         setActor((prev) => ({
           ...prev,
@@ -223,7 +218,6 @@ export function useSequence({
 
     if (runIdRef.current !== runId) return;
     setActiveItemId(null);
-    setActiveMode(null);
     setActor((prev) => ({ ...prev, isMoving: false, visible: false }));
     stop();
     setAnimating(false);
@@ -257,7 +251,6 @@ export function useSequence({
     runIdRef.current += 1;
     cancelActive();
     setActiveItemId(null);
-    setActiveMode(null);
     setActor((prev) => ({ ...prev, isMoving: false, visible: false }));
     stop();
     stopAudio();
@@ -293,13 +286,11 @@ export function useSequence({
     stopAudio();
     setAnimating(false);
     setActiveItemId(null);
-    setActiveMode(null);
     setActor(idleActor);
   }, [cancelActive, enabled, setAnimating, stop, stopAudio]);
 
   return {
     activeItemId,
-    activeMode,
     isAnimating: activeItemId !== null || storeIsAnimating,
     speed: playbackSpeed,
     isPaused,

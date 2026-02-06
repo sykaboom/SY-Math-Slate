@@ -40,7 +40,7 @@ This file is the **single source** for AI agents. It is intentionally verbose an
 ## Directory Map (v10/src)
 ```
 core/
-  config/        (boardSpec, capabilities)
+  config/        (boardSpec, capabilities, typography defaults)
   export/        (export pipeline scaffold)
   extensions/    (manifest, registry, connectors, runtime scaffold)
   math/          (MathJax loader/render)
@@ -48,6 +48,7 @@ core/
   themes/        (chalk theme)
   types/         (canvas data types)
 features/
+  animation/     (animation model, plan/measure/runtime, modding contract)
   canvas/        (rendering layers, actors)
   hooks/         (useSequence, usePersistence, useFileIO, useAudioPlayer, ...)
   layout/        (AppLayout, autoLayout, overview)
@@ -89,6 +90,7 @@ app/
 
 **PersistedSlateDoc**
 - Document-only payload for storage/export (no session fields).
+- Includes optional `animationModInput` (format-agnostic external profile payload).
 
 ---
 
@@ -103,6 +105,7 @@ app/
 - `stepBlocks: StepBlock[]`
 - `anchorMap: AnchorMap | null`
 - `audioByStep: Record<number, StepAudio>`
+- `animationModInput: ModInput | null`
 - `insertionIndex: number`
 - `currentStroke: StrokeItem | null`
 - `selectedItemId: string | null`
@@ -147,9 +150,21 @@ app/
    - wait for animation
 5) Delay `autoPlayDelayMs`, then `nextStep()`.
 
+### Rich Text Animation Pipeline
+1) `ContentLayer` routes active text items through `RichTextAnimator` (single entrypoint).
+2) `compileAnimationPlan` classifies content as `text` / `math` / `mixed`.
+3) `measureAnimationPlan` collects run metrics.
+4) `playAnimationPlan` executes timeline phases (text reveal, highlight, math reveal).
+5) Profile resolution is format-agnostic:
+   - external mod payload -> `normalizeModProfile` -> internal `AnimationProfile`.
+6) text-only / math-only / mixed all use the same plan/measure/runtime path.
+7) Animation runtime must remain font-agnostic:
+   - no font-name hardcoding in runtime/model modules.
+
 ### Persistence (Doc-only)
 - Local autosave and `.slate` export **store doc only**.
 - Session fields are never saved.
+- `animationModInput` and text segment style payload are persisted with doc data.
 
 ---
 
@@ -165,12 +180,14 @@ app   -> features + ui
 **Concrete dependency hotspots**
 - `features/layout/autoLayout.ts`
   - `@core/config/boardSpec`
+  - `@core/config/typography`
   - `@core/math/loader`
   - `@core/math/render`
   - `@core/types/canvas`
 - `features/hooks/usePersistence.ts`
   - `@core/migrations/migrateToV2`
   - `@core/config/boardSpec`
+  - `@core/config/typography`
   - `@features/store/useCanvasStore`
   - `@features/store/useUIStore`
 - `features/hooks/useFileIO.ts`
@@ -180,7 +197,16 @@ app   -> features + ui
   - `@features/store/useCanvasStore`
   - `@features/hooks/useAudioPlayer`
   - `@features/hooks/useSFX`
+- `features/canvas/animation/RichTextAnimator.tsx`
+  - `@features/animation/model/*`
+  - `@features/animation/modding/*`
+  - `@features/animation/plan/*`
+  - `@features/animation/runtime/*`
+  - `@core/math/loader`
+  - `@core/math/render`
+  - `@features/hooks/useBoardTransform`
 - `features/store/useCanvasStore.ts`
+  - `@core/config/typography`
   - `@core/types/canvas`
 
 ---
@@ -201,17 +227,29 @@ app   -> features + ui
 1) Collect items where `item.stepIndex === currentStep`.
 2) If `audioByStep[currentStep]` exists:
    - play audio (useAudioPlayer)
-   - run text animation (useSequence loop)
+   - run animation loop (useSequence + animator on active item)
    - await **both** to finish
 3) If no audio:
    - run animation only
 4) Delay `autoPlayDelayMs`, then `nextStep()`.
 
+### Animation Runtime (features/animation/*)
+1) Build plan from typeset DOM:
+   - `compileAnimationPlan` creates ordered runs.
+2) Measure:
+   - `measureAnimationPlan` computes run metrics.
+3) Play:
+   - `playAnimationPlan` drives rAF timeline with pause/skip/stop/speed.
+4) Profile:
+   - `normalizeModProfile` converts external mod input (format-agnostic) into `AnimationProfile`.
+
 ### Migration (core/migrations/migrateToV2.ts)
 1) Normalize pages (`pages`, `pageOrder`).
 2) Normalize items (stroke/text/image/math/unknown).
-3) Ensure at least 1 page exists.
-4) Normalize version (2 or 2.1), return **doc-only** payload (no session fields).
+3) Normalize `stepBlocks` (segment order/style) and sanitize rich text HTML/class allowlist.
+4) Normalize `animationModInput` if present.
+5) Ensure at least 1 page exists.
+6) Normalize version (2 or 2.1), return **doc-only** payload (no session fields).
 
 ### Persistence (features/hooks/usePersistence.ts)
 1) `saveSnapshot` filters **image items** for local storage.
@@ -241,6 +279,7 @@ app   -> features + ui
 - `setColumnCount / increaseColumns / decreaseColumns`: adjust per-page column counts.
 - `addPage / deletePage / goToPage / isPageEmpty`: page management helpers.
 - `setStepAudio / clearStepAudio`: mutate `audioByStep`.
+- `setAnimationModInput`: updates persisted modding payload for animation profile input.
 - `nextStep / prevStep / goToStep / resetStep`: session-only step navigation.
 - `nextPage / prevPage`: session-only page navigation.
 - `captureLayoutSnapshot / restoreLayoutSnapshot`: doc snapshot + restore.
@@ -265,7 +304,8 @@ app   -> features + ui
   "pageColumnCounts": { "page-1": 2 },
   "stepBlocks": [],
   "anchorMap": {},
-  "audioByStep": {}
+  "audioByStep": {},
+  "animationModInput": null
 }
 ```
 
@@ -294,7 +334,7 @@ Located in `core/extensions/`:
 ## Invariants (Do Not Break)
 - **Global Step**: never reset per-page.
 - **Doc-only persistence**: never store session fields.
-- **Sanitize HTML**: any `innerHTML` must be DOMPurify-sanitized.
+- **Sanitize HTML**: any `innerHTML` must be sanitized upstream (DOMPurify or allowlist sanitizer).
 - **Layer boundaries**: `core` must not import `features` or `ui`.
 - **JSON-safe persistence**: no DOM/Function in persisted payloads.
 

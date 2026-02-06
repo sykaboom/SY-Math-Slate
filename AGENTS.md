@@ -69,6 +69,11 @@ After coding:
 - Codex must state the exact scope and files before editing.
 - After the hotfix, add a brief note in `codex_tasks/` (new hotfix log or append to the closest task log).
 
+## Hotfix log policy
+- Hotfix md files must be created in `codex_tasks/hotfix/` only.
+- Naming: `hotfix_###_slug.md` with sequential numbering (no gaps). New hotfix uses the next number in order.
+- Hotfix files are created by Codex only.
+
 ## Quality & safety constraints (always)
 - No eval/new Function
 - No window globals

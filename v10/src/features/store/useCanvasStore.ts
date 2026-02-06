@@ -3,6 +3,7 @@ import { create } from "zustand";
 import type {
   AnchorMap,
   CanvasItem,
+  ModInput,
   PersistedCanvasV2,
   PersistedSlateDoc,
   StepAudio,
@@ -11,6 +12,7 @@ import type {
   StrokeItem,
 } from "@core/types/canvas";
 import { getBoardPadding } from "@core/config/boardSpec";
+import { toTextItemStyle } from "@core/config/typography";
 import { runAutoLayout } from "@features/layout/autoLayout";
 import { useUIStore } from "@features/store/useUIStore";
 
@@ -25,6 +27,7 @@ interface CanvasState extends PersistedCanvasV2 {
   selectedItemId: string | null;
   stepBlocks: StepBlock[];
   audioByStep: Record<number, StepAudio>;
+  animationModInput: ModInput | null;
   insertionIndex: number;
   anchorMap: AnchorMap | null;
   layoutSnapshot: PersistedCanvasV2 | null;
@@ -47,6 +50,7 @@ interface CanvasState extends PersistedCanvasV2 {
   undo: () => void;
   clear: () => void;
   importStepBlocks: (blocks: StepBlock[]) => void;
+  setAnimationModInput: (input: ModInput | null) => void;
   setInsertionIndex: (index: number) => void;
   setStepAudio: (stepIndex: number, audio: StepAudio) => void;
   clearStepAudio: (stepIndex: number) => void;
@@ -98,6 +102,7 @@ const createInitialState = () => {
     pageColumnCounts: { [firstPageId]: defaultColumns },
     stepBlocks: [] as StepBlock[],
     audioByStep: {} as Record<number, StepAudio>,
+    animationModInput: null as ModInput | null,
     insertionIndex: 0,
     anchorMap: null,
     layoutSnapshot: null,
@@ -353,7 +358,7 @@ const buildPagesFromBlocks = (
         x: 0,
         y: 0,
         zIndex,
-        style: { fontSize: "28px", color: "#ffffff" },
+        style: toTextItemStyle(undefined),
         segmentId: block.id,
       });
       zIndexByPage.set(currentPageId, zIndex + 1);
@@ -375,7 +380,7 @@ const buildPagesFromBlocks = (
           x: 0,
           y: 0,
           zIndex,
-          style: { fontSize: "28px", color: "#ffffff" },
+          style: toTextItemStyle(segment.style),
           segmentId: segment.id,
         });
         zIndexByPage.set(currentPageId, zIndex + 1);
@@ -679,6 +684,10 @@ export const useCanvasStore = create<CanvasState>((set, get) => {
           anchorMap: null,
         };
       }),
+    setAnimationModInput: (input) =>
+      set(() => ({
+        animationModInput: input,
+      })),
     setInsertionIndex: (index) =>
       set((state) => {
         const max = state.stepBlocks.length;
@@ -756,6 +765,7 @@ export const useCanvasStore = create<CanvasState>((set, get) => {
           stepBlocks: state.stepBlocks,
           anchorMap: state.anchorMap ?? undefined,
           audioByStep: state.audioByStep,
+          animationModInput: state.animationModInput,
         },
       })),
     restoreLayoutSnapshot: () =>
@@ -771,6 +781,7 @@ export const useCanvasStore = create<CanvasState>((set, get) => {
           stepBlocks: snapshot.stepBlocks ?? [],
           anchorMap: snapshot.anchorMap ?? null,
           audioByStep: snapshot.audioByStep ?? state.audioByStep,
+          animationModInput: snapshot.animationModInput ?? null,
           layoutSnapshot: null,
         };
       }),
@@ -907,6 +918,7 @@ export const useCanvasStore = create<CanvasState>((set, get) => {
         selectedItemId: null,
         stepBlocks,
         audioByStep: data.audioByStep ?? {},
+        animationModInput: data.animationModInput ?? null,
         insertionIndex: stepBlocks.length,
         anchorMap: data.anchorMap ?? null,
         layoutSnapshot: null,

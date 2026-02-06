@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 import { migrateToV2 } from "@core/migrations/migrateToV2";
 import { getBoardSize } from "@core/config/boardSpec";
+import { toTextItemStyle } from "@core/config/typography";
 import { useCanvasStore } from "@features/store/useCanvasStore";
 import { useUIStore } from "@features/store/useUIStore";
 import type { PersistedSlateDoc } from "@core/types/canvas";
@@ -112,7 +113,7 @@ export function usePersistence(options?: {
             y: 0,
             zIndex: 0,
             stepIndex: 0,
-            style: { fontSize: "28px" },
+            style: toTextItemStyle(undefined),
           },
           {
             id: `seed-${Date.now()}-2`,
@@ -123,7 +124,7 @@ export function usePersistence(options?: {
             y: 0,
             zIndex: 1,
             stepIndex: 1,
-            style: { fontSize: "28px" },
+            style: toTextItemStyle(undefined),
           },
           {
             id: `seed-${Date.now()}-3`,
@@ -134,7 +135,7 @@ export function usePersistence(options?: {
             y: 0,
             zIndex: 2,
             stepIndex: 2,
-            style: { fontSize: "28px" },
+            style: toTextItemStyle(undefined),
           },
         ],
       },
@@ -165,6 +166,7 @@ export function usePersistence(options?: {
         stepBlocks: data.stepBlocks,
         anchorMap: data.anchorMap,
         audioByStep: data.audioByStep,
+        animationModInput: data.animationModInput ?? null,
       };
       setSaveStatus("saving");
       try {
@@ -209,6 +211,7 @@ export function usePersistence(options?: {
         stepBlocks: state.stepBlocks,
         anchorMap: state.anchorMap ?? undefined,
         audioByStep: state.audioByStep,
+        animationModInput: state.animationModInput,
       },
       { context: "manual-save", notifyOnImageSkip: true }
     );
@@ -302,6 +305,7 @@ export function usePersistence(options?: {
             stepBlocks: state.stepBlocks,
             anchorMap: state.anchorMap ?? undefined,
             audioByStep: state.audioByStep,
+            animationModInput: state.animationModInput,
           },
           { notifyOnError: true, context: "auto-save", notifyOnImageSkip: false }
         );

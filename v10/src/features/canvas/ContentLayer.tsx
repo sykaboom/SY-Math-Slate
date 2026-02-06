@@ -11,8 +11,7 @@ import { getBoardPadding } from "@core/config/boardSpec";
 import { cn } from "@core/utils";
 import { MathTextBlock } from "@features/canvas/MathTextBlock";
 import { ImageBlock } from "@features/canvas/objects/ImageBlock";
-import { AnimatedTextBlock } from "@features/canvas/animation/AnimatedTextBlock";
-import { MixedRevealBlock } from "@features/canvas/animation/MixedRevealBlock";
+import { RichTextAnimator } from "@features/canvas/animation/RichTextAnimator";
 import type { AnimationState } from "@features/hooks/useSequence";
 import { PlayCircle } from "lucide-react";
 
@@ -63,7 +62,7 @@ export function ContentLayer({
   readOnly = false,
   animationState,
 }: ContentLayerProps) {
-  const { pages, currentPageId, currentStep, pageColumnCounts } =
+  const { pages, currentPageId, currentStep, pageColumnCounts, animationModInput } =
     useCanvasStore();
   const { isOverviewMode, isDataInputOpen } = useUIStore();
   const resolvedPageId = pageId ?? currentPageId;
@@ -189,27 +188,8 @@ export function ContentLayer({
               ? (item.style as CSSProperties)
               : undefined;
             if (isAnimating && item.id === activeItemId && !isOverviewMode) {
-              if (sanitized.includes("$")) {
-                return (
-                  <MixedRevealBlock
-                    key={item.id}
-                    className={cn(
-                      "text-item mb-8 break-inside-avoid pointer-events-none"
-                    )}
-                    style={style}
-                    html={sanitized}
-                    isActive
-                    speed={animationState?.speed ?? 1}
-                    isPaused={animationState?.isPaused ?? false}
-                    skipSignal={animationState?.skipSignal ?? 0}
-                    stopSignal={animationState?.stopSignal ?? 0}
-                    onMove={animationState?.onMove ?? (() => {})}
-                    onDone={animationState?.onDone ?? (() => {})}
-                  />
-                );
-              }
               return (
-                <AnimatedTextBlock
+                <RichTextAnimator
                   key={item.id}
                   className={cn(
                     "text-item mb-8 break-inside-avoid pointer-events-none"
@@ -223,6 +203,7 @@ export function ContentLayer({
                   stopSignal={animationState?.stopSignal ?? 0}
                   onMove={animationState?.onMove ?? (() => {})}
                   onDone={animationState?.onDone ?? (() => {})}
+                  modInput={animationModInput}
                 />
               );
             }
@@ -291,29 +272,9 @@ export function ContentLayer({
           const style = isRecord(item.style)
             ? (item.style as CSSProperties)
             : undefined;
-            if (isAnimating && item.id === activeItemId && !isOverviewMode) {
-              if (sanitized.includes("$")) {
-                return (
-                  <MixedRevealBlock
-                    key={item.id}
-                    className="text-item absolute"
-                    style={{
-                      transform: `translate(${item.x}px, ${item.y}px)`,
-                      ...style,
-                    }}
-                    html={sanitized}
-                    isActive
-                    speed={animationState?.speed ?? 1}
-                    isPaused={animationState?.isPaused ?? false}
-                    skipSignal={animationState?.skipSignal ?? 0}
-                    stopSignal={animationState?.stopSignal ?? 0}
-                    onMove={animationState?.onMove ?? (() => {})}
-                    onDone={animationState?.onDone ?? (() => {})}
-                  />
-                );
-              }
+          if (isAnimating && item.id === activeItemId && !isOverviewMode) {
             return (
-              <AnimatedTextBlock
+              <RichTextAnimator
                 key={item.id}
                 className="text-item absolute"
                 style={{
@@ -326,11 +287,12 @@ export function ContentLayer({
                 isPaused={animationState?.isPaused ?? false}
                 skipSignal={animationState?.skipSignal ?? 0}
                 stopSignal={animationState?.stopSignal ?? 0}
-                onMove={animationState?.onMove ?? (() => {})}
-                onDone={animationState?.onDone ?? (() => {})}
-              />
-            );
-          }
+                  onMove={animationState?.onMove ?? (() => {})}
+                  onDone={animationState?.onDone ?? (() => {})}
+                  modInput={animationModInput}
+                />
+              );
+            }
           return (
             <div
               key={item.id}

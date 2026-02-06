@@ -4,6 +4,18 @@ export type StrokeTool = "pen" | "eraser";
 export type StepSegmentType = "text" | "image" | "video";
 export type StepBlockKind = "content" | "line-break" | "column-break" | "page-break";
 
+export type ModInput = {
+  format: string;
+  payload: unknown;
+};
+
+export type TextSegmentStyle = {
+  fontFamily?: string;
+  fontSize?: string;
+  fontWeight?: string;
+  color?: string;
+};
+
 export interface Point {
   x: number;
   y: number;
@@ -72,13 +84,14 @@ export type CanvasItem =
   | UnknownItem;
 
 export type PersistedSlateDoc = {
-  version: 2;
+  version: 2 | 2.1;
   pages: Record<string, CanvasItem[]>;
   pageOrder: string[];
   pageColumnCounts?: Record<string, number>;
   stepBlocks?: StepBlock[];
   anchorMap?: AnchorMap | null;
   audioByStep?: Record<number, StepAudio>;
+  animationModInput?: ModInput | null;
 };
 
 export type PersistedCanvasV2 = PersistedSlateDoc & {
@@ -95,6 +108,7 @@ export type StepSegmentBase = {
 export type TextSegment = StepSegmentBase & {
   type: "text";
   html: string;
+  style?: TextSegmentStyle;
 };
 
 export type ImageSegment = StepSegmentBase & {

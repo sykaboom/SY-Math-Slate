@@ -97,6 +97,7 @@ export function useFileIO() {
         stepBlocks: state.stepBlocks,
         anchorMap: state.anchorMap ?? undefined,
         audioByStep: state.audioByStep,
+        animationModInput: state.animationModInput,
       };
 
       zip.file("manifest.json", JSON.stringify(manifest, null, 2));
