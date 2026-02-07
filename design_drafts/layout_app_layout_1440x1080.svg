@@ -1,0 +1,57 @@
+<svg width="1440" height="1080" viewBox="0 0 1440 1080" xmlns="http://www.w3.org/2000/svg">
+  <!-- Structure v3: AppLayout (4:3) -->
+  <text x="20" y="30" fill="#aaaaaa" font-family="monospace" font-size="14">Ratio: 4:3 (1440x1080)</text>
+
+  <!-- Header Region -->
+  <g id="region_header">
+    <rect x="0" y="0" width="1440" height="80" fill="none" stroke="#00ff00" stroke-width="2" stroke-dasharray="5,5" />
+    <text x="10" y="70" fill="#00ff00" font-family="monospace" font-size="12">Header: h-20 (80px), sticky top-0</text>
+  </g>
+
+  <!-- Main Content Area (Flex Row) -->
+  <g id="region_main">
+    <rect x="0" y="80" width="1440" height="880" fill="none" stroke="#00ffff" stroke-width="2" />
+    
+    <!-- 1. Left Padding (24px) -->
+    <rect x="0" y="80" width="24" height="880" fill="none" stroke="#555555" stroke-opacity="0.3" />
+    
+    <!-- 2. Canvas Stage (flex-1) -->
+    <!-- Calculation: 1440 - 24(L) - 16(Gap) - 420(Panel) - 24(R) = 956 -->
+    <g id="container_canvas">
+      <rect x="24" y="104" width="956" height="832" fill="none" stroke="#00ffff" stroke-opacity="0.8" />
+      <text x="34" y="120" fill="#00ffff" font-family="monospace" font-size="12">CanvasStage: x=24 w=956 (flex-1)</text>
+    </g>
+
+    <!-- 3. Gap (16px) -->
+    <rect x="980" y="104" width="16" height="832" fill="none" stroke="#ff0000" stroke-opacity="0.3" />
+
+    <!-- 4. DataInput Panel (Fixed 420px) -->
+    <g id="container_datainput">
+      <rect x="996" y="104" width="420" height="832" fill="none" stroke="#ff00ff" stroke-opacity="0.8" />
+      <text x="1006" y="130" fill="#ff00ff" font-family="monospace" font-size="12">DataInputPanel: x=996 w=420 (lg:static)</text>
+      <text x="1006" y="150" fill="#ff00ff" font-family="monospace" font-size="10">Behavior: &lt;lg fixed overlay</text>
+    </g>
+
+    <!-- 5. Right Padding (24px) -->
+    <rect x="1416" y="80" width="24" height="880" fill="none" stroke="#555555" stroke-opacity="0.3" />
+  </g>
+
+  <!-- Footer Area -->
+  <g id="region_footer">
+    <rect x="0" y="960" width="1440" height="120" fill="none" stroke="#ffff00" stroke-width="2" />
+    
+    <!-- Stack Container -->
+    <g id="container_stack_center">
+      <rect x="160" y="960" width="1120" height="110" fill="none" stroke="#ffff00" stroke-opacity="0.5" stroke-dasharray="4 2" />
+      <text x="170" y="975" fill="#ffff00" font-family="monospace" font-size="12">Stack: w=min(1120px, 94vw)</text>
+      
+      <!-- Slot 1: Prompter -->
+      <rect x="360" y="965" width="720" height="40" fill="none" stroke="#ffffff" />
+      <text x="370" y="990" fill="#ffffff" font-family="monospace" font-size="12">Prompter</text>
+      
+      <!-- Slot 2: FloatingToolbar -->
+      <rect x="320" y="1015" width="800" height="50" fill="none" stroke="#ffffff" />
+      <text x="330" y="1045" fill="#ffffff" font-family="monospace" font-size="12">FloatingToolbar</text>
+    </g>
+  </g>
+</svg>

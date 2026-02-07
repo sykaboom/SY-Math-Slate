@@ -1,0 +1,38 @@
+<svg width="1440" height="1080" viewBox="0 0 1440 1080" xmlns="http://www.w3.org/2000/svg">
+  <!-- Structure v3: OverviewStage (4:3) -->
+  <text x="20" y="30" fill="#aaaaaa" font-family="monospace" font-size="14">Ratio: 4:3 (1440x1080)</text>
+
+  <!-- Viewport -->
+  <rect x="0" y="0" width="1440" height="1080" fill="none" stroke="#555555" stroke-width="2" />
+  
+  <!-- Transform Layer (Dynamic) -->
+  <g id="transform_layer" transform="translate(100, 100)">
+    <text x="0" y="-40" fill="#00ff00" font-family="monospace" font-size="24">Transform Root</text>
+    <text x="0" y="-10" fill="#00ff00" font-family="monospace" font-size="20">style="transform: scale(overviewZoom)"</text>
+    
+    <!-- Grid System -->
+    <g id="grid_layout">
+      <!-- Page 1 -->
+      <g id="page_1">
+        <rect width="1440" height="1080" fill="none" stroke="#00ffff" stroke-width="4" />
+        <text x="40" y="80" fill="#00ffff" font-family="monospace" font-size="24">Page 1 (1440x1080)</text>
+      </g>
+      
+      <!-- Page 2 (Col Gap 48) -->
+      <g id="page_2" transform="translate(1488, 0)">
+         <rect width="1440" height="1080" fill="none" stroke="#00ffff" stroke-width="4" />
+         <text x="40" y="80" fill="#00ffff" font-family="monospace" font-size="24">Page 2</text>
+         <!-- Gap Indicator -->
+         <line x1="-24" y1="0" x2="-24" y2="1080" stroke="#ff0000" stroke-width="2" stroke-dasharray="10,10" />
+         <text x="-40" y="540" fill="#ff0000" font-family="monospace" font-size="20" transform="rotate(-90, -40, 540)">Gap 48</text>
+      </g>
+      
+      <!-- Page 3 (Row Gap 48) -->
+      <g id="page_3" transform="translate(0, 1128)">
+         <rect width="1440" height="1080" fill="none" stroke="#00ffff" stroke-width="4" />
+         <text x="40" y="80" fill="#00ffff" font-family="monospace" font-size="24">Page 3</text>
+         <text x="600" y="-20" fill="#ff0000" font-family="monospace" font-size="20">Row Gap 48</text>
+      </g>
+    </g>
+  </g>
+</svg>

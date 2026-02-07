@@ -1,0 +1,45 @@
+<svg width="1440" height="1080" viewBox="0 0 1440 1080" xmlns="http://www.w3.org/2000/svg">
+  <!-- Structure v3: DataInputPanel (4:3) -->
+  <text x="20" y="30" fill="#aaaaaa" font-family="monospace" font-size="14">Ratio: 4:3 (1440x1080)</text>
+
+  <!-- Panel Container (Desktop Context) -->
+  <g id="panel_desktop">
+    <!-- Fixed Width 420px -->
+    <rect x="1020" y="0" width="420" height="1080" fill="none" stroke="#00ffff" stroke-width="2" />
+    <text x="1030" y="30" fill="#00ffff" font-family="monospace" font-size="14">Desktop: w-[420px] (standalone local x=1020)</text>
+    <text x="1030" y="48" fill="#00ffff" font-family="monospace" font-size="12">AppLayout mapping: panel x=996 after 24/956/16 rhythm</text>
+    
+    <!-- Internal Sections -->
+    <g transform="translate(1020, 0)">
+      <!-- 1. Header -->
+      <g id="region_header">
+        <rect x="0" y="0" width="420" height="60" fill="none" stroke="#00ffff" stroke-opacity="0.3" />
+        <text x="10" y="35" fill="#00ffff" font-family="monospace" font-size="12">ID: #region_header</text>
+      </g>
+
+      <!-- 2. Tabs (Mobile only usually, but structure slot exists) -->
+      <g id="region_tabs">
+        <rect x="0" y="60" width="420" height="40" fill="none" stroke="#00ffff" stroke-opacity="0.3" stroke-dasharray="2,2" />
+        <text x="10" y="85" fill="#00ffff" font-family="monospace" font-size="12">ID: #region_tabs</text>
+      </g>
+
+      <!-- 3. Content Area -->
+      <g id="region_scroll_content">
+        <rect x="0" y="100" width="420" height="900" fill="none" stroke="#00ffff" stroke-opacity="0.3" />
+        <text x="10" y="120" fill="#00ffff" font-family="monospace" font-size="12">ID: #region_scroll_content (flex-1)</text>
+      </g>
+      
+      <!-- 4. Footer Actions -->
+      <g id="region_footer_actions">
+        <rect x="0" y="1000" width="420" height="80" fill="none" stroke="#00ffff" stroke-opacity="0.5" />
+        <text x="10" y="1040" fill="#00ffff" font-family="monospace" font-size="12">ID: #region_footer_actions (sticky bottom)</text>
+      </g>
+    </g>
+  </g>
+
+  <!-- Responsive Annotation -->
+  <g id="meta_responsive">
+    <text x="600" y="500" fill="#ff00ff" font-family="monospace" font-size="12">Target: Desktop(1440), Tablet(&lt;lg)</text>
+    <text x="600" y="520" fill="#ff00ff" font-family="monospace" font-size="12">Behavior: &lt;lg = fixed inset-0 (Overlay)</text>
+  </g>
+</svg>

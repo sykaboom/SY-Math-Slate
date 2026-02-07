@@ -84,6 +84,22 @@ After coding:
 - Layout/structure changes require an SVG artifact in `design_drafts/` with a path listed in the task spec.
 - Codex must verify the SVG file exists before implementation; if missing, stop and request it from Gemini.
 
+## Tablet ink UX layout governance (layout/structure changes)
+- Treat layout controls as part of core writing UX, not visual polish.
+- Tablet-targeting layout tasks must include this viewport matrix in the task spec:
+  - `768x1024` (tablet portrait baseline)
+  - `820x1180` (tablet portrait large)
+  - `1024x768` (tablet landscape baseline)
+  - `1180x820` (tablet landscape large)
+- Refinement loop:
+  - Gemini creates initial SVG structure pack.
+  - Codex records redline deltas (numeric conflicts, spacing, reachability) in the task spec.
+  - Gemini performs one revision pass from redline.
+  - Codex implements only after SVG + redline are structurally consistent.
+- Freeze rule: no production layout edits while unresolved coordinate/size conflicts remain.
+- Implementation order for refactors: app shell -> panel/drawer -> footer controls -> overlays.
+- Ink continuity gate: overlays/panels must not unexpectedly block pointer path, and the writing surface must stay usable in both portrait and landscape tablet orientations.
+
 ## Speculative defense guardrails (always)
 - No “just in case” branches without evidence from spec, existing inputs, or real bug reports.
 - If a future-proofing branch is required, it must include:

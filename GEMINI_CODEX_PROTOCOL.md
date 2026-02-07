@@ -56,6 +56,27 @@ Purpose: use Gemini's spatial reasoning to design stable layout structure withou
 - SVG is a design artifact only; it must NOT be embedded in production code.
 - Gemini must not edit production files.
 
+## 3.2) Ink-First Tablet Refinement Loop (Gemini <-> Codex)
+Purpose: keep tablet writing UX stable while using Gemini for spatial design and Codex for implementation.
+
+### Required viewport set for tablet layout tasks
+- `768 x 1024` (portrait baseline)
+- `820 x 1180` (portrait large)
+- `1024 x 768` (landscape baseline)
+- `1180 x 820` (landscape large)
+
+### Loop (mandatory for layout refinements)
+1) Gemini produces initial SVG structure drafts.
+2) Codex writes redline deltas in the task spec (numeric mismatches, spacing, alignment, reachability).
+3) Gemini applies one revision pass from redline.
+4) Codex freezes structure references and implements in small slices.
+
+### Rules
+- Writing continuity has priority over decorative layout choices.
+- No production layout edits start until unresolved coordinate/size conflicts are cleared in spec.
+- If SVG labels and code constraints conflict, resolve with explicit numeric values in spec before implementation.
+- Avoid repeated full-redraw loops; after one revision, remaining issues are handled by Codex redline deltas.
+
 ## 4) Workflow (mandatory)
 1) Spec Draft (Gemini): `codex_tasks/task_<id>_<desc>.md` with status = PENDING
 2) Review + Edit (Codex): review spec; if missing scope/acceptance/touched files -> edit the spec and request user review/approval

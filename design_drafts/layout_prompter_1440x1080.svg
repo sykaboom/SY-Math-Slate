@@ -1,0 +1,15 @@
+<svg width="1440" height="1080" viewBox="0 0 1440 1080" xmlns="http://www.w3.org/2000/svg">
+  <!-- Structure v3: Prompter (4:3) -->
+  <text x="20" y="30" fill="#aaaaaa" font-family="monospace" font-size="14">Ratio: 4:3 (1440x1080)</text>
+
+  <!-- Footer Stack Context -->
+  <g id="container_stack" transform="translate(160, 960)">
+    <rect x="0" y="0" width="1120" height="120" fill="none" stroke="#ffff00" stroke-opacity="0.3" stroke-dasharray="4,4" />
+    
+    <!-- Prompter -->
+    <g id="component_prompter" transform="translate(200, 5)">
+      <rect x="0" y="0" width="720" height="40" rx="20" fill="none" stroke="#00ffff" stroke-width="2" />
+      <text x="10" y="-5" fill="#00ffff" font-family="monospace" font-size="12">w=min(720px, 92vw)</text>
+    </g>
+  </g>
+</svg>

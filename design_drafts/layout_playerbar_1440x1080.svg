@@ -1,0 +1,25 @@
+<svg width="1440" height="1080" viewBox="0 0 1440 1080" xmlns="http://www.w3.org/2000/svg">
+  <!-- Structure v3: PlayerBar (4:3) -->
+  <text x="20" y="30" fill="#aaaaaa" font-family="monospace" font-size="14">Ratio: 4:3 (1440x1080)</text>
+
+  <!-- Footer Context -->
+  <rect x="0" y="960" width="1440" height="120" fill="none" stroke="#333333" stroke-dasharray="2,2" />
+  
+  <!-- PlayerBar Container -->
+  <g id="component_playerbar" transform="translate(330, 980)">
+    <!-- Width: min(780px, 92vw) -->
+    <rect x="0" y="0" width="780" height="68" rx="34" fill="none" stroke="#00ffff" stroke-width="2" />
+    <text x="10" y="-10" fill="#00ffff" font-family="monospace" font-size="12">w=min(780px, 92vw)</text>
+
+    <!-- Controls -->
+    <g id="group_playback" transform="translate(16, 11)">
+      <rect x="0" y="0" width="90" height="46" fill="none" stroke="#00ff00" stroke-opacity="0.3" />
+    </g>
+    <g id="group_progress" transform="translate(130, 0)">
+      <rect x="0" y="20" width="480" height="28" fill="none" stroke="#ffff00" stroke-opacity="0.3" />
+    </g>
+    <g id="group_settings" transform="translate(630, 19)">
+      <rect x="0" y="0" width="100" height="30" fill="none" stroke="#ff00ff" stroke-opacity="0.3" />
+    </g>
+  </g>
+</svg>
