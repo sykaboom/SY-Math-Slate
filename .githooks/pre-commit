@@ -9,10 +9,32 @@ fi
 repo_root="$(git rev-parse --show-toplevel)"
 cd "$repo_root"
 
+configured_hooks_path="$(git config --get core.hooksPath || true)"
+if [[ "$configured_hooks_path" != ".githooks" ]]; then
+  echo "[pre-commit] WARNING: core.hooksPath is '$configured_hooks_path' (expected '.githooks')."
+fi
+
 staged_files="$(git diff --cached --name-only --diff-filter=ACMR)"
 if [[ -z "$staged_files" ]]; then
   echo "[pre-commit] No staged files."
   exit 0
+fi
+
+needs_map_refresh=0
+while IFS= read -r path; do
+  if [[ "$path" == v10/* ]] || [[ "$path" == "scripts/gen_ai_read_me_map.mjs" ]]; then
+    needs_map_refresh=1
+    break
+  fi
+done <<< "$staged_files"
+
+if [[ "$needs_map_refresh" -eq 1 ]]; then
+  echo "[pre-commit] Refreshing v10/AI_READ_ME_MAP.md ..."
+  node scripts/gen_ai_read_me_map.mjs
+  if ! git diff --quiet -- v10/AI_READ_ME_MAP.md; then
+    git add v10/AI_READ_ME_MAP.md
+    echo "[pre-commit] Staged updated v10/AI_READ_ME_MAP.md"
+  fi
 fi
 
 has_v10_changes=0
@@ -24,13 +46,6 @@ while IFS= read -r path; do
 done <<< "$staged_files"
 
 if [[ "$has_v10_changes" -eq 1 ]]; then
-  echo "[pre-commit] Refreshing v10/AI_READ_ME_MAP.md ..."
-  node scripts/gen_ai_read_me_map.mjs
-  if ! git diff --quiet -- v10/AI_READ_ME_MAP.md; then
-    git add v10/AI_READ_ME_MAP.md
-    echo "[pre-commit] Staged updated v10/AI_READ_ME_MAP.md"
-  fi
-
   mapfile -t lint_targets < <(
     printf '%s\n' "$staged_files" \
       | awk '/^v10\/.*\.(ts|tsx|js|jsx)$/ { sub(/^v10\//, "", $0); print $0 }'
