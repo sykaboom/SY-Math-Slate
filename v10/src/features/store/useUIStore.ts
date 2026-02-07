@@ -10,6 +10,7 @@ import type { AlignmentGuide } from "@features/hooks/useSnap";
 
 export type Tool = "pen" | "eraser" | "laser" | "hand" | "text";
 export type LaserType = "standard" | "highlighter";
+export type FullscreenInkMode = "off" | "native" | "app";
 export type { PenType };
 
 export type PanelId = "pen" | "laser" | null;
@@ -52,6 +53,7 @@ interface UIState {
   isAnimating: boolean;
   isSoundEnabled: boolean;
   isDataInputOpen: boolean;
+  fullscreenInkMode: FullscreenInkMode;
   showCursors: boolean;
   showBreakGuides: boolean;
   showCanvasBorder: boolean;
@@ -93,6 +95,10 @@ interface UIState {
   openDataInput: () => void;
   closeDataInput: () => void;
   toggleDataInput: () => void;
+  setFullscreenInkMode: (mode: FullscreenInkMode) => void;
+  enterFullscreenInkNative: () => void;
+  enterFullscreenInkFallback: () => void;
+  exitFullscreenInk: () => void;
   toggleCursors: () => void;
   toggleBreakGuides: () => void;
   toggleCanvasBorder: () => void;
@@ -128,6 +134,7 @@ export const useUIStore = create<UIState>((set, get) => ({
   isAnimating: false,
   isSoundEnabled: false,
   isDataInputOpen: false,
+  fullscreenInkMode: "off",
   showCursors: false,
   showBreakGuides: true,
   showCanvasBorder: true,
@@ -245,6 +252,10 @@ export const useUIStore = create<UIState>((set, get) => ({
   closeDataInput: () => set(() => ({ isDataInputOpen: false })),
   toggleDataInput: () =>
     set((state) => ({ isDataInputOpen: !state.isDataInputOpen })),
+  setFullscreenInkMode: (mode) => set(() => ({ fullscreenInkMode: mode })),
+  enterFullscreenInkNative: () => set(() => ({ fullscreenInkMode: "native" })),
+  enterFullscreenInkFallback: () => set(() => ({ fullscreenInkMode: "app" })),
+  exitFullscreenInk: () => set(() => ({ fullscreenInkMode: "off" })),
   toggleCursors: () => set((state) => ({ showCursors: !state.showCursors })),
   toggleBreakGuides: () =>
     set((state) => ({ showBreakGuides: !state.showBreakGuides })),

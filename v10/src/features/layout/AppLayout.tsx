@@ -1,6 +1,6 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
 import dynamic from "next/dynamic";
 
 import { CanvasStage } from "@features/canvas/CanvasStage";
@@ -10,7 +10,7 @@ import { Prompter } from "@features/layout/Prompter";
 import { PlayerBar } from "@features/layout/PlayerBar";
 import { Button } from "@ui/components/button";
 import { useUIStore } from "@features/store/useUIStore";
-import { Minus, MonitorPlay, Plus, ZoomIn } from "lucide-react";
+import { Maximize2, Minimize2, Minus, MonitorPlay, Plus, ZoomIn } from "lucide-react";
 
 const FloatingToolbar = dynamic(
   () =>
@@ -25,6 +25,7 @@ interface AppLayoutProps {
 }
 
 export function AppLayout({ children }: AppLayoutProps) {
+  const layoutRootRef = useRef<HTMLDivElement | null>(null);
   const {
     viewMode,
     isOverviewMode,
@@ -33,9 +34,24 @@ export function AppLayout({ children }: AppLayoutProps) {
     toggleOverviewMode,
     setViewMode,
     openDataInput,
+    closeDataInput,
     isDataInputOpen,
+    fullscreenInkMode,
+    enterFullscreenInkNative,
+    enterFullscreenInkFallback,
+    exitFullscreenInk,
   } = useUIStore();
   const isPresentation = viewMode === "presentation";
+  const isNativeFullscreen = fullscreenInkMode === "native";
+  const isAppFullscreen = fullscreenInkMode === "app";
+  const isFullscreenInkActive = fullscreenInkMode !== "off";
+  const layoutState = isNativeFullscreen
+    ? "state_native_fullscreen"
+    : isAppFullscreen
+      ? "state_app_fullscreen_fallback"
+      : isDataInputOpen
+        ? "state_input_mode"
+        : "state_canvas_mode";
   const zoomLabel = isOverviewMode ? Math.round(overviewZoom * 100) : 100;
 
   const handleHeaderZoom = (delta: number) => {
@@ -43,12 +59,65 @@ export function AppLayout({ children }: AppLayoutProps) {
     setOverviewZoom(overviewZoom + delta);
   };
 
+  const handleEnterFullscreenInk = async () => {
+    closeDataInput();
+    const rootNode = layoutRootRef.current;
+    if (!rootNode || typeof rootNode.requestFullscreen !== "function") {
+      enterFullscreenInkFallback();
+      return;
+    }
+    try {
+      await rootNode.requestFullscreen();
+      enterFullscreenInkNative();
+    } catch {
+      enterFullscreenInkFallback();
+    }
+  };
+
+  const handleExitFullscreenInk = async () => {
+    if (
+      isNativeFullscreen &&
+      typeof document !== "undefined" &&
+      document.fullscreenElement
+    ) {
+      try {
+        await document.exitFullscreen();
+      } catch {
+        // ignore
+      }
+    }
+    exitFullscreenInk();
+  };
+
+  useEffect(() => {
+    if (typeof document === "undefined") return;
+    const handleFullscreenChange = () => {
+      if (document.fullscreenElement) return;
+      if (fullscreenInkMode === "native") {
+        exitFullscreenInk();
+      }
+    };
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+    return () =>
+      document.removeEventListener("fullscreenchange", handleFullscreenChange);
+  }, [exitFullscreenInk, fullscreenInkMode]);
+
+  useEffect(() => {
+    if (!isDataInputOpen || !isFullscreenInkActive) return;
+    exitFullscreenInk();
+  }, [exitFullscreenInk, isDataInputOpen, isFullscreenInkActive]);
+
   return (
     <div
-      data-layout-state={isDataInputOpen ? "state_input_mode" : "state_canvas_mode"}
-      className="flex h-[100dvh] w-full flex-col bg-slate-app text-white"
+      ref={layoutRootRef}
+      data-layout-state={layoutState}
+      className={
+        isAppFullscreen
+          ? "flex h-[100svh] w-full flex-col bg-slate-app text-white"
+          : "flex h-[100dvh] w-full flex-col bg-slate-app text-white"
+      }
     >
-      {!isPresentation && (
+      {!isPresentation && !isFullscreenInkActive && (
         <header
           data-layout-id="region_chrome_top"
           className="sticky top-0 z-40 border-b border-white/10 bg-black/40 backdrop-blur-md"
@@ -73,6 +142,17 @@ export function AppLayout({ children }: AppLayoutProps) {
                 data-layout-id="action_open_drafting_room"
               >
                 입력
+              </Button>
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-11 w-11 border-white/15 bg-white/5 text-white/80 hover:bg-white/10 hover:text-white"
+                onClick={handleEnterFullscreenInk}
+                aria-label="전체화면 필기 시작"
+                title="전체화면 필기 시작"
+                data-layout-id="action_enter_fullscreen_ink"
+              >
+                <Maximize2 className="h-4 w-4" />
               </Button>
               <div className="flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-2 py-1 sm:gap-2 sm:px-3">
                 <Button
@@ -132,20 +212,28 @@ export function AppLayout({ children }: AppLayoutProps) {
           <div data-layout-id="region_canvas_primary" className="min-w-0 flex-1">
             <CanvasStage>{children}</CanvasStage>
           </div>
-          {!isPresentation && <DataInputPanel />}
+          {!isPresentation && !isFullscreenInkActive && <DataInputPanel />}
         </div>
       </main>
 
       {!isPresentation && (
         <footer
           data-layout-id="region_chrome_bottom"
-          className="pointer-events-none fixed inset-x-0 bottom-0 z-40 flex items-end justify-center px-3 pb-3 sm:px-4 sm:pb-4 xl:pointer-events-auto xl:static xl:px-6 xl:pb-6"
+          className={
+            isFullscreenInkActive
+              ? "pointer-events-none fixed inset-x-0 bottom-0 z-40 flex items-end justify-center px-3 pb-3 sm:px-4 sm:pb-4"
+              : "pointer-events-none fixed inset-x-0 bottom-0 z-40 flex items-end justify-center px-3 pb-3 sm:px-4 sm:pb-4 xl:pointer-events-auto xl:static xl:px-6 xl:pb-6"
+          }
         >
           <div
             data-layout-id="region_toolchips"
-            className="pointer-events-auto flex w-full max-w-[min(1120px,96vw)] flex-col gap-2 xl:max-w-[min(1120px,94vw)]"
+            className={
+              isFullscreenInkActive
+                ? "pointer-events-auto flex w-full max-w-[min(980px,96vw)] flex-col gap-2"
+                : "pointer-events-auto flex w-full max-w-[min(1120px,96vw)] flex-col gap-2 xl:max-w-[min(1120px,94vw)]"
+            }
           >
-            <div className="hidden xl:block">
+            <div className={isFullscreenInkActive ? "hidden" : "hidden xl:block"}>
               <Prompter />
             </div>
             <FloatingToolbar />
@@ -158,6 +246,23 @@ export function AppLayout({ children }: AppLayoutProps) {
         </footer>
       )}
       {!isPresentation && <PasteHelperModal />}
+      {isFullscreenInkActive && !isPresentation && (
+        <div className="pointer-events-none fixed inset-0 z-50">
+          <div className="pointer-events-auto absolute left-3 top-3 sm:left-4 sm:top-4">
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-12 w-12 border-white/20 bg-black/60 text-white hover:bg-black/75"
+              onClick={handleExitFullscreenInk}
+              aria-label="전체화면 필기 종료"
+              title="전체화면 필기 종료"
+              data-layout-id="action_exit_fullscreen_ink"
+            >
+              <Minimize2 className="h-5 w-5" />
+            </Button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
