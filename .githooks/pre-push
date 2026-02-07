@@ -1,0 +1,65 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if [[ "${SKIP_QUALITY_GATE:-0}" == "1" ]]; then
+  echo "[pre-push] SKIP_QUALITY_GATE=1 -> skipped."
+  exit 0
+fi
+
+repo_root="$(git rev-parse --show-toplevel)"
+cd "$repo_root"
+
+changed_files="$(
+  while read -r local_ref local_sha remote_ref remote_sha; do
+    if [[ -z "${local_sha:-}" ]]; then
+      continue
+    fi
+
+    if [[ "${remote_sha:-}" =~ ^0+$ ]]; then
+      git diff-tree --no-commit-id --name-only -r "$local_sha"
+    else
+      git diff --name-only "${remote_sha}..${local_sha}"
+    fi
+  done | sed '/^$/d' | sort -u
+)"
+
+if [[ -z "$changed_files" ]]; then
+  echo "[pre-push] No changed files detected from push refs. Running shell verifications only."
+  bash scripts/run_repo_verifications.sh
+  echo "[pre-push] OK"
+  exit 0
+fi
+
+needs_v10_build=0
+needs_root_build=0
+
+while IFS= read -r path; do
+  [[ "$path" == v10/* ]] && needs_v10_build=1
+
+  if [[ "$path" == src/* ]] \
+    || [[ "$path" == "index.html" ]] \
+    || [[ "$path" == "package.json" ]] \
+    || [[ "$path" == "vite.config.js" ]] \
+    || [[ "$path" == "vite.config.mjs" ]] \
+    || [[ "$path" == "vite.config.ts" ]]; then
+    needs_root_build=1
+  fi
+done <<< "$changed_files"
+
+if [[ "$needs_v10_build" -eq 1 ]]; then
+  echo "[pre-push] Running v10 build ..."
+  (
+    cd v10
+    npm run build
+  )
+fi
+
+if [[ "$needs_root_build" -eq 1 ]]; then
+  echo "[pre-push] Running root legacy build ..."
+  npm run build
+fi
+
+echo "[pre-push] Running shell verifications ..."
+bash scripts/run_repo_verifications.sh
+
+echo "[pre-push] OK"

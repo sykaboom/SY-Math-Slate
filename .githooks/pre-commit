@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if [[ "${SKIP_QUALITY_GATE:-0}" == "1" ]]; then
+  echo "[pre-commit] SKIP_QUALITY_GATE=1 -> skipped."
+  exit 0
+fi
+
+repo_root="$(git rev-parse --show-toplevel)"
+cd "$repo_root"
+
+staged_files="$(git diff --cached --name-only --diff-filter=ACMR)"
+if [[ -z "$staged_files" ]]; then
+  echo "[pre-commit] No staged files."
+  exit 0
+fi
+
+has_v10_changes=0
+while IFS= read -r path; do
+  if [[ "$path" == v10/* ]]; then
+    has_v10_changes=1
+    break
+  fi
+done <<< "$staged_files"
+
+if [[ "$has_v10_changes" -eq 1 ]]; then
+  echo "[pre-commit] Refreshing v10/AI_READ_ME_MAP.md ..."
+  node scripts/gen_ai_read_me_map.mjs
+  if ! git diff --quiet -- v10/AI_READ_ME_MAP.md; then
+    git add v10/AI_READ_ME_MAP.md
+    echo "[pre-commit] Staged updated v10/AI_READ_ME_MAP.md"
+  fi
+
+  mapfile -t lint_targets < <(
+    printf '%s\n' "$staged_files" \
+      | awk '/^v10\/.*\.(ts|tsx|js|jsx)$/ { sub(/^v10\//, "", $0); print $0 }'
+  )
+
+  if ((${#lint_targets[@]} > 0)); then
+    echo "[pre-commit] Running scoped v10 lint on staged source files ..."
+    (
+      cd v10
+      npm run lint -- --max-warnings=0 -- "${lint_targets[@]}"
+    )
+  else
+    echo "[pre-commit] No staged v10 JS/TS files. Scoped lint skipped."
+  fi
+fi
+
+echo "[pre-commit] Running shell verifications ..."
+bash scripts/run_repo_verifications.sh
+
+echo "[pre-commit] OK"

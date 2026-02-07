@@ -28,7 +28,7 @@ If no task spec exists for the requested work:
 ## Default target
 - Unless the spec explicitly says "root legacy app", assume work happens in `v10/`.
 
-## Commands (do NOT run unless user explicitly asks)
+## Commands (default policy)
 Root (legacy Vite app):
 - Install: `npm install`
 - Dev: `npm run dev` (http://localhost:5173)
@@ -42,6 +42,42 @@ v10 (Next.js app):
 - Build: `npm run build`
 - Start: `npm run start`
 - Lint: `npm run lint`
+
+### Quality gate exception (default run)
+- For code changes, Codex should run baseline verification before commit/push unless the user explicitly opts out:
+  - v10 changes: `cd v10 && npm run lint` and `cd v10 && npm run build`
+  - Root legacy changes: run the relevant build command for touched app (`npm run build` in root)
+- If checks fail due to pre-existing repo issues, Codex must report:
+  - which failures are pre-existing vs new from current changes
+  - whether current task scope is blocked by those failures
+
+### `.sh` verification scripts policy (default run when relevant)
+- If `.sh` scripts exist, Codex should discover and run verification-oriented scripts when they are relevant and safe.
+- Candidate patterns (priority):
+  - `check_*.sh`, `verify_*.sh`, `validate_*.sh`, `scan_*.sh`, `lint_*.sh`, `test_*.sh`, `guardrail*.sh`
+  - typically under `scripts/` or repo root
+- Exclusions by default:
+  - launcher/orchestrator wrappers such as `run_*.sh`, `dispatch*.sh`, deploy wrappers, or scripts that are not validation-focused
+  - these run only on explicit user request
+- Execution policy:
+  1) run each selected validation script once
+  2) summarize pass/fail briefly
+  3) if a script is missing/not executable/fails, report and continue with baseline lint/build unless blocked
+
+### Sandbox/network command policy (no-loop)
+- For network/remote commands (`git push`, `git pull`, remote fetch, dependency install), avoid retry loops.
+- Default sequence:
+  1) single normal attempt
+  2) on sandbox/network failure, single escalated attempt with justification
+  3) if still failing, stop and report exact error
+- Do not repeatedly retry the same failing remote command.
+
+### Git hooks bootstrap (required once per clone)
+- Repo-managed hooks path: `.githooks/`
+- Setup command: `git config core.hooksPath .githooks`
+- Hook intent:
+  - `pre-commit`: refresh `v10/AI_READ_ME_MAP.md` for staged `v10/` changes, run scoped staged-file lint, run verification `.sh` scripts.
+  - `pre-push`: run build gates by changed app scope, run verification `.sh` scripts.
 
 ## Spec-gated implementation workflow (mandatory)
 Before coding:
@@ -119,3 +155,4 @@ After coding:
 ## PR / commit behavior
 - Do NOT commit or push unless the user explicitly asks.
 - If asked to commit, follow existing conventional prefixes (feat/chore/docs) and include task/spec references.
+- If asked to push, follow the no-loop network policy above and report one concise status update per attempt.
