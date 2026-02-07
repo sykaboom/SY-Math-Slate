@@ -226,6 +226,16 @@ Gemini is never involved in hotfix execution.
 
 ---
 
+## Network Push Operation (sandbox-aware default)
+
+- In this environment, normal `git push` frequently fails due to DNS/network sandbox limits.
+- Default operation for `git push`:
+  1) run with escalated permission first
+  2) if it fails, stop and report the exact error
+- Do **not** run repeated normal-then-escalated retry loops for push.
+
+---
+
 ## Forward Compatibility Invariants (always)
 
 - Contracts are backward-compatible by default
