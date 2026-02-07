@@ -1,6 +1,6 @@
 # Task 085: Cross-App Contract Provisional Policy + Freeze Gate (v10 Lead)
 
-Status: PENDING
+Status: COMPLETED
 Owner: Codex (spec)
 Target: v10 + cross-app contract docs (planning/spec only)
 Date: 2026-02-07
@@ -171,11 +171,11 @@ Purpose: minimal interoperable payload for v10 <-> pdf-builder.
 - [ ] 규칙/의미 변경(레이어 규칙, 불변조건, 핵심 플로우 등) 발생 시: `v10/AI_READ_ME.md` 갱신 여부 확인
 
 ## Acceptance criteria (must be testable)
-- [ ] Provisional policy is explicitly documented (no premature freeze).
-- [ ] Minimal payload draft includes required/optional split.
-- [ ] Versioning draft and freeze gate are explicit.
-- [ ] 2-3 concrete payload examples are included (text+math, image 포함).
-- [ ] MCP/tool boundary rule is explicit and enforceable in future tasks.
+- [x] Provisional policy is explicitly documented (no premature freeze).
+- [x] Minimal payload draft includes required/optional split.
+- [x] Versioning draft and freeze gate are explicit.
+- [x] 2-3 concrete payload examples are included (text+math, image 포함).
+- [x] MCP/tool boundary rule is explicit and enforceable in future tasks.
 
 ## Manual verification steps (since no automated tests)
 - Read this spec and verify all five requested sections exist.
@@ -190,12 +190,12 @@ Purpose: minimal interoperable payload for v10 <-> pdf-builder.
 ---
 
 ## Implementation Log (Codex fills)
-Status: PENDING
+Status: COMPLETED
 Changed files:
 - `codex_tasks/task_085_crossapp_contract_provisional_freeze_policy.md`
 
 Commands run (only if user asked):
-- None
+- `sed -n '1,320p' codex_tasks/task_085_crossapp_contract_provisional_freeze_policy.md`
 
 Notes:
-- Spec-only task created from v10/pdf-builder alignment request.
+- Spec-only task finalized as policy baseline for cross-app provisional contract and freeze gate.
