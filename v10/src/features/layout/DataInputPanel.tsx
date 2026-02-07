@@ -461,7 +461,10 @@ export function DataInputPanel() {
   };
 
   return (
-    <aside className="fixed inset-0 z-50 flex h-[100dvh] w-full flex-col border-l border-white/10 bg-slate-900/95 px-4 py-4 backdrop-blur-md overscroll-contain lg:static lg:z-auto lg:h-full lg:w-[420px] lg:min-w-[420px] lg:shrink-0 lg:bg-black/40">
+    <aside
+      data-layout-state="state_input_mode"
+      className="fixed inset-0 z-50 flex h-[100dvh] w-full flex-col bg-slate-900/95 px-4 py-4 backdrop-blur-md overscroll-contain xl:static xl:z-auto xl:h-full xl:w-[420px] xl:min-w-[420px] xl:shrink-0 xl:border-l xl:border-white/10 xl:bg-black/40"
+    >
       <input
         ref={imageInputRef}
         type="file"
@@ -476,44 +479,51 @@ export function DataInputPanel() {
         className="hidden"
         onChange={handleVideoInput}
       />
-      <div className="mb-4 flex items-center justify-between">
+      <div
+        data-layout-id="region_drafting_header"
+        className="mb-4 flex items-center justify-between"
+      >
         <div>
           <p className="text-sm font-semibold text-white">데이터 입력</p>
           <p className="text-xs text-white/50">한 줄 = 한 블록 (step)</p>
         </div>
         <Button
+          data-layout-id="action_return_to_canvas"
           variant="ghost"
           size="icon"
-          className="h-8 w-8 text-white/70 hover:text-white"
+          className="h-11 w-11 text-white/70 hover:text-white"
           onClick={closeDataInput}
         >
-          <X className="h-4 w-4" />
+          <X className="h-5 w-5" />
         </Button>
       </div>
 
-      <div className="mb-3 flex items-center gap-2 lg:hidden">
+      <div className="mb-3 flex items-center gap-2 xl:hidden">
         <Button
           variant={activeTab === "input" ? "default" : "outline"}
-          className="h-8 flex-1 text-xs"
+          className="h-11 flex-1 text-xs"
           onClick={() => setActiveTab("input")}
         >
           Input
         </Button>
         <Button
           variant={activeTab === "blocks" ? "default" : "outline"}
-          className="h-8 flex-1 text-xs"
+          className="h-11 flex-1 text-xs"
           onClick={() => setActiveTab("blocks")}
         >
           Blocks
         </Button>
       </div>
 
-      <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto pb-6 [scrollbar-gutter:stable]">
+      <div
+        data-layout-id="region_drafting_content"
+        className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto pb-6 [scrollbar-gutter:stable]"
+      >
         <div
           className={cn(
             "flex flex-col gap-2",
             activeTab === "input" ? "flex" : "hidden",
-            "lg:flex"
+            "xl:flex"
           )}
         >
           <label className="text-xs font-semibold text-white/60">
@@ -555,7 +565,7 @@ export function DataInputPanel() {
           className={cn(
             "flex min-h-0 flex-1 flex-col gap-2",
             activeTab === "blocks" ? "flex" : "hidden",
-            "lg:flex"
+            "xl:flex"
           )}
         >
           <div className="flex items-center justify-between">
@@ -946,7 +956,10 @@ export function DataInputPanel() {
         </div>
       </div>
 
-      <div className="sticky bottom-0 mt-4 flex flex-wrap items-center gap-2 border-t border-white/10 bg-slate-900/95 pb-[env(safe-area-inset-bottom)] pt-3 lg:bg-black/40">
+      <div
+        data-layout-id="region_drafting_actions"
+        className="sticky bottom-0 mt-4 flex flex-wrap items-center gap-2 border-t border-white/10 bg-slate-900/95 pb-[env(safe-area-inset-bottom)] pt-3 xl:bg-black/40"
+      >
         <Button
           variant="outline"
           className="flex-1 border-white/20 text-white/70 hover:bg-white/10"
