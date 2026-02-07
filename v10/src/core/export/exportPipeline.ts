@@ -1,6 +1,18 @@
-// Stub registry for future export plugins. Intentionally empty for now.
+import {
+  isPersistedSlateDocLike,
+  mapPersistedDocToNormalizedContent,
+  type NormalizedContent,
+  type NormalizedContentValidationResult,
+  type PersistedDocMapOptions,
+  type ToolResult,
+  validateNormalizedContent,
+  validateToolResult,
+} from "@core/contracts";
+
 export type ExportPayload = {
   data: unknown;
+  normalizedContent?: NormalizedContent;
+  toolResult?: ToolResult<unknown>;
 };
 
 export type ExportResult = {
@@ -17,3 +29,46 @@ export type ExportProvider = {
 };
 
 export const exportProviders: ExportProvider[] = [];
+
+const failNormalized = (
+  code: string,
+  message: string,
+  path: string
+): NormalizedContentValidationResult => ({
+  ok: false,
+  code,
+  message,
+  path,
+});
+
+export const resolveNormalizedContentForExport = (
+  payload: ExportPayload,
+  options?: PersistedDocMapOptions
+): NormalizedContentValidationResult => {
+  if (payload.normalizedContent) {
+    return validateNormalizedContent(payload.normalizedContent);
+  }
+
+  if (payload.toolResult) {
+    const toolResultValidation = validateToolResult(payload.toolResult);
+    if (!toolResultValidation.ok) {
+      return failNormalized(
+        "invalid-tool-result",
+        `${toolResultValidation.code}: ${toolResultValidation.message}`,
+        `toolResult.${toolResultValidation.path}`
+      );
+    }
+
+    return validateNormalizedContent(toolResultValidation.value.normalized);
+  }
+
+  if (!isPersistedSlateDocLike(payload.data)) {
+    return failNormalized(
+      "invalid-export-data",
+      "Export payload must provide normalizedContent, toolResult, or PersistedSlateDoc-compatible data.",
+      "data"
+    );
+  }
+
+  return mapPersistedDocToNormalizedContent(payload.data, options);
+};

@@ -40,6 +40,7 @@ This file is the **single source** for AI agents. It is intentionally verbose an
 ## Directory Map (v10/src)
 ```
 core/
+  contracts/     (NormalizedContent/ToolResult contract types, guards, mappers)
   config/        (boardSpec, capabilities, typography defaults)
   export/        (export pipeline scaffold)
   extensions/    (manifest, registry, connectors, runtime scaffold)
@@ -166,6 +167,12 @@ app/
 - Session fields are never saved.
 - `animationModInput` and text segment style payload are persisted with doc data.
 
+### Contract Normalization (Provisional)
+1) Tool adapters return `ToolResult` envelope.
+2) Core contract guards validate `ToolResult`.
+3) `normalized` payload is validated as `NormalizedContent`.
+4) Export/interchange consumes normalized payload only (no provider branching in features/store).
+
 ---
 
 ## Dependency Map (Practical)
@@ -208,6 +215,8 @@ app   -> features + ui
 - `features/store/useCanvasStore.ts`
   - `@core/config/typography`
   - `@core/types/canvas`
+- `core/export/exportPipeline.ts`
+  - `@core/contracts/index`
 
 ---
 

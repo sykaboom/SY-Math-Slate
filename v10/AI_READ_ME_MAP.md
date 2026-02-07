@@ -38,6 +38,11 @@ v10/src/
 |   |   |-- boardSpec.ts
 |   |   |-- capabilities.ts
 |   |   \-- typography.ts
+|   |-- contracts/
+|   |   |-- fromPersistedDoc.ts
+|   |   |-- index.ts
+|   |   |-- normalizedContent.ts
+|   |   \-- toolResult.ts
 |   |-- export/
 |   |   \-- exportPipeline.ts
 |   |-- extensions/
