@@ -34,12 +34,12 @@ import {
   blocksToRawText,
   buildBlocksFromFlowItems,
   createBlockId,
-  createBlocksFromRawText,
   createMediaSegment,
   createTextSegment,
   normalizeBlocksDraft,
   normalizeSegments,
   sanitizeDraftHtml,
+  syncBlocksFromRawText,
 } from "@features/layout/dataInput/blockDraft";
 import {
   captureSelection,
@@ -53,7 +53,7 @@ import {
   readVideoFile,
   readVideoUrl,
 } from "@features/layout/dataInput/mediaIO";
-import type { StepBlockDraft } from "@features/layout/dataInput/types";
+import type { RawSyncDecision, StepBlockDraft } from "@features/layout/dataInput/types";
 import {
   ChevronDown,
   ChevronUp,
@@ -91,6 +91,8 @@ export function DataInputPanel() {
   } = useCanvasStore();
   const [rawText, setRawText] = useState("");
   const [blocks, setBlocks] = useState<StepBlockDraft[]>([]);
+  const [unmatchedBlocks, setUnmatchedBlocks] = useState<StepBlockDraft[]>([]);
+  const [syncDecisions, setSyncDecisions] = useState<RawSyncDecision[]>([]);
   const [activeTab, setActiveTab] = useState<"input" | "blocks">("input");
   const [isLayoutRunning, setIsLayoutRunning] = useState(false);
   const hasInitializedRef = useRef(false);
@@ -133,6 +135,8 @@ export function DataInputPanel() {
   useEffect(() => {
     if (!isDataInputOpen) {
       hasInitializedRef.current = false;
+      setUnmatchedBlocks([]);
+      setSyncDecisions([]);
       return;
     }
     if (hasInitializedRef.current) return;
@@ -143,6 +147,8 @@ export function DataInputPanel() {
       stepBlocks.length > 0 ? stepBlocks : fallbackBlocks
     );
     setBlocks(initialBlocks);
+    setUnmatchedBlocks([]);
+    setSyncDecisions([]);
     setRawText(blocksToRawText(initialBlocks));
     setInsertionIndex(initialBlocks.length);
   }, [fallbackBlocks, isDataInputOpen, stepBlocks]);
@@ -160,6 +166,8 @@ export function DataInputPanel() {
     if (blocks.length === stepBlocks.length) return;
     const normalized = normalizeBlocksDraft(stepBlocks);
     setBlocks(normalized);
+    setUnmatchedBlocks([]);
+    setSyncDecisions([]);
     setRawText(blocksToRawText(normalized));
   }, [blocks, isDataInputOpen, stepBlocks]);
 
@@ -227,13 +235,26 @@ export function DataInputPanel() {
   };
 
   const updateBlocksFromRaw = (value: string) => {
-    const nextBlocks = createBlocksFromRawText(value);
-    setBlocks(nextBlocks);
+    const syncPool = [...blocks, ...unmatchedBlocks];
+    const result = syncBlocksFromRawText(value, syncPool);
+    setBlocks(result.blocks);
+    setUnmatchedBlocks(result.unmatchedBlocks);
+    setSyncDecisions(result.decisions);
   };
 
   const handleRawChange = (value: string) => {
     setRawText(value);
     updateBlocksFromRaw(value);
+  };
+
+  const handleRestoreUnmatched = () => {
+    if (unmatchedBlocks.length === 0) return;
+    setBlocks((prev) => normalizeBlocksDraft([...prev, ...unmatchedBlocks]));
+    setUnmatchedBlocks([]);
+  };
+
+  const handleDiscardUnmatched = () => {
+    setUnmatchedBlocks([]);
   };
 
   const handleRawScroll = (event: UIEvent<HTMLTextAreaElement>) => {
@@ -383,6 +404,7 @@ export function DataInputPanel() {
   };
 
   const handleApply = () => {
+    if (unmatchedBlocks.length > 0) return;
     const normalizedBlocks = normalizeBlocksDraft(blocks);
     importStepBlocks(normalizedBlocks);
   };
@@ -557,8 +579,13 @@ export function DataInputPanel() {
             />
           </div>
           <p className="text-[11px] text-white/40">
-            원문을 수정하면 블록이 다시 생성됩니다.
+            원문 수정 시 블록은 비파괴 동기화됩니다. 매칭 실패 블록은 임시 보관됩니다.
           </p>
+          {syncDecisions.length > 0 && (
+            <p className="text-[11px] text-white/30">
+              동기화 결과: {syncDecisions.length}줄 처리
+            </p>
+          )}
         </div>
 
         <div
@@ -956,6 +983,33 @@ export function DataInputPanel() {
         </div>
       </div>
 
+      {unmatchedBlocks.length > 0 && (
+        <div className="mt-3 rounded-lg border border-amber-300/40 bg-amber-400/10 p-3 text-amber-100">
+          <p className="text-xs font-semibold">
+            보존 블록 {unmatchedBlocks.length}개가 임시 보관 중입니다.
+          </p>
+          <p className="mt-1 text-[11px] text-amber-100/80">
+            적용 전 복원 또는 폐기를 선택해야 데이터 유실 없이 진행됩니다.
+          </p>
+          <div className="mt-2 flex flex-wrap gap-2">
+            <Button
+              variant="outline"
+              className="h-8 border-amber-200/40 text-xs text-amber-50 hover:bg-amber-300/10"
+              onClick={handleRestoreUnmatched}
+            >
+              보존 블록 복원
+            </Button>
+            <Button
+              variant="ghost"
+              className="h-8 text-xs text-amber-100/90 hover:text-amber-50"
+              onClick={handleDiscardUnmatched}
+            >
+              보존 블록 폐기
+            </Button>
+          </div>
+        </div>
+      )}
+
       <div
         data-layout-id="region_drafting_actions"
         className="sticky bottom-0 mt-4 flex flex-wrap items-center gap-2 border-t border-white/10 bg-slate-900/95 pb-[env(safe-area-inset-bottom)] pt-3 xl:bg-black/40"
@@ -983,7 +1037,11 @@ export function DataInputPanel() {
         >
           {isLayoutRunning ? "배치 중..." : "Auto Layout"}
         </Button>
-        <Button className="flex-1" onClick={handleApply}>
+        <Button
+          className="flex-1"
+          onClick={handleApply}
+          disabled={unmatchedBlocks.length > 0}
+        >
           캔버스에 적용
         </Button>
       </div>

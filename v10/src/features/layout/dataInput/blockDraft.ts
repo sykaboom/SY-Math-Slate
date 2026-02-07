@@ -5,7 +5,7 @@ import {
 } from "@core/config/typography";
 import { sanitizeRichTextHtml } from "@core/sanitize/richTextSanitizer";
 
-import type { StepBlockDraft } from "./types";
+import type { RawSyncResult, StepBlockDraft } from "./types";
 
 const escapeHtml = (value: string) =>
   value
@@ -19,6 +19,84 @@ const toPlainText = (html: string) => {
   const div = document.createElement("div");
   div.innerHTML = html;
   return (div.textContent ?? "").replace(/\u00a0/g, "");
+};
+
+const normalizeForMatch = (value: string) =>
+  value.replace(/\u00a0/g, " ").replace(/\s+/g, " ").trim();
+
+const toRawLineHtml = (line: string) =>
+  line.trim() === "" ? "&nbsp;" : escapeHtml(line);
+
+const STABLE_ID_TOKEN = /^\s*\[#([A-Za-z0-9._:-]+)\]\s*(.*)$/;
+
+const parseStableIdToken = (line: string) => {
+  const match = line.match(STABLE_ID_TOKEN);
+  if (!match) {
+    return {
+      stableId: null as string | null,
+      displayLine: line,
+    };
+  }
+  return {
+    stableId: match[1],
+    displayLine: match[2] ?? "",
+  };
+};
+
+const getBlockNormalizedText = (block: StepBlockDraft) => {
+  if (block.kind && block.kind !== "content") return "";
+  return normalizeForMatch(
+    block.segments
+      .filter((segment) => segment.type === "text")
+      .map((segment) => toPlainText(segment.html))
+      .join(" ")
+  );
+};
+
+const rewriteBlockTextFromRaw = (
+  block: StepBlockDraft,
+  lineHtml: string,
+  normalizedLine: string
+): StepBlockDraft => {
+  if (block.kind && block.kind !== "content") return block;
+  const currentNormalized = getBlockNormalizedText(block);
+  if (currentNormalized === normalizedLine) return block;
+
+  const firstTextIndex = block.segments.findIndex(
+    (segment) => segment.type === "text"
+  );
+  if (firstTextIndex < 0) {
+    return {
+      ...block,
+      segments: normalizeSegments([
+        createTextSegment(sanitizeDraftHtml(lineHtml), 0),
+        ...block.segments,
+      ]),
+    };
+  }
+
+  const preserved = block.segments.filter(
+    (segment, index) => segment.type !== "text" || index === firstTextIndex
+  );
+  const nextSegments = preserved.map((segment, index) => {
+    if (segment.type !== "text") {
+      return {
+        ...segment,
+        orderIndex: index,
+      };
+    }
+    return {
+      ...segment,
+      html: sanitizeDraftHtml(lineHtml),
+      style: normalizeTextSegmentStyle(segment.style),
+      orderIndex: index,
+    };
+  });
+
+  return {
+    ...block,
+    segments: normalizeSegments(nextSegments),
+  };
 };
 
 export const createBlockId = () => {
@@ -166,8 +244,126 @@ export const createBlocksFromRawText = (value: string): StepBlockDraft[] => {
   const lines = value.split(/\r?\n/);
   return lines.map((line) => ({
     id: createBlockId(),
-    segments: [
-      createTextSegment(line.trim() === "" ? "&nbsp;" : escapeHtml(line), 0),
-    ],
+    segments: [createTextSegment(toRawLineHtml(line), 0)],
   }));
+};
+
+export const syncBlocksFromRawText = (
+  rawValue: string,
+  previousBlocks: StepBlockDraft[]
+): RawSyncResult => {
+  const lines = rawValue.split(/\r?\n/);
+  const parsedLines = lines.map((line, lineIndex) => {
+    const { stableId, displayLine } = parseStableIdToken(line);
+    return {
+      lineIndex,
+      stableId,
+      html: toRawLineHtml(displayLine),
+      normalized: normalizeForMatch(displayLine),
+    };
+  });
+
+  const existingContentBlocks = previousBlocks
+    .filter((block) => !block.kind || block.kind === "content")
+    .map((block, contentIndex) => ({
+      block,
+      contentIndex,
+      normalized: getBlockNormalizedText(block),
+    }));
+  const preservedNonContentBlocks = previousBlocks.filter(
+    (block) => Boolean(block.kind) && block.kind !== "content"
+  );
+
+  const usedContentIndices = new Set<number>();
+  const decisions: RawSyncResult["decisions"] = [];
+  const nextBlocks: StepBlockDraft[] = [];
+
+  const findNearestUnused = (targetIndex: number, maxDistance = 2) => {
+    for (let distance = 0; distance <= maxDistance; distance += 1) {
+      const candidates = existingContentBlocks.filter((entry) => {
+        if (usedContentIndices.has(entry.contentIndex)) return false;
+        return Math.abs(entry.contentIndex - targetIndex) === distance;
+      });
+      if (candidates.length > 0) {
+        return candidates[0];
+      }
+    }
+    return null;
+  };
+
+  parsedLines.forEach((line) => {
+    let matched = null as (typeof existingContentBlocks)[number] | null;
+    let reason: RawSyncResult["decisions"][number]["reason"] = "new";
+
+    if (line.stableId) {
+      const stableMatched = existingContentBlocks.find(
+        (entry) =>
+          entry.block.id === line.stableId &&
+          !usedContentIndices.has(entry.contentIndex)
+      );
+      if (stableMatched) {
+        matched = stableMatched;
+        reason = "stable-id";
+      }
+    }
+
+    if (!matched) {
+      const textMatched = existingContentBlocks.find(
+        (entry) =>
+          entry.normalized === line.normalized &&
+          !usedContentIndices.has(entry.contentIndex)
+      );
+      if (textMatched) {
+        matched = textMatched;
+        reason = "normalized-text";
+      }
+    }
+
+    if (!matched) {
+      const fallbackMatched = findNearestUnused(line.lineIndex, 2);
+      if (fallbackMatched) {
+        matched = fallbackMatched;
+        reason = "positional-fallback";
+      }
+    }
+
+    if (!matched) {
+      const created: StepBlockDraft = {
+        id: createBlockId(),
+        segments: [createTextSegment(line.html, 0)],
+      };
+      nextBlocks.push(created);
+      decisions.push({
+        lineIndex: line.lineIndex,
+        reason: "new",
+      });
+      return;
+    }
+
+    usedContentIndices.add(matched.contentIndex);
+    nextBlocks.push(
+      rewriteBlockTextFromRaw(matched.block, line.html, line.normalized)
+    );
+    decisions.push({
+      lineIndex: line.lineIndex,
+      reason,
+      matchedBlockId: matched.block.id,
+    });
+  });
+
+  const unmatchedContentBlocks = existingContentBlocks
+    .filter((entry) => !usedContentIndices.has(entry.contentIndex))
+    .map((entry) => entry.block);
+
+  const normalizedBlocks = normalizeBlocksDraft(nextBlocks);
+  const normalizedUnmatched = normalizeBlocksDraft([
+    ...preservedNonContentBlocks,
+    ...unmatchedContentBlocks,
+  ]);
+
+  return {
+    blocks: normalizedBlocks,
+    unmatchedBlocks: normalizedUnmatched,
+    decisions,
+  };
 };
