@@ -45,18 +45,18 @@ export function AppLayout({ children }: AppLayoutProps) {
     <div className="flex h-[100dvh] w-full flex-col bg-slate-app text-white">
       {!isPresentation && (
         <header className="sticky top-0 z-40 border-b border-white/10 bg-black/40 backdrop-blur-md">
-          <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-4">
-            <div className="flex items-center gap-3">
+          <div className="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-x-3 gap-y-2 px-4 py-3 sm:px-5 sm:py-4 lg:px-6">
+            <div className="flex min-w-0 items-center gap-3">
               <span className="text-xs font-semibold uppercase tracking-[0.3em] text-white/50">
                 SY
               </span>
-              <div>
+              <div className="min-w-0">
                 <p className="text-lg font-semibold">Math Slate</p>
                 <p className="text-xs text-white/50">Dark Canvas Workspace</p>
               </div>
             </div>
-            <div className="flex items-center gap-3">
-              <div className="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1">
+            <div className="ml-auto flex items-center gap-2 sm:gap-3">
+              <div className="flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-2 py-1 sm:gap-2 sm:px-3">
                 <Button
                   variant="ghost"
                   size="icon"
@@ -92,9 +92,11 @@ export function AppLayout({ children }: AppLayoutProps) {
                 variant="outline"
                 className="border-white/15 bg-white/5 text-white/70 hover:bg-white/10 hover:text-white"
                 onClick={toggleOverviewMode}
+                aria-label="개요 보기"
+                title="개요 보기"
               >
                 <ZoomIn className="h-4 w-4" />
-                View
+                <span className="hidden sm:inline">View</span>
               </Button>
             </div>
           </div>
@@ -104,11 +106,11 @@ export function AppLayout({ children }: AppLayoutProps) {
       <main
         className={
           isPresentation
-            ? "relative flex min-h-0 flex-1 overflow-hidden px-6 py-6"
-            : "relative flex min-h-0 flex-1 overflow-hidden px-6 pt-6"
+            ? "relative flex min-h-0 flex-1 overflow-hidden px-4 py-4 sm:px-5 sm:py-5 lg:px-6 lg:py-6"
+            : "relative flex min-h-0 flex-1 overflow-hidden px-4 pt-4 sm:px-5 sm:pt-5 lg:px-6 lg:pt-6"
         }
       >
-        <div className="flex h-full w-full min-h-0 flex-1 gap-4">
+        <div className="flex h-full w-full min-h-0 flex-1 gap-3 lg:gap-4">
           <div className="min-w-0 flex-1">
             <CanvasStage>{children}</CanvasStage>
           </div>
@@ -117,7 +119,7 @@ export function AppLayout({ children }: AppLayoutProps) {
       </main>
 
       {!isPresentation && (
-        <footer className="relative flex flex-col items-center px-6 pb-6">
+        <footer className="relative flex flex-col items-center px-4 pb-4 sm:px-5 sm:pb-5 lg:px-6 lg:pb-6">
           <div className="flex w-full max-w-[min(1120px,94vw)] flex-col gap-2">
             <Prompter />
             <FloatingToolbar />
@@ -125,7 +127,7 @@ export function AppLayout({ children }: AppLayoutProps) {
         </footer>
       )}
       {isPresentation && (
-        <footer className="relative flex items-center justify-center px-6 pb-6">
+        <footer className="relative flex items-center justify-center px-4 pb-4 sm:px-5 sm:pb-5 lg:px-6 lg:pb-6">
           <PlayerBar />
         </footer>
       )}

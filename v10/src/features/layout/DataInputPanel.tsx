@@ -177,6 +177,16 @@ export function DataInputPanel() {
     return () => document.removeEventListener("selectionchange", handleSelection);
   }, [isDataInputOpen]);
 
+  useEffect(() => {
+    if (!isDataInputOpen) return;
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      closeDataInput();
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [closeDataInput, isDataInputOpen]);
+
   if (!isDataInputOpen) return null;
 
   const renderInsertionMarker = (index: number) => {
@@ -451,7 +461,7 @@ export function DataInputPanel() {
   };
 
   return (
-    <aside className="fixed inset-0 z-50 flex h-[100dvh] w-full flex-col border-l border-white/10 bg-slate-900/95 px-4 py-4 backdrop-blur-md lg:static lg:h-full lg:w-[420px] lg:bg-black/40">
+    <aside className="fixed inset-0 z-50 flex h-[100dvh] w-full flex-col border-l border-white/10 bg-slate-900/95 px-4 py-4 backdrop-blur-md overscroll-contain lg:static lg:z-auto lg:h-full lg:w-[420px] lg:min-w-[420px] lg:shrink-0 lg:bg-black/40">
       <input
         ref={imageInputRef}
         type="file"
@@ -498,7 +508,7 @@ export function DataInputPanel() {
         </Button>
       </div>
 
-      <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-scroll pb-6 [scrollbar-gutter:stable]">
+      <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto pb-6 [scrollbar-gutter:stable]">
         <div
           className={cn(
             "flex flex-col gap-2",
