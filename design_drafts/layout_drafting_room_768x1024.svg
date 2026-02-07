@@ -1,0 +1,35 @@
+<svg viewBox="0 0 768 1024" xmlns="http://www.w3.org/2000/svg">
+  <desc>Drafting Room - Tablet Portrait (768x1024)</desc>
+  <text x="10" y="20" font-family="monospace" font-size="12" fill="#666">Ratio: 3:4 | state_input_mode (Full-screen Overlay)</text>
+  <text x="10" y="40" font-family="monospace" font-size="12" fill="#f43f5e">CONTRACT: non_destructive_sync_required</text>
+
+  <rect id="viewport_root" width="768" height="1024" fill="#020617" />
+  
+  <g id="region_drafting_header">
+    <rect width="768" height="60" fill="#0f172a" />
+    <line x1="0" y1="60" x2="768" y2="60" stroke="#334155" stroke-width="1" />
+    <text x="384" y="38" font-family="sans-serif" font-weight="bold" font-size="18" fill="white" text-anchor="middle">자료 편집실 (Drafting Room)</text>
+    <rect id="action_return_to_canvas" x="10" y="8" width="44" height="44" rx="8" fill="#334155" />
+    <text x="32" y="38" font-family="sans-serif" font-size="24" fill="white" text-anchor="middle">×</text>
+  </g>
+
+  <g id="region_drafting_content">
+    <rect x="20" y="80" width="728" height="300" rx="12" fill="#000" stroke="#334155" />
+    <rect x="20" y="400" width="728" height="520" rx="12" fill="#0f172a" stroke="#334155" />
+  </g>
+
+  <g id="region_drafting_actions">
+    <rect y="944" width="768" height="80" fill="#0f172a" />
+    <rect x="400" y="960" width="328" height="48" rx="24" fill="#3b82f6" />
+    <rect x="40" y="960" width="328" height="48" rx="24" fill="#1e293b" stroke="#334155" />
+  </g>
+
+  <!-- Redline Annotations -->
+  <g font-family="monospace" font-size="10" fill="#94a3b8">
+    <text x="550" y="100">LAYER ORDER:</text>
+    <text x="550" y="115">100: drafting workspace overlay</text>
+    <text x="550" y="130">110: header/actions</text>
+    <text x="550" y="145">120: transient modals/toasts</text>
+    <text x="550" y="160">Spacing tokens: gap-8 / gap-12</text>
+  </g>
+</svg>

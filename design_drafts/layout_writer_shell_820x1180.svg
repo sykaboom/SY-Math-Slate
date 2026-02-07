@@ -1,0 +1,29 @@
+<svg viewBox="0 0 820 1180" xmlns="http://www.w3.org/2000/svg">
+  <desc>Writer Shell - Tablet Portrait Large (820x1180)</desc>
+  <text x="10" y="20" font-family="monospace" font-size="12" fill="#666">Ratio: ~2:3 | Canvas Dominance: 96.2% (Target: 90%)</text>
+  <text x="10" y="36" font-family="monospace" font-size="11" fill="#64748b">Dominance basis: app viewport (100dvh)</text>
+  
+  <rect id="viewport_root" width="820" height="1180" fill="#0f172a" />
+  <rect id="region_canvas_primary" x="0" y="44" width="820" height="1136" fill="#1e293b" />
+  
+  <rect id="region_chrome_top" x="0" y="0" width="820" height="44" fill="#020617" opacity="0.9" />
+  <rect id="action_open_drafting_room" x="12" y="0" width="44" height="44" rx="4" fill="#334155" />
+  
+  <rect id="region_chrome_bottom" x="0" y="1176" width="820" height="4" fill="#020617" opacity="0.5" />
+  
+  <g id="region_toolchips">
+    <rect x="260" y="1080" width="300" height="60" rx="30" fill="#1e293b" stroke="#334155" stroke-width="2" />
+  </g>
+
+  <!-- Redline Annotations -->
+  <g font-family="monospace" font-size="10" fill="#94a3b8">
+    <text x="600" y="1000">Z-ORDER:</text>
+    <text x="600" y="1015">0: canvas</text>
+    <text x="600" y="1030">10: chrome</text>
+    <text x="600" y="1045">20: toolchips</text>
+    <text x="600" y="1060">30: transient overlays</text>
+    <rect x="600" y="1080" width="44" height="44" fill="none" stroke="#f43f5e" stroke-dasharray="2,2" />
+    <text x="650" y="1105" fill="#f43f5e">TOUCH: 44x44 MIN</text>
+    <text x="600" y="1120">Spacing tokens: gap-8 / gap-12</text>
+  </g>
+</svg>

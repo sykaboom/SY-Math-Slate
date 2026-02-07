@@ -1,0 +1,32 @@
+<svg viewBox="0 0 1024 768" xmlns="http://www.w3.org/2000/svg">
+  <desc>Drafting Room - Tablet Landscape (1024x768)</desc>
+  <text x="10" y="20" font-family="monospace" font-size="12" fill="#666">Ratio: 4:3 | state_input_mode</text>
+  <text x="10" y="40" font-family="monospace" font-size="12" fill="#f43f5e">CONTRACT: non_destructive_sync_required</text>
+
+  <rect id="viewport_root" width="1024" height="768" fill="#020617" />
+  
+  <g id="region_drafting_header">
+    <rect width="1024" height="60" fill="#0f172a" />
+    <text x="512" y="38" font-family="sans-serif" font-weight="bold" font-size="18" fill="white" text-anchor="middle">자료 편집실 (Landscape)</text>
+    <rect id="action_return_to_canvas" x="10" y="8" width="44" height="44" rx="8" fill="#334155" />
+    <text x="32" y="38" font-family="sans-serif" font-size="24" fill="white" text-anchor="middle">×</text>
+  </g>
+
+  <g id="region_drafting_content">
+    <rect x="20" y="80" width="482" height="600" rx="12" fill="#000" stroke="#334155" />
+    <rect x="522" y="80" width="482" height="600" rx="12" fill="#0f172a" stroke="#334155" />
+  </g>
+
+  <g id="region_drafting_actions">
+    <rect y="700" width="1024" height="68" fill="#0f172a" />
+    <rect x="700" y="710" width="300" height="48" rx="24" fill="#3b82f6" />
+  </g>
+
+  <g font-family="monospace" font-size="10" fill="#94a3b8">
+    <text x="800" y="100">Z-ORDER:</text>
+    <text x="800" y="115">100: drafting_overlay</text>
+    <text x="800" y="130">110: header/actions</text>
+    <text x="800" y="145">120: transient modals/toasts</text>
+    <text x="800" y="160">Spacing tokens: gap-8 / gap-12</text>
+  </g>
+</svg>
