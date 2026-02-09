@@ -51,6 +51,10 @@
 
 @layer base {
   :root {
+    --font-noto-sans:
+      "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+    --font-geist-mono:
+      "JetBrains Mono", "SFMono-Regular", "Menlo", "Consolas", monospace;
     --bg-color: #000000;
     --text-color: #ffffff;
     --border-color: #333;

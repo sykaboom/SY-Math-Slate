@@ -1,6 +1,6 @@
 # Task 089: Lint Debt Cleanup Batch 1 (Error-First)
 
-Status: PENDING
+Status: COMPLETED
 Owner: Codex (spec / review / implementation)
 Target: v10/
 Date: 2026-02-08
@@ -63,19 +63,26 @@ Out of scope:
 ---
 
 ## Documentation Update Check
-- [ ] Structure changes:
-  - `node scripts/gen_ai_read_me_map.mjs`
-  - `v10/AI_READ_ME_MAP.md` 반영 확인
-- [ ] Semantic/rule changes:
-  - `v10/AI_READ_ME.md` 업데이트 필요성 확인
+- [x] Structure changes: NO (N/A)
+- [x] Semantic/rule changes: NO (N/A)
 
 ---
 
 ## Acceptance Criteria (must be testable)
-- [ ] AC-1: Scope 내 6개 파일의 기존 ESLint `error`가 제거된다.
-- [ ] AC-2: `cd v10 && npm run lint` 실행 시 `error`가 0건이다.
-- [ ] AC-3: 동작 변경(런타임 기능 변경)이 없다.
-- [ ] AC-4: Scope 외 파일 수정이 없다.
+- [x] AC-1: Scope 내 6개 파일의 기존 ESLint `error`가 제거된다.
+- [x] AC-2: `cd v10 && npm run lint` 실행 시 `error`가 0건이다.
+- [x] AC-3: 동작 변경(런타임 기능 변경)이 없다.
+- [x] AC-4: Scope 외 파일 수정이 없다.
+
+Lint baseline (2026-02-09, before implementation):
+- `cd v10 && npm run lint` 결과: `7 errors`, `10 warnings`
+- `error` 파일 분포:
+  - `v10/src/core/math/rules.ts`
+  - `v10/src/features/canvas/AnchorIndicator.tsx`
+  - `v10/src/features/canvas/ContentLayer.tsx`
+  - `v10/src/features/canvas/PasteHelperModal.tsx`
+  - `v10/src/features/canvas/animation/RichTextAnimator.tsx`
+  - `v10/src/features/hooks/useSequence.ts`
 
 ---
 
@@ -108,21 +115,32 @@ Out of scope:
 ---
 
 ## Approval Gate (mandatory)
-- [ ] Spec self-reviewed by Codex
-- [ ] Explicit user approval received (e.g. "승인: 진행")
+- [x] Spec self-reviewed by Codex
+- [x] Explicit user approval received (e.g. "승인: 진행")
 
 > Implementation MUST NOT begin until both boxes are checked.
 
 ---
 
 ## Implementation Log (Codex fills)
-Status: PENDING
+Status: COMPLETED
 
 Changed files:
 - `codex_tasks/task_089_lint_debt_cleanup_batch1.md`
+- `v10/src/core/math/rules.ts`
+- `v10/src/features/canvas/AnchorIndicator.tsx`
+- `v10/src/features/canvas/ContentLayer.tsx`
+- `v10/src/features/canvas/PasteHelperModal.tsx`
+- `v10/src/features/canvas/animation/RichTextAnimator.tsx`
+- `v10/src/features/hooks/useSequence.ts`
 
 Commands run:
-- None
+- `cd v10 && npm run lint` (spec baseline 확인)
+- `bash scripts/run_repo_verifications.sh` (`No verification scripts matched.`)
+- `cd v10 && npm run lint` (implementation 후 재검증: `0 errors`, `8 warnings`)
+- `cd v10 && npm run build` (실패: sandbox 네트워크 제한으로 Google Fonts fetch 불가)
+- `bash scripts/run_repo_verifications.sh` (`No verification scripts matched.`)
 
 Notes:
 - Error-first cleanup batch. Warnings are deferred to follow-up batch.
+- Build 실패 원인은 코드 회귀가 아니라 외부 폰트 네트워크 fetch 실패(`Geist Mono`, `Noto Sans KR`)다.

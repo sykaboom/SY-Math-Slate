@@ -40,7 +40,7 @@ This file is the **single source** for AI agents. It is intentionally verbose an
 ## Directory Map (v10/src)
 ```
 core/
-  contracts/     (NormalizedContent/ToolResult contract types, guards, mappers)
+  contracts/     (NormalizedContent/RenderPlan/TTSScript/ToolResult/ToolRegistry contract types, guards, mappers)
   config/        (boardSpec, capabilities, typography defaults)
   export/        (export pipeline scaffold)
   extensions/    (manifest, registry, connectors, runtime scaffold)
@@ -51,6 +51,7 @@ core/
 features/
   animation/     (animation model, plan/measure/runtime, modding contract)
   canvas/        (rendering layers, actors)
+  extensions/    (tool adapter interfaces/registry/mock adapter)
   hooks/         (useSequence, usePersistence, useFileIO, useAudioPlayer, ...)
   layout/        (AppLayout, autoLayout, overview)
   store/         (zustand state)
@@ -169,9 +170,15 @@ app/
 
 ### Contract Normalization (Provisional)
 1) Tool adapters return `ToolResult` envelope.
-2) Core contract guards validate `ToolResult`.
-3) `normalized` payload is validated as `NormalizedContent`.
-4) Export/interchange consumes normalized payload only (no provider branching in features/store).
+2) Tool execution candidates are checked against `ToolRegistry` contract.
+3) Core contract guards validate `ToolResult`.
+4) `normalized` payload is validated as one of:
+   - `NormalizedContent`
+   - `RenderPlan`
+   - `TTSScript`
+5) Export/interchange 경로는 `NormalizedContent`만 수용하며, 나머지 타입은 deterministic error로 반환한다.
+6) Core connector는 adapter lookup -> invoke -> ToolResult validate 경로만 담당한다.
+7) Provider/MCP specific execution stays in `features/extensions/adapters/**`.
 
 ---
 
@@ -328,12 +335,18 @@ app   -> features + ui
 
 ---
 
-## Extension Scaffolding (No Execution Yet)
+## Extension Scaffolding (Contract-first Boundary)
 Located in `core/extensions/`:
 - `manifest.ts`: permissions, triggers, UI placement
-- `registry.ts`: register/list only
-- `connectors.ts`: external API connector interface
-- `runtime.ts`: script manifest + trigger registry (no execution)
+- `registry.ts`: extension registry + tool registry entry store
+- `connectors.ts`: registered-tool gate + adapter lookup/invoke contract + ToolResult validation
+- `runtime.ts`: script manifest + trigger registry (no direct network execution)
+
+Located in `features/extensions/adapters/`:
+- `types.ts`: adapter interface (`adapterId`, `supports`, `invoke`, `health`)
+- `registry.ts`: feature-layer adapter registry (`register/get/list/clear`)
+- `mockAdapter.ts`: deterministic local adapter for boundary validation
+- `index.ts`: adapter exports + default registration helper
 
 **Permission scope examples**
 - `canvas:read`, `canvas:write`, `net:http`, `llm:invoke`

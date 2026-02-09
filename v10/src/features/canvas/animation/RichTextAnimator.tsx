@@ -76,7 +76,7 @@ export function RichTextAnimator({
   const onDoneRef = useRef(onDone);
   const { toBoardPoint } = useBoardTransform();
 
-  const [ready, setReady] = useState(false);
+  const [planVersion, setPlanVersion] = useState(0);
 
   const profile = useMemo(() => {
     return normalizeModProfile(modInput, BUILTIN_ANIMATION_PROFILES[0], modNormalizer);
@@ -113,7 +113,6 @@ export function RichTextAnimator({
 
     renderIdRef.current += 1;
     const renderId = renderIdRef.current;
-    setReady(false);
     runsRef.current = [];
 
     if (controllerRef.current) {
@@ -134,13 +133,13 @@ export function RichTextAnimator({
         }
         const compiled = compileAnimationPlan(el, html);
         runsRef.current = compiled.runs;
-        setReady(true);
+        setPlanVersion(renderId);
       } catch {
         if (renderIdRef.current !== renderId) return;
         el.innerHTML = html;
         const compiled = compileAnimationPlan(el, html);
         runsRef.current = compiled.runs;
-        setReady(true);
+        setPlanVersion(renderId);
       }
     };
 
@@ -148,7 +147,7 @@ export function RichTextAnimator({
   }, [html]);
 
   useEffect(() => {
-    if (!ready) return;
+    if (planVersion === 0) return;
 
     if (!isActive) {
       contentRef.current?.classList.remove("hl-temporary");
@@ -165,7 +164,8 @@ export function RichTextAnimator({
       controllerRef.current = null;
     }
 
-    contentRef.current?.classList.add("hl-temporary");
+    const contentNode = contentRef.current;
+    contentNode?.classList.add("hl-temporary");
 
     const runs = runsRef.current;
     const metrics = measureAnimationPlan(runs);
@@ -178,7 +178,7 @@ export function RichTextAnimator({
         onMoveRef.current?.(pos, tool);
       },
       onDone: () => {
-        contentRef.current?.classList.remove("hl-temporary");
+        contentNode?.classList.remove("hl-temporary");
         onDoneRef.current?.();
       },
       getSpeed: () => speedRef.current,
@@ -193,9 +193,9 @@ export function RichTextAnimator({
         controller.stop();
         controllerRef.current = null;
       }
-      contentRef.current?.classList.remove("hl-temporary");
+      contentNode?.classList.remove("hl-temporary");
     };
-  }, [isActive, profile, ready, toBoardPoint]);
+  }, [isActive, planVersion, profile, toBoardPoint]);
 
   useEffect(() => {
     if (!isActive) {

@@ -116,20 +116,18 @@ export function ContentLayer({
   const isAnimating = Boolean(animationState?.isAnimating);
   const canEdit = !readOnly && !isOverviewMode;
 
-  const visibleFlowItems = useMemo(() => {
-    return flowItems.filter((item) => {
-      const stepIndex = getStepIndex(item);
-      if (isTextItem(item)) {
-        if (stepIndex < currentStep) return true;
-        return isAnimating && item.id === activeItemId;
-      }
-      if (isImageItem(item)) {
-        if (stepIndex < currentStep) return true;
-        return isAnimating && stepIndex === currentStep;
-      }
-      return false;
-    });
-  }, [flowItems, currentStep, isAnimating, activeItemId]);
+  const visibleFlowItems = flowItems.filter((item) => {
+    const stepIndex = getStepIndex(item);
+    if (isTextItem(item)) {
+      if (stepIndex < currentStep) return true;
+      return isAnimating && item.id === activeItemId;
+    }
+    if (isImageItem(item)) {
+      if (stepIndex < currentStep) return true;
+      return isAnimating && stepIndex === currentStep;
+    }
+    return false;
+  });
 
   const maxStep = useMemo(() => {
     return getGlobalMaxStep(pages);

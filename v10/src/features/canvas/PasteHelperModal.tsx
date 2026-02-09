@@ -52,7 +52,7 @@ export function PasteHelperModal() {
           suppressContentEditableWarning
           className="mt-4 flex h-32 items-center justify-center rounded-xl border-2 border-dashed border-cyan-300/70 bg-black/40 text-sm text-white/70 outline-none"
         >
-          여기를 길게 터치하여<br />'붙여넣기'를 선택하세요.
+          여기를 길게 터치하여<br />&apos;붙여넣기&apos;를 선택하세요.
         </div>
         <button
           className="mt-4 rounded-full border border-white/10 px-6 py-2 text-xs text-white/70 hover:bg-white/10"

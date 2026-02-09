@@ -79,7 +79,7 @@ export const applyMathDisplayRules = (tex: string) => {
     return i;
   };
   const consumeArgument = (input: string, start: number) => {
-    let i = start;
+    const i = start;
     if (i >= input.length) return i;
     const ch = input[i];
     if (ch === "{") return consumeGroup(input, i, "{", "}");

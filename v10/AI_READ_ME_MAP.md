@@ -42,7 +42,10 @@ v10/src/
 |   |   |-- fromPersistedDoc.ts
 |   |   |-- index.ts
 |   |   |-- normalizedContent.ts
-|   |   \-- toolResult.ts
+|   |   |-- renderPlan.ts
+|   |   |-- toolRegistry.ts
+|   |   |-- toolResult.ts
+|   |   \-- ttsScript.ts
 |   |-- export/
 |   |   \-- exportPipeline.ts
 |   |-- extensions/
@@ -105,6 +108,12 @@ v10/src/
 |   |   |-- PageViewport.tsx
 |   |   |-- PasteHelperModal.tsx
 |   |   \-- StaticStrokeLayer.tsx
+|   |-- extensions/
+|   |   \-- adapters/
+|   |       |-- index.ts
+|   |       |-- mockAdapter.ts
+|   |       |-- registry.ts
+|   |       \-- types.ts
 |   |-- hooks/
 |   |   |-- useAudioPlayer.ts
 |   |   |-- useBoardTransform.ts

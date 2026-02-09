@@ -1,3 +1,10 @@
+import type { NormalizedContent } from "./normalizedContent";
+import { validateNormalizedContent } from "./normalizedContent";
+import type { RenderPlan } from "./renderPlan";
+import { validateRenderPlan } from "./renderPlan";
+import type { TTSScript } from "./ttsScript";
+import { validateTTSScript } from "./ttsScript";
+
 export type ToolResultStatus = "ok" | "error" | "partial";
 
 export type ToolResultDiagnostics = {
@@ -7,7 +14,12 @@ export type ToolResultDiagnostics = {
   [key: string]: unknown;
 };
 
-export type ToolResult<TNormalized = unknown> = {
+export type KnownNormalizedPayload =
+  | NormalizedContent
+  | RenderPlan
+  | TTSScript;
+
+export type ToolResult<TNormalized = KnownNormalizedPayload> = {
   toolId: string;
   toolVersion: string;
   status: ToolResultStatus;
@@ -25,29 +37,117 @@ export type ToolResultValidationError = {
 
 export type ToolResultValidationSuccess = {
   ok: true;
-  value: ToolResult<unknown>;
+  value: ToolResult<KnownNormalizedPayload>;
 };
 
 export type ToolResultValidationResult =
   | ToolResultValidationSuccess
   | ToolResultValidationError;
 
+export type KnownNormalizedValidationError = {
+  ok: false;
+  code: string;
+  message: string;
+  path: string;
+};
+
+export type KnownNormalizedValidationSuccess = {
+  ok: true;
+  value: KnownNormalizedPayload;
+};
+
+export type KnownNormalizedValidationResult =
+  | KnownNormalizedValidationSuccess
+  | KnownNormalizedValidationError;
+
 const VALID_TOOL_STATUS = new Set<ToolResultStatus>(["ok", "error", "partial"]);
 
-const fail = (code: string, message: string, path: string): ToolResultValidationError => ({
+const fail = (
+  code: string,
+  message: string,
+  path: string
+): ToolResultValidationError => ({
   ok: false,
   code,
   message,
   path,
 });
 
-const ok = (value: ToolResult<unknown>): ToolResultValidationSuccess => ({
+const ok = (
+  value: ToolResult<KnownNormalizedPayload>
+): ToolResultValidationSuccess => ({
+  ok: true,
+  value,
+});
+
+const failKnown = (
+  code: string,
+  message: string,
+  path: string
+): KnownNormalizedValidationError => ({
+  ok: false,
+  code,
+  message,
+  path,
+});
+
+const okKnown = (value: KnownNormalizedPayload): KnownNormalizedValidationSuccess => ({
   ok: true,
   value,
 });
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
+
+export const validateKnownNormalizedPayload = (
+  value: unknown
+): KnownNormalizedValidationResult => {
+  if (!isRecord(value)) {
+    return failKnown(
+      "invalid-normalized-root",
+      "normalized payload must be an object.",
+      "root"
+    );
+  }
+  if (typeof value.type !== "string") {
+    return failKnown(
+      "invalid-normalized-type",
+      "normalized.type must be a string discriminator.",
+      "type"
+    );
+  }
+
+  if (value.type === "NormalizedContent") {
+    const validated = validateNormalizedContent(value);
+    if (validated.ok === false) {
+      return failKnown(validated.code, validated.message, validated.path);
+    }
+    return okKnown(validated.value);
+  }
+  if (value.type === "RenderPlan") {
+    const validated = validateRenderPlan(value);
+    if (validated.ok === false) {
+      return failKnown(validated.code, validated.message, validated.path);
+    }
+    return okKnown(validated.value);
+  }
+  if (value.type === "TTSScript") {
+    const validated = validateTTSScript(value);
+    if (validated.ok === false) {
+      return failKnown(validated.code, validated.message, validated.path);
+    }
+    return okKnown(validated.value);
+  }
+  return failKnown(
+    "unsupported-normalized-type",
+    "normalized.type must be one of NormalizedContent/RenderPlan/TTSScript.",
+    "type"
+  );
+};
+
+export const isKnownNormalizedPayload = (
+  value: unknown
+): value is KnownNormalizedPayload => validateKnownNormalizedPayload(value).ok;
 
 export const validateToolResult = (value: unknown): ToolResultValidationResult => {
   if (!isRecord(value)) {
@@ -60,7 +160,10 @@ export const validateToolResult = (value: unknown): ToolResultValidationResult =
       "toolId"
     );
   }
-  if (typeof value.toolVersion !== "string" || value.toolVersion.trim() === "") {
+  if (
+    typeof value.toolVersion !== "string" ||
+    value.toolVersion.trim() === ""
+  ) {
     return fail(
       "invalid-tool-version",
       "toolVersion must be a non-empty string.",
@@ -85,6 +188,14 @@ export const validateToolResult = (value: unknown): ToolResultValidationResult =
       "missing-normalized",
       "normalized field is required.",
       "normalized"
+    );
+  }
+  const normalizedValidation = validateKnownNormalizedPayload(value.normalized);
+  if (normalizedValidation.ok === false) {
+    return fail(
+      "invalid-normalized",
+      `${normalizedValidation.code}: ${normalizedValidation.message}`,
+      `normalized.${normalizedValidation.path}`
     );
   }
   if (!isRecord(value.diagnostics)) {
@@ -126,8 +237,12 @@ export const validateToolResult = (value: unknown): ToolResultValidationResult =
     );
   }
 
-  return ok(value as ToolResult<unknown>);
+  return ok({
+    ...(value as Omit<ToolResult<KnownNormalizedPayload>, "normalized">),
+    normalized: normalizedValidation.value,
+  });
 };
 
-export const isToolResult = (value: unknown): value is ToolResult<unknown> =>
-  validateToolResult(value).ok;
+export const isToolResult = (
+  value: unknown
+): value is ToolResult<KnownNormalizedPayload> => validateToolResult(value).ok;

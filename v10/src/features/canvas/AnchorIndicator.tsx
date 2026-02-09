@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useLayoutEffect, useMemo, useState } from "react";
 
 import { cn } from "@core/utils";
 import { useCanvasStore } from "@features/store/useCanvasStore";
 import { useUIStore } from "@features/store/useUIStore";
-import { getBoardPadding, getBoardSize } from "@core/config/boardSpec";
+import { getBoardPadding } from "@core/config/boardSpec";
 import { useBoardTransform } from "@features/hooks/useBoardTransform";
 import { chalkTheme } from "@core/themes/chalkTheme";
 
@@ -45,7 +45,7 @@ export function AnchorIndicator({ isAnimating }: AnchorIndicatorProps) {
     pages,
     stepBlocks,
   } = useCanvasStore();
-  const { isOverviewMode, overviewViewportRatio, playSignal } = useUIStore();
+  const { isOverviewMode } = useUIStore();
   const { toBoardPoint } = useBoardTransform();
 
   const segmentTypeById = useMemo(
@@ -54,13 +54,12 @@ export function AnchorIndicator({ isAnimating }: AnchorIndicatorProps) {
   );
 
   const fallbackAnchor = useMemo(() => {
-    const board = getBoardSize(overviewViewportRatio);
     const padding = getBoardPadding();
     return {
       x: padding,
       y: padding + FALLBACK_BASELINE_OFFSET,
     };
-  }, [overviewViewportRatio]);
+  }, []);
 
   const anchor = useMemo(() => {
     const positions = anchorMap?.[currentPageId]?.[currentStep];
@@ -70,20 +69,8 @@ export function AnchorIndicator({ isAnimating }: AnchorIndicatorProps) {
   }, [anchorMap, currentPageId, currentStep]);
 
   const [flowAnchor, setFlowAnchor] = useState<FlowAnchor | null>(null);
-  const [suppress, setSuppress] = useState(false);
-  const lastPlaySignal = useRef(playSignal);
-  const sawAnimatingRef = useRef(false);
-  const playPending = playSignal !== lastPlaySignal.current;
-
-  useEffect(() => {
-    if (playSignal === lastPlaySignal.current) return;
-    lastPlaySignal.current = playSignal;
-    setSuppress(true);
-    sawAnimatingRef.current = false;
-  }, [playSignal]);
 
   useLayoutEffect(() => {
-    setFlowAnchor(null);
     const raf = window.requestAnimationFrame(() => {
       const cursorEl = document.querySelector<HTMLElement>(
         `[data-flow-cursor][data-flow-step="${currentStep}"]`
@@ -100,29 +87,13 @@ export function AnchorIndicator({ isAnimating }: AnchorIndicatorProps) {
     return () => window.cancelAnimationFrame(raf);
   }, [currentPageId, currentStep, toBoardPoint]);
 
-  useEffect(() => {
-    if (isAnimating) {
-      sawAnimatingRef.current = true;
-      return;
-    }
-    if (!suppress) return;
-    if (sawAnimatingRef.current) {
-      setSuppress(false);
-      return;
-    }
-    const timer = window.setTimeout(() => {
-      setSuppress(false);
-    }, 120);
-    return () => window.clearTimeout(timer);
-  }, [isAnimating, suppress]);
-
   const maxStep = useMemo(() => {
     if (stepBlocks.length > 0) return stepBlocks.length - 1;
     const items = pages[currentPageId] ?? [];
     return getMaxTextStep(items);
   }, [pages, currentPageId, stepBlocks]);
 
-  const isHidden = isAnimating || suppress || playPending;
+  const isHidden = isAnimating;
   const hasValidFlowAnchor = flowAnchor?.step === currentStep;
   const currentBlock = stepBlocks[currentStep];
   const isBreakAnchor = Boolean(currentBlock?.kind && currentBlock.kind !== "content");

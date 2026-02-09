@@ -1,6 +1,7 @@
 import {
   isPersistedSlateDocLike,
   mapPersistedDocToNormalizedContent,
+  type KnownNormalizedPayload,
   type NormalizedContent,
   type NormalizedContentValidationResult,
   type PersistedDocMapOptions,
@@ -58,8 +59,16 @@ export const resolveNormalizedContentForExport = (
         `toolResult.${toolResultValidation.path}`
       );
     }
-
-    return validateNormalizedContent(toolResultValidation.value.normalized);
+    const normalizedPayload: KnownNormalizedPayload =
+      toolResultValidation.value.normalized;
+    if (normalizedPayload.type !== "NormalizedContent") {
+      return failNormalized(
+        "unsupported-normalized-type",
+        `Export pipeline requires NormalizedContent, received ${normalizedPayload.type}.`,
+        "toolResult.normalized.type"
+      );
+    }
+    return validateNormalizedContent(normalizedPayload);
   }
 
   if (!isPersistedSlateDocLike(payload.data)) {

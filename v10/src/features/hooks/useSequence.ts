@@ -73,13 +73,14 @@ export function useSequence({
   const resolveRef = useRef<(() => void) | null>(null);
   const lastPlaySignalRef = useRef(playSignal);
   const lastStopSignalRef = useRef(stopSignal);
+  const actorElementRef = useRef<HTMLDivElement | null>(null);
   const itemsRef = useRef<TextItem[]>([]);
   const lastSoundToolRef = useRef<"chalk" | "marker" | null>(null);
   const autoTimerRef = useRef<number | null>(null);
 
   const moveActor = useCallback(
     (pos: { x: number; y: number }, tool?: "chalk" | "marker") => {
-      const el = actorRef?.current;
+      const el = actorElementRef.current;
       if (!el) return;
       const resolvedTool = tool ?? "chalk";
       const offset =
@@ -92,7 +93,7 @@ export function useSequence({
       const snappedY = Math.round(rawY * dpr) / dpr;
       el.style.transform = `translate3d(${snappedX}px, ${snappedY}px, 0)`;
     },
-    [actorRef]
+    []
   );
 
   const itemsForStep = useMemo(() => {
@@ -118,6 +119,10 @@ export function useSequence({
     resolveRef.current?.();
     resolveRef.current = null;
   }, []);
+
+  useEffect(() => {
+    actorElementRef.current = actorRef?.current ?? null;
+  }, [actorRef]);
 
   useEffect(() => {
     itemsRef.current = itemsForStep;
@@ -239,9 +244,16 @@ export function useSequence({
     if (playSignal === lastPlaySignalRef.current) return;
     lastPlaySignalRef.current = playSignal;
     if (currentStep > maxStep) return;
-    if (isPaused) setPaused(false);
+    if (isPaused) {
+      window.setTimeout(() => {
+        setPaused(false);
+      }, 0);
+    }
     clearAutoTimer();
-    runSequence();
+    const id = window.setTimeout(() => {
+      void runSequence();
+    }, 0);
+    return () => window.clearTimeout(id);
   }, [clearAutoTimer, currentStep, enabled, isPaused, maxStep, playSignal, runSequence, setPaused]);
 
   useEffect(() => {
@@ -250,8 +262,10 @@ export function useSequence({
     lastStopSignalRef.current = stopSignal;
     runIdRef.current += 1;
     cancelActive();
-    setActiveItemId(null);
-    setActor((prev) => ({ ...prev, isMoving: false, visible: false }));
+    const id = window.setTimeout(() => {
+      setActiveItemId(null);
+      setActor((prev) => ({ ...prev, isMoving: false, visible: false }));
+    }, 0);
     stop();
     stopAudio();
     setAnimating(false);
@@ -259,15 +273,19 @@ export function useSequence({
     if (isPaused) {
       setPaused(false);
     }
+    return () => window.clearTimeout(id);
   }, [cancelActive, clearAutoTimer, enabled, isPaused, setAnimating, setPaused, stop, stopAudio, stopSignal]);
 
   useEffect(() => {
     if (!isPaused) return;
     stop();
     stopAudio();
-    setActor((prev) => ({ ...prev, isMoving: false }));
+    const id = window.setTimeout(() => {
+      setActor((prev) => ({ ...prev, isMoving: false }));
+    }, 0);
     clearAutoTimer();
-  }, [isPaused, stop, stopAudio]);
+    return () => window.clearTimeout(id);
+  }, [clearAutoTimer, isPaused, stop, stopAudio]);
 
   useEffect(() => {
     return () => {
@@ -285,8 +303,11 @@ export function useSequence({
     stop();
     stopAudio();
     setAnimating(false);
-    setActiveItemId(null);
-    setActor(idleActor);
+    const id = window.setTimeout(() => {
+      setActiveItemId(null);
+      setActor(idleActor);
+    }, 0);
+    return () => window.clearTimeout(id);
   }, [cancelActive, enabled, setAnimating, stop, stopAudio]);
 
   return {
