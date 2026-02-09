@@ -26,13 +26,16 @@ const inputConfig: InputConfig = {
     minAlpha: 0.35,
     maxAlpha: 0.85,
     maxSpeed: 1.2,
-    minDistance: 0.4,
+    minDistance: 0.55,
   },
   pressure: {
     min: 0.1,
     max: 1.0,
   },
 };
+
+const TOUCH_PALM_REJECTION_MS = 520;
+const TOUCH_DISTANCE_FACTOR = 1.25;
 
 const laserDefaults: Record<
   LaserType,
@@ -80,6 +83,13 @@ const createStrokeId = () => {
   return `overlay-${Date.now()}-${Math.random().toString(16).slice(2)}`;
 };
 
+const getMinDistanceForPointer = (pointerType: string | undefined) => {
+  if (pointerType === "touch") {
+    return inputConfig.smoothing.minDistance * TOUCH_DISTANCE_FACTOR;
+  }
+  return inputConfig.smoothing.minDistance;
+};
+
 export function useOverlayCanvas() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const laserCanvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -99,6 +109,7 @@ export function useOverlayCanvas() {
   const laserTypeRef = useRef<LaserType>("standard");
   const laserColorRef = useRef<string>("#FF3B30");
   const laserWidthRef = useRef<number>(10);
+  const lastPenInputAtRef = useRef<number>(0);
 
   const {
     activeTool,
@@ -171,6 +182,17 @@ export function useOverlayCanvas() {
       p: rawPoint.p,
       t: rawPoint.t,
     } satisfies Point;
+  }, []);
+
+  const markPenActivity = useCallback((event: PointerEvent) => {
+    if (event.pointerType !== "pen") return;
+    lastPenInputAtRef.current = event.timeStamp || performance.now();
+  }, []);
+
+  const shouldSuppressTouch = useCallback((event: PointerEvent) => {
+    if (event.pointerType !== "touch") return false;
+    const now = event.timeStamp || performance.now();
+    return now - lastPenInputAtRef.current < TOUCH_PALM_REJECTION_MS;
   }, []);
 
   const drawStoredStroke = useCallback(
@@ -329,6 +351,8 @@ export function useOverlayCanvas() {
   const handlePointerDown = useCallback(
     (event: ReactPointerEvent<HTMLDivElement>) => {
       const nativeEvent = event.nativeEvent as PointerEvent;
+      markPenActivity(nativeEvent);
+      if (shouldSuppressTouch(nativeEvent)) return;
       if (isViewportInteracting) return;
       if (activeTool !== "pen" && activeTool !== "laser") return;
 
@@ -373,6 +397,7 @@ export function useOverlayCanvas() {
       activeTool,
       getCanvasPoint,
       isViewportInteracting,
+      markPenActivity,
       makePoint,
       penColor,
       penOpacity,
@@ -380,12 +405,15 @@ export function useOverlayCanvas() {
       penWidth,
       renderAll,
       scheduleLaserFrame,
+      shouldSuppressTouch,
     ]
   );
 
   const handlePointerMove = useCallback(
     (event: ReactPointerEvent<HTMLDivElement>) => {
       const nativeEvent = event.nativeEvent as PointerEvent;
+      markPenActivity(nativeEvent);
+      if (shouldSuppressTouch(nativeEvent)) return;
       if (isViewportInteracting) return;
 
       if (activeTool === "laser" && isLaserRef.current) {
@@ -409,6 +437,7 @@ export function useOverlayCanvas() {
       ctx.lineJoin = "round";
       ctx.lineCap = "round";
 
+      const minDistance = getMinDistanceForPointer(nativeEvent.pointerType);
       const events = getCoalescedEvents(nativeEvent);
       for (const ev of events) {
         const rawPoint = makePoint(ev);
@@ -420,7 +449,7 @@ export function useOverlayCanvas() {
             smooth.x - lastDrawPoint.x,
             smooth.y - lastDrawPoint.y
           );
-          if (dist < inputConfig.smoothing.minDistance) {
+          if (dist < minDistance) {
             lastRawPointRef.current = rawPoint;
             continue;
           }
@@ -466,38 +495,54 @@ export function useOverlayCanvas() {
       getCanvasPoint,
       getCoalescedEvents,
       isViewportInteracting,
+      markPenActivity,
       makePoint,
       penColor,
       penOpacity,
       scheduleLaserFrame,
       smoothPoint,
+      shouldSuppressTouch,
     ]
   );
 
-  const handlePointerUp = useCallback(() => {
-    if (isViewportInteracting) {
-      cancelActiveStroke();
-      return;
-    }
-    if (isLaserRef.current) {
-      isLaserRef.current = false;
-      return;
-    }
+  const handlePointerUp = useCallback(
+    (event?: ReactPointerEvent<HTMLDivElement>) => {
+      const nativeEvent = event?.nativeEvent as PointerEvent | undefined;
+      if (nativeEvent) {
+        markPenActivity(nativeEvent);
+        if (shouldSuppressTouch(nativeEvent)) return;
+      }
+      if (isViewportInteracting) {
+        cancelActiveStroke();
+        return;
+      }
+      if (isLaserRef.current) {
+        isLaserRef.current = false;
+        return;
+      }
 
-    if (!isDrawingRef.current || !activeStrokeRef.current) return;
-    isDrawingRef.current = false;
-    const finishedStroke = {
-      ...activeStrokeRef.current,
-      path: [...activeStrokeRef.current.path],
-    };
-    overlayStrokesRef.current = [...overlayStrokesRef.current, finishedStroke];
-    renderAll(overlayStrokesRef.current);
-    activeStrokeRef.current = null;
-    pointsRef.current = [];
-    lastRawPointRef.current = null;
-    lastSmoothPointRef.current = null;
-    lastDrawPointRef.current = null;
-  }, [cancelActiveStroke, isViewportInteracting, renderAll]);
+      if (!isDrawingRef.current || !activeStrokeRef.current) return;
+      isDrawingRef.current = false;
+      const finishedStroke = {
+        ...activeStrokeRef.current,
+        path: [...activeStrokeRef.current.path],
+      };
+      overlayStrokesRef.current = [...overlayStrokesRef.current, finishedStroke];
+      renderAll(overlayStrokesRef.current);
+      activeStrokeRef.current = null;
+      pointsRef.current = [];
+      lastRawPointRef.current = null;
+      lastSmoothPointRef.current = null;
+      lastDrawPointRef.current = null;
+    },
+    [
+      cancelActiveStroke,
+      isViewportInteracting,
+      markPenActivity,
+      renderAll,
+      shouldSuppressTouch,
+    ]
+  );
 
   useEffect(() => {
     const canvas = canvasRef.current;

@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import type { ChangeEvent } from "react";
 
 import { Popover, PopoverTrigger } from "@ui/components/popover";
@@ -21,6 +21,8 @@ import {
   FilePlus,
   Hand,
   Image as ImageIcon,
+  Maximize2,
+  Minimize2,
   MoreHorizontal,
   PenLine,
   Redo2,
@@ -57,6 +59,11 @@ export function FloatingToolbar() {
     setOverviewViewportRatio,
     isDataInputOpen,
     toggleDataInput,
+    closeDataInput,
+    fullscreenInkMode,
+    enterFullscreenInkNative,
+    enterFullscreenInkFallback,
+    exitFullscreenInk,
     resetViewport,
     showBreakGuides,
     showCanvasBorder,
@@ -97,6 +104,8 @@ export function FloatingToolbar() {
     totalSteps === 0 ? 0 : Math.min(currentStep + 1, totalSteps);
   const canOverview = isCapabilityEnabled("overview.mode");
   const canAdvancedExport = isCapabilityEnabled("export.advanced");
+  const isNativeFullscreen = fullscreenInkMode === "native";
+  const isFullscreenInkActive = fullscreenInkMode !== "off";
   const profileOptions = [
     {
       value: "basic",
@@ -157,6 +166,40 @@ export function FloatingToolbar() {
     event.target.value = "";
   };
 
+  const handleEnterFullscreenInk = async () => {
+    closeDataInput();
+    if (typeof document === "undefined") {
+      enterFullscreenInkFallback();
+      return;
+    }
+    const rootNode = document.documentElement;
+    if (typeof rootNode.requestFullscreen !== "function") {
+      enterFullscreenInkFallback();
+      return;
+    }
+    try {
+      await rootNode.requestFullscreen();
+      enterFullscreenInkNative();
+    } catch {
+      enterFullscreenInkFallback();
+    }
+  };
+
+  const handleExitFullscreenInk = async () => {
+    if (
+      isNativeFullscreen &&
+      typeof document !== "undefined" &&
+      document.fullscreenElement
+    ) {
+      try {
+        await document.exitFullscreen();
+      } catch {
+        // ignore
+      }
+    }
+    exitFullscreenInk();
+  };
+
   const handleOverviewZoom = (delta: number) => {
     setOverviewZoom(overviewZoom + delta);
   };
@@ -190,6 +233,19 @@ export function FloatingToolbar() {
     }
     window.location.reload();
   };
+
+  useEffect(() => {
+    if (typeof document === "undefined") return;
+    const handleFullscreenChange = () => {
+      if (document.fullscreenElement) return;
+      if (fullscreenInkMode === "native") {
+        exitFullscreenInk();
+      }
+    };
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+    return () =>
+      document.removeEventListener("fullscreenchange", handleFullscreenChange);
+  }, [exitFullscreenInk, fullscreenInkMode]);
 
   return (
     <div className="w-full">
@@ -275,6 +331,23 @@ export function FloatingToolbar() {
           label="붙여넣기 도움말"
           onClick={handlePasteHelper}
           disabled={isOverviewMode}
+        />
+        <ToolButton
+          icon={isFullscreenInkActive ? Minimize2 : Maximize2}
+          label={isFullscreenInkActive ? "필기 전체화면 종료" : "필기 전체화면"}
+          active={isFullscreenInkActive}
+          onClick={() => {
+            if (isFullscreenInkActive) {
+              void handleExitFullscreenInk();
+              return;
+            }
+            void handleEnterFullscreenInk();
+          }}
+          data-layout-id={
+            isFullscreenInkActive
+              ? "action_exit_fullscreen_ink_toolbar"
+              : "action_enter_fullscreen_ink_toolbar"
+          }
         />
         <PlaybackControls />
         <PageNavigator />

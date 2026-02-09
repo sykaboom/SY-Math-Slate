@@ -27,13 +27,16 @@ const inputConfig: InputConfig = {
     minAlpha: 0.35,
     maxAlpha: 0.85,
     maxSpeed: 1.2,
-    minDistance: 0.4,
+    minDistance: 0.55,
   },
   pressure: {
     min: 0.1,
     max: 1.0,
   },
 };
+
+const TOUCH_PALM_REJECTION_MS = 520;
+const TOUCH_DISTANCE_FACTOR = 1.25;
 
 const laserDefaults: Record<
   LaserType,
@@ -129,6 +132,13 @@ const strokeIntersectsSegment = (
   return false;
 };
 
+const getMinDistanceForPointer = (pointerType: string | undefined) => {
+  if (pointerType === "touch") {
+    return inputConfig.smoothing.minDistance * TOUCH_DISTANCE_FACTOR;
+  }
+  return inputConfig.smoothing.minDistance;
+};
+
 export function useCanvas() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const laserCanvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -149,6 +159,7 @@ export function useCanvas() {
   const laserTypeRef = useRef<LaserType>("standard");
   const laserColorRef = useRef<string>("#FF3B30");
   const laserWidthRef = useRef<number>(10);
+  const lastPenInputAtRef = useRef<number>(0);
 
   const {
     activeTool,
@@ -226,6 +237,17 @@ export function useCanvas() {
       p: rawPoint.p,
       t: rawPoint.t,
     } satisfies Point;
+  }, []);
+
+  const markPenActivity = useCallback((event: PointerEvent) => {
+    if (event.pointerType !== "pen") return;
+    lastPenInputAtRef.current = event.timeStamp || performance.now();
+  }, []);
+
+  const shouldSuppressTouch = useCallback((event: PointerEvent) => {
+    if (event.pointerType !== "touch") return false;
+    const now = event.timeStamp || performance.now();
+    return now - lastPenInputAtRef.current < TOUCH_PALM_REJECTION_MS;
   }, []);
 
   const drawStoredStroke = useCallback((ctx: CanvasRenderingContext2D, stroke: StrokeItem) => {
@@ -421,6 +443,8 @@ export function useCanvas() {
   const handlePointerDown = useCallback(
     (event: ReactPointerEvent<HTMLDivElement>) => {
       const nativeEvent = event.nativeEvent as PointerEvent;
+      markPenActivity(nativeEvent);
+      if (shouldSuppressTouch(nativeEvent)) return;
       if (isViewportInteracting) return;
       if (activeTool !== "pen" && activeTool !== "eraser" && activeTool !== "laser") {
         return;
@@ -487,6 +511,7 @@ export function useCanvas() {
       getCanvasPoint,
       isViewportInteracting,
       items,
+      markPenActivity,
       makePoint,
       penColor,
       penOpacity,
@@ -495,12 +520,15 @@ export function useCanvas() {
       renderAll,
       scheduleLaserFrame,
       setCurrentStroke,
+      shouldSuppressTouch,
     ]
   );
 
   const handlePointerMove = useCallback(
     (event: ReactPointerEvent<HTMLDivElement>) => {
       const nativeEvent = event.nativeEvent as PointerEvent;
+      markPenActivity(nativeEvent);
+      if (shouldSuppressTouch(nativeEvent)) return;
       if (isViewportInteracting) return;
       if (activeTool === "laser" && isLaserRef.current) {
         const events = getCoalescedEvents(nativeEvent);
@@ -519,6 +547,7 @@ export function useCanvas() {
       if (!isDrawingRef.current) return;
 
       if (isErasingRef.current) {
+        const minDistance = getMinDistanceForPointer(nativeEvent.pointerType);
         const events = getCoalescedEvents(nativeEvent);
         for (const ev of events) {
           const rawPoint = makePoint(ev);
@@ -529,7 +558,7 @@ export function useCanvas() {
               smooth.x - lastDrawPoint.x,
               smooth.y - lastDrawPoint.y
             );
-            if (dist >= inputConfig.smoothing.minDistance) {
+            if (dist >= minDistance) {
               eraseStrokesAtSegment(lastDrawPoint, smooth);
               lastDrawPointRef.current = smooth;
             }
@@ -549,6 +578,7 @@ export function useCanvas() {
       ctx.lineJoin = "round";
       ctx.lineCap = "round";
 
+      const minDistance = getMinDistanceForPointer(nativeEvent.pointerType);
       const events = getCoalescedEvents(nativeEvent);
       for (const ev of events) {
         const rawPoint = makePoint(ev);
@@ -560,7 +590,7 @@ export function useCanvas() {
             smooth.x - lastDrawPoint.x,
             smooth.y - lastDrawPoint.y
           );
-          if (dist < inputConfig.smoothing.minDistance) {
+          if (dist < minDistance) {
             lastRawPointRef.current = rawPoint;
             continue;
           }
@@ -614,16 +644,23 @@ export function useCanvas() {
       getCanvasPoint,
       getCoalescedEvents,
       isViewportInteracting,
+      markPenActivity,
       makePoint,
       penColor,
       penOpacity,
       scheduleLaserFrame,
       smoothPoint,
+      shouldSuppressTouch,
     ]
   );
 
   const handlePointerUp = useCallback(
-    () => {
+    (event?: ReactPointerEvent<HTMLDivElement>) => {
+      const nativeEvent = event?.nativeEvent as PointerEvent | undefined;
+      if (nativeEvent) {
+        markPenActivity(nativeEvent);
+        if (shouldSuppressTouch(nativeEvent)) return;
+      }
       if (isViewportInteracting) {
         cancelActiveStroke();
         return;
@@ -660,7 +697,15 @@ export function useCanvas() {
       lastSmoothPointRef.current = null;
       lastDrawPointRef.current = null;
     },
-    [addStroke, cancelActiveStroke, isViewportInteracting, renderAll, strokes]
+    [
+      addStroke,
+      cancelActiveStroke,
+      isViewportInteracting,
+      markPenActivity,
+      renderAll,
+      shouldSuppressTouch,
+      strokes,
+    ]
   );
 
   useEffect(() => {

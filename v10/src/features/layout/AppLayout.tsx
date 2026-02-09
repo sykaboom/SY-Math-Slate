@@ -122,17 +122,17 @@ export function AppLayout({ children }: AppLayoutProps) {
           data-layout-id="region_chrome_top"
           className="sticky top-0 z-40 border-b border-white/10 bg-black/40 backdrop-blur-md"
         >
-          <div className="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-x-3 gap-y-2 px-3 py-2 sm:px-4 sm:py-2.5 xl:px-6 xl:py-3">
-            <div className="flex min-w-0 items-center gap-3">
+          <div className="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-x-2 gap-y-1.5 px-2.5 py-1.5 sm:px-3 sm:py-2 lg:px-4 lg:py-2.5 xl:px-6 xl:py-3">
+            <div className="flex min-w-0 items-center gap-2.5">
               <span className="text-xs font-semibold uppercase tracking-[0.3em] text-white/50">
                 SY
               </span>
               <div className="min-w-0">
-                <p className="text-lg font-semibold">Math Slate</p>
-                <p className="text-xs text-white/50">Dark Canvas Workspace</p>
+                <p className="text-base font-semibold sm:text-lg">Math Slate</p>
+                <p className="hidden text-xs text-white/50 lg:block">Dark Canvas Workspace</p>
               </div>
             </div>
-            <div className="ml-auto flex items-center gap-2 sm:gap-3">
+            <div className="ml-auto flex items-center gap-1.5 sm:gap-2.5">
               <Button
                 variant={isDataInputOpen ? "default" : "outline"}
                 className="h-11 min-w-11 border-white/15 bg-white/5 px-3 text-white/80 hover:bg-white/10 hover:text-white"

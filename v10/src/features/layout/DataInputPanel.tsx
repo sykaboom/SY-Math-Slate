@@ -94,6 +94,7 @@ export function DataInputPanel() {
   const [unmatchedBlocks, setUnmatchedBlocks] = useState<StepBlockDraft[]>([]);
   const [syncDecisions, setSyncDecisions] = useState<RawSyncDecision[]>([]);
   const [activeTab, setActiveTab] = useState<"input" | "blocks">("input");
+  const [isAdvancedControls, setIsAdvancedControls] = useState(false);
   const [isLayoutRunning, setIsLayoutRunning] = useState(false);
   const hasInitializedRef = useRef(false);
   const segmentRefs = useRef<Record<string, HTMLDivElement | null>>({});
@@ -137,11 +138,13 @@ export function DataInputPanel() {
       hasInitializedRef.current = false;
       setUnmatchedBlocks([]);
       setSyncDecisions([]);
+      setIsAdvancedControls(false);
       return;
     }
     if (hasInitializedRef.current) return;
     hasInitializedRef.current = true;
     setActiveTab("input");
+    setIsAdvancedControls(false);
 
     const initialBlocks = normalizeBlocksDraft(
       stepBlocks.length > 0 ? stepBlocks : fallbackBlocks
@@ -151,7 +154,7 @@ export function DataInputPanel() {
     setSyncDecisions([]);
     setRawText(blocksToRawText(initialBlocks));
     setInsertionIndex(initialBlocks.length);
-  }, [fallbackBlocks, isDataInputOpen, stepBlocks]);
+  }, [fallbackBlocks, isDataInputOpen, setInsertionIndex, stepBlocks]);
 
   useEffect(() => {
     if (!isDataInputOpen || !hasInitializedRef.current) return;
@@ -508,6 +511,24 @@ export function DataInputPanel() {
         <div>
           <p className="text-sm font-semibold text-white">데이터 입력</p>
           <p className="text-xs text-white/50">한 줄 = 한 블록 (step)</p>
+          <div className="mt-2 flex items-center gap-2">
+            <Button
+              variant={isAdvancedControls ? "outline" : "default"}
+              className="h-10 px-3 text-xs"
+              onClick={() => setIsAdvancedControls(false)}
+              data-layout-id="action_mode_compact"
+            >
+              간단
+            </Button>
+            <Button
+              variant={isAdvancedControls ? "default" : "outline"}
+              className="h-10 px-3 text-xs"
+              onClick={() => setIsAdvancedControls(true)}
+              data-layout-id="action_mode_advanced"
+            >
+              상세
+            </Button>
+          </div>
         </div>
         <Button
           data-layout-id="action_return_to_canvas"
@@ -606,7 +627,7 @@ export function DataInputPanel() {
           <div className="flex flex-wrap items-center gap-2">
             <Button
               variant="outline"
-              className="h-8 px-2 text-xs"
+              className="h-10 px-3 text-xs"
               onClick={() => insertBreakBlock("line-break")}
             >
               <CornerDownLeft className="mr-1 h-3 w-3" />
@@ -614,7 +635,7 @@ export function DataInputPanel() {
             </Button>
             <Button
               variant="outline"
-              className="h-8 px-2 text-xs"
+              className="h-10 px-3 text-xs"
               onClick={() => insertBreakBlock("column-break")}
             >
               <Columns className="mr-1 h-3 w-3" />
@@ -622,7 +643,7 @@ export function DataInputPanel() {
             </Button>
             <Button
               variant="outline"
-              className="h-8 px-2 text-xs"
+              className="h-10 px-3 text-xs"
               onClick={() => insertBreakBlock("page-break")}
             >
               <FilePlus className="mr-1 h-3 w-3" />
@@ -687,7 +708,7 @@ export function DataInputPanel() {
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-7 w-7 text-white/50 hover:text-white"
+                            className="h-10 w-10 text-white/50 hover:text-white"
                             onClick={() => moveBlockByIndex(index, -1)}
                             disabled={index === 0}
                           >
@@ -696,7 +717,7 @@ export function DataInputPanel() {
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-7 w-7 text-white/50 hover:text-white"
+                            className="h-10 w-10 text-white/50 hover:text-white"
                             onClick={() => moveBlockByIndex(index, 1)}
                             disabled={index === blocks.length - 1}
                           >
@@ -705,7 +726,7 @@ export function DataInputPanel() {
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-7 w-7 text-white/50 hover:text-white"
+                            className="h-10 w-10 text-white/50 hover:text-white"
                             onClick={() => handleDeleteBlock(block.id)}
                           >
                             <Trash2 className="h-4 w-4" />
@@ -770,7 +791,7 @@ export function DataInputPanel() {
                                           segmentRefs.current[segment.id] = node;
                                         }}
                                         className={cn(
-                                          "min-h-[28px] rounded-md border border-white/10 bg-black/30 px-2 py-1 text-sm text-white/80 outline-none",
+                                          "min-h-[40px] rounded-md border border-white/10 bg-black/30 px-2 py-2 text-sm text-white/80 outline-none",
                                           "focus-within:border-white/40"
                                         )}
                                         style={editorStyle}
@@ -785,7 +806,7 @@ export function DataInputPanel() {
                                       />
                                       <div className="flex flex-wrap items-center gap-2">
                                         <select
-                                          className="h-7 rounded-md border border-white/15 bg-black/40 px-2 text-[11px] text-white/80 outline-none"
+                                          className="h-10 min-w-[112px] rounded-md border border-white/15 bg-black/40 px-2 text-[11px] text-white/80 outline-none"
                                           value={textStyle?.fontFamily ?? ""}
                                           onChange={(event) =>
                                             updateTextSegmentStyle(
@@ -806,7 +827,7 @@ export function DataInputPanel() {
                                         </select>
                                         <Button
                                           variant="outline"
-                                          className="h-7 px-2 text-[11px] font-bold"
+                                          className="h-10 px-3 text-[11px] font-bold"
                                           onMouseDown={(event) => {
                                             event.preventDefault();
                                             wrapSelectionWithClass(
@@ -820,48 +841,10 @@ export function DataInputPanel() {
                                         >
                                           B
                                         </Button>
-                                        {TEXT_INLINE_COLOR_OPTIONS.map((option) => (
-                                          <Button
-                                            key={`${segment.id}-${option.className}`}
-                                            variant="outline"
-                                            className="h-7 px-2 text-[11px]"
-                                            onMouseDown={(event) => {
-                                              event.preventDefault();
-                                              wrapSelectionWithClass(
-                                                segment.id,
-                                                option.className,
-                                                segmentRefs.current,
-                                                selectionRef.current,
-                                                updateSegmentHtml
-                                              );
-                                            }}
-                                          >
-                                            {option.label}
-                                          </Button>
-                                        ))}
-                                        {TEXT_INLINE_SIZE_OPTIONS.map((option) => (
-                                          <Button
-                                            key={`${segment.id}-${option.className}`}
-                                            variant="outline"
-                                            className="h-7 px-2 text-[11px]"
-                                            onMouseDown={(event) => {
-                                              event.preventDefault();
-                                              wrapSelectionWithClass(
-                                                segment.id,
-                                                option.className,
-                                                segmentRefs.current,
-                                                selectionRef.current,
-                                                updateSegmentHtml
-                                              );
-                                            }}
-                                          >
-                                            {option.label}
-                                          </Button>
-                                        ))}
                                         {canMath && (
                                           <Button
                                             variant="outline"
-                                            className="h-7 px-2 text-[11px]"
+                                            className="h-10 px-3 text-[11px]"
                                             onMouseDown={(event) => {
                                               event.preventDefault();
                                               wrapSelectionWithMath(
@@ -878,7 +861,7 @@ export function DataInputPanel() {
                                         {canHighlight && (
                                           <Button
                                             variant="outline"
-                                            className="h-7 px-2 text-[11px]"
+                                            className="h-10 px-3 text-[11px]"
                                             onMouseDown={(event) => {
                                               event.preventDefault();
                                               wrapSelectionWithHighlight(
@@ -893,10 +876,53 @@ export function DataInputPanel() {
                                           </Button>
                                         )}
                                       </div>
+                                      {isAdvancedControls && (
+                                        <div className="flex flex-wrap items-center gap-2">
+                                          {TEXT_INLINE_COLOR_OPTIONS.map((option) => (
+                                            <Button
+                                              key={`${segment.id}-${option.className}`}
+                                              variant="outline"
+                                              className="h-10 px-3 text-[11px]"
+                                              onMouseDown={(event) => {
+                                                event.preventDefault();
+                                                wrapSelectionWithClass(
+                                                  segment.id,
+                                                  option.className,
+                                                  segmentRefs.current,
+                                                  selectionRef.current,
+                                                  updateSegmentHtml
+                                                );
+                                              }}
+                                            >
+                                              {option.label}
+                                            </Button>
+                                          ))}
+                                          {TEXT_INLINE_SIZE_OPTIONS.map((option) => (
+                                            <Button
+                                              key={`${segment.id}-${option.className}`}
+                                              variant="outline"
+                                              className="h-10 px-3 text-[11px]"
+                                              onMouseDown={(event) => {
+                                                event.preventDefault();
+                                                wrapSelectionWithClass(
+                                                  segment.id,
+                                                  option.className,
+                                                  segmentRefs.current,
+                                                  selectionRef.current,
+                                                  updateSegmentHtml
+                                                );
+                                              }}
+                                            >
+                                              {option.label}
+                                            </Button>
+                                          ))}
+                                        </div>
+                                      )}
                                     </>
                                   ) : (
                                     <div className="flex items-center gap-3 text-xs text-white/60">
                                       {segment.type === "image" ? (
+                                        // eslint-disable-next-line @next/next/no-img-element
                                         <img
                                           src={segment.src}
                                           alt="preview"
@@ -918,7 +944,7 @@ export function DataInputPanel() {
                                 <Button
                                   variant="ghost"
                                   size="icon"
-                                  className="h-7 w-7 text-white/50 hover:text-white"
+                                  className="h-10 w-10 text-white/50 hover:text-white"
                                   onClick={() =>
                                     removeSegment(block.id, segment.id)
                                   }
@@ -935,7 +961,7 @@ export function DataInputPanel() {
                       <div className="mt-3 flex flex-wrap items-center gap-2">
                         <Button
                           variant="outline"
-                          className="h-8 px-2 text-xs"
+                          className="h-10 px-3 text-xs"
                           onClick={() => addTextSegment(block.id)}
                         >
                           <Plus className="mr-1 h-3 w-3" />
@@ -943,7 +969,7 @@ export function DataInputPanel() {
                         </Button>
                         <Button
                           variant="outline"
-                          className="h-8 px-2 text-xs"
+                          className="h-10 px-3 text-xs"
                           onClick={() => handleMediaPick(block.id, "image")}
                         >
                           <ImagePlus className="mr-1 h-3 w-3" />
@@ -951,14 +977,14 @@ export function DataInputPanel() {
                         </Button>
                         <Button
                           variant="ghost"
-                          className="h-8 px-2 text-[11px] text-white/60 hover:text-white"
+                          className="h-10 px-3 text-[11px] text-white/60 hover:text-white"
                           onClick={() => handleMediaUrl(block.id, "image")}
                         >
                           URL
                         </Button>
                         <Button
                           variant="outline"
-                          className="h-8 px-2 text-xs"
+                          className="h-10 px-3 text-xs"
                           onClick={() => handleMediaPick(block.id, "video")}
                         >
                           <PlaySquare className="mr-1 h-3 w-3" />
@@ -966,7 +992,7 @@ export function DataInputPanel() {
                         </Button>
                         <Button
                           variant="ghost"
-                          className="h-8 px-2 text-[11px] text-white/60 hover:text-white"
+                          className="h-10 px-3 text-[11px] text-white/60 hover:text-white"
                           onClick={() => handleMediaUrl(block.id, "video")}
                         >
                           URL
@@ -994,14 +1020,14 @@ export function DataInputPanel() {
           <div className="mt-2 flex flex-wrap gap-2">
             <Button
               variant="outline"
-              className="h-8 border-amber-200/40 text-xs text-amber-50 hover:bg-amber-300/10"
+              className="h-10 border-amber-200/40 text-xs text-amber-50 hover:bg-amber-300/10"
               onClick={handleRestoreUnmatched}
             >
               보존 블록 복원
             </Button>
             <Button
               variant="ghost"
-              className="h-8 text-xs text-amber-100/90 hover:text-amber-50"
+              className="h-10 text-xs text-amber-100/90 hover:text-amber-50"
               onClick={handleDiscardUnmatched}
             >
               보존 블록 폐기
@@ -1016,14 +1042,14 @@ export function DataInputPanel() {
       >
         <Button
           variant="outline"
-          className="flex-1 border-white/20 text-white/70 hover:bg-white/10"
+          className="h-11 flex-1 border-white/20 text-white/70 hover:bg-white/10"
           onClick={closeDataInput}
         >
           닫기
         </Button>
         <Button
           variant="outline"
-          className="flex-1 border-white/20 text-white/70 hover:bg-white/10"
+          className="h-11 flex-1 border-white/20 text-white/70 hover:bg-white/10"
           onClick={restoreLayoutSnapshot}
           disabled={!layoutSnapshot}
         >
@@ -1031,14 +1057,14 @@ export function DataInputPanel() {
         </Button>
         <Button
           variant="outline"
-          className="flex-1 border-white/20 text-white/70 hover:bg-white/10"
+          className="h-11 flex-1 border-white/20 text-white/70 hover:bg-white/10"
           onClick={handleAutoLayout}
           disabled={isLayoutRunning}
         >
           {isLayoutRunning ? "배치 중..." : "Auto Layout"}
         </Button>
         <Button
-          className="flex-1"
+          className="h-11 flex-1"
           onClick={handleApply}
           disabled={unmatchedBlocks.length > 0}
         >

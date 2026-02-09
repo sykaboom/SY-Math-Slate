@@ -33,7 +33,7 @@ export function ToolButton({
       whileTap={{ scale: 0.9 }}
       className={cn(
         buttonVariants({ variant: "ghost", size: "icon" }),
-        "h-10 w-10 text-white/70 hover:text-white disabled:text-white/30",
+        "h-11 w-11 text-white/70 hover:text-white disabled:text-white/30",
         active && activeButtonClass,
         className
       )}
