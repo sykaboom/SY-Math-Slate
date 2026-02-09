@@ -38,3 +38,21 @@ Skills are shared. Your setup is yours. Keeping them apart means you can update 
 ---
 
 Add whatever helps you do your job. This is your cheat sheet.
+
+## Codex Runtime Checklist
+
+When setting up a new machine:
+
+```bash
+./scripts/bootstrap_codex_env.sh --dry-run
+./scripts/bootstrap_codex_env.sh --apply
+```
+
+Then verify runtime mode in Codex CLI:
+- Open `/experimental`
+- `sub-agents [x]` -> parallel execution available
+- `sub-agents [ ]` -> single-Codex fallback mode
+
+Keep these notes local:
+- Any machine-specific path overrides used with `--source` or `--target`
+- Whether your current environment should default to parallel or fallback mode

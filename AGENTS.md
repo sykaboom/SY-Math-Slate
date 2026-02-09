@@ -99,9 +99,10 @@ Before coding, Codex must re-open the spec and verify:
 
 If ambiguity exists:
 - Update the spec
-- Request user approval again
+- In manual mode: request user approval again
+- In delegated mode: continue unless escalation conditions are met
 
-**No implementation may begin without explicit user approval.**
+**No implementation may begin without explicit user approval, unless a delegated execution window has already been approved by the user.**
 
 ---
 
@@ -135,6 +136,46 @@ No other log location is allowed.
 
 ---
 
+## One-click Delegated Execution Mode (Codex-orchestrated)
+
+Activation:
+- User gives a single delegated instruction for a scoped chain (example: "승인. 090-093 위임 실행").
+- Delegation remains valid for that chain until completion, explicit user stop, or escalation.
+
+Required 6-role set:
+- Spec-Writer
+- Spec-Reviewer
+- Implementer-A
+- Implementer-B
+- Implementer-C
+- Reviewer+Verifier (combined)
+
+Execution rules:
+- No per-task repeated approval prompts inside the delegated chain.
+- Codex keeps final authority for spec lock, merge decision, and completion status.
+- Progress updates are blocker-only; otherwise one final management report is sent.
+- Review/verification loop is one pass only; no infinite rework loop.
+- One file can be owned by only one Implementer at a time (file ownership lock).
+- If ownership conflict appears, switch that branch to sequential execution.
+
+Parallel planning rules (DAG + waves):
+- Split tasks by explicit dependency edges (DAG).
+- Run independent nodes in parallel waves.
+- Do not exceed session sub-agent concurrency limit (current baseline: 6).
+- For large batches, reuse role types across waves instead of keeping idle agents.
+
+Escalation conditions (must request user confirmation):
+- Breaking change
+- New dependency
+- Security or cost policy impact
+- Data migration requirement
+- Gemini SVG draft request required for a layout task
+
+Fallback:
+- If sub-agent runtime is unavailable or disabled, continue in single Codex mode with the same spec gates.
+
+---
+
 ## Gemini Interaction Rule (SVG-only)
 
 Gemini is a **specialized layout assistant**, not a peer executor.
@@ -146,7 +187,7 @@ Codex may:
 Codex must:
 - Verify SVG existence before layout implementation
 - Record numeric redlines (spacing, reachability, conflicts) in the task spec
-- Allow **at most one** Gemini revision pass
+- Request **one SVG draft only** from Gemini (no iterative regeneration loop)
 - Freeze structure before coding
 
 Codex must NOT:

@@ -52,6 +52,23 @@ Out of scope:
 
 ---
 
+## Agent Assignment (execution planning)
+
+- Execution mode: MANUAL | DELEGATED
+- If delegated, chain scope:
+  - (task IDs / boundaries covered by one-click delegation)
+- Assigned agents / roles:
+  - Spec-Writer:
+  - Spec-Reviewer:
+  - Implementer-A:
+  - Implementer-B:
+  - Implementer-C:
+  - Reviewer+Verifier:
+- File ownership lock plan:
+  - (which implementer owns which files; conflict handling rule)
+
+---
+
 ## Speculative Defense Check (guardrail)
 
 - [ ] Any defensive branches added: YES / NO
@@ -124,6 +141,26 @@ Changed files:
 
 Commands run (only if user asked or required by spec):
 - ...
+
+## Gate Results (Codex fills)
+
+- Lint:
+  - PASS | FAIL | N/A
+- Build:
+  - PASS | FAIL | N/A
+- Script checks:
+  - PASS | FAIL | N/A
+
+## Failure Classification (Codex fills when any gate fails)
+
+- Pre-existing failures:
+  - (file / command / reason)
+- Newly introduced failures:
+  - (file / command / reason)
+- Blocking:
+  - YES / NO
+- Mitigation:
+  - (rollback or follow-up task)
 
 Manual verification notes:
 - (results vs Acceptance Criteria)

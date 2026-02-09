@@ -54,7 +54,7 @@ Codex is the **only agent** that may:
 
 - Author task specs in `codex_tasks/`
 - Revise specs during self-review
-- Request user approval for specs
+- Request user approval for specs (manual mode) or execute under approved delegated mode
 - Implement production code
 - Validate scope, acceptance, and rollback feasibility
 - Update spec implementation logs (COMPLETED)
@@ -97,8 +97,7 @@ Use Gemini’s spatial reasoning **without contaminating code or spec ownership*
    - Saved under `design_drafts/`
 2) Codex references SVG as **structural input**
 3) Codex records numeric redlines in the task spec
-4) Gemini may apply **one revision pass**
-5) Structure is frozen → Codex implements
+4) Structure is frozen → Codex implements (Gemini regeneration loop is not part of default pipeline)
 
 No implementation begins before SVG + redlines are resolved.
 
@@ -138,11 +137,48 @@ For tasks affecting writing / ink / canvas UX:
 - Coordinate conflicts must be resolved **before** implementation
 
 Loop:
-Gemini SVG → Codex numeric redlines → Gemini 1 revision → freeze
+Gemini SVG (one draft) → Codex numeric redlines → freeze
 
 ---
 
-## 6) Spec-gated Workflow (Codex-led)
+## 6) Sub-agent Assisted Execution (Codex-controlled)
+
+This workflow allows one-click delegated execution while preserving Codex authority.
+
+Role set (baseline 6):
+- Spec-Writer
+- Spec-Reviewer
+- Implementer-A
+- Implementer-B
+- Implementer-C
+- Reviewer+Verifier
+
+Rules:
+- Delegation starts only after explicit user instruction for a scoped chain.
+- No per-task repeated user approval prompts inside that chain.
+- File ownership lock is mandatory for parallel implementation.
+- Shared file conflicts must switch affected branches to sequential mode.
+- Reviewer+Verifier performs one pass only (no infinite review loop).
+- Progress updates are blocker-only; Codex sends one final management report.
+
+Parallel criteria:
+- Use DAG-based dependency splitting.
+- Execute independent nodes in waves.
+- Respect runtime sub-agent concurrency limit (current baseline: 6).
+
+Escalation required (Codex -> user):
+- Breaking change
+- New dependency
+- Security or cost policy impact
+- Data migration requirement
+- Gemini SVG draft request for layout tasks
+
+Fallback:
+- If sub-agent runtime is unavailable, continue in single Codex mode with identical spec gates.
+
+---
+
+## 7) Spec-gated Workflow (Codex-led)
 
 This is the **default and expected workflow**.
 
@@ -154,10 +190,12 @@ This is the **default and expected workflow**.
 2) **Spec Self-Review (Codex)**
    - Identify ambiguity, risk, scope creep
    - Revise spec if needed
-   - Request user approval
+   - Manual mode: request user approval
+   - Delegated mode: proceed unless escalation conditions are met
 
 3) **User Gate**
-   - Explicit approval signal required to proceed
+   - Manual mode: explicit approval signal required
+   - Delegated mode: initial delegation signal covers in-scope chain
 
 4) **Implementation (Codex)**
    - Touch only approved files
@@ -174,7 +212,7 @@ Gemini is not a required step in this loop unless layout SVG is needed.
 
 ---
 
-## 7) Hotfix Exception (user-approved only)
+## 8) Hotfix Exception (user-approved only)
 
 - Codex may bypass spec **only** with explicit user approval
 - Codex must state:
@@ -187,7 +225,7 @@ Gemini is never involved in hotfix execution.
 
 ---
 
-## 8) Anti-hallucination & Evidence Rules (both agents)
+## 9) Anti-hallucination & Evidence Rules (both agents)
 
 - Never assert codebase facts without evidence
 - Evidence format:
@@ -200,12 +238,12 @@ Guessing is a protocol violation.
 
 ---
 
-## 9) Binding Summary
+## 10) Binding Summary
 
 - Codex owns **specs, validation, and implementation**
 - Gemini exists to do **one thing**:
   > spatial reasoning via SVG
 - There is no symmetry between agents
-- Speed comes from **ownership clarity**, not parallelism
+- Sub-agents are execution helpers, never decision owners
 
 Any behavior outside this protocol is considered invalid.
