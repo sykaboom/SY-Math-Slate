@@ -22,6 +22,7 @@ import type {
   TextItem,
 } from "@core/types/canvas";
 import {
+  DEFAULT_TEXT_LANE_STYLE,
   DEFAULT_TEXT_LINE_HEIGHT,
   TEXT_FONT_FAMILY_OPTIONS,
   TEXT_INLINE_BOLD_CLASS,
@@ -68,6 +69,31 @@ import {
   Trash2,
   X,
 } from "lucide-react";
+
+const FONT_SIZE_PATTERN_PX = /^(\d+(?:\.\d+)?)px$/i;
+const FONT_SIZE_STEP_PX = 2;
+const FONT_SIZE_MIN_PX = 16;
+const FONT_SIZE_MAX_PX = 72;
+
+const parseFontSizePx = (
+  value: string | undefined,
+  fallback: number
+): number => {
+  if (!value) return fallback;
+  const match = value.trim().match(FONT_SIZE_PATTERN_PX);
+  if (!match) return fallback;
+  const parsed = Number(match[1]);
+  if (!Number.isFinite(parsed)) return fallback;
+  return Math.round(parsed);
+};
+
+const DEFAULT_FONT_SIZE_PX = parseFontSizePx(
+  DEFAULT_TEXT_LANE_STYLE.fontSize,
+  28
+);
+
+const clampFontSizePx = (value: number) =>
+  Math.max(FONT_SIZE_MIN_PX, Math.min(FONT_SIZE_MAX_PX, value));
 
 export function DataInputPanel() {
   const {
@@ -364,6 +390,32 @@ export function DataInputPanel() {
           style: normalizeTextSegmentStyle({
             ...segment.style,
             ...partial,
+          }),
+        };
+      })
+    );
+  };
+
+  const adjustTextSegmentFontSize = (
+    blockId: string,
+    segmentId: string,
+    deltaPx: number
+  ) => {
+    updateBlockSegments(blockId, (segments) =>
+      segments.map((segment) => {
+        if (segment.id !== segmentId || segment.type !== "text") return segment;
+        const normalizedStyle = normalizeTextSegmentStyle(segment.style);
+        const currentPx = parseFontSizePx(
+          normalizedStyle.fontSize,
+          DEFAULT_FONT_SIZE_PX
+        );
+        const nextPx = clampFontSizePx(currentPx + deltaPx);
+        if (nextPx === currentPx) return segment;
+        return {
+          ...segment,
+          style: normalizeTextSegmentStyle({
+            ...normalizedStyle,
+            fontSize: `${nextPx}px`,
           }),
         };
       })
@@ -847,6 +899,16 @@ export function DataInputPanel() {
                                     lineHeight: DEFAULT_TEXT_LINE_HEIGHT,
                                   }
                                 : undefined;
+                            const fontSizePx = textStyle
+                              ? parseFontSizePx(
+                                  textStyle.fontSize,
+                                  DEFAULT_FONT_SIZE_PX
+                                )
+                              : DEFAULT_FONT_SIZE_PX;
+                            const canDecreaseFontSize =
+                              fontSizePx > FONT_SIZE_MIN_PX;
+                            const canIncreaseFontSize =
+                              fontSizePx < FONT_SIZE_MAX_PX;
                             return (
                               <div
                                 key={segment.id}
@@ -893,77 +955,126 @@ export function DataInputPanel() {
                                           __html: segment.html,
                                         }}
                                       />
-                                      <div className="flex flex-wrap items-center gap-2">
-                                        <select
-                                          className="h-10 min-w-[112px] rounded-md border border-white/15 bg-black/40 px-2 text-[11px] text-white/80 outline-none"
-                                          value={textStyle?.fontFamily ?? ""}
-                                          onChange={(event) =>
-                                            updateTextSegmentStyle(
-                                              block.id,
-                                              segment.id,
-                                              { fontFamily: event.target.value }
-                                            )
-                                          }
-                                        >
-                                          {TEXT_FONT_FAMILY_OPTIONS.map((option) => (
-                                            <option
-                                              key={option.value}
-                                              value={option.value}
+                                      <div className="flex flex-col gap-2">
+                                        <div className="flex flex-wrap items-center gap-2">
+                                          <div className="inline-flex h-11 min-w-[192px] items-center gap-2 rounded-md border border-white/15 bg-black/40 px-2">
+                                            <span className="text-[10px] font-semibold uppercase tracking-[0.12em] text-white/45">
+                                              폰트
+                                            </span>
+                                            <select
+                                              className="h-9 flex-1 min-w-[108px] rounded-md border border-white/15 bg-black/50 px-2 text-[11px] text-white/80 outline-none"
+                                              value={textStyle?.fontFamily ?? ""}
+                                              onChange={(event) =>
+                                                updateTextSegmentStyle(
+                                                  block.id,
+                                                  segment.id,
+                                                  {
+                                                    fontFamily:
+                                                      event.target.value,
+                                                  }
+                                                )
+                                              }
                                             >
-                                              {option.label}
-                                            </option>
-                                          ))}
-                                        </select>
-                                        <Button
-                                          variant="outline"
-                                          className="h-10 px-3 text-[11px] font-bold"
-                                          onMouseDown={(event) => {
-                                            event.preventDefault();
-                                            wrapSelectionWithClass(
-                                              segment.id,
-                                              TEXT_INLINE_BOLD_CLASS,
-                                              segmentRefs.current,
-                                              selectionRef.current,
-                                              updateSegmentHtml
-                                            );
-                                          }}
-                                        >
-                                          B
-                                        </Button>
-                                        {canMath && (
+                                              {TEXT_FONT_FAMILY_OPTIONS.map(
+                                                (option) => (
+                                                  <option
+                                                    key={option.value}
+                                                    value={option.value}
+                                                  >
+                                                    {option.label}
+                                                  </option>
+                                                )
+                                              )}
+                                            </select>
+                                          </div>
+                                          <div className="inline-flex h-11 items-center rounded-md border border-white/15 bg-black/40">
+                                            <Button
+                                              variant="ghost"
+                                              className="h-11 rounded-r-none px-3 text-[11px] text-white/75 hover:text-white"
+                                              onClick={() =>
+                                                adjustTextSegmentFontSize(
+                                                  block.id,
+                                                  segment.id,
+                                                  -FONT_SIZE_STEP_PX
+                                                )
+                                              }
+                                              disabled={!canDecreaseFontSize}
+                                              aria-label="폰트 크기 줄이기"
+                                            >
+                                              A-
+                                            </Button>
+                                            <span className="min-w-[56px] border-x border-white/10 px-2 text-center text-[11px] font-semibold text-cyan-100">
+                                              {fontSizePx}px
+                                            </span>
+                                            <Button
+                                              variant="ghost"
+                                              className="h-11 rounded-l-none px-3 text-[11px] text-white/75 hover:text-white"
+                                              onClick={() =>
+                                                adjustTextSegmentFontSize(
+                                                  block.id,
+                                                  segment.id,
+                                                  FONT_SIZE_STEP_PX
+                                                )
+                                              }
+                                              disabled={!canIncreaseFontSize}
+                                              aria-label="폰트 크기 키우기"
+                                            >
+                                              A+
+                                            </Button>
+                                          </div>
+                                        </div>
+                                        <div className="flex flex-wrap items-center gap-2">
                                           <Button
                                             variant="outline"
-                                            className="h-10 px-3 text-[11px]"
+                                            className="h-10 px-3 text-[11px] font-bold"
                                             onMouseDown={(event) => {
                                               event.preventDefault();
-                                              wrapSelectionWithMath(
+                                              wrapSelectionWithClass(
                                                 segment.id,
+                                                TEXT_INLINE_BOLD_CLASS,
                                                 segmentRefs.current,
                                                 selectionRef.current,
                                                 updateSegmentHtml
                                               );
                                             }}
                                           >
-                                            $$
+                                            B
                                           </Button>
-                                        )}
-                                        {canHighlight && (
-                                          <Button
-                                            variant="outline"
-                                            className="h-10 px-3 text-[11px]"
-                                            onMouseDown={(event) => {
-                                              event.preventDefault();
-                                              wrapSelectionWithHighlight(
-                                                segment.id,
-                                                segmentRefs.current,
-                                                selectionRef.current,
-                                                updateSegmentHtml
-                                              );
-                                            }}
-                                          >
-                                            HL
-                                          </Button>
-                                        )}
+                                          {canMath && (
+                                            <Button
+                                              variant="outline"
+                                              className="h-10 px-3 text-[11px]"
+                                              onMouseDown={(event) => {
+                                                event.preventDefault();
+                                                wrapSelectionWithMath(
+                                                  segment.id,
+                                                  segmentRefs.current,
+                                                  selectionRef.current,
+                                                  updateSegmentHtml
+                                                );
+                                              }}
+                                            >
+                                              $$
+                                            </Button>
+                                          )}
+                                          {canHighlight && (
+                                            <Button
+                                              variant="outline"
+                                              className="h-10 px-3 text-[11px]"
+                                              onMouseDown={(event) => {
+                                                event.preventDefault();
+                                                wrapSelectionWithHighlight(
+                                                  segment.id,
+                                                  segmentRefs.current,
+                                                  selectionRef.current,
+                                                  updateSegmentHtml
+                                                );
+                                              }}
+                                            >
+                                              HL
+                                            </Button>
+                                          )}
+                                        </div>
                                       </div>
                                       {isAdvancedControls && (
                                         <div className="flex flex-wrap items-center gap-2">

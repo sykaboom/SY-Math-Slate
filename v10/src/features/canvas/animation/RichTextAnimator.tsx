@@ -49,6 +49,23 @@ const revealRuns = (runs: AnimationRun[]) => {
   });
 };
 
+const primeRunsForActivePlayback = (runs: AnimationRun[]) => {
+  runs.forEach((run) => {
+    if (run.type === "text") {
+      run.spans.forEach((span) => span.classList.remove("tw-visible"));
+      run.highlightSpans.forEach((span) => {
+        delete span.dataset.hlActive;
+      });
+      return;
+    }
+    run.node.style.visibility = "hidden";
+    run.node.style.opacity = "0";
+    run.node.style.filter = "";
+    run.node.style.transform = "";
+    run.node.style.transformOrigin = "";
+  });
+};
+
 export function RichTextAnimator({
   html,
   className,
@@ -69,6 +86,7 @@ export function RichTextAnimator({
   const controllerRef = useRef<AnimationPlaybackController | null>(null);
 
   const speedRef = useRef(speed);
+  const isActiveRef = useRef(isActive);
   const pausedRef = useRef(isPaused);
   const skipRef = useRef(skipSignal);
   const stopRef = useRef(stopSignal);
@@ -91,6 +109,10 @@ export function RichTextAnimator({
   useEffect(() => {
     speedRef.current = speed;
   }, [speed]);
+
+  useEffect(() => {
+    isActiveRef.current = isActive;
+  }, [isActive]);
 
   useEffect(() => {
     pausedRef.current = isPaused;
@@ -133,12 +155,22 @@ export function RichTextAnimator({
         }
         const compiled = compileAnimationPlan(el, html);
         runsRef.current = compiled.runs;
+        if (isActiveRef.current) {
+          primeRunsForActivePlayback(compiled.runs);
+        } else {
+          revealRuns(compiled.runs);
+        }
         setPlanVersion(renderId);
       } catch {
         if (renderIdRef.current !== renderId) return;
         el.innerHTML = html;
         const compiled = compileAnimationPlan(el, html);
         runsRef.current = compiled.runs;
+        if (isActiveRef.current) {
+          primeRunsForActivePlayback(compiled.runs);
+        } else {
+          revealRuns(compiled.runs);
+        }
         setPlanVersion(renderId);
       }
     };
