@@ -96,6 +96,7 @@ export function DataInputPanel() {
   const [activeTab, setActiveTab] = useState<"input" | "blocks">("input");
   const [isAdvancedControls, setIsAdvancedControls] = useState(false);
   const [isLayoutRunning, setIsLayoutRunning] = useState(false);
+  const [expandedBlockId, setExpandedBlockId] = useState<string | null>(null);
   const hasInitializedRef = useRef(false);
   const segmentRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const selectionRef = useRef<Record<string, Range | null>>({});
@@ -128,6 +129,33 @@ export function DataInputPanel() {
     ? "leading-[1.25]"
     : "leading-[1.6]";
 
+  const normalizePreviewText = (value: string) =>
+    value
+      .replace(/<br\s*\/?>/gi, " ")
+      .replace(/<[^>]*>/g, " ")
+      .replace(/&nbsp;/gi, " ")
+      .replace(/&amp;/gi, "&")
+      .replace(/&lt;/gi, "<")
+      .replace(/&gt;/gi, ">")
+      .replace(/\s+/g, " ")
+      .trim();
+
+  const getBlockPreview = (block: StepBlockDraft) => {
+    const parts = block.segments
+      .map((segment) => {
+        if (segment.type === "text") {
+          return normalizePreviewText(segment.html);
+        }
+        if (segment.type === "image") {
+          return "[이미지]";
+        }
+        return "[비디오]";
+      })
+      .filter((part) => part.length > 0);
+    if (parts.length === 0) return "내용 없음";
+    return parts.join(" ").slice(0, 96);
+  };
+
   const fallbackBlocks = useMemo(
     () => buildBlocksFromFlowItems(flowItems),
     [flowItems]
@@ -139,6 +167,7 @@ export function DataInputPanel() {
       setUnmatchedBlocks([]);
       setSyncDecisions([]);
       setIsAdvancedControls(false);
+      setExpandedBlockId(null);
       return;
     }
     if (hasInitializedRef.current) return;
@@ -154,6 +183,7 @@ export function DataInputPanel() {
     setSyncDecisions([]);
     setRawText(blocksToRawText(initialBlocks));
     setInsertionIndex(initialBlocks.length);
+    setExpandedBlockId(null);
   }, [fallbackBlocks, isDataInputOpen, setInsertionIndex, stepBlocks]);
 
   useEffect(() => {
@@ -173,6 +203,18 @@ export function DataInputPanel() {
     setSyncDecisions([]);
     setRawText(blocksToRawText(normalized));
   }, [blocks, isDataInputOpen, stepBlocks]);
+
+  useEffect(() => {
+    if (!expandedBlockId) return;
+    const hasExpandedBlock = blocks.some(
+      (block) =>
+        block.id === expandedBlockId &&
+        (!block.kind || block.kind === "content")
+    );
+    if (!hasExpandedBlock) {
+      setExpandedBlockId(null);
+    }
+  }, [blocks, expandedBlockId]);
 
   useEffect(() => {
     if (blocks.length < insertionIndex) {
@@ -290,6 +332,10 @@ export function DataInputPanel() {
 
   const handleDeleteBlock = (id: string) => {
     setBlocks((prev) => prev.filter((block) => block.id !== id));
+  };
+
+  const toggleBlockExpanded = (blockId: string) => {
+    setExpandedBlockId((prev) => (prev === blockId ? null : blockId));
   };
 
   const updateBlockSegments = (
@@ -511,23 +557,33 @@ export function DataInputPanel() {
         <div>
           <p className="text-sm font-semibold text-white">데이터 입력</p>
           <p className="text-xs text-white/50">한 줄 = 한 블록 (step)</p>
-          <div className="mt-2 flex items-center gap-2">
-            <Button
-              variant={isAdvancedControls ? "outline" : "default"}
-              className="h-10 px-3 text-xs"
+          <div className="mt-2 inline-flex items-center rounded-full border border-white/15 bg-black/40 p-1">
+            <button
+              type="button"
+              className={cn(
+                "h-11 min-w-[84px] rounded-full px-4 text-xs font-semibold transition-colors",
+                isAdvancedControls
+                  ? "text-white/60 hover:bg-white/10 hover:text-white"
+                  : "bg-sky-500 text-white"
+              )}
               onClick={() => setIsAdvancedControls(false)}
               data-layout-id="action_mode_compact"
             >
               간단
-            </Button>
-            <Button
-              variant={isAdvancedControls ? "default" : "outline"}
-              className="h-10 px-3 text-xs"
+            </button>
+            <button
+              type="button"
+              className={cn(
+                "h-11 min-w-[84px] rounded-full px-4 text-xs font-semibold transition-colors",
+                isAdvancedControls
+                  ? "bg-sky-500 text-white"
+                  : "text-white/60 hover:bg-white/10 hover:text-white"
+              )}
               onClick={() => setIsAdvancedControls(true)}
               data-layout-id="action_mode_advanced"
             >
               상세
-            </Button>
+            </button>
           </div>
         </div>
         <Button
@@ -667,13 +723,19 @@ export function DataInputPanel() {
                       : block.kind === "page-break"
                         ? "페이지 이동"
                         : "구분선";
+                const isExpanded =
+                  !isBreakBlock && expandedBlockId === block.id;
+                const blockPreview =
+                  isBreakBlock ? "" : getBlockPreview(block);
                 return (
                   <Fragment key={block.id}>
                     {renderInsertionMarker(index)}
                     <div
                       className={cn(
-                        "group rounded-lg border border-white/10 bg-white/5",
-                        isBreakBlock ? "px-3 py-2" : "p-3"
+                        "group rounded-lg border bg-white/5",
+                        isBreakBlock
+                          ? "min-h-9 border-dashed border-fuchsia-300/40 bg-fuchsia-500/5 px-3 py-2"
+                          : "border-white/10 p-3"
                       )}
                       draggable
                       onDragStart={(event) => {
@@ -693,22 +755,49 @@ export function DataInputPanel() {
                         moveBlock(fromId, block.id);
                       }}
                     >
-                      <div className="flex items-center gap-2">
+                      <div className={cn("flex items-start gap-2", isBreakBlock && "items-center")}>
                         <div className="text-white/40">
                           <GripVertical className="h-4 w-4" />
                         </div>
                         {isBreakBlock ? (
-                          <span className="text-xs break-label">{breakLabel}</span>
-                        ) : (
-                          <span className="text-xs step-label">
-                            Step {stepNumber}
+                          <span className="flex-1 text-xs font-semibold uppercase tracking-[0.16em] text-fuchsia-100/90 break-label">
+                            {breakLabel}
                           </span>
+                        ) : (
+                          <button
+                            type="button"
+                            className="min-h-11 min-w-0 flex-1 rounded-md px-1 py-1 text-left hover:bg-white/5"
+                            onClick={() => toggleBlockExpanded(block.id)}
+                          >
+                            <span className="text-xs font-semibold text-white step-label">
+                              Step {stepNumber}
+                            </span>
+                            <p className="mt-1 truncate text-[11px] text-white/45">
+                              {blockPreview}
+                            </p>
+                          </button>
                         )}
-                        <div className="ml-auto flex items-center gap-1">
+                        {!isBreakBlock && (
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-10 w-10 text-white/50 hover:text-white"
+                            className="h-11 w-11 text-white/60 hover:text-white"
+                            onClick={() => toggleBlockExpanded(block.id)}
+                            aria-label={isExpanded ? "블록 접기" : "블록 펼치기"}
+                          >
+                            <ChevronDown
+                              className={cn(
+                                "h-4 w-4 transition-transform",
+                                isExpanded ? "rotate-180" : ""
+                              )}
+                            />
+                          </Button>
+                        )}
+                        <div className="flex items-center gap-1">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-11 w-11 text-white/50 hover:text-white"
                             onClick={() => moveBlockByIndex(index, -1)}
                             disabled={index === 0}
                           >
@@ -717,7 +806,7 @@ export function DataInputPanel() {
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-10 w-10 text-white/50 hover:text-white"
+                            className="h-11 w-11 text-white/50 hover:text-white"
                             onClick={() => moveBlockByIndex(index, 1)}
                             disabled={index === blocks.length - 1}
                           >
@@ -726,7 +815,7 @@ export function DataInputPanel() {
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-10 w-10 text-white/50 hover:text-white"
+                            className="h-11 w-11 text-white/50 hover:text-white"
                             onClick={() => handleDeleteBlock(block.id)}
                           >
                             <Trash2 className="h-4 w-4" />
@@ -734,7 +823,7 @@ export function DataInputPanel() {
                         </div>
                       </div>
 
-                      {!isBreakBlock ? (
+                      {!isBreakBlock && isExpanded ? (
                         <div className="mt-3 flex flex-col gap-2">
                           {block.segments.map((segment) => {
                             const label =
@@ -957,8 +1046,8 @@ export function DataInputPanel() {
                       </div>
                     ) : null}
 
-                    {!isBreakBlock && (
-                      <div className="mt-3 flex flex-wrap items-center gap-2">
+                      {!isBreakBlock && isExpanded && (
+                        <div className="mt-3 flex flex-wrap items-center gap-2">
                         <Button
                           variant="outline"
                           className="h-10 px-3 text-xs"
@@ -1038,38 +1127,42 @@ export function DataInputPanel() {
 
       <div
         data-layout-id="region_drafting_actions"
-        className="sticky bottom-0 mt-4 flex flex-wrap items-center gap-2 border-t border-white/10 bg-slate-900/95 pb-[env(safe-area-inset-bottom)] pt-3 xl:bg-black/40"
+        className="sticky bottom-0 mt-4 border-t border-white/10 bg-slate-900/95 pb-[env(safe-area-inset-bottom)] pt-3 xl:bg-black/40"
       >
-        <Button
-          variant="outline"
-          className="h-11 flex-1 border-white/20 text-white/70 hover:bg-white/10"
-          onClick={closeDataInput}
-        >
-          닫기
-        </Button>
-        <Button
-          variant="outline"
-          className="h-11 flex-1 border-white/20 text-white/70 hover:bg-white/10"
-          onClick={restoreLayoutSnapshot}
-          disabled={!layoutSnapshot}
-        >
-          되돌리기
-        </Button>
-        <Button
-          variant="outline"
-          className="h-11 flex-1 border-white/20 text-white/70 hover:bg-white/10"
-          onClick={handleAutoLayout}
-          disabled={isLayoutRunning}
-        >
-          {isLayoutRunning ? "배치 중..." : "Auto Layout"}
-        </Button>
-        <Button
-          className="h-11 flex-1"
-          onClick={handleApply}
-          disabled={unmatchedBlocks.length > 0}
-        >
-          캔버스에 적용
-        </Button>
+        <div className="grid grid-cols-2 gap-2">
+          <Button
+            variant="ghost"
+            className="h-11 border border-white/20 bg-white/[0.03] text-white/70 hover:bg-white/10"
+            onClick={closeDataInput}
+          >
+            닫기
+          </Button>
+          <Button
+            variant="ghost"
+            className="h-11 border border-white/20 bg-white/[0.03] text-white/70 hover:bg-white/10"
+            onClick={restoreLayoutSnapshot}
+            disabled={!layoutSnapshot}
+          >
+            되돌리기
+          </Button>
+        </div>
+        <div className="mt-2 grid grid-cols-2 gap-2">
+          <Button
+            variant="outline"
+            className="h-11 border-cyan-200/40 bg-cyan-500/5 text-cyan-100 hover:bg-cyan-500/15"
+            onClick={handleAutoLayout}
+            disabled={isLayoutRunning}
+          >
+            {isLayoutRunning ? "배치 중..." : "Auto Layout"}
+          </Button>
+          <Button
+            className="h-11 bg-blue-600 text-white hover:bg-blue-500 disabled:bg-blue-900/40 disabled:text-white/50"
+            onClick={handleApply}
+            disabled={unmatchedBlocks.length > 0}
+          >
+            캔버스에 적용
+          </Button>
+        </div>
       </div>
     </aside>
   );
