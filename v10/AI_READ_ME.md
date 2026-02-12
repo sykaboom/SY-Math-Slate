@@ -39,6 +39,10 @@ This file is the **single source** for AI agents. It is intentionally verbose an
 
 ## Directory Map (v10/src)
 ```
+app/
+  globals.css
+  layout.tsx
+  page.tsx
 core/
   contracts/     (NormalizedContent/RenderPlan/TTSScript/ToolResult/ToolRegistry contract types, guards, mappers)
   config/        (boardSpec, capabilities, typography defaults)
@@ -46,11 +50,14 @@ core/
   extensions/    (manifest, registry, connectors, runtime scaffold)
   math/          (MathJax loader/render)
   migrations/    (migrateToV2)
+  persistence/   (buildPersistedDoc and doc-only shaping helpers)
+  sanitize/      (richTextSanitizer)
   themes/        (chalk theme)
   types/         (canvas data types)
+  utils.ts       (shared utility helpers)
 features/
   animation/     (animation model, plan/measure/runtime, modding contract)
-  canvas/        (rendering layers, actors)
+  canvas/        (rendering layers, actors, objects, viewport)
   extensions/    (tool adapter interfaces/registry/mock adapter)
   hooks/         (useSequence, usePersistence, useFileIO, useAudioPlayer, ...)
   layout/        (AppLayout, autoLayout, overview)
@@ -58,9 +65,6 @@ features/
   toolbar/       (toolbar + panels)
 ui/
   components/    (pure UI building blocks)
-app/
-  globals.css
-  page.tsx
 ```
 
 ---
@@ -200,12 +204,14 @@ app   -> features + ui
   - `@core/types/canvas`
 - `features/hooks/usePersistence.ts`
   - `@core/migrations/migrateToV2`
+  - `@core/persistence/buildPersistedDoc`
   - `@core/config/boardSpec`
   - `@core/config/typography`
   - `@features/store/useCanvasStore`
   - `@features/store/useUIStore`
 - `features/hooks/useFileIO.ts`
   - `@core/migrations/migrateToV2`
+  - `@core/persistence/buildPersistedDoc`
   - `@features/store/useCanvasStore`
 - `features/hooks/useSequence.ts`
   - `@features/store/useCanvasStore`
@@ -363,6 +369,7 @@ Located in `features/extensions/adapters/`:
 ---
 
 ## Common Entry Points
+- Next app shell: `app/layout.tsx`
 - Layout root: `features/layout/AppLayout.tsx`
 - Playback engine: `features/hooks/useSequence.ts`
 - Persistence: `features/hooks/usePersistence.ts`

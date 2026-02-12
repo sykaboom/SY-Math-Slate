@@ -92,7 +92,6 @@ v10/src/
 |   |   |   |-- MathRevealBlock.tsx
 |   |   |   |-- MixedRevealBlock.tsx
 |   |   |   \-- RichTextAnimator.tsx
-|   |   |-- editing/
 |   |   |-- objects/
 |   |   |   \-- ImageBlock.tsx
 |   |   |-- viewport/
@@ -150,10 +149,6 @@ v10/src/
 |       |-- PageNavigator.tsx
 |       |-- PenControls.tsx
 |       \-- PlaybackControls.tsx
-|-- generated/
-|   \-- prisma/
-|       |-- internal/
-|       \-- models/
 \-- ui/
     \-- components/
         |-- button.tsx
