@@ -5,6 +5,7 @@ import { useCallback, useMemo } from "react";
 import type { NormalizedBlock, NormalizedContent } from "@core/contracts";
 import { isNormalizedContent } from "@core/contracts";
 import { normalizeTextSegmentStyle } from "@core/config/typography";
+import { dispatchCommand } from "@core/engine/commandBus";
 import { sanitizeRichTextHtml } from "@core/sanitize/richTextSanitizer";
 import type { StepBlock } from "@core/types/canvas";
 import { useCanvasStore } from "@features/store/useCanvasStore";
@@ -32,6 +33,29 @@ export type UseApprovalLogicResult = {
 
 const isNonEmptyString = (value: unknown): value is string =>
   typeof value === "string" && value.trim().length > 0;
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null && !Array.isArray(value);
+
+type CommandQueueMeta = {
+  queueType: "command";
+  commandId: string;
+  idempotencyKey?: string;
+};
+
+const toCommandQueueMeta = (entry: PendingAIQueueEntry): CommandQueueMeta | null => {
+  if (!entry.meta || !isRecord(entry.meta)) return null;
+  if (entry.meta.queueType !== "command") return null;
+  if (!isNonEmptyString(entry.meta.commandId)) return null;
+  const idempotencyKey = isNonEmptyString(entry.meta.idempotencyKey)
+    ? entry.meta.idempotencyKey.trim()
+    : undefined;
+  return {
+    queueType: "command",
+    commandId: entry.meta.commandId.trim(),
+    ...(idempotencyKey ? { idempotencyKey } : {}),
+  };
+};
 
 const escapeHtml = (value: string) =>
   value
@@ -188,6 +212,22 @@ export function useApprovalLogic(): UseApprovalLogicResult {
     (id: string) => {
       const entry = queue.find((candidate) => candidate.id === id);
       if (!entry) return;
+
+      const commandQueueMeta = toCommandQueueMeta(entry);
+      if (commandQueueMeta) {
+        void dispatchCommand(commandQueueMeta.commandId, entry.payload, {
+          role: "host",
+          idempotencyKey: commandQueueMeta.idempotencyKey,
+          meta: entry.meta ?? undefined,
+        })
+          .then((result) => {
+            if (!result.ok) return;
+            markApproved(id);
+            removeQueueEntry(id);
+          })
+          .catch(() => undefined);
+        return;
+      }
 
       const normalized = entry.toolResult?.normalized;
       if (isNormalizedContent(normalized)) {

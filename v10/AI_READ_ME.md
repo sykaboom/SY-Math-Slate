@@ -49,10 +49,11 @@ app/
   layout.tsx
   page.tsx
 core/
+  engine/        (headless command bus: command registry, preflight, idempotency)
   contracts/     (NormalizedContent/RenderPlan/TTSScript/ToolResult/ToolRegistry contract types, guards, mappers)
   config/        (boardSpec, capabilities, typography defaults)
   export/        (export pipeline scaffold)
-  extensions/    (manifest, registry, connectors, runtime scaffold)
+  extensions/    (manifest, registry, connectors, pluginLoader, mcpGateway, runtime scaffold)
   math/          (MathJax loader/render)
   migrations/    (migrateToV2)
   persistence/   (buildPersistedDoc and doc-only shaping helpers)
@@ -63,7 +64,7 @@ core/
 features/
   animation/     (animation model, plan/measure/runtime, modding contract)
   canvas/        (rendering layers, actors, objects, viewport)
-  extensions/    (tool adapter interfaces/registry/mock adapter)
+  extensions/    (tool adapter interfaces/registry/mock adapter, command policy + command registrations)
   hooks/         (useSequence, usePersistence, useFileIO, useAudioPlayer, ...)
   layout/        (AppLayout, autoLayout, overview)
   store/         (zustand state)
@@ -188,6 +189,23 @@ ui/
 5) Export/interchange 경로는 `NormalizedContent`만 수용하며, 나머지 타입은 deterministic error로 반환한다.
 6) Core connector는 adapter lookup -> invoke -> ToolResult validate 경로만 담당한다.
 7) Provider/MCP specific execution stays in `features/extensions/adapters/**`.
+
+### Command Bus / Plugin / MCP (Current Runtime)
+1) Declarative plugin clicks and MCP `call_tool` command route 모두 `core/engine/commandBus.ts`로 진입한다.
+2) Command bus preflight:
+   - payload validator 실행
+   - role 판정 (`host | student`)
+   - `student + requiresApproval`이면 실행 차단 후 `useSyncStore.pendingAIQueue`로 enqueue
+3) Core command set (`insertBlock`, `updateBlock`, `deleteBlock`)은 `features/extensions/commands/registerCoreCommands.ts`에서 등록된다.
+4) Declarative plugin manifest는 `core/extensions/pluginLoader.ts`에서 strict guard로 검증된다.
+   - `ui.type`: `button | panel`
+   - known slot names only
+   - JSON-safe payload/context only
+   - no arbitrary function/component injection
+5) MCP gateway는 `core/extensions/mcpGateway.ts`에서 postMessage로 동작한다.
+   - origin allowlist: `NEXT_PUBLIC_ALLOWED_ORIGIN`
+   - handshake token: `NEXT_PUBLIC_MCP_CAPABILITY_TOKEN`
+   - session token 발급 후에만 `list_tools` / `call_tool` 허용
 
 ---
 
@@ -351,6 +369,8 @@ Located in `core/extensions/`:
 - `manifest.ts`: permissions, triggers, UI placement
 - `registry.ts`: extension registry + tool registry entry store
 - `connectors.ts`: registered-tool gate + adapter lookup/invoke contract + ToolResult validation
+- `pluginLoader.ts`: strict declarative plugin manifest v1 validator/registry
+- `mcpGateway.ts`: postMessage-based MCP-compatible secure gateway runtime
 - `runtime.ts`: script manifest + trigger registry (no direct network execution)
 
 Located in `features/extensions/adapters/`:
@@ -358,6 +378,11 @@ Located in `features/extensions/adapters/`:
 - `registry.ts`: feature-layer adapter registry (`register/get/list/clear`)
 - `mockAdapter.ts`: deterministic local adapter for boundary validation
 - `index.ts`: adapter exports + default registration helper
+
+Located in `features/extensions/`:
+- `commandExecutionPolicy.ts`: command bus role/approval queue policy hooks
+- `commands/registerCoreCommands.ts`: core command registrations for doc mutation facade
+- `ui/ExtensionRuntimeBootstrap.tsx`: slot/adapters/policy/command/mcp runtime bootstrap
 
 **Permission scope examples**
 - `canvas:read`, `canvas:write`, `net:http`, `llm:invoke`

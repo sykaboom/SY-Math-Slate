@@ -55,6 +55,7 @@ export type RegisteredToolExecutionRequest = {
   toolId: string;
   payload?: unknown;
   meta?: Record<string, unknown>;
+  role?: ToolExecutionRole;
 };
 
 export type RegisteredToolExecutionOptions = {
@@ -173,7 +174,7 @@ const maybeInterceptStudentMutation = (
   toolResult: ToolResult<KnownNormalizedPayload>
 ): ConnectorToolResultResolution | null => {
   const hooks = toolExecutionPolicyHooks;
-  const role = hooks?.getRole() ?? "host";
+  const role = request.role ?? hooks?.getRole() ?? "host";
   if (role !== "student") {
     return null;
   }

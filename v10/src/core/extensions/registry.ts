@@ -2,7 +2,6 @@ import type { ComponentType } from "react";
 import type {
   ExtensionManifest,
   ExtensionType,
-  ExtensionUiSlotName,
 } from "./manifest";
 import type {
   ToolRegistryEntry,
@@ -17,6 +16,13 @@ const uiSlotRegistry = new Map<UISlotName, UISlotComponent[]>();
 const uiSlotRegistryListeners = new Set<() => void>();
 let uiSlotRegistryVersion = 0;
 
+export const KNOWN_UI_SLOT_NAMES = [
+  "chrome-top-toolbar",
+  "left-panel",
+  "toolbar-inline",
+  "toolbar-bottom",
+] as const;
+
 export type ToolRegistryUpsertSuccess = ToolRegistryValidationSuccess & {
   replaced: boolean;
 };
@@ -25,8 +31,14 @@ export type ToolRegistryUpsertResult =
   | ToolRegistryUpsertSuccess
   | ToolRegistryValidationError;
 
-export type UISlotName = ExtensionUiSlotName;
+export type UISlotName = (typeof KNOWN_UI_SLOT_NAMES)[number];
 export type UISlotComponent = ComponentType;
+
+export const listKnownUISlotNames = (): UISlotName[] => [...KNOWN_UI_SLOT_NAMES];
+
+export const isKnownUISlotName = (slotName: unknown): slotName is UISlotName =>
+  typeof slotName === "string" &&
+  (KNOWN_UI_SLOT_NAMES as readonly string[]).includes(slotName);
 
 const notifyUISlotRegistryUpdated = (): void => {
   uiSlotRegistryVersion += 1;

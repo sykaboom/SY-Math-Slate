@@ -22,7 +22,8 @@ v10/
 |-- prisma.config.ts
 |-- README.md
 |-- tailwind.config.ts
-\-- tsconfig.json
+|-- tsconfig.json
+\-- tsconfig.tsbuildinfo
 ```
 
 ## v10/src/
@@ -46,11 +47,15 @@ v10/src/
 |   |   |-- toolRegistry.ts
 |   |   |-- toolResult.ts
 |   |   \-- ttsScript.ts
+|   |-- engine/
+|   |   \-- commandBus.ts
 |   |-- export/
 |   |   \-- exportPipeline.ts
 |   |-- extensions/
 |   |   |-- connectors.ts
 |   |   |-- manifest.ts
+|   |   |-- mcpGateway.ts
+|   |   |-- pluginLoader.ts
 |   |   |-- registry.ts
 |   |   \-- runtime.ts
 |   |-- math/
@@ -114,10 +119,13 @@ v10/src/
 |   |   |   |-- mockAdapter.ts
 |   |   |   |-- registry.ts
 |   |   |   \-- types.ts
+|   |   |-- commands/
+|   |   |   \-- registerCoreCommands.ts
 |   |   |-- ui/
 |   |   |   |-- ExtensionRuntimeBootstrap.tsx
 |   |   |   |-- ExtensionSlot.tsx
 |   |   |   \-- registerCoreSlots.ts
+|   |   |-- commandExecutionPolicy.ts
 |   |   \-- toolExecutionPolicy.ts
 |   |-- hooks/
 |   |   |-- useAudioPlayer.ts
