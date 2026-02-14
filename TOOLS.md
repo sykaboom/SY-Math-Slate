@@ -1,6 +1,6 @@
-# TOOLS.md - Local Notes
+# TOOLS.md - Local Runtime Notes
 
-Skills define _how_ tools work. This file is for _your_ specifics — the stuff that's unique to your setup.
+Skills define _how_ tools work. This file is for _your machine-specific runtime notes_.
 
 ## What Goes Here
 
@@ -33,13 +33,13 @@ Things like:
 
 ## Why Separate?
 
-Skills are shared. Your setup is yours. Keeping them apart means you can update skills without losing your notes, and share skills without leaking your infrastructure.
+Skills are shared. Your setup is yours. Keeping them apart means you can update skills without losing local notes.
 
 ---
 
 Add whatever helps you do your job. This is your cheat sheet.
 
-## Codex Runtime Checklist
+## Codex Runtime Checklist (Local Ops)
 
 When setting up a new machine:
 
@@ -56,3 +56,10 @@ Then verify runtime mode in Codex CLI:
 Keep these notes local:
 - Any machine-specific path overrides used with `--source` or `--target`
 - Whether your current environment should default to parallel or fallback mode
+
+## Delegated Workflow Reference
+
+Delegated sub-agent orchestration policy is maintained in:
+- `codex_tasks/_PLAYBOOK_subagent_oneclick.md`
+
+This file should store only local runtime hints and machine-specific overrides.

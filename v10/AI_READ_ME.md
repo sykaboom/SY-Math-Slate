@@ -1,11 +1,16 @@
 # AI_READ_ME (v10 Deep Map)
 
-This file is the **single source** for AI agents. It is intentionally verbose and explicit.
+This file is the v10 implementation/architecture reference map.
 
-## Read Order (SSOT)
-1) `GEMINI_CODEX_PROTOCOL.md`  
-2) `PROJECT_BLUEPRINT.md` + `PROJECT_CONTEXT.md`  
-3) Task spec in `codex_tasks/`
+## Governance Note
+- Workflow authority order is defined by `AGENTS.md`.
+- This document must not redefine SSOT priority; it only maps v10 architecture and invariants.
+
+## Suggested Read Flow (v10 implementation context)
+1) `PROJECT_BLUEPRINT.md` + `PROJECT_CONTEXT.md`  
+2) `AGENTS.md` (authority + execution rules)  
+3) Task spec in `codex_tasks/`  
+4) `GEMINI_CODEX_PROTOCOL.md` (only when layout/SVG coordination is relevant)
 
 ---
 

@@ -40,10 +40,18 @@ Example delegation signal:
 - Implementer-C
 - Reviewer+Verifier
 
+Role duplication policy (allowed):
+- Same role may be called multiple times (`Implementer-A1`, `Implementer-A2`) when tasks are independent.
+- Duplicate-role agents must still obey file ownership lock.
+
 Codex remains final decision owner for:
 - spec lock
 - merge decision
 - completion status
+
+Model policy for sub-agents:
+- Preferred profile: `gpt-5.3 extremelyhigh`
+- If runtime cannot pin this profile, continue with current runtime default (do not block execution).
 
 ---
 
@@ -66,9 +74,22 @@ Progress reporting policy:
 
 - Build a dependency DAG from approved specs.
 - Run independent nodes in parallel waves.
-- Respect runtime sub-agent limit (baseline 6).
+- Respect runtime sub-agent limit (hard max `6` active slots).
 - If file ownership conflict exists, convert conflicted nodes to sequential execution.
 - Reuse role types across waves; do not keep idle agents pinned.
+
+Dispatch blueprint:
+1) Wave-Spec:
+   - `Spec-Writer` -> `Spec-Reviewer`
+2) Wave-Implement:
+   - Up to 3 implementer slots in parallel (`A/B/C` or duplicated role IDs)
+3) Wave-Verify:
+   - `Reviewer+Verifier` single pass
+
+Slot accounting rules:
+- Active slot count must stay `<= 6`.
+- New agent launches only when dependency + file-lock constraints are satisfied.
+- If verification requires rework, spawn a mini-wave instead of reopening infinite loops.
 
 ---
 
@@ -116,4 +137,3 @@ Final report must include:
 - gate results (lint/build/scripts)
 - failure classification (`pre-existing` vs `new`, `blocking` vs `non-blocking`)
 - risks and follow-up recommendations (if any)
-

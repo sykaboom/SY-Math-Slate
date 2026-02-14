@@ -7,7 +7,7 @@ Date: YYYY-MM-DD
 
 ---
 
-## Goal
+## Goal (Base Required)
 - What to change:
   - (concise, observable change)
 - What must NOT change:
@@ -15,7 +15,7 @@ Date: YYYY-MM-DD
 
 ---
 
-## Scope (Codex must touch ONLY these)
+## Scope (Base Required)
 
 Touched files/directories:
 - (explicit, minimal list)
@@ -25,80 +25,99 @@ Out of scope:
 
 ---
 
-## Design Artifacts (required for layout/structure changes)
-
-- [ ] Layout / structure changes included: YES / NO
-- [ ] SVG path in `design_drafts/`: (required if YES)
-- [ ] SVG includes explicit `viewBox` (width / height / ratio label)
-- [ ] Tablet viewports considered (if applicable):
-  - 768x1024 / 820x1180 / 1024x768 / 1180x820
-- [ ] Codex must verify SVG file exists before implementation
-
-> Note:
-> - SVG is a structural design artifact only.
-> - SVG must NOT be embedded in production code.
-> - Gemini provides SVG input only; ownership remains with Codex.
-
----
-
-## Dependencies / Constraints
+## Dependencies / Constraints (Base Required)
 
 - New dependencies allowed: NO (default)
   - If YES, list and justify explicitly.
 - Boundary rules:
-  - (e.g. core cannot import features; provider logic stays in adapters)
+  - (layer/import/runtime constraints)
 - Compatibility:
   - (backward compatibility expectations, if relevant)
 
 ---
 
-## Agent Assignment (execution planning)
+## Optional Block A — Layout / SVG Gate
 
-- Execution mode: MANUAL | DELEGATED
-- If delegated, chain scope:
-  - (task IDs / boundaries covered by one-click delegation)
-- Assigned agents / roles:
-  - Spec-Writer:
-  - Spec-Reviewer:
-  - Implementer-A:
-  - Implementer-B:
-  - Implementer-C:
-  - Reviewer+Verifier:
-- File ownership lock plan:
-  - (which implementer owns which files; conflict handling rule)
+- [ ] Applies: YES / NO
+- If YES, fill all items:
+  - [ ] SVG path in `design_drafts/`
+  - [ ] SVG has explicit `viewBox` (width / height / ratio)
+  - [ ] Tablet viewport checks considered:
+    - 768x1024 / 820x1180 / 1024x768 / 1180x820
+  - [ ] Numeric redlines recorded in spec
+  - [ ] Codex verified SVG exists before implementation
 
 ---
 
-## Speculative Defense Check (guardrail)
+## Optional Block B — Delegated Execution
 
-- [ ] Any defensive branches added: YES / NO
+- [ ] Applies: YES / NO
+- If YES:
+  - Execution mode: DELEGATED
+  - Delegation chain scope:
+    - (task IDs / boundaries)
+  - Assigned roles:
+    - Spec-Writer:
+    - Spec-Reviewer:
+    - Implementer-A:
+    - Implementer-B:
+    - Implementer-C:
+    - Reviewer+Verifier:
+  - File ownership lock plan:
+    - (one file = one implementer)
+  - Parallel slot plan:
+    - (max 6 active slots)
+
+If NO:
+- Execution mode: MANUAL
+
+---
+
+## Optional Block C — Hotfix Exception
+
+- [ ] Applies: YES / NO
+- If YES:
+  - Explicit user hotfix approval quote:
+    - (chat message)
+  - Exact hotfix scope/files:
+    - ...
+  - Hotfix log path:
+    - `codex_tasks/hotfix/hotfix_<id>_<slug>.md`
+
+---
+
+## Optional Block D — Speculative Defense Check
+
+- [ ] Applies: YES / NO
 - If YES:
   - Evidence (real input, spec, or bug report):
-    - (link / file / example)
-  - Sunset criteria (when and how to remove):
-    - (explicit condition)
+    - (link / file / sample)
+  - Sunset criteria:
+    - (explicit removal condition)
 
 ---
 
-## Documentation Update Check
+## Optional Block E — Documentation Update Check
 
-- [ ] Structure changes (file/folder add/move/delete):
-  - Run `node scripts/gen_ai_read_me_map.mjs`
-  - Verify `v10/AI_READ_ME_MAP.md` update if needed
-- [ ] Semantic / rule changes (layers, invariants, core flows):
-  - Verify `v10/AI_READ_ME.md` update if needed
+- [ ] Applies: YES / NO
+- If YES:
+  - [ ] Structure changes (file/folder add/move/delete):
+    - Run `node scripts/gen_ai_read_me_map.mjs`
+    - Verify `v10/AI_READ_ME_MAP.md` update if needed
+  - [ ] Semantic/rule changes:
+    - Verify `v10/AI_READ_ME.md` update if needed
 
 ---
 
-## Acceptance Criteria (must be testable)
+## Acceptance Criteria (Base Required)
 
-- [ ] AC-1: (observable condition; pass/fail)
-- [ ] AC-2: (observable condition; pass/fail)
+- [ ] AC-1: (observable pass/fail condition)
+- [ ] AC-2: (observable pass/fail condition)
 - [ ] AC-3: ...
 
 ---
 
-## Manual Verification Steps (since no automated tests)
+## Manual Verification Steps (Base Required)
 
 > Each step should map to one or more Acceptance Criteria.
 
@@ -114,19 +133,19 @@ Out of scope:
 
 ---
 
-## Risks / Roll-back Notes
+## Risks / Roll-back Notes (Base Required)
 
 - Risks:
   - (what could go wrong, why)
 - Roll-back:
-  - (exact revert strategy; what to undo, what to keep)
+  - (exact revert strategy)
 
 ---
 
-## Approval Gate (mandatory)
+## Approval Gate (Base Required)
 
 - [ ] Spec self-reviewed by Codex
-- [ ] Explicit user approval received (e.g. "승인: 진행")
+- [ ] Explicit user approval received (or delegated chain approval reference)
 
 > Implementation MUST NOT begin until both boxes are checked.
 

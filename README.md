@@ -28,6 +28,7 @@ This repo uses `.github/workflows/gh-pages.yml`. Pushing to `main` triggers
 ## Project docs
 - `PROJECT_BLUEPRINT.md` (architecture, SSOT, and integration rules)
 - `AGENTS.md` (Codex execution rules and workflow gates)
+- `codex_tasks/_PLAYBOOK_subagent_oneclick.md` (delegated sub-agent orchestration policy)
 
 ## Codex Environment Bootstrap
 For Codex workflow portability across machines:
@@ -37,14 +38,8 @@ For Codex workflow portability across machines:
 ./scripts/bootstrap_codex_env.sh --apply
 ```
 
-What this does:
-- Syncs repository skills (`codex_skills/`) into local runtime skills (`~/.codex/skills`)
-- Prints runtime checklist for `sub-agents` mode
-
-After bootstrap:
-- Open Codex CLI and check `/experimental`
-- `sub-agents [x]`: parallel wave mode
-- `sub-agents [ ]`: single-Codex fallback mode
+Detailed runtime checklist and machine-specific overrides are maintained in:
+- `TOOLS.md`
 
 ## Notes
 - For tablet testing on the same network:

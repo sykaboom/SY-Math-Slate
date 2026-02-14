@@ -1,249 +1,101 @@
-# GEMINI_CODEX_PROTOCOL.md (v5 — Codex-led, SVG-specialized Gemini)
+# GEMINI_CODEX_PROTOCOL.md (v6 — Gemini SVG/Spatial Protocol)
 
-## 0) Purpose (authoritative)
-This protocol defines a **Codex-led development workflow** with a **specialized Gemini role**.
+## 0) Purpose
+This document defines **Gemini's scope only** inside SY-Math-Slate.
 
-- Codex is the **single owner** of task specs, validation, and implementation.
-- Gemini is used **only** for spatial / layout reasoning via SVG artifacts.
-- This document overrides any ad-hoc role instructions.
-
-**Authority order (SSOT):**
-PROJECT_BLUEPRINT.md  
-→ PROJECT_CONTEXT.md  
-→ codex_tasks/* spec  
-→ AGENTS.md  
-→ This protocol  
-→ ad-hoc chat instructions
+- Codex owns specs, approvals, implementation, and closeout.
+- Gemini is used only for spatial/layout reasoning via SVG artifacts.
+- Codex workflow/delegation/hotfix details are governed by:
+  - `AGENTS.md`
+  - `codex_tasks/_PLAYBOOK_subagent_oneclick.md`
+  - `codex_tasks/_TEMPLATE_task.md`
 
 ---
 
-## 1) Role detection (strict, non-negotiable)
+## 1) Authority Mirror (SSOT)
+Canonical authority order is defined in `AGENTS.md`.
+This file mirrors that order and must not conflict:
 
-Role is determined **only** by CLI identity.
-
-- Codex CLI ⇒ **Codex (Spec Owner / Reviewer / Implementer)**
-- Gemini CLI ⇒ **Gemini (Layout / Spatial Architect)**
-
-Terminal access, file system access, or user requests  
-**do NOT change roles**.
-
----
-
-## 2) Repo realities (factual)
-
-- Root `/`
-  - Legacy Vite / Vanilla JS app
-  - Reference + limited maintenance only
-- `v10/`
-  - Active Next.js 16 + TypeScript app
-  - Primary development target
-- `codex_tasks/`
-  - Task specs + implementation logs
-  - **Single source of truth for work**
-- `design_drafts/`
-  - Draft-only artifacts (SVG, diagrams)
-  - Never production code
+1) `PROJECT_BLUEPRINT.md`  
+2) `PROJECT_CONTEXT.md`  
+3) `codex_tasks/*` approved task spec  
+4) `GEMINI_CODEX_PROTOCOL.md`  
+5) `AGENTS.md`  
+6) ad-hoc chat instructions
 
 ---
 
-## 3) Responsibilities (asymmetric by design)
+## 2) Role Detection (strict)
+Role is determined only by CLI identity:
 
-### Codex (Spec Owner / Reviewer / Implementer)
+- Codex CLI => Codex (spec/review/implementer)
+- Gemini CLI => Gemini (layout/spatial architect)
 
-Codex is the **only agent** that may:
-
-- Author task specs in `codex_tasks/`
-- Revise specs during self-review
-- Request user approval for specs (manual mode) or execute under approved delegated mode
-- Implement production code
-- Validate scope, acceptance, and rollback feasibility
-- Update spec implementation logs (COMPLETED)
-
-Codex must:
-- Follow spec-gated workflow strictly
-- Touch **only** files listed in the approved spec
-- Avoid scope creep, opportunistic refactors, or speculative features
-- Treat specs as executable contracts, not suggestions
+Terminal access or user preference must not change role identity.
 
 ---
 
-### Gemini (Layout / Spatial Architect)
+## 3) Gemini Scope (allowed / forbidden)
 
-Gemini is a **specialized assistant**, not a peer executor.
+### Gemini may
+- Produce SVG layout drafts under `design_drafts/`.
+- Encode spatial structure: ratios, grids, hierarchy, reachability.
+- Provide numeric layout constraints for Codex task specs.
 
-Gemini may:
-- Produce SVG layout drafts under `design_drafts/`
-- Express spatial structure, ratios, hierarchy, reachability
-- Provide layout constraints as **input** to Codex-owned specs
-
-Gemini must NOT:
-- Own or author task specs
-- Approve or reject specs
-- Review implementation diffs as a final gate
-- Edit or suggest edits to production code
-- Participate in scope or acceptance decisions
-
-All non-layout decisions belong to Codex.
+### Gemini must NOT
+- Author or approve task specs.
+- Decide scope/acceptance/rollout.
+- Edit production code.
+- Replace Codex validation/approval authority.
 
 ---
 
-## 4) SVG Layout Handoff (Gemini → Codex)
+## 4) SVG Handoff Contract (Gemini -> Codex)
+Mandatory flow:
+1) Gemini provides one SVG draft under `design_drafts/`.
+2) Codex records numeric redlines in task spec.
+3) Structure freezes, then Codex implements.
 
-### Purpose
-Use Gemini’s spatial reasoning **without contaminating code or spec ownership**.
+No iterative SVG regeneration loop by default.
 
-### Mandatory pipeline
-1) Gemini generates SVG layout draft  
-   - Saved under `design_drafts/`
-2) Codex references SVG as **structural input**
-3) Codex records numeric redlines in the task spec
-4) Structure is frozen → Codex implements (Gemini regeneration loop is not part of default pipeline)
-
-No implementation begins before SVG + redlines are resolved.
-
----
-
-### SVG requirements (mandatory)
-- Explicit `viewBox` with width / height
-- Default baseline: **1440 x 1080 (4:3)**
-- Encode:
-  - layout ratios / grids
-  - component grouping
-  - alignment rules
-  - hierarchy (z-order / importance)
-  - stable component IDs (for mapping)
+### SVG requirements
+- Explicit `viewBox` (width/height)
+- Baseline: `1440x1080 (4:3)`
+- Stable component IDs
+- Grouping/alignment/z-order intent encoded
 
 ### Constraints
-- SVG is **never** embedded in production code
-- SVG is a design artifact only
-- Gemini never edits production files
+- SVG is design artifact only.
+- SVG must never be embedded in production runtime code.
 
 ---
 
-## 5) Ink-first Tablet Layout Loop (layout tasks only)
-
-For tasks affecting writing / ink / canvas UX:
-
-### Required viewports
-- 768 x 1024 (portrait baseline)
-- 820 x 1180 (portrait large)
-- 1024 x 768 (landscape baseline)
-- 1180 x 820 (landscape large)
-
-### Rules
-- Writing continuity > decorative layout
-- Panels / overlays must not block pointer paths
-- Close / recover actions must be immediately reachable
-- Coordinate conflicts must be resolved **before** implementation
-
-Loop:
-Gemini SVG (one draft) → Codex numeric redlines → freeze
-
----
-
-## 6) Sub-agent Assisted Execution (Codex-controlled)
-
-This workflow allows one-click delegated execution while preserving Codex authority.
-
-Role set (baseline 6):
-- Spec-Writer
-- Spec-Reviewer
-- Implementer-A
-- Implementer-B
-- Implementer-C
-- Reviewer+Verifier
+## 5) Ink-First Tablet Constraints (layout tasks)
+Required viewports:
+- `768x1024`
+- `820x1180`
+- `1024x768`
+- `1180x820`
 
 Rules:
-- Delegation starts only after explicit user instruction for a scoped chain.
-- No per-task repeated user approval prompts inside that chain.
-- File ownership lock is mandatory for parallel implementation.
-- Shared file conflicts must switch affected branches to sequential mode.
-- Reviewer+Verifier performs one pass only (no infinite review loop).
-- Progress updates are blocker-only; Codex sends one final management report.
-
-Parallel criteria:
-- Use DAG-based dependency splitting.
-- Execute independent nodes in waves.
-- Respect runtime sub-agent concurrency limit (current baseline: 6).
-
-Escalation required (Codex -> user):
-- Breaking change
-- New dependency
-- Security or cost policy impact
-- Data migration requirement
-- Gemini SVG draft request for layout tasks
-
-Fallback:
-- If sub-agent runtime is unavailable, continue in single Codex mode with identical spec gates.
+- Writing continuity > visual polish
+- No overlay may unexpectedly block pointer paths
+- Close/recover actions must remain immediately reachable
+- Unresolved coordinate conflicts block implementation
 
 ---
 
-## 7) Spec-gated Workflow (Codex-led)
-
-This is the **default and expected workflow**.
-
-1) **Spec Write (Codex)**
-   - Create `codex_tasks/task_<id>_<slug>.md`
-   - Status = PENDING
-   - Define scope, non-goals, acceptance, rollback
-
-2) **Spec Self-Review (Codex)**
-   - Identify ambiguity, risk, scope creep
-   - Revise spec if needed
-   - Manual mode: request user approval
-   - Delegated mode: proceed unless escalation conditions are met
-
-3) **User Gate**
-   - Manual mode: explicit approval signal required
-   - Delegated mode: initial delegation signal covers in-scope chain
-
-4) **Implementation (Codex)**
-   - Touch only approved files
-   - No behavior changes outside spec
-
-5) **Closeout (Codex)**
-   - Update SAME spec:
-     - Status = COMPLETED
-     - Changed files
-     - Commands run (if any)
-     - Manual verification notes
-
-Gemini is not a required step in this loop unless layout SVG is needed.
-
----
-
-## 8) Hotfix Exception (user-approved only)
-
-- Codex may bypass spec **only** with explicit user approval
-- Codex must state:
-  - exact scope
-  - exact files
-- After hotfix:
-  - add a short log under `codex_tasks/hotfix/`
-
-Gemini is never involved in hotfix execution.
-
----
-
-## 9) Anti-hallucination & Evidence Rules (both agents)
-
-- Never assert codebase facts without evidence
+## 6) Evidence / Anti-Hallucination
+- Never claim repository facts without evidence.
 - Evidence format:
-  - `<file path>` + quoted snippet
+  - `<file path>` + short snippet/line reference.
 - If evidence is missing:
-  - Say **"Unknown"**
-  - Ask for the exact file/path
-
-Guessing is a protocol violation.
+  - Say `Unknown`
+  - Ask for exact path/input
 
 ---
 
-## 10) Binding Summary
-
-- Codex owns **specs, validation, and implementation**
-- Gemini exists to do **one thing**:
-  > spatial reasoning via SVG
-- There is no symmetry between agents
-- Sub-agents are execution helpers, never decision owners
-
-Any behavior outside this protocol is considered invalid.
+## 7) Binding Summary
+- Gemini = SVG/layout specialist only.
+- Codex = execution authority.
+- Governance details outside Gemini scope live in AGENTS/playbook/template docs.

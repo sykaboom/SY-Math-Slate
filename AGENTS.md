@@ -1,9 +1,9 @@
-# AGENTS.md — SY-Math-Slate (Codex-led Execution Rules)
+# AGENTS.md — SY-Math-Slate (Governance Core)
 
 ## Identity (strict)
-- You are **Codex CLI** ⇒ **Codex (Spec Owner / Reviewer / Implementer)**.
+- You are **Codex CLI** => **Codex (Spec Owner / Reviewer / Implementer)**.
 - Do NOT role-switch.
-- Follow this file as an **execution constitution**, not a suggestion.
+- Follow this file as the always-on governance core.
 
 Gemini CLI rules are defined separately in `GEMINI.md`.
 
@@ -12,291 +12,136 @@ Gemini CLI rules are defined separately in `GEMINI.md`.
 ## Authority Order (SSOT)
 All decisions must follow this order:
 
-1) PROJECT_BLUEPRINT.md  
-2) PROJECT_CONTEXT.md  
-3) codex_tasks/* task spec  
-4) GEMINI_CODEX_PROTOCOL.md  
-5) AGENTS.md (this file)  
+1) `PROJECT_BLUEPRINT.md`  
+2) `PROJECT_CONTEXT.md`  
+3) `codex_tasks/*` approved task spec  
+4) `GEMINI_CODEX_PROTOCOL.md`  
+5) `AGENTS.md` (this file)  
 6) ad-hoc chat instructions
 
-If any conflict exists, **higher authority always wins**.
+If any conflict exists, higher authority wins.
 
 ---
 
-## Repository Map (factual)
-
-- Root `/`
-  - Legacy Vite / Vanilla JS app
-  - Reference + limited maintenance only
-- `v10/`
-  - Active Next.js 16 + TypeScript app
-  - **Default and primary target**
-- `codex_tasks/`
-  - Task specs + implementation logs
-  - **Single source of truth for work**
-- `design_drafts/`
-  - Draft-only artifacts (SVG, diagrams)
-  - Never production code
-
-Unless a spec explicitly says otherwise,  
-**assume work happens in `v10/`.**
+## Repository Defaults
+- Primary target: `v10/`
+- Work log + task contracts: `codex_tasks/`
+- Draft-only layout artifacts: `design_drafts/`
+- Unless a spec says otherwise, assume work is in `v10/`.
 
 ---
 
-## Core Principle (non-negotiable)
+## Task Classification
+Codex must classify each request before implementation.
 
-> **Codex owns the entire execution loop.**  
-> Specs, validation, implementation, and closeout are Codex’s responsibility.
+- `Task required`:
+  - Any change to code, behavior, contracts, structure, workflow policy docs, or templates.
+- `No task spec required`:
+  - Pure discussion / review conversation.
+  - Read-only inspection commands.
+  - Operational git sync/status commands:
+    - `git pull`, `git push`, `git fetch`, `git status`, `git log`, `git branch --show-current`.
 
-Gemini may assist **only** via SVG layout drafts.  
-No other agent owns or finalizes work.
+For non-task requests, explicitly state:
+- `"No task spec required for this request."`
 
----
-
-## Task Bootstrap Rule (mandatory)
-
-When a new work request is received:
-
-- Codex MUST first determine whether this constitutes a “task”.
-- If it is a task (i.e. any change to code, behavior, structure, or contracts):
-  - Codex MUST create or update a task spec using `_TEMPLATE_task.md`.
-  - Codex MUST NOT begin implementation before the spec is written and approved.
-- If it is NOT a task (pure discussion, exploration, or questions):
-  - Codex must explicitly state: “No task spec required for this request.”
-
-Hotfixes are NOT exempt and must follow the Hotfix Exception rule.
+Hotfixes are not exempt from governance and must follow the Hotfix section.
 
 ---
 
-## Codex-only 3-Stage Execution Loop (mandatory)
+## Spec-Gated Execution Loop
 
-### Stage 1 — Spec Write (Codex)
-- Create `codex_tasks/task_<id>_<slug>.md`
-- Status = **PENDING**
-- Must include:
-  - Goal (what changes / what must NOT change)
-  - Scope (explicit touched files or directories)
-  - Out of scope
-  - Acceptance criteria (testable)
-  - Manual verification steps
-  - Risks / roll-back notes (when relevant)
+### Stage 1 — Spec Write
+- Create/update `codex_tasks/task_<id>_<slug>.md` from `codex_tasks/_TEMPLATE_task.md`.
+- Status starts as `PENDING`.
+- Must include: Goal, Scope, Out of scope, Acceptance criteria, Manual verification, Risks/Roll-back.
 
-If no spec exists:
-- STOP
-- Ask the user to approve spec creation, or
-- Create a draft spec and request approval before implementation
+### Stage 2 — Spec Self-Review
+- Verify minimal scope, testable acceptance, realistic rollback, and no hidden scope creep.
+- Implementation cannot start without approval unless a delegated window is already active.
 
----
-
-### Stage 2 — Spec Self-Review (Codex)
-Before coding, Codex must re-open the spec and verify:
-
-- Scope is minimal and explicit
-- No hidden scope creep
-- Acceptance criteria are verifiable
-- Roll-back is realistic
-- No speculative or “just in case” branches
-
-If ambiguity exists:
-- Update the spec
-- In manual mode: request user approval again
-- In delegated mode: continue unless escalation conditions are met
-
-**No implementation may begin without explicit user approval, unless a delegated execution window has already been approved by the user.**
-
----
-
-### Stage 3 — Implementation (Codex)
-- Touch **ONLY** files listed in the approved spec
-- No opportunistic refactors
-- No extra features
-- No cross-layer coupling
-- Preserve behavior outside scope
-
-After implementation:
-- Run required checks (if relevant and safe):
+### Stage 3 — Implementation
+- Touch only files listed in the approved spec.
+- No opportunistic refactor or extra feature outside scope.
+- For code changes, run required gates when relevant:
   - `cd v10 && npm run lint`
   - `cd v10 && npm run build`
-- If failures occur:
-  - Classify clearly:
-    - pre-existing vs newly introduced
-    - blocking vs non-blocking
-
----
 
 ### Closeout (mandatory)
-Update the **same spec file**:
-
-- Status ⇒ **COMPLETED**
-- List of changed files
-- Commands run (if any)
-- Manual verification notes
-
-No other log location is allowed.
+- Update the same spec file:
+  - Status => `COMPLETED`
+  - Changed files
+  - Commands run
+  - Manual verification notes
+- Classify failures as pre-existing vs newly introduced, and blocking vs non-blocking.
 
 ---
 
-## One-click Delegated Execution Mode (Codex-orchestrated)
+## Delegated Execution (Core Invariants)
+Delegated chain starts with one explicit user delegation instruction.
 
-Activation:
-- User gives a single delegated instruction for a scoped chain (example: "승인. 090-093 위임 실행").
-- Delegation remains valid for that chain until completion, explicit user stop, or escalation.
+Detailed policy lives in:
+- `codex_tasks/_PLAYBOOK_subagent_oneclick.md`
 
-Required 6-role set:
-- Spec-Writer
-- Spec-Reviewer
-- Implementer-A
-- Implementer-B
-- Implementer-C
-- Reviewer+Verifier (combined)
-
-Execution rules:
-- No per-task repeated approval prompts inside the delegated chain.
-- Codex keeps final authority for spec lock, merge decision, and completion status.
-- Progress updates are blocker-only; otherwise one final management report is sent.
-- Review/verification loop is one pass only; no infinite rework loop.
-- One file can be owned by only one Implementer at a time (file ownership lock).
-- If ownership conflict appears, switch that branch to sequential execution.
-
-Parallel planning rules (DAG + waves):
-- Split tasks by explicit dependency edges (DAG).
-- Run independent nodes in parallel waves.
-- Do not exceed session sub-agent concurrency limit (current baseline: 6).
-- For large batches, reuse role types across waves instead of keeping idle agents.
-
-Escalation conditions (must request user confirmation):
-- Breaking change
-- New dependency
-- Security or cost policy impact
-- Data migration requirement
-- Gemini SVG draft request required for a layout task
-
-Fallback:
-- If sub-agent runtime is unavailable or disabled, continue in single Codex mode with the same spec gates.
+Non-negotiable invariants:
+- Max concurrent sub-agents: `6` slots.
+- File ownership lock: one file has one implementer at a time.
+- One-pass review/verification loop (no infinite rework loop).
+- Progress reporting is blocker-first.
+- Escalate to user on breaking change, new dependency, security/cost impact, data migration, or required Gemini SVG request.
 
 ---
 
-## Gemini Interaction Rule (SVG-only)
+## Layout / SVG Gate
+Layout, panel, overlay, or writing-surface geometry changes must follow:
+- `GEMINI_CODEX_PROTOCOL.md`
+- `codex_tasks/_TEMPLATE_task.md` optional Layout block
 
-Gemini is a **specialized layout assistant**, not a peer executor.
-
-Codex may:
-- Request SVG layout drafts from Gemini
-- Reference SVG files under `design_drafts/` as structural input
-
-Codex must:
-- Verify SVG existence before layout implementation
-- Record numeric redlines (spacing, reachability, conflicts) in the task spec
-- Request **one SVG draft only** from Gemini (no iterative regeneration loop)
-- Freeze structure before coding
-
-Codex must NOT:
-- Delegate spec ownership to Gemini
-- Delegate validation or approval decisions
-- Allow layout changes without SVG gate
+Mandatory constraints:
+- SVG artifact must exist under `design_drafts/` before implementation.
+- Tablet viewports must be considered:
+  - `768x1024`, `820x1180`, `1024x768`, `1180x820`
 
 ---
 
-## SVG Layout Gate (hard stop)
-
-Any task involving:
-- layout
-- panel / drawer / overlay structure
-- canvas or writing surface geometry
-
-**MUST** satisfy:
-- SVG exists under `design_drafts/`
-- SVG follows baseline + tablet viewport rules
-- Redlines resolved in spec
-
-If SVG is missing:
-- STOP
-- Request Gemini SVG before proceeding
-
----
-
-## Tablet Ink UX Governance (layout tasks)
-
-Required viewports:
-- 768 x 1024
-- 820 x 1180
-- 1024 x 768
-- 1180 x 820
-
-Rules:
-- Writing continuity > visual polish
-- No overlay may unexpectedly block pointer paths
-- Close / recover actions must be immediately reachable
-- Coordinate conflicts block implementation
-
-Implementation order for layout refactors:
-1) app shell
-2) panel / drawer
-3) footer controls
-4) overlays
-
----
-
-## Hotfix Exception (user-approved only)
-
-Codex may bypass the spec **only** if:
-
-- User explicitly approves a hotfix in chat
-- Codex states:
-  - exact scope
-  - exact files to be touched
+## Hotfix Exception
+Codex may bypass normal spec flow only if:
+- User explicitly approves hotfix in chat.
+- Codex states exact scope and exact files before editing.
 
 After hotfix:
-- Create a log under `codex_tasks/hotfix/`
-- Naming: `hotfix_<id>_<slug>.md`
-- Sequential numbering, no gaps
-
-Gemini is never involved in hotfix execution.
+- Create log under `codex_tasks/hotfix/` using `hotfix_<id>_<slug>.md`.
 
 ---
 
-## Quality & Safety Constraints (always)
-
+## Quality & Safety Constraints
 - No `eval` / `new Function`
 - No `window` globals
 - Sanitize `innerHTML`
 - Persist JSON-safe data only
-- Keep logic and view separated
-- No secrets committed
+- Keep logic/view separation
+- No secrets in repo
 - New dependencies require explicit user approval
 
 ---
 
-## Network Push Operation (sandbox-aware default)
-
-- In this environment, normal `git push` frequently fails due to DNS/network sandbox limits.
-- Default operation for `git push`:
-  1) run with escalated permission first
-  2) if it fails, stop and report the exact error
-- Do **not** run repeated normal-then-escalated retry loops for push.
+## Network Push Operation
+- In this environment, `git push` should run with escalated permission first.
+- If escalated push fails, stop and report exact error.
+- Do not run normal-then-escalated retry loops.
 
 ---
 
-## Forward Compatibility Invariants (always)
-
-- Contracts are backward-compatible by default
-- Breaking changes require:
-  - version bump
-  - migration path
-- Tool / model / provider logic stays in adapter layers
-- Core must remain generic
-- Refactors:
-  - small batches
-  - behavior preserved
-  - no layer violations
+## Reference Docs
+- Gemini/layout protocol: `GEMINI_CODEX_PROTOCOL.md`
+- Delegated orchestration playbook: `codex_tasks/_PLAYBOOK_subagent_oneclick.md`
+- Task template: `codex_tasks/_TEMPLATE_task.md`
+- v10 architecture map: `v10/AI_READ_ME.md`, `v10/AI_READ_ME_MAP.md`
 
 ---
 
 ## Binding Summary
-
-- Codex is the **single execution authority**
-- Specs are contracts, not suggestions
-- Gemini is SVG-only
-- Speed comes from **clarity and gates**, not parallel agents
-
-Violating these rules is considered an execution failure.
+- Codex is the single execution authority.
+- Approved task specs are execution contracts.
+- Gemini is SVG/layout-only.
+- Keep always-on governance short; push details to referenced playbooks/templates.
