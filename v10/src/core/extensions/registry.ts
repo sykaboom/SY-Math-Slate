@@ -14,6 +14,8 @@ import { validateToolRegistryEntry } from "@core/contracts";
 const registry: ExtensionManifest[] = [];
 const toolRegistry: ToolRegistryEntry[] = [];
 const uiSlotRegistry = new Map<UISlotName, UISlotComponent[]>();
+const uiSlotRegistryListeners = new Set<() => void>();
+let uiSlotRegistryVersion = 0;
 
 export type ToolRegistryUpsertSuccess = ToolRegistryValidationSuccess & {
   replaced: boolean;
@@ -25,6 +27,11 @@ export type ToolRegistryUpsertResult =
 
 export type UISlotName = ExtensionUiSlotName;
 export type UISlotComponent = ComponentType;
+
+const notifyUISlotRegistryUpdated = (): void => {
+  uiSlotRegistryVersion += 1;
+  uiSlotRegistryListeners.forEach((listener) => listener());
+};
 
 export const registerExtension = (manifest: ExtensionManifest) => {
   const existingIndex = registry.findIndex((item) => item.id === manifest.id);
@@ -85,11 +92,13 @@ export const registerUISlotComponent = (
   const components = uiSlotRegistry.get(slotName);
   if (!components) {
     uiSlotRegistry.set(slotName, [component]);
+    notifyUISlotRegistryUpdated();
     return;
   }
 
   if (!components.includes(component)) {
     components.push(component);
+    notifyUISlotRegistryUpdated();
   }
 };
 
@@ -97,11 +106,26 @@ export const listUISlotComponents = (
   slotName: UISlotName
 ): UISlotComponent[] => [...(uiSlotRegistry.get(slotName) ?? [])];
 
+export const subscribeUISlotRegistry = (
+  listener: () => void
+): (() => void) => {
+  uiSlotRegistryListeners.add(listener);
+  return () => {
+    uiSlotRegistryListeners.delete(listener);
+  };
+};
+
+export const getUISlotRegistryVersion = (): number => uiSlotRegistryVersion;
+
 export const clearUISlotComponents = (slotName?: UISlotName): void => {
   if (slotName === undefined) {
+    if (uiSlotRegistry.size === 0) return;
     uiSlotRegistry.clear();
+    notifyUISlotRegistryUpdated();
     return;
   }
 
+  if (!uiSlotRegistry.has(slotName)) return;
   uiSlotRegistry.delete(slotName);
+  notifyUISlotRegistryUpdated();
 };

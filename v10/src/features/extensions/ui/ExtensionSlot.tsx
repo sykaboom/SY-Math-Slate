@@ -1,13 +1,13 @@
 "use client";
 
-import { useSyncExternalStore, type ComponentType } from "react";
+import { useSyncExternalStore } from "react";
 
 import {
+  getUISlotRegistryVersion,
   listUISlotComponents,
+  subscribeUISlotRegistry,
   type UISlotName,
 } from "@core/extensions/registry";
-
-const SLOT_REGISTRY_UPDATED_EVENT = "sy-math-slate:extension-slots-updated";
 
 type ExtensionSlotProps = {
   name?: UISlotName;
@@ -15,25 +15,16 @@ type ExtensionSlotProps = {
   className?: string;
 };
 
-const subscribe = (onStoreChange: () => void) => {
-  if (typeof window === "undefined") {
-    return () => {};
-  }
-  window.addEventListener(SLOT_REGISTRY_UPDATED_EVENT, onStoreChange);
-  return () => window.removeEventListener(SLOT_REGISTRY_UPDATED_EVENT, onStoreChange);
-};
-
-const getServerSnapshot = (): ComponentType[] => [];
-
 export function ExtensionSlot(props: ExtensionSlotProps) {
   const slotName = props.name ?? props.slot;
   const className = props.className;
 
-  const components = useSyncExternalStore(
-    subscribe,
-    () => (slotName ? listUISlotComponents(slotName) : []),
-    getServerSnapshot
+  useSyncExternalStore(
+    subscribeUISlotRegistry,
+    getUISlotRegistryVersion,
+    getUISlotRegistryVersion
   );
+  const components = slotName ? listUISlotComponents(slotName) : [];
 
   if (!slotName) return null;
   if (components.length === 0) return null;
