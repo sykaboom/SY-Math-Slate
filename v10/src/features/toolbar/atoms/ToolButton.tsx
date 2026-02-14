@@ -7,7 +7,7 @@ import { buttonVariants } from "@ui/components/button";
 import { cn } from "@core/utils";
 
 const activeButtonClass =
-  "bg-neon-yellow text-black shadow-[0_0_16px_rgba(255,255,0,0.4)]";
+  "bg-toolbar-active-bg text-toolbar-active-text shadow-[var(--toolbar-active-shadow)]";
 
 type ToolButtonProps = {
   icon: LucideIcon;
@@ -33,7 +33,7 @@ export function ToolButton({
       whileTap={{ scale: 0.9 }}
       className={cn(
         buttonVariants({ variant: "ghost", size: "icon" }),
-        "h-11 w-11 text-white/70 hover:text-white disabled:text-white/30",
+        "h-11 w-11 bg-toolbar-chip/5 text-toolbar-text/70 hover:bg-toolbar-chip/5 hover:text-toolbar-text disabled:text-toolbar-muted/60",
         active && activeButtonClass,
         className
       )}

@@ -99,7 +99,7 @@ export function PlaybackControls() {
   };
 
   return (
-    <div className="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-2 py-1 text-xs text-white/60">
+    <div className="flex items-center gap-2 rounded-full border border-toolbar-border/10 bg-toolbar-chip/5 px-2 py-1 text-xs text-toolbar-muted/60">
       <ToolButton
         icon={isAnimating && !isPaused ? Pause : Play}
         label={isAnimating ? (isPaused ? "Resume" : "Pause") : "Play"}
@@ -113,7 +113,7 @@ export function PlaybackControls() {
         disabled={!isAnimating && !isPaused}
         className="h-8 w-8"
       />
-      <div className="flex items-center gap-1 rounded-full border border-white/10 bg-white/5 px-2 py-1">
+      <div className="flex items-center gap-1 rounded-full border border-toolbar-border/10 bg-toolbar-chip/5 px-2 py-1">
         <ToolButton
           icon={ChevronLeft}
           label="Previous Step"
@@ -125,7 +125,7 @@ export function PlaybackControls() {
           <PopoverTrigger asChild>
             <button
               type="button"
-              className="whitespace-nowrap rounded-full px-2 py-1 text-[11px] text-white/70 hover:text-white disabled:text-white/40"
+              className="whitespace-nowrap rounded-full px-2 py-1 text-[11px] text-toolbar-text/70 hover:text-toolbar-text disabled:text-toolbar-muted/40"
               disabled={!canStepJump}
             >
               Step {displayStep}/{totalSteps}
@@ -141,7 +141,7 @@ export function PlaybackControls() {
                   step={1}
                   onValueChange={(value) => handleStepJump(value[0])}
                 />
-                <span className="w-10 text-right text-xs text-white/80">
+                <span className="w-10 text-right text-xs text-toolbar-text/80">
                   {displayStep}/{totalSteps}
                 </span>
               </div>
@@ -167,15 +167,15 @@ export function PlaybackControls() {
             />
           </PopoverTrigger>
           <ToolbarPanel side="top" align="end" sideOffset={18} className="w-56">
-            <div className="grid gap-3 text-[11px] text-white/70">
+            <div className="grid gap-3 text-[11px] text-toolbar-text/70">
               {canAutoPlay && (
                 <button
                   type="button"
                   className={cn(
                     "flex items-center justify-between gap-3 rounded-md border px-2 py-1 transition",
                     isAutoPlay
-                      ? "border-white/40 bg-white/15 text-white"
-                      : "border-white/10 text-white/70 hover:border-white/30"
+                      ? "border-toolbar-border/40 bg-toolbar-chip/15 text-toolbar-text"
+                      : "border-toolbar-border/10 text-toolbar-text/70 hover:border-toolbar-border/30"
                   )}
                   onClick={handleAutoToggle}
                 >
@@ -189,9 +189,9 @@ export function PlaybackControls() {
 
               {canTiming && (
                 <div className="grid gap-2">
-                  <div className="flex items-center justify-between text-white/70">
+                  <div className="flex items-center justify-between text-toolbar-text/70">
                     <span>Speed</span>
-                    <span className="text-white/80">{speedLabel}x</span>
+                    <span className="text-toolbar-text/80">{speedLabel}x</span>
                   </div>
                   <Slider
                     value={[playbackSpeed]}
@@ -205,9 +205,9 @@ export function PlaybackControls() {
 
               {canTiming && canAutoPlay && (
                 <div className="grid gap-2">
-                  <div className="flex items-center justify-between text-white/70">
+                  <div className="flex items-center justify-between text-toolbar-text/70">
                     <span>Delay</span>
-                    <span className="text-white/80">{delayLabel}s</span>
+                    <span className="text-toolbar-text/80">{delayLabel}s</span>
                   </div>
                   <Slider
                     value={[autoPlayDelayMs]}

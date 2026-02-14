@@ -22,7 +22,7 @@ export function ToolbarPanel({
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: 10 }}
         className={cn(
-          "w-auto rounded-2xl border border-white/10 bg-slate-900/95 p-4 text-white shadow-[0_16px_40px_rgba(0,0,0,0.45)]",
+          "w-auto rounded-2xl border border-toolbar-border/10 bg-toolbar-surface/95 p-4 text-toolbar-text/70 shadow-[var(--toolbar-panel-shadow)]",
           className
         )}
       >

@@ -109,11 +109,16 @@ v10/src/
 |   |   |-- PasteHelperModal.tsx
 |   |   \-- StaticStrokeLayer.tsx
 |   |-- extensions/
-|   |   \-- adapters/
-|   |       |-- index.ts
-|   |       |-- mockAdapter.ts
-|   |       |-- registry.ts
-|   |       \-- types.ts
+|   |   |-- adapters/
+|   |   |   |-- index.ts
+|   |   |   |-- mockAdapter.ts
+|   |   |   |-- registry.ts
+|   |   |   \-- types.ts
+|   |   |-- ui/
+|   |   |   |-- ExtensionRuntimeBootstrap.tsx
+|   |   |   |-- ExtensionSlot.tsx
+|   |   |   \-- registerCoreSlots.ts
+|   |   \-- toolExecutionPolicy.ts
 |   |-- hooks/
 |   |   |-- useAudioPlayer.ts
 |   |   |-- useBoardTransform.ts
@@ -139,6 +144,9 @@ v10/src/
 |   |   \-- Prompter.tsx
 |   |-- store/
 |   |   |-- useCanvasStore.ts
+|   |   |-- useDocStore.ts
+|   |   |-- useLocalStore.ts
+|   |   |-- useSyncStore.ts
 |   |   \-- useUIStore.ts
 |   \-- toolbar/
 |       |-- atoms/
@@ -149,7 +157,9 @@ v10/src/
 |       |-- LaserControls.tsx
 |       |-- PageNavigator.tsx
 |       |-- PenControls.tsx
-|       \-- PlaybackControls.tsx
+|       |-- PendingApprovalPanel.tsx
+|       |-- PlaybackControls.tsx
+|       \-- useApprovalLogic.ts
 |-- generated/
 |   \-- prisma/
 |       |-- internal/

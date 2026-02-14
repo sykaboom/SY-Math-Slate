@@ -21,6 +21,8 @@ export type ExtensionUiPlacement =
   | "context"
   | (string & {});
 
+export type ExtensionUiSlotName = string & {};
+
 export type ExtensionManifest = {
   id: string;
   name: string;

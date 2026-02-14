@@ -43,7 +43,7 @@ export function PageNavigator() {
   };
 
   return (
-    <div className="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-2 py-1 text-xs text-white/60">
+    <div className="flex items-center gap-2 rounded-full border border-toolbar-border/10 bg-toolbar-chip/5 px-2 py-1 text-xs text-toolbar-muted/60">
       <ToolButton
         icon={ChevronLeft}
         label="Previous Page"
@@ -55,7 +55,7 @@ export function PageNavigator() {
         <PopoverTrigger asChild>
           <button
             type="button"
-            className="whitespace-nowrap rounded-full px-2 py-1 text-[11px] text-white/70 hover:text-white disabled:text-white/40"
+            className="whitespace-nowrap rounded-full px-2 py-1 text-[11px] text-toolbar-text/70 hover:text-toolbar-text disabled:text-toolbar-muted/40"
             disabled={isOverviewMode || !canPageJump}
           >
             Page {currentIndex + 1} / {totalPages}
@@ -71,7 +71,7 @@ export function PageNavigator() {
                 step={1}
                 onValueChange={(value) => handleJump(value[0])}
               />
-              <span className="w-10 text-right text-xs text-white/80">
+              <span className="w-10 text-right text-xs text-toolbar-text/80">
                 {currentIndex + 1}/{totalPages}
               </span>
             </div>
@@ -99,8 +99,8 @@ export function PageNavigator() {
         disabled={!canDelete || isOverviewMode}
         className="h-7 w-7"
       />
-      <span className="h-4 w-px bg-white/10" />
-      <div className="flex items-center gap-1 rounded-full border border-white/10 bg-white/5 px-1 py-0.5">
+      <span className="h-4 border-r border-toolbar-border/10" />
+      <div className="flex items-center gap-1 rounded-full border border-toolbar-border/10 bg-toolbar-chip/5 px-1 py-0.5">
         <ToolButton
           icon={Minus}
           label="Decrease Columns"
@@ -108,7 +108,7 @@ export function PageNavigator() {
           disabled={!canDecrease || isOverviewMode}
           className="h-6 w-6"
         />
-        <span className="min-w-[36px] text-center text-[11px] text-white/70">
+        <span className="min-w-[36px] text-center text-[11px] text-toolbar-text/70">
           {columnCount}단
         </span>
         <ToolButton

@@ -1,4 +1,9 @@
-import type { ExtensionManifest, ExtensionType } from "./manifest";
+import type { ComponentType } from "react";
+import type {
+  ExtensionManifest,
+  ExtensionType,
+  ExtensionUiSlotName,
+} from "./manifest";
 import type {
   ToolRegistryEntry,
   ToolRegistryValidationError,
@@ -8,6 +13,7 @@ import { validateToolRegistryEntry } from "@core/contracts";
 
 const registry: ExtensionManifest[] = [];
 const toolRegistry: ToolRegistryEntry[] = [];
+const uiSlotRegistry = new Map<UISlotName, UISlotComponent[]>();
 
 export type ToolRegistryUpsertSuccess = ToolRegistryValidationSuccess & {
   replaced: boolean;
@@ -16,6 +22,9 @@ export type ToolRegistryUpsertSuccess = ToolRegistryValidationSuccess & {
 export type ToolRegistryUpsertResult =
   | ToolRegistryUpsertSuccess
   | ToolRegistryValidationError;
+
+export type UISlotName = ExtensionUiSlotName;
+export type UISlotComponent = ComponentType;
 
 export const registerExtension = (manifest: ExtensionManifest) => {
   const existingIndex = registry.findIndex((item) => item.id === manifest.id);
@@ -67,4 +76,32 @@ export const isToolRegistered = (toolId: string): boolean =>
 
 export const clearToolRegistryEntries = () => {
   toolRegistry.length = 0;
+};
+
+export const registerUISlotComponent = (
+  slotName: UISlotName,
+  component: UISlotComponent
+): void => {
+  const components = uiSlotRegistry.get(slotName);
+  if (!components) {
+    uiSlotRegistry.set(slotName, [component]);
+    return;
+  }
+
+  if (!components.includes(component)) {
+    components.push(component);
+  }
+};
+
+export const listUISlotComponents = (
+  slotName: UISlotName
+): UISlotComponent[] => [...(uiSlotRegistry.get(slotName) ?? [])];
+
+export const clearUISlotComponents = (slotName?: UISlotName): void => {
+  if (slotName === undefined) {
+    uiSlotRegistry.clear();
+    return;
+  }
+
+  uiSlotRegistry.delete(slotName);
 };

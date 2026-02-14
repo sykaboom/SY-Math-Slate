@@ -5,13 +5,23 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        "slate-app": "#111111",
-        "slate-panel": "rgba(30, 30, 30, 0.95)",
-        "neon-yellow": "#FFFF00",
-        "neon-cyan": "#00FFFF",
-        "neon-pink": "#FF10F0",
-        "neon-green": "#39FF14",
-        "cursor-blink": "#FFA500",
+        "slate-app": "rgba(var(--slate-app-rgb), <alpha-value>)",
+        "slate-panel": "rgba(var(--slate-panel-rgb), <alpha-value>)",
+        "neon-yellow": "rgba(var(--neon-yellow-rgb), <alpha-value>)",
+        "neon-cyan": "rgba(var(--neon-cyan-rgb), <alpha-value>)",
+        "neon-pink": "rgba(var(--neon-pink-rgb), <alpha-value>)",
+        "neon-green": "rgba(var(--neon-green-rgb), <alpha-value>)",
+        "cursor-blink": "rgba(var(--cursor-blink-rgb), <alpha-value>)",
+        "toolbar-surface": "rgba(var(--toolbar-surface-rgb), <alpha-value>)",
+        "toolbar-chip": "rgba(var(--toolbar-chip-rgb), <alpha-value>)",
+        "toolbar-border": "rgba(var(--toolbar-border-rgb), <alpha-value>)",
+        "toolbar-text": "rgba(var(--toolbar-text-rgb), <alpha-value>)",
+        "toolbar-muted": "rgba(var(--toolbar-muted-rgb), <alpha-value>)",
+        "toolbar-active-bg": "rgba(var(--toolbar-active-bg-rgb), <alpha-value>)",
+        "toolbar-active-text":
+          "rgba(var(--toolbar-active-text-rgb), <alpha-value>)",
+        "toolbar-menu-bg": "rgba(var(--toolbar-menu-bg-rgb), <alpha-value>)",
+        "toolbar-danger": "rgba(var(--toolbar-danger-rgb), <alpha-value>)",
       },
       fontFamily: {
         sans: ["var(--font-sans)", "Noto Sans KR", "sans-serif"],

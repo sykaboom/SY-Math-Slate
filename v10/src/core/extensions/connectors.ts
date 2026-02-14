@@ -44,7 +44,8 @@ export type ConnectorResolutionErrorCode =
   | "tool-id-mismatch"
   | "unregistered-tool"
   | "unknown-adapter"
-  | "adapter-invoke-failed";
+  | "adapter-invoke-failed"
+  | "approval-required";
 
 export type ConnectorToolResultResolution =
   | { ok: true; toolResult: ToolResult<KnownNormalizedPayload> }
@@ -59,6 +60,35 @@ export type RegisteredToolExecutionRequest = {
 export type RegisteredToolExecutionOptions = {
   getToolById?: (toolId: string) => ToolRegistryEntry | null;
   getAdapterById: (adapterId: string) => ConnectorAdapterInvoker | null;
+};
+
+export type ToolExecutionRole = "host" | "student";
+
+export type PendingApprovalEntry = {
+  request: RegisteredToolExecutionRequest;
+  adapterId: string;
+  toolResult: ToolResult<KnownNormalizedPayload>;
+};
+
+export type ToolExecutionPolicyHooks = {
+  getRole: () => ToolExecutionRole;
+  enqueuePendingApproval?: (entry: PendingApprovalEntry) => void;
+  shouldQueue?: (entry: PendingApprovalEntry) => boolean;
+};
+
+const APPROVAL_REQUIRED_ERROR =
+  "approval required: student mutating tool results must be approved by host.";
+
+let toolExecutionPolicyHooks: ToolExecutionPolicyHooks | null = null;
+
+export const configureToolExecutionPolicyHooks = (
+  hooks: ToolExecutionPolicyHooks
+): void => {
+  toolExecutionPolicyHooks = hooks;
+};
+
+export const resetToolExecutionPolicyHooks = (): void => {
+  toolExecutionPolicyHooks = null;
 };
 
 const failResolution = (
@@ -133,6 +163,42 @@ export const resolveToolExecutionAdapterId = (
   return `endpoint:${entry.execution.endpointRef ?? "unknown"}`;
 };
 
+const isMutatingNormalizedPayload = (
+  toolResult: ToolResult<KnownNormalizedPayload>
+): boolean => toolResult.normalized.type === "NormalizedContent";
+
+const maybeInterceptStudentMutation = (
+  request: RegisteredToolExecutionRequest,
+  adapterId: string,
+  toolResult: ToolResult<KnownNormalizedPayload>
+): ConnectorToolResultResolution | null => {
+  const hooks = toolExecutionPolicyHooks;
+  const role = hooks?.getRole() ?? "host";
+  if (role !== "student") {
+    return null;
+  }
+  if (!isMutatingNormalizedPayload(toolResult)) {
+    return null;
+  }
+
+  const pendingEntry: PendingApprovalEntry = {
+    request: {
+      toolId: request.toolId,
+      payload: request.payload,
+      meta: request.meta,
+    },
+    adapterId,
+    toolResult,
+  };
+
+  const shouldQueue = hooks?.shouldQueue?.(pendingEntry) ?? true;
+  if (shouldQueue) {
+    hooks?.enqueuePendingApproval?.(pendingEntry);
+  }
+
+  return failResolution("approval-required", APPROVAL_REQUIRED_ERROR);
+};
+
 export const executeRegisteredToolRequest = async (
   request: RegisteredToolExecutionRequest,
   options: RegisteredToolExecutionOptions
@@ -163,7 +229,21 @@ export const executeRegisteredToolRequest = async (
       payload: request.payload,
       meta: request.meta,
     });
-    return resolveConnectorToolResult(response, request.toolId);
+    const resolved = resolveConnectorToolResult(response, request.toolId);
+    if (!resolved.ok) {
+      return resolved;
+    }
+
+    const intercepted = maybeInterceptStudentMutation(
+      request,
+      adapterId,
+      resolved.toolResult
+    );
+    if (intercepted) {
+      return intercepted;
+    }
+
+    return resolved;
   } catch (error) {
     const message =
       error instanceof Error ? error.message : "unknown adapter invocation failure";

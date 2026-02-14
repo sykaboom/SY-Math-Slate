@@ -7,6 +7,8 @@ import type {
   WheelEvent as ReactWheelEvent,
 } from "react";
 
+import { useLocalStore } from "@features/store/useLocalStore";
+import { useSyncStore } from "@features/store/useSyncStore";
 import { useUIStore } from "@features/store/useUIStore";
 
 type Point = { x: number; y: number };
@@ -100,6 +102,36 @@ export function useViewportInteraction(
   const setViewportInteracting = useUIStore(
     (state) => state.setViewportInteracting
   );
+  const role = useLocalStore((state) => state.role);
+  const sharedViewport = useSyncStore((state) => state.sharedViewport);
+  const setSharedViewport = useSyncStore((state) => state.setSharedViewport);
+  const isStudent = role === "student";
+
+  const applyViewport = useCallback(
+    (nextZoom: number, nextPan: Point) => {
+      setViewportZoom(nextZoom);
+      setViewportPan(nextPan.x, nextPan.y);
+      if (isStudent) return;
+      setSharedViewport({
+        zoomLevel: nextZoom,
+        panOffset: { ...nextPan },
+      });
+    },
+    [isStudent, setSharedViewport, setViewportPan, setViewportZoom]
+  );
+
+  const applyViewportPan = useCallback(
+    (nextPan: Point) => {
+      const { viewport } = useUIStore.getState();
+      setViewportPan(nextPan.x, nextPan.y);
+      if (isStudent) return;
+      setSharedViewport({
+        zoomLevel: viewport.zoomLevel,
+        panOffset: { ...nextPan },
+      });
+    },
+    [isStudent, setSharedViewport, setViewportPan]
+  );
 
   const cancelPointerPan = useCallback(() => {
     const panState = panStateRef.current;
@@ -123,6 +155,26 @@ export function useViewportInteraction(
       setViewportInteracting(false);
     }
   }, [containerRef, setViewportInteracting]);
+
+  useEffect(() => {
+    if (!isStudent) return;
+    cancelPointerPan();
+    pinchStateRef.current.active = false;
+    setViewportInteracting(false);
+  }, [cancelPointerPan, isStudent, setViewportInteracting]);
+
+  useEffect(() => {
+    if (!isStudent) return;
+    setViewportZoom(sharedViewport.zoomLevel);
+    setViewportPan(sharedViewport.panOffset.x, sharedViewport.panOffset.y);
+  }, [
+    isStudent,
+    setViewportPan,
+    setViewportZoom,
+    sharedViewport.panOffset.x,
+    sharedViewport.panOffset.y,
+    sharedViewport.zoomLevel,
+  ]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -157,6 +209,7 @@ export function useViewportInteraction(
     if (!container) return;
 
     const handleTouchStart = (event: TouchEvent) => {
+      if (isStudent) return;
       if (event.touches.length < 2) return;
       const distance = getTouchDistance(event.touches);
       if (distance <= 0) return;
@@ -175,6 +228,7 @@ export function useViewportInteraction(
     };
 
     const handleTouchMove = (event: TouchEvent) => {
+      if (isStudent) return;
       const pinchState = pinchStateRef.current;
       if (!pinchState.active || event.touches.length < 2) return;
       const distance = getTouchDistance(event.touches);
@@ -194,13 +248,13 @@ export function useViewportInteraction(
           center.y -
           scaleRatio * (pinchState.startCenter.y - pinchState.startPan.y),
       };
-      setViewportZoom(nextZoom);
-      setViewportPan(nextPan.x, nextPan.y);
+      applyViewport(nextZoom, nextPan);
       event.preventDefault();
       event.stopPropagation();
     };
 
     const handleTouchEnd = (event: TouchEvent) => {
+      if (isStudent) return;
       if (!pinchStateRef.current.active) return;
       if (event.touches.length >= 2) return;
       pinchStateRef.current.active = false;
@@ -225,13 +279,14 @@ export function useViewportInteraction(
   }, [
     cancelPointerPan,
     containerRef,
+    applyViewport,
+    isStudent,
     setViewportInteracting,
-    setViewportPan,
-    setViewportZoom,
   ]);
 
   const handlePointerDownCapture = useCallback(
     (event: ReactPointerEvent<HTMLDivElement>) => {
+      if (isStudent) return;
       const state = useUIStore.getState();
       const isMiddleButton = event.button === 1;
       const isSpacePan =
@@ -255,20 +310,25 @@ export function useViewportInteraction(
       event.preventDefault();
       event.stopPropagation();
     },
-    [setViewportInteracting]
+    [isStudent, setViewportInteracting]
   );
 
   const handlePointerMoveCapture = useCallback(
     (event: ReactPointerEvent<HTMLDivElement>) => {
+      if (isStudent) return;
       const panState = panStateRef.current;
       if (!panState.active || panState.pointerId !== event.pointerId) return;
       const dx = event.clientX - panState.startX;
       const dy = event.clientY - panState.startY;
-      setViewportPan(panState.originPan.x + dx, panState.originPan.y + dy);
+      const nextPan = {
+        x: panState.originPan.x + dx,
+        y: panState.originPan.y + dy,
+      };
+      applyViewportPan(nextPan);
       event.preventDefault();
       event.stopPropagation();
     },
-    [setViewportPan]
+    [applyViewportPan, isStudent]
   );
 
   const handlePointerUpCapture = useCallback(
@@ -296,6 +356,7 @@ export function useViewportInteraction(
 
   const handleWheel = useCallback(
     (event: ReactWheelEvent<HTMLDivElement>) => {
+      if (isStudent) return;
       const container = containerRef.current;
       if (!container || event.deltaY === 0) return;
       event.preventDefault();
@@ -317,10 +378,9 @@ export function useViewportInteraction(
         y: anchor.y - scaleRatio * (anchor.y - viewport.panOffset.y),
       };
 
-      setViewportZoom(nextZoom);
-      setViewportPan(nextPan.x, nextPan.y);
+      applyViewport(nextZoom, nextPan);
     },
-    [containerRef, setViewportPan, setViewportZoom]
+    [applyViewport, containerRef, isStudent]
   );
 
   return useMemo(

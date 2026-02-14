@@ -7,6 +7,7 @@ import { getBoardSize } from "@core/config/boardSpec";
 import { toTextItemStyle } from "@core/config/typography";
 import { buildPersistedDoc } from "@core/persistence/buildPersistedDoc";
 import { useCanvasStore } from "@features/store/useCanvasStore";
+import { useDocStore } from "@features/store/useDocStore";
 import { useUIStore } from "@features/store/useUIStore";
 import type { PersistedSlateDoc } from "@core/types/canvas";
 
@@ -15,6 +16,69 @@ const COORD_MIGRATION_KEY = "v10_board_coords_migrated";
 const DEFAULT_DEBOUNCE_MS = 600;
 
 type SaveStatus = "idle" | "saving" | "error";
+
+const scalePx = (value: unknown, factor: number) => {
+  if (typeof value === "number") return value * factor;
+  if (typeof value === "string" && value.endsWith("px")) {
+    const num = Number.parseFloat(value);
+    if (Number.isFinite(num)) return `${num * factor}px`;
+  }
+  return value;
+};
+
+const scaleStyle = (style: Record<string, unknown> | undefined, factor: number) => {
+  if (!style) return style;
+  const next = { ...style };
+  if ("fontSize" in next) {
+    next.fontSize = scalePx(next.fontSize, factor);
+  }
+  return next;
+};
+
+const scalePersistedData = (
+  data: PersistedSlateDoc,
+  factor: number
+): PersistedSlateDoc => {
+  const scaledPages: PersistedSlateDoc["pages"] = {};
+  Object.entries(data.pages).forEach(([pageId, items]) => {
+    scaledPages[pageId] = items.map((item) => {
+      const base = {
+        ...item,
+        x: item.x * factor,
+        y: item.y * factor,
+      } as typeof item;
+      if (item.type === "stroke") {
+        return {
+          ...base,
+          width: item.width * factor,
+          path: item.path.map((p) => ({
+            ...p,
+            x: p.x * factor,
+            y: p.y * factor,
+          })),
+        };
+      }
+      if (item.type === "image") {
+        return {
+          ...base,
+          w: item.w * factor,
+          h: item.h * factor,
+        };
+      }
+      if (item.type === "text") {
+        return {
+          ...base,
+          style: scaleStyle(item.style, factor),
+        };
+      }
+      return base;
+    });
+  });
+  return {
+    ...data,
+    pages: scaledPages,
+  };
+};
 
 export function usePersistence(options?: {
   autoSave?: boolean;
@@ -29,69 +93,6 @@ export function usePersistence(options?: {
   const [saveStatus, setSaveStatus] = useState<SaveStatus>("idle");
   const [lastError, setLastError] = useState<string | null>(null);
   const didSeedRef = useRef(false);
-
-  const scalePx = (value: unknown, factor: number) => {
-    if (typeof value === "number") return value * factor;
-    if (typeof value === "string" && value.endsWith("px")) {
-      const num = Number.parseFloat(value);
-      if (Number.isFinite(num)) return `${num * factor}px`;
-    }
-    return value;
-  };
-
-  const scaleStyle = (style: Record<string, unknown> | undefined, factor: number) => {
-    if (!style) return style;
-    const next = { ...style };
-    if ("fontSize" in next) {
-      next.fontSize = scalePx(next.fontSize, factor);
-    }
-    return next;
-  };
-
-  const scalePersistedData = (
-    data: PersistedSlateDoc,
-    factor: number
-  ): PersistedSlateDoc => {
-    const scaledPages: PersistedSlateDoc["pages"] = {};
-    Object.entries(data.pages).forEach(([pageId, items]) => {
-      scaledPages[pageId] = items.map((item) => {
-        const base = {
-          ...item,
-          x: item.x * factor,
-          y: item.y * factor,
-        } as typeof item;
-        if (item.type === "stroke") {
-          return {
-            ...base,
-            width: item.width * factor,
-            path: item.path.map((p) => ({
-              ...p,
-              x: p.x * factor,
-              y: p.y * factor,
-            })),
-          };
-        }
-        if (item.type === "image") {
-          return {
-            ...base,
-            w: item.w * factor,
-            h: item.h * factor,
-          };
-        }
-        if (item.type === "text") {
-          return {
-            ...base,
-            style: scaleStyle(item.style, factor),
-          };
-        }
-        return base;
-      });
-    });
-    return {
-      ...data,
-      pages: scaledPages,
-    };
-  };
 
   const getSeededItems = useCallback((): PersistedSlateDoc | null => {
     const params = new URLSearchParams(window.location.search);
@@ -189,17 +190,10 @@ export function usePersistence(options?: {
 
   const saveNow = useCallback(() => {
     const state = useCanvasStore.getState();
+    const docStore = useDocStore.getState();
+    docStore.syncFromCanvas(state);
     return saveSnapshot(
-      {
-        version: 2,
-        pages: state.pages,
-        pageOrder: state.pageOrder,
-        pageColumnCounts: state.pageColumnCounts,
-        stepBlocks: state.stepBlocks,
-        anchorMap: state.anchorMap ?? undefined,
-        audioByStep: state.audioByStep,
-        animationModInput: state.animationModInput,
-      },
+      docStore.getDocSnapshot(),
       { context: "manual-save", notifyOnImageSkip: true }
     );
   }, [saveSnapshot]);
@@ -231,6 +225,7 @@ export function usePersistence(options?: {
         let normalized = migrateToV2(parsed);
 
         const hydrateState = (data: PersistedSlateDoc) => {
+          useDocStore.getState().hydrateDoc(data);
           useCanvasStore.getState().hydrate(data);
           isReadyRef.current = true;
         };
@@ -268,6 +263,7 @@ export function usePersistence(options?: {
         const seeded = getSeededItems();
         if (seeded) {
           didSeedRef.current = true;
+          useDocStore.getState().hydrateDoc(seeded);
           useCanvasStore.getState().hydrate(seeded);
         }
     }
@@ -283,17 +279,10 @@ export function usePersistence(options?: {
         window.clearTimeout(timeoutRef.current);
       }
       timeoutRef.current = window.setTimeout(() => {
+        const docStore = useDocStore.getState();
+        docStore.syncFromCanvas(state);
         saveSnapshot(
-          {
-            version: 2,
-            pages: state.pages,
-            pageOrder: state.pageOrder,
-            pageColumnCounts: state.pageColumnCounts,
-            stepBlocks: state.stepBlocks,
-            anchorMap: state.anchorMap ?? undefined,
-            audioByStep: state.audioByStep,
-            animationModInput: state.animationModInput,
-          },
+          docStore.getDocSnapshot(),
           { notifyOnError: true, context: "auto-save", notifyOnImageSkip: false }
         );
       }, debounceMs);

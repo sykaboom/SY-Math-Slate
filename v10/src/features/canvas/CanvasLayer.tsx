@@ -2,22 +2,27 @@
 
 import { useCanvas } from "@features/hooks/useCanvas";
 import { cn } from "@core/utils";
+import { useLocalStore } from "@features/store/useLocalStore";
 import { useUIStore } from "@features/store/useUIStore";
 
 export function CanvasLayer() {
   const { canvasRef, laserCanvasRef, bind } = useCanvas();
+  const role = useLocalStore((state) => state.role);
   const { activeTool, viewMode } = useUIStore();
+  const isStudent = role === "student";
   const isDrawingMode =
     viewMode !== "presentation" && ["pen", "eraser", "laser"].includes(activeTool);
-  const pointerClass = isDrawingMode
-    ? "pointer-events-auto"
-    : "pointer-events-none";
+  const pointerClass = isStudent
+    ? "pointer-events-none"
+    : isDrawingMode
+      ? "pointer-events-auto"
+      : "pointer-events-none";
 
   return (
     <div
       className={cn("absolute inset-0 z-20", pointerClass)}
       style={{ touchAction: "none" }}
-      {...(isDrawingMode ? bind : {})}
+      {...(isDrawingMode && !isStudent ? bind : {})}
     >
       <canvas
         ref={canvasRef}

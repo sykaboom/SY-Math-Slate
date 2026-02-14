@@ -8,7 +8,9 @@ import { PasteHelperModal } from "@features/canvas/PasteHelperModal";
 import { DataInputPanel } from "@features/layout/DataInputPanel";
 import { Prompter } from "@features/layout/Prompter";
 import { PlayerBar } from "@features/layout/PlayerBar";
+import { ExtensionSlot } from "@features/extensions/ui/ExtensionSlot";
 import { Button } from "@ui/components/button";
+import { useLocalStore } from "@features/store/useLocalStore";
 import { useUIStore } from "@features/store/useUIStore";
 import { Maximize2, Minimize2, Minus, MonitorPlay, Plus, ZoomIn } from "lucide-react";
 
@@ -26,6 +28,7 @@ interface AppLayoutProps {
 
 export function AppLayout({ children }: AppLayoutProps) {
   const layoutRootRef = useRef<HTMLDivElement | null>(null);
+  const role = useLocalStore((state) => state.role);
   const {
     viewMode,
     isOverviewMode,
@@ -41,6 +44,7 @@ export function AppLayout({ children }: AppLayoutProps) {
     enterFullscreenInkFallback,
     exitFullscreenInk,
   } = useUIStore();
+  const isStudentRole = role === "student";
   const isPresentation = viewMode === "presentation";
   const isNativeFullscreen = fullscreenInkMode === "native";
   const isAppFullscreen = fullscreenInkMode === "app";
@@ -117,7 +121,7 @@ export function AppLayout({ children }: AppLayoutProps) {
           : "flex h-[100dvh] w-full flex-col bg-slate-app text-white"
       }
     >
-      {!isPresentation && !isFullscreenInkActive && (
+      {!isPresentation && !isFullscreenInkActive && !isStudentRole && (
         <header
           data-layout-id="region_chrome_top"
           className="sticky top-0 z-40 border-b border-white/10 bg-black/40 backdrop-blur-md"
@@ -196,6 +200,9 @@ export function AppLayout({ children }: AppLayoutProps) {
                 <ZoomIn className="h-4 w-4" />
                 <span className="hidden sm:inline">View</span>
               </Button>
+              <div data-extension-slot-host="chrome-top-toolbar" className="flex items-center">
+                <ExtensionSlot slot="chrome-top-toolbar" />
+              </div>
             </div>
           </div>
         </header>
@@ -212,7 +219,7 @@ export function AppLayout({ children }: AppLayoutProps) {
           <div data-layout-id="region_canvas_primary" className="min-w-0 flex-1">
             <CanvasStage>{children}</CanvasStage>
           </div>
-          {!isPresentation && !isFullscreenInkActive && <DataInputPanel />}
+          {!isPresentation && !isFullscreenInkActive && !isStudentRole && <DataInputPanel />}
         </div>
       </main>
 
@@ -225,27 +232,36 @@ export function AppLayout({ children }: AppLayoutProps) {
               : "pointer-events-none fixed inset-x-0 bottom-0 z-40 flex items-end justify-center px-3 pb-3 sm:px-4 sm:pb-4 xl:pointer-events-auto xl:static xl:px-6 xl:pb-6"
           }
         >
-          <div
-            data-layout-id="region_toolchips"
-            className={
-              isFullscreenInkActive
-                ? "pointer-events-auto flex w-full max-w-[min(980px,96vw)] flex-col gap-2"
-                : "pointer-events-auto flex w-full max-w-[min(1120px,96vw)] flex-col gap-2 xl:max-w-[min(1120px,94vw)]"
-            }
-          >
-            <div className={isFullscreenInkActive ? "hidden" : "hidden xl:block"}>
-              <Prompter />
+          {isStudentRole ? (
+            <div className="pointer-events-auto flex w-full justify-center">
+              <PlayerBar readOnly />
             </div>
-            <FloatingToolbar />
-          </div>
+          ) : (
+            <div
+              data-layout-id="region_toolchips"
+              className={
+                isFullscreenInkActive
+                  ? "pointer-events-auto flex w-full max-w-[min(980px,96vw)] flex-col gap-2"
+                  : "pointer-events-auto flex w-full max-w-[min(1120px,96vw)] flex-col gap-2 xl:max-w-[min(1120px,94vw)]"
+              }
+            >
+              <div className={isFullscreenInkActive ? "hidden" : "hidden xl:block"}>
+                <Prompter />
+              </div>
+              <div data-extension-slot-host="toolbar-bottom" className="flex flex-col gap-2">
+                <ExtensionSlot slot="toolbar-bottom" />
+              </div>
+              <FloatingToolbar />
+            </div>
+          )}
         </footer>
       )}
       {isPresentation && (
         <footer className="relative flex items-center justify-center px-3 pb-3 sm:px-4 sm:pb-4 xl:px-6 xl:pb-6">
-          <PlayerBar />
+          <PlayerBar readOnly={isStudentRole} />
         </footer>
       )}
-      {!isPresentation && <PasteHelperModal />}
+      {!isPresentation && !isStudentRole && <PasteHelperModal />}
       {isFullscreenInkActive && !isPresentation && (
         <div className="pointer-events-none fixed inset-0 z-50">
           <div className="pointer-events-auto absolute left-3 top-3 sm:left-4 sm:top-4">

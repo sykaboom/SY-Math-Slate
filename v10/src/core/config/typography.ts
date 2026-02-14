@@ -16,11 +16,11 @@ export const DEFAULT_TEXT_LANE_STYLE: Required<TextSegmentStyle> = {
   fontFamily: '"Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif',
   fontSize: "28px",
   fontWeight: "400",
-  color: "#ffffff",
+  color: "var(--text-color)",
 };
 
 export const DEFAULT_MATH_LANE_STYLE: MathLaneStyle = {
-  color: "#ffffff",
+  color: "var(--text-color)",
   scale: 1,
 };
 
@@ -45,10 +45,10 @@ export const TEXT_FONT_FAMILY_OPTIONS: ReadonlyArray<{
 export const TEXT_INLINE_BOLD_CLASS = "font-bold";
 
 export const TEXT_INLINE_COLOR_OPTIONS: ReadonlyArray<StyleOption> = [
-  { label: "White", className: "text-white" },
-  { label: "Amber", className: "text-amber-300" },
-  { label: "Cyan", className: "text-cyan-300" },
-  { label: "Lime", className: "text-lime-300" },
+  { label: "White", className: "text-toolbar-text" },
+  { label: "Yellow", className: "text-neon-yellow" },
+  { label: "Cyan", className: "text-neon-cyan" },
+  { label: "Green", className: "text-neon-green" },
 ];
 
 export const TEXT_INLINE_SIZE_OPTIONS: ReadonlyArray<StyleOption> = [
@@ -67,6 +67,8 @@ export const ALLOWED_RICH_TEXT_CLASSES: ReadonlyArray<string> = [
 
 const HEX_COLOR_PATTERN = /^#([0-9a-f]{3}|[0-9a-f]{6})$/i;
 const CSS_COLOR_FUNC_PATTERN = /^(rgb|rgba|hsl|hsla)\([^()]+\)$/i;
+const CSS_VAR_COLOR_PATTERN =
+  /^var\(\s*--[a-z0-9_-]+\s*(?:,\s*[^()]+\s*)?\)$/i;
 const FONT_SIZE_PATTERN = /^\d+(\.\d+)?(px|rem|em|%)$/i;
 const FONT_WEIGHT_PATTERN =
   /^(normal|bold|bolder|lighter|[1-9]00)$/i;
@@ -92,6 +94,7 @@ const normalizeColor = (value: unknown, fallback: string) => {
   const next = asTrimmedString(value);
   if (HEX_COLOR_PATTERN.test(next)) return next;
   if (CSS_COLOR_FUNC_PATTERN.test(next)) return next;
+  if (CSS_VAR_COLOR_PATTERN.test(next)) return next;
   return fallback;
 };
 
@@ -128,4 +131,3 @@ export const toTextItemStyle = (
     lineHeight: DEFAULT_TEXT_LINE_HEIGHT,
   };
 };
-

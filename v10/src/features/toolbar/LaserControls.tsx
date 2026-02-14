@@ -8,9 +8,9 @@ import { cn } from "@core/utils";
 import { useUIStore, type LaserType } from "@features/store/useUIStore";
 
 const laserColors = [
-  { label: "Red", value: "#FF3B30" },
-  { label: "Yellow", value: "#FFFF00" },
-  { label: "Cyan", value: "#00FFFF" },
+  { label: "Red", value: "#FF3B30", className: "bg-toolbar-danger" },
+  { label: "Yellow", value: "#FFFF00", className: "bg-neon-yellow" },
+  { label: "Cyan", value: "#00FFFF", className: "bg-neon-cyan" },
 ];
 
 export function LaserControls() {
@@ -19,7 +19,7 @@ export function LaserControls() {
   return (
     <div className="flex w-72 flex-col gap-4">
       <div>
-        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-white/60">
+        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-toolbar-muted/60">
           Laser Type
         </p>
         <ToggleGroup
@@ -38,7 +38,7 @@ export function LaserControls() {
       </div>
 
       <div>
-        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-white/60">
+        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-toolbar-muted/60">
           Color
         </p>
         <div className="mt-3 flex items-center gap-2">
@@ -48,12 +48,12 @@ export function LaserControls() {
               type="button"
               onClick={() => setLaserColor(color.value)}
               className={cn(
-                "h-7 w-7 rounded-full border border-white/10 transition",
+                "h-7 w-7 rounded-full border border-toolbar-border/10 transition",
+                color.className,
                 laserColor === color.value
-                  ? "ring-2 ring-neon-cyan"
+                  ? "ring-2 ring-toolbar-active-bg"
                   : "hover:scale-110"
               )}
-              style={{ backgroundColor: color.value }}
               aria-label={color.label}
             />
           ))}

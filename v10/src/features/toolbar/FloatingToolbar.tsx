@@ -8,6 +8,7 @@ import { useFileIO } from "@features/hooks/useFileIO";
 import { useImageInsert } from "@features/hooks/useImageInsert";
 import { usePersistence } from "@features/hooks/usePersistence";
 import { useSFX } from "@features/hooks/useSFX";
+import { ExtensionSlot } from "@features/extensions/ui/ExtensionSlot";
 import { cn } from "@core/utils";
 import { useCanvasStore } from "@features/store/useCanvasStore";
 import { useUIStore, type Tool } from "@features/store/useUIStore";
@@ -119,7 +120,7 @@ export function FloatingToolbar() {
     },
   ] as const;
   const menuButtonClass =
-    "rounded-md border border-white/10 bg-black/20 px-2 py-1.5 text-left text-[11px] text-white/70 hover:border-white/30";
+    "rounded-md border border-toolbar-border/10 bg-toolbar-menu-bg/20 px-2 py-1.5 text-left text-[11px] text-toolbar-text/70 hover:border-toolbar-border/30";
 
   const handleTool = (tool: Tool) => () => setTool(tool);
 
@@ -220,7 +221,6 @@ export function FloatingToolbar() {
     }
   };
 
-
   const handleResetLocal = () => {
     const ok = window.confirm(
       "로컬 데이터와 캐시를 초기화할까요? 되돌릴 수 없습니다."
@@ -249,7 +249,7 @@ export function FloatingToolbar() {
 
   return (
     <div className="w-full">
-      <div className="flex flex-nowrap items-center gap-2 overflow-hidden rounded-3xl border border-white/10 bg-slate-900/90 px-4 py-3 shadow-[0_12px_30px_rgba(0,0,0,0.45)] backdrop-blur-md">
+      <div className="flex flex-nowrap items-center gap-2 overflow-hidden rounded-3xl border border-toolbar-border/10 bg-toolbar-surface/90 px-4 py-3 shadow-[var(--toolbar-shell-shadow)] backdrop-blur-md">
         <input
           ref={fileInputRef}
           type="file"
@@ -351,7 +351,10 @@ export function FloatingToolbar() {
         />
         <PlaybackControls />
         <PageNavigator />
-        <div className="flex items-center gap-1 rounded-full border border-white/10 bg-white/5 px-2 py-1 text-[11px] text-white/70">
+        <div data-extension-slot-host="toolbar-inline" className="flex items-center">
+          <ExtensionSlot slot="toolbar-inline" />
+        </div>
+        <div className="flex items-center gap-1 rounded-full border border-toolbar-border/10 bg-toolbar-chip/5 px-2 py-1 text-[11px] text-toolbar-text/70">
           <ToolButton
             icon={CornerDownLeft}
             label="Line Break"
@@ -379,9 +382,9 @@ export function FloatingToolbar() {
             <ToolButton icon={MoreHorizontal} label="More" />
           </PopoverTrigger>
           <ToolbarPanel side="top" align="end" sideOffset={18} className="w-80">
-            <div className="grid gap-3 text-[11px] text-white/70">
+            <div className="grid gap-3 text-[11px] text-toolbar-text/70">
               <div className="grid gap-2">
-                <span className="text-[10px] uppercase tracking-wide text-white/40">
+                <span className="text-[10px] uppercase tracking-wide text-toolbar-muted/40">
                   Profile
                 </span>
                 <div className="flex flex-wrap items-center gap-2">
@@ -395,8 +398,8 @@ export function FloatingToolbar() {
                         className={cn(
                           "rounded-full border px-3 py-1 text-[11px] transition",
                           isActive
-                            ? "border-white/40 bg-white/15 text-white"
-                            : "border-white/10 bg-black/20 text-white/70 hover:border-white/30"
+                            ? "border-toolbar-border/40 bg-toolbar-chip/15 text-toolbar-text"
+                            : "border-toolbar-border/10 bg-toolbar-menu-bg/20 text-toolbar-text/70 hover:border-toolbar-border/30"
                         )}
                       >
                         {option.title}
@@ -407,7 +410,7 @@ export function FloatingToolbar() {
               </div>
 
               <div className="grid gap-2">
-                <span className="text-[10px] uppercase tracking-wide text-white/40">
+                <span className="text-[10px] uppercase tracking-wide text-toolbar-muted/40">
                   File
                 </span>
                 <div className="grid grid-cols-2 gap-2">
@@ -443,7 +446,7 @@ export function FloatingToolbar() {
               </div>
 
               <div className="grid gap-2">
-                <span className="text-[10px] uppercase tracking-wide text-white/40">
+                <span className="text-[10px] uppercase tracking-wide text-toolbar-muted/40">
                   Local
                 </span>
                 <div className="grid grid-cols-2 gap-2">
@@ -477,7 +480,7 @@ export function FloatingToolbar() {
               </div>
 
               <div className="grid gap-2">
-                <span className="text-[10px] uppercase tracking-wide text-white/40">
+                <span className="text-[10px] uppercase tracking-wide text-toolbar-muted/40">
                   View
                 </span>
                 <div className="grid grid-cols-2 gap-2">
@@ -492,7 +495,7 @@ export function FloatingToolbar() {
               </div>
 
               <div className="grid gap-2">
-                <span className="text-[10px] uppercase tracking-wide text-white/40">
+                <span className="text-[10px] uppercase tracking-wide text-toolbar-muted/40">
                   Cursor
                 </span>
                 <div className="grid gap-2">
@@ -501,7 +504,7 @@ export function FloatingToolbar() {
                     className={cn(
                       menuButtonClass,
                       "flex items-center justify-between",
-                      !showCursors && "text-white/40"
+                      !showCursors && "text-toolbar-muted/40"
                     )}
                     onClick={toggleCursors}
                   >
@@ -514,7 +517,7 @@ export function FloatingToolbar() {
               </div>
 
               <div className="grid gap-2">
-                <span className="text-[10px] uppercase tracking-wide text-white/40">
+                <span className="text-[10px] uppercase tracking-wide text-toolbar-muted/40">
                   Layout
                 </span>
                 <div className="grid gap-2">
@@ -523,7 +526,7 @@ export function FloatingToolbar() {
                     className={cn(
                       menuButtonClass,
                       "flex items-center justify-between",
-                      !showCanvasBorder && "text-white/40"
+                      !showCanvasBorder && "text-toolbar-muted/40"
                     )}
                     onClick={toggleCanvasBorder}
                   >
@@ -537,7 +540,7 @@ export function FloatingToolbar() {
                     className={cn(
                       menuButtonClass,
                       "flex items-center justify-between",
-                      !showBreakGuides && "text-white/40"
+                      !showBreakGuides && "text-toolbar-muted/40"
                     )}
                     onClick={toggleBreakGuides}
                   >
@@ -550,7 +553,7 @@ export function FloatingToolbar() {
               </div>
               {canOverview && (
                 <div className="grid gap-2">
-                  <span className="text-[10px] uppercase tracking-wide text-white/40">
+                  <span className="text-[10px] uppercase tracking-wide text-toolbar-muted/40">
                     Overview
                   </span>
                   <div className="grid gap-2">
@@ -567,8 +570,8 @@ export function FloatingToolbar() {
                         className={cn(
                           "rounded-full px-3 py-1 text-[11px] transition",
                           overviewViewportRatio === "16:9"
-                            ? "bg-white/80 text-black"
-                            : "border border-white/10 text-white/70 hover:border-white/30"
+                            ? "border border-toolbar-border/40 bg-toolbar-chip/15 text-toolbar-text"
+                            : "border border-toolbar-border/10 text-toolbar-text/70 hover:border-toolbar-border/30"
                         )}
                         onClick={() => setOverviewViewportRatio("16:9")}
                       >
@@ -579,18 +582,18 @@ export function FloatingToolbar() {
                         className={cn(
                           "rounded-full px-3 py-1 text-[11px] transition",
                           overviewViewportRatio === "4:3"
-                            ? "bg-white/80 text-black"
-                            : "border border-white/10 text-white/70 hover:border-white/30"
+                            ? "border border-toolbar-border/40 bg-toolbar-chip/15 text-toolbar-text"
+                            : "border border-toolbar-border/10 text-toolbar-text/70 hover:border-toolbar-border/30"
                         )}
                         onClick={() => setOverviewViewportRatio("4:3")}
                       >
                         4:3
                       </button>
                       {isOverviewMode && (
-                        <div className="ml-auto flex items-center gap-1 text-[11px] text-white/60">
+                        <div className="ml-auto flex items-center gap-1 text-[11px] text-toolbar-muted/60">
                           <button
                             type="button"
-                            className="rounded-full border border-white/10 px-2 py-1"
+                            className="rounded-full border border-toolbar-border/10 px-2 py-1"
                             onClick={() => handleOverviewZoom(-0.1)}
                             disabled={overviewZoom <= 0.2}
                           >
@@ -599,7 +602,7 @@ export function FloatingToolbar() {
                           <span>{Math.round(overviewZoom * 100)}%</span>
                           <button
                             type="button"
-                            className="rounded-full border border-white/10 px-2 py-1"
+                            className="rounded-full border border-toolbar-border/10 px-2 py-1"
                             onClick={() => handleOverviewZoom(0.1)}
                             disabled={overviewZoom >= 1}
                           >
@@ -613,7 +616,7 @@ export function FloatingToolbar() {
               )}
 
               <div className="grid gap-2">
-                <span className="text-[10px] uppercase tracking-wide text-white/40">
+                <span className="text-[10px] uppercase tracking-wide text-toolbar-muted/40">
                   Steps
                 </span>
                 <div className="flex items-center justify-between">
@@ -641,7 +644,7 @@ export function FloatingToolbar() {
               </div>
 
               <div className="grid gap-2">
-                <span className="text-[10px] uppercase tracking-wide text-white/40">
+                <span className="text-[10px] uppercase tracking-wide text-toolbar-muted/40">
                   History
                 </span>
                 <div className="flex items-center justify-between">
@@ -658,7 +661,7 @@ export function FloatingToolbar() {
                       icon={Redo2}
                       label="Redo (coming soon)"
                       disabled
-                      className="h-8 w-8 text-white/40 hover:text-white/40"
+                      className="h-8 w-8 text-toolbar-muted/40 hover:text-toolbar-muted/40"
                     />
                   </div>
                 </div>
@@ -668,7 +671,9 @@ export function FloatingToolbar() {
                 <div
                   className={cn(
                     "text-[11px]",
-                    saveStatus === "error" ? "text-red-300" : "text-white/50"
+                    saveStatus === "error"
+                      ? "text-toolbar-danger"
+                      : "text-toolbar-text/50"
                   )}
                 >
                   {saveStatus === "saving" && "저장 중..."}

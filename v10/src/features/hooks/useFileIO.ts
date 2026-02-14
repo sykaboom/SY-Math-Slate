@@ -6,6 +6,7 @@ import { saveAs } from "file-saver";
 import { migrateToV2 } from "@core/migrations/migrateToV2";
 import { buildPersistedDoc } from "@core/persistence/buildPersistedDoc";
 import { useCanvasStore } from "@features/store/useCanvasStore";
+import { useDocStore } from "@features/store/useDocStore";
 import type { ImageItem, PersistedSlateDoc } from "@core/types/canvas";
 
 const MANIFEST_VERSION = "1.0";
@@ -68,12 +69,34 @@ const collectImageAssets = async (pages: PersistedSlateDoc["pages"]) => {
   return { entries, map };
 };
 
+const syncDocStoreFromCanvas = (): PersistedSlateDoc => {
+  const canvasState = useCanvasStore.getState();
+  const docStore = useDocStore.getState();
+
+  docStore.syncFromCanvas({
+    version: canvasState.version,
+    pages: canvasState.pages,
+    pageOrder: canvasState.pageOrder,
+    pageColumnCounts: canvasState.pageColumnCounts,
+    stepBlocks: canvasState.stepBlocks,
+    anchorMap: canvasState.anchorMap ?? undefined,
+    audioByStep: canvasState.audioByStep,
+    animationModInput: canvasState.animationModInput,
+  });
+
+  return docStore.getDocSnapshot();
+};
+
+const hydrateDocStore = (doc: PersistedSlateDoc) => {
+  useDocStore.getState().hydrateDoc(doc);
+};
+
 export function useFileIO() {
   const exportSlate = async () => {
     try {
-      const state = useCanvasStore.getState();
+      const docSnapshot = syncDocStoreFromCanvas();
       const zip = new JSZip();
-      const { entries, map } = await collectImageAssets(state.pages);
+      const { entries, map } = await collectImageAssets(docSnapshot.pages);
 
       const manifest = {
         version: MANIFEST_VERSION,
@@ -81,7 +104,7 @@ export function useFileIO() {
         title: "Untitled Board",
       };
       const mappedPages = Object.fromEntries(
-        Object.entries(state.pages).map(([pageId, items]) => [
+        Object.entries(docSnapshot.pages).map(([pageId, items]) => [
           pageId,
           items.map((item) => {
             if (!isImageItem(item)) return item;
@@ -92,14 +115,14 @@ export function useFileIO() {
         ])
       );
       const { doc: board } = buildPersistedDoc({
-        version: 2,
+        version: docSnapshot.version,
         pages: mappedPages,
-        pageOrder: state.pageOrder,
-        pageColumnCounts: state.pageColumnCounts,
-        stepBlocks: state.stepBlocks,
-        anchorMap: state.anchorMap ?? undefined,
-        audioByStep: state.audioByStep,
-        animationModInput: state.animationModInput,
+        pageOrder: docSnapshot.pageOrder,
+        pageColumnCounts: docSnapshot.pageColumnCounts,
+        stepBlocks: docSnapshot.stepBlocks,
+        anchorMap: docSnapshot.anchorMap ?? undefined,
+        audioByStep: docSnapshot.audioByStep,
+        animationModInput: docSnapshot.animationModInput,
       });
 
       zip.file("manifest.json", JSON.stringify(manifest, null, 2));
@@ -174,6 +197,7 @@ export function useFileIO() {
         pageColumnCounts: normalized.pageColumnCounts,
       };
 
+      hydrateDocStore(hydrated);
       useCanvasStore.getState().hydrate(hydrated);
       return { ok: true } as const;
     } catch (error) {

@@ -10,7 +10,11 @@ import { Popover, PopoverTrigger } from "@ui/components/popover";
 import { Slider } from "@ui/components/slider";
 import { ToolbarPanel } from "@features/toolbar/atoms/ToolbarPanel";
 
-export function PlayerBar() {
+type PlayerBarProps = {
+  readOnly?: boolean;
+};
+
+export function PlayerBar({ readOnly = false }: PlayerBarProps) {
   const { pages, currentPageId, currentStep } = useCanvasStore();
   const {
     triggerPlay,
@@ -43,6 +47,7 @@ export function PlayerBar() {
   const progress = totalSteps > 0 ? currentDisplay / totalSteps : 0;
 
   const handlePlay = () => {
+    if (readOnly) return;
     setAutoPlay(true);
     if (isPaused) setPaused(false);
     if (currentStep > maxStep) return;
@@ -50,8 +55,23 @@ export function PlayerBar() {
   };
 
   const handleStop = () => {
+    if (readOnly) return;
     setAutoPlay(false);
     triggerStop();
+  };
+
+  const handlePlayPause = () => {
+    if (readOnly) return;
+    if (isAnimating) {
+      togglePause();
+      return;
+    }
+    handlePlay();
+  };
+
+  const handleExitPresentation = () => {
+    if (readOnly) return;
+    setViewMode("edit");
   };
 
   const speedLabel = useMemo(() => playbackSpeed.toFixed(2), [playbackSpeed]);
@@ -68,9 +88,14 @@ export function PlayerBar() {
           type="button"
           className={cn(
             "flex h-11 w-11 items-center justify-center rounded-full border border-white/10 text-white",
-            isAnimating && !isPaused ? "bg-white/15" : "bg-white/10 hover:bg-white/20"
+            readOnly
+              ? "cursor-not-allowed bg-white/10 opacity-50"
+              : isAnimating && !isPaused
+                ? "bg-white/15"
+                : "bg-white/10 hover:bg-white/20"
           )}
-          onClick={isAnimating ? togglePause : handlePlay}
+          onClick={handlePlayPause}
+          disabled={readOnly}
           aria-label={isAnimating ? (isPaused ? "Resume" : "Pause") : "Auto Play"}
         >
           {isAnimating && !isPaused ? (
@@ -81,8 +106,12 @@ export function PlayerBar() {
         </button>
         <button
           type="button"
-          className="flex h-9 w-9 items-center justify-center rounded-full border border-white/10 text-white/80 hover:bg-white/10"
+          className={cn(
+            "flex h-9 w-9 items-center justify-center rounded-full border border-white/10 text-white/80",
+            readOnly ? "cursor-not-allowed opacity-50" : "hover:bg-white/10"
+          )}
           onClick={handleStop}
+          disabled={readOnly}
           aria-label="Stop"
         >
           <Square className="h-4 w-4" />
@@ -100,72 +129,86 @@ export function PlayerBar() {
           </span>
         </div>
 
-        {canTiming && (
-          <Popover>
-            <PopoverTrigger asChild>
-              <button
-                type="button"
-                className={cn(
-                  "rounded-full border border-white/10 bg-white/5 px-2 py-1 text-[11px] text-white/70",
-                  "hover:text-white focus:outline-none focus:ring-2 focus:ring-white/30"
-                )}
-                title="Speed"
-              >
-                {speedLabel}x
-              </button>
-            </PopoverTrigger>
-            <ToolbarPanel side="top" align="center" sideOffset={18}>
-              <div className="flex w-44 items-center gap-3">
-                <Slider
-                  value={[playbackSpeed]}
-                  min={0.1}
-                  max={2}
-                  step={0.05}
-                  onValueChange={(value) => setPlaybackSpeed(value[0])}
-                />
-                <span className="w-10 text-right text-xs text-white/80">
+        {canTiming &&
+          (readOnly ? (
+            <span className="rounded-full border border-white/10 bg-white/5 px-2 py-1 text-[11px] text-white/50">
+              {speedLabel}x
+            </span>
+          ) : (
+            <Popover>
+              <PopoverTrigger asChild>
+                <button
+                  type="button"
+                  className={cn(
+                    "rounded-full border border-white/10 bg-white/5 px-2 py-1 text-[11px] text-white/70",
+                    "hover:text-white focus:outline-none focus:ring-2 focus:ring-white/30"
+                  )}
+                  title="Speed"
+                >
                   {speedLabel}x
-                </span>
-              </div>
-            </ToolbarPanel>
-          </Popover>
-        )}
+                </button>
+              </PopoverTrigger>
+              <ToolbarPanel side="top" align="center" sideOffset={18}>
+                <div className="flex w-44 items-center gap-3">
+                  <Slider
+                    value={[playbackSpeed]}
+                    min={0.1}
+                    max={2}
+                    step={0.05}
+                    onValueChange={(value) => setPlaybackSpeed(value[0])}
+                  />
+                  <span className="w-10 text-right text-xs text-white/80">
+                    {speedLabel}x
+                  </span>
+                </div>
+              </ToolbarPanel>
+            </Popover>
+          ))}
 
-        {canTiming && (
-          <Popover>
-            <PopoverTrigger asChild>
-              <button
-                type="button"
-                className={cn(
-                  "rounded-full border border-white/10 bg-white/5 px-2 py-1 text-[11px] text-white/70",
-                  "hover:text-white focus:outline-none focus:ring-2 focus:ring-white/30"
-                )}
-                title="Delay"
-              >
-                {delayLabel}s
-              </button>
-            </PopoverTrigger>
-            <ToolbarPanel side="top" align="center" sideOffset={18}>
-              <div className="flex w-44 items-center gap-3">
-                <Slider
-                  value={[autoPlayDelayMs]}
-                  min={300}
-                  max={3000}
-                  step={100}
-                  onValueChange={(value) => setAutoPlayDelay(value[0])}
-                />
-                <span className="w-10 text-right text-xs text-white/80">
+        {canTiming &&
+          (readOnly ? (
+            <span className="rounded-full border border-white/10 bg-white/5 px-2 py-1 text-[11px] text-white/50">
+              {delayLabel}s
+            </span>
+          ) : (
+            <Popover>
+              <PopoverTrigger asChild>
+                <button
+                  type="button"
+                  className={cn(
+                    "rounded-full border border-white/10 bg-white/5 px-2 py-1 text-[11px] text-white/70",
+                    "hover:text-white focus:outline-none focus:ring-2 focus:ring-white/30"
+                  )}
+                  title="Delay"
+                >
                   {delayLabel}s
-                </span>
-              </div>
-            </ToolbarPanel>
-          </Popover>
-        )}
+                </button>
+              </PopoverTrigger>
+              <ToolbarPanel side="top" align="center" sideOffset={18}>
+                <div className="flex w-44 items-center gap-3">
+                  <Slider
+                    value={[autoPlayDelayMs]}
+                    min={300}
+                    max={3000}
+                    step={100}
+                    onValueChange={(value) => setAutoPlayDelay(value[0])}
+                  />
+                  <span className="w-10 text-right text-xs text-white/80">
+                    {delayLabel}s
+                  </span>
+                </div>
+              </ToolbarPanel>
+            </Popover>
+          ))}
 
         <button
           type="button"
-          className="flex h-9 w-9 items-center justify-center rounded-full border border-white/10 text-white/70 hover:bg-white/10"
-          onClick={() => setViewMode("edit")}
+          className={cn(
+            "flex h-9 w-9 items-center justify-center rounded-full border border-white/10 text-white/70",
+            readOnly ? "cursor-not-allowed opacity-50" : "hover:bg-white/10"
+          )}
+          onClick={handleExitPresentation}
+          disabled={readOnly}
           aria-label="Exit Presentation Mode"
         >
           <X className="h-4 w-4" />
