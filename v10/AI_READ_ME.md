@@ -108,6 +108,15 @@ ui/
 
 ## Store Schemas (Zustand)
 
+### 3-tier stores (authority layer)
+- `useDocStore`: persisted document authority (`pages`, `pageOrder`, `pageColumnCounts`, `stepBlocks`, `anchorMap`, `audioByStep`, `animationModInput`)
+- `useSyncStore`: shared/session-sync authority (`globalStep`, `laserPosition`, `sharedViewport`, `pendingAIQueue`)
+- `useLocalStore`: local device/role authority (`role`, `isPanelOpen`, `localViewport`)
+
+### Legacy interaction stores (still active)
+- `useCanvasStore`: canvas mutation + layout/session actions (draw, page/step/block mutation facade)
+- `useUIStore`: UI interaction/presentation controls (toolbar/playback/panel/view mode)
+
 ### useCanvasStore (state essentials)
 - `pages: Record<pageId, CanvasItem[]>`
 - `pageOrder: string[]`
@@ -187,8 +196,9 @@ ui/
    - `RenderPlan`
    - `TTSScript`
 5) Export/interchange 경로는 `NormalizedContent`만 수용하며, 나머지 타입은 deterministic error로 반환한다.
-6) Core connector는 adapter lookup -> invoke -> ToolResult validate 경로만 담당한다.
-7) Provider/MCP specific execution stays in `features/extensions/adapters/**`.
+6) Connector path(`core/extensions/connectors.ts`)는 registered-tool adapter lookup -> invoke -> ToolResult validate 경로를 담당한다.
+7) MCP `call_tool` command route는 command bus 경로를 사용하며, connector path와 별도로 정책/검증을 적용한다.
+8) Provider/MCP specific transport adapters stay in `features/extensions/adapters/**`.
 
 ### Command Bus / Plugin / MCP (Current Runtime)
 1) Declarative plugin clicks and MCP `call_tool` command route 모두 `core/engine/commandBus.ts`로 진입한다.
@@ -381,6 +391,7 @@ Located in `features/extensions/adapters/`:
 
 Located in `features/extensions/`:
 - `commandExecutionPolicy.ts`: command bus role/approval queue policy hooks
+- `toolExecutionPolicy.ts`: connector tool execution role/approval queue policy hooks
 - `commands/registerCoreCommands.ts`: core command registrations for doc mutation facade
 - `ui/ExtensionRuntimeBootstrap.tsx`: slot/adapters/policy/command/mcp runtime bootstrap
 
