@@ -14,6 +14,8 @@ interface ViewportStoreState {
   overviewViewportRatio: "16:9" | "4:3";
   viewport: ViewportState;
   isViewportInteracting: boolean;
+  isGestureLocked: boolean;
+  activeGestureLocks: string[];
   viewMode: ViewMode;
   guides: AlignmentGuide[];
   toggleOverviewMode: () => void;
@@ -25,6 +27,9 @@ interface ViewportStoreState {
   setViewportPan: (x: number, y: number) => void;
   resetViewport: () => void;
   setViewportInteracting: (value: boolean) => void;
+  acquireGestureLock: (owner: string) => void;
+  releaseGestureLock: (owner: string) => void;
+  clearGestureLocks: () => void;
   setGuides: (guides: AlignmentGuide[]) => void;
   clearGuides: () => void;
 }
@@ -38,6 +43,8 @@ export const useViewportStore = create<ViewportStoreState>((set) => ({
   overviewViewportRatio: "16:9",
   viewport: { zoomLevel: 1, panOffset: { x: 0, y: 0 } },
   isViewportInteracting: false,
+  isGestureLocked: false,
+  activeGestureLocks: [],
   viewMode: "edit",
   guides: [],
   toggleOverviewMode: () =>
@@ -72,6 +79,39 @@ export const useViewportStore = create<ViewportStoreState>((set) => ({
     })),
   setViewportInteracting: (value) =>
     set(() => ({ isViewportInteracting: value })),
+  acquireGestureLock: (owner) =>
+    set((state) => {
+      if (!owner || state.activeGestureLocks.includes(owner)) return state;
+      const activeGestureLocks = [...state.activeGestureLocks, owner];
+      return {
+        activeGestureLocks,
+        isGestureLocked: activeGestureLocks.length > 0,
+      };
+    }),
+  releaseGestureLock: (owner) =>
+    set((state) => {
+      if (!owner) return state;
+      const activeGestureLocks = state.activeGestureLocks.filter(
+        (activeOwner) => activeOwner !== owner
+      );
+      if (activeGestureLocks.length === state.activeGestureLocks.length) {
+        return state;
+      }
+      return {
+        activeGestureLocks,
+        isGestureLocked: activeGestureLocks.length > 0,
+      };
+    }),
+  clearGestureLocks: () =>
+    set((state) => {
+      if (!state.isGestureLocked && state.activeGestureLocks.length === 0) {
+        return state;
+      }
+      return {
+        activeGestureLocks: [],
+        isGestureLocked: false,
+      };
+    }),
   setGuides: (guides) => set(() => ({ guides })),
   clearGuides: () => set(() => ({ guides: [] })),
 }));

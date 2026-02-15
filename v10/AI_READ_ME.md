@@ -80,6 +80,25 @@ ui/
 
 ---
 
+## Recent W6 Additions (task_207~212)
+- Tablet shell profile:
+  - `features/layout/useTabletShellProfile.ts` provides deterministic viewport class/orientation/safe-area profile.
+  - `features/layout/AppLayout.tsx` uses profile flags for compact insets, left-panel overlay, and bottom chrome safe-area padding.
+- Thumb-zone toolbar:
+  - `features/toolbar/ThumbZoneDock.tsx` adds compact mobile/tablet dock shell.
+  - `features/toolbar/FloatingToolbar.tsx` now branches compact vs desktop toolbar while preserving command IDs/payload semantics.
+- Gesture conflict lock path:
+  - `useViewportStore` adds `isGestureLocked` + `activeGestureLocks` + acquire/release helpers.
+  - Draw hooks (`useCanvas`, `useOverlayCanvas`) coordinate lock ownership (`canvas.draw`, `overlay.draw`) to prevent pan/draw conflicts.
+- Low-end render profile:
+  - `core/config/perfProfile.ts` resolves `low|normal|high` profile from navigator hints.
+  - Draw hooks apply profile to coalesced-event sampling and laser trail/shadow intensity.
+- Offline draft queue:
+  - `features/input-studio/offlineDraftQueue.ts` adds JSON-safe bounded deterministic local queue (`max=50`, dedupe by deterministic id).
+  - `useInputStudioLlmDraft` enqueues offline requests and returns explicit offline-queued error marker.
+
+---
+
 ## Canvas Layering (Notes)
 - `features/canvas/PageViewport.tsx` exposes an `overlay` slot for screen-space layers (rendered outside the zoom/pan transform).
 - `features/canvas/PageGuides.tsx` uses screen-space coordinates and expands its SVG viewport to avoid clipping while panning/zooming.

@@ -42,6 +42,7 @@ v10/src/
 |   |-- config/
 |   |   |-- boardSpec.ts
 |   |   |-- capabilities.ts
+|   |   |-- perfProfile.ts
 |   |   |-- rolePolicy.ts
 |   |   |-- rolePolicyGuards.ts
 |   |   |-- themeTokens.ts
@@ -206,9 +207,10 @@ v10/src/
 |   |   |-- schema/
 |   |   |   |-- structuredContentSchema.ts
 |   |   |   \-- StructuredSchemaEditor.tsx
-|   |   \-- validation/
-|   |       |-- batchTransformPipeline.ts
-|   |       \-- types.ts
+|   |   |-- validation/
+|   |   |   |-- batchTransformPipeline.ts
+|   |   |   \-- types.ts
+|   |   \-- offlineDraftQueue.ts
 |   |-- layout/
 |   |   |-- dataInput/
 |   |   |   |-- blockDraft.ts
@@ -222,7 +224,8 @@ v10/src/
 |   |   |-- DataInputPanel.tsx
 |   |   |-- OverviewStage.tsx
 |   |   |-- PlayerBar.tsx
-|   |   \-- Prompter.tsx
+|   |   |-- Prompter.tsx
+|   |   \-- useTabletShellProfile.ts
 |   |-- mod-studio/
 |   |   |-- core/
 |   |   |   |-- ModStudioPanel.tsx
@@ -276,6 +279,7 @@ v10/src/
 |       |-- PenControls.tsx
 |       |-- PendingApprovalPanel.tsx
 |       |-- PlaybackControls.tsx
+|       |-- ThumbZoneDock.tsx
 |       \-- useApprovalLogic.ts
 |-- generated/
 |   \-- prisma/

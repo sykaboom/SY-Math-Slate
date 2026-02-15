@@ -7,6 +7,7 @@ import { executeRegisteredToolRequest } from "@core/extensions/connectors";
 import { getAdapterInvokerById } from "@features/extensions/adapters";
 import { blocksToRawText } from "@features/layout/dataInput/blockDraft";
 import { useLocalStore } from "@features/store/useLocalStore";
+import { enqueueOfflineDraftQueueItem } from "@features/input-studio/offlineDraftQueue";
 import { buildDraftDiff } from "@features/input-studio/diff/draftDiff";
 
 import { normalizedToDraftBlocks } from "./normalizedToDraftBlocks";
@@ -21,6 +22,9 @@ import {
 } from "./types";
 
 const DEFAULT_LOCALE = "ko-KR";
+const OFFLINE_DRAFT_QUEUED_ERROR_CODE = "connector-failed" as const;
+const OFFLINE_DRAFT_QUEUED_ERROR_MESSAGE =
+  "offline-draft-queued: request saved to offline queue.";
 
 const toDraftError = (
   code: InputStudioLlmDraftError["code"],
@@ -81,6 +85,22 @@ export const useInputStudioLlmDraft = ({
         locale: pickLocale(request.locale, fallbackLocale),
         rawText: request.rawText ?? currentRawText,
       };
+
+      if (typeof navigator !== "undefined" && navigator.onLine === false) {
+        enqueueOfflineDraftQueueItem({
+          prompt,
+          locale: payload.locale,
+          rawText: payload.rawText,
+          meta: request.meta,
+          role,
+        });
+        const nextError = toDraftError(
+          OFFLINE_DRAFT_QUEUED_ERROR_CODE,
+          OFFLINE_DRAFT_QUEUED_ERROR_MESSAGE
+        );
+        setError(nextError);
+        return { ok: false, error: nextError };
+      }
 
       setIsRequesting(true);
       setError(null);

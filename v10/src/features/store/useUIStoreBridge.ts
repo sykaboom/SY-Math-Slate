@@ -30,6 +30,8 @@ export interface UIState {
   overviewViewportRatio: "16:9" | "4:3";
   viewport: ViewportState;
   isViewportInteracting: boolean;
+  isGestureLocked: boolean;
+  activeGestureLocks: string[];
   viewMode: ViewMode;
   capabilityProfile: CapabilityProfileName;
   guides: AlignmentGuide[];
@@ -67,6 +69,9 @@ export interface UIState {
   setViewportPan: (x: number, y: number) => void;
   resetViewport: () => void;
   setViewportInteracting: (value: boolean) => void;
+  acquireGestureLock: (owner: string) => void;
+  releaseGestureLock: (owner: string) => void;
+  clearGestureLocks: () => void;
   setCapabilityProfile: (profile: CapabilityProfileName) => void;
   isCapabilityEnabled: (key: CapabilityKey) => boolean;
   setGuides: (guides: AlignmentGuide[]) => void;
@@ -116,6 +121,8 @@ const getViewportSliceState = () => {
     overviewViewportRatio: state.overviewViewportRatio,
     viewport: state.viewport,
     isViewportInteracting: state.isViewportInteracting,
+    isGestureLocked: state.isGestureLocked,
+    activeGestureLocks: state.activeGestureLocks,
     viewMode: state.viewMode,
     guides: state.guides,
   };
@@ -185,6 +192,11 @@ export const useUIStoreBridge = create<UIState>(() => ({
   resetViewport: () => useViewportStore.getState().resetViewport(),
   setViewportInteracting: (value) =>
     useViewportStore.getState().setViewportInteracting(value),
+  acquireGestureLock: (owner) =>
+    useViewportStore.getState().acquireGestureLock(owner),
+  releaseGestureLock: (owner) =>
+    useViewportStore.getState().releaseGestureLock(owner),
+  clearGestureLocks: () => useViewportStore.getState().clearGestureLocks(),
   setCapabilityProfile: (profile) =>
     useCapabilityStore.getState().setCapabilityProfile(profile),
   isCapabilityEnabled: (key) =>

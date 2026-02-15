@@ -14,6 +14,7 @@ import {
 import { DataInputPanel } from "@features/layout/DataInputPanel";
 import { Prompter } from "@features/layout/Prompter";
 import { PlayerBar } from "@features/layout/PlayerBar";
+import { useTabletShellProfile } from "@features/layout/useTabletShellProfile";
 import { ExtensionSlot } from "@features/extensions/ui/ExtensionSlot";
 import { ModStudioShell } from "@features/mod-studio";
 import { reportPolicyBooleanDiffBatch } from "@features/policy/policyShadow";
@@ -47,6 +48,7 @@ type LayoutRoleVisibilityPolicy = {
 export function AppLayout({ children }: AppLayoutProps) {
   useAsymmetricSessionSync();
   const layoutRootRef = useRef<HTMLDivElement | null>(null);
+  const tabletShellProfile = useTabletShellProfile();
   const role = useLocalStore((state) => state.role);
   const {
     viewMode,
@@ -101,6 +103,31 @@ export function AppLayout({ children }: AppLayoutProps) {
         ? "state_input_mode"
         : "state_canvas_mode";
   const zoomLabel = isOverviewMode ? Math.round(overviewZoom * 100) : 100;
+  const useCompactHorizontalInsets =
+    tabletShellProfile.shouldUseCompactHorizontalInsets;
+  const shouldOverlayLeftPanel =
+    useLayoutSlotCutover && tabletShellProfile.shouldOverlayLeftPanel;
+  const bottomChromeStyle = tabletShellProfile.shouldPadBottomChromeWithSafeArea
+    ? {
+        paddingBottom: "calc(env(safe-area-inset-bottom) + 8px)",
+      }
+    : undefined;
+  const mainShellClass = isPresentation
+    ? useCompactHorizontalInsets
+      ? "relative flex min-h-0 flex-1 overflow-hidden px-2 py-2.5 sm:px-3 sm:py-3 xl:px-6 xl:py-6"
+      : "relative flex min-h-0 flex-1 overflow-hidden px-3 py-3 sm:px-4 sm:py-4 xl:px-6 xl:py-6"
+    : useCompactHorizontalInsets
+      ? "relative flex min-h-0 flex-1 overflow-hidden px-2 pt-2.5 sm:px-3 sm:pt-3 xl:px-6 xl:pt-6"
+      : "relative flex min-h-0 flex-1 overflow-hidden px-3 pt-3 sm:px-4 sm:pt-4 xl:px-6 xl:pt-6";
+  const footerHorizontalInsetClass = useCompactHorizontalInsets
+    ? "px-2 sm:px-3"
+    : "px-3 sm:px-4";
+  const footerBottomInsetClass = tabletShellProfile.shouldPadBottomChromeWithSafeArea
+    ? "pb-2"
+    : "pb-3 sm:pb-4";
+  const presentationFooterClass = useCompactHorizontalInsets
+    ? "relative flex items-center justify-center px-2 pb-2 sm:px-3 sm:pb-3 xl:px-6 xl:pb-6"
+    : "relative flex items-center justify-center px-3 pb-3 sm:px-4 sm:pb-4 xl:px-6 xl:pb-6";
   const legacyRoleVisibility: LayoutRoleVisibilityPolicy =
     resolveLegacyLayoutVisibilityForRole(role);
 
@@ -364,11 +391,7 @@ export function AppLayout({ children }: AppLayoutProps) {
       )}
 
       <main
-        className={
-          isPresentation
-            ? "relative flex min-h-0 flex-1 overflow-hidden px-3 py-3 sm:px-4 sm:py-4 xl:px-6 xl:py-6"
-            : "relative flex min-h-0 flex-1 overflow-hidden px-3 pt-3 sm:px-4 sm:pt-4 xl:px-6 xl:pt-6"
-        }
+        className={mainShellClass}
       >
         <div className="flex h-full w-full min-h-0 flex-1 gap-3 xl:gap-4">
           <div data-layout-id="region_canvas_primary" className="min-w-0 flex-1">
@@ -378,9 +401,20 @@ export function AppLayout({ children }: AppLayoutProps) {
             (useLayoutSlotCutover ? (
               <aside
                 data-layout-id="region_left_panel_slot"
-                className="w-full max-w-[420px] min-w-[300px]"
+                className={
+                  shouldOverlayLeftPanel
+                    ? "pointer-events-none absolute inset-y-0 right-0 z-30 flex w-full max-w-full justify-end"
+                    : "w-full max-w-[420px] min-w-[300px]"
+                }
               >
-                <div data-extension-slot-host="left-panel" className="h-full">
+                <div
+                  data-extension-slot-host="left-panel"
+                  className={
+                    shouldOverlayLeftPanel
+                      ? "pointer-events-auto h-full w-full max-w-[min(420px,100vw)]"
+                      : "h-full"
+                  }
+                >
                   <ExtensionSlot slot="left-panel" />
                 </div>
               </aside>
@@ -393,10 +427,11 @@ export function AppLayout({ children }: AppLayoutProps) {
       {!isPresentation && (
         <footer
           data-layout-id="region_chrome_bottom"
+          style={bottomChromeStyle}
           className={
             isFullscreenInkActive
-              ? "pointer-events-none fixed inset-x-0 bottom-0 z-40 flex items-end justify-center px-3 pb-3 sm:px-4 sm:pb-4"
-              : "pointer-events-none fixed inset-x-0 bottom-0 z-40 flex items-end justify-center px-3 pb-3 sm:px-4 sm:pb-4 xl:pointer-events-auto xl:static xl:px-6 xl:pb-6"
+              ? `pointer-events-none fixed inset-x-0 bottom-0 z-40 flex items-end justify-center ${footerHorizontalInsetClass} ${footerBottomInsetClass}`
+              : `pointer-events-none fixed inset-x-0 bottom-0 z-40 flex items-end justify-center ${footerHorizontalInsetClass} ${footerBottomInsetClass} xl:pointer-events-auto xl:static xl:px-6 xl:pb-6`
           }
         >
           {showStudentPlayerBarPolicy ? (
@@ -432,7 +467,10 @@ export function AppLayout({ children }: AppLayoutProps) {
         </footer>
       )}
       {isPresentation && (
-        <footer className="relative flex items-center justify-center px-3 pb-3 sm:px-4 sm:pb-4 xl:px-6 xl:pb-6">
+        <footer
+          style={bottomChromeStyle}
+          className={presentationFooterClass}
+        >
           <PlayerBar readOnly={isPolicyStudentRole} />
         </footer>
       )}

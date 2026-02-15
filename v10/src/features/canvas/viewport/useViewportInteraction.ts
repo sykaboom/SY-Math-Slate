@@ -9,7 +9,8 @@ import type {
 
 import { useLocalStore } from "@features/store/useLocalStore";
 import { useSyncStore } from "@features/store/useSyncStore";
-import { useUIStore } from "@features/store/useUIStoreBridge";
+import { useToolStore } from "@features/store/useToolStore";
+import { useViewportStore } from "@features/store/useViewportStore";
 
 type Point = { x: number; y: number };
 
@@ -97,11 +98,13 @@ export function useViewportInteraction(
     startPan: { x: 0, y: 0 },
   });
 
-  const setViewportZoom = useUIStore((state) => state.setViewportZoom);
-  const setViewportPan = useUIStore((state) => state.setViewportPan);
-  const setViewportInteracting = useUIStore(
+  const activeTool = useToolStore((state) => state.activeTool);
+  const setViewportZoom = useViewportStore((state) => state.setViewportZoom);
+  const setViewportPan = useViewportStore((state) => state.setViewportPan);
+  const setViewportInteracting = useViewportStore(
     (state) => state.setViewportInteracting
   );
+  const isGestureLocked = useViewportStore((state) => state.isGestureLocked);
   const role = useLocalStore((state) => state.role);
   const sharedViewport = useSyncStore((state) => state.sharedViewport);
   const setSharedViewport = useSyncStore((state) => state.setSharedViewport);
@@ -122,7 +125,7 @@ export function useViewportInteraction(
 
   const applyViewportPan = useCallback(
     (nextPan: Point) => {
-      const { viewport } = useUIStore.getState();
+      const { viewport } = useViewportStore.getState();
       setViewportPan(nextPan.x, nextPan.y);
       if (isStudent) return;
       setSharedViewport({
@@ -156,12 +159,25 @@ export function useViewportInteraction(
     }
   }, [containerRef, setViewportInteracting]);
 
+  const cancelPinch = useCallback(() => {
+    if (!pinchStateRef.current.active) return;
+    pinchStateRef.current.active = false;
+    if (!panStateRef.current.active) {
+      setViewportInteracting(false);
+    }
+  }, [setViewportInteracting]);
+
   useEffect(() => {
     if (!isStudent) return;
     cancelPointerPan();
-    pinchStateRef.current.active = false;
-    setViewportInteracting(false);
-  }, [cancelPointerPan, isStudent, setViewportInteracting]);
+    cancelPinch();
+  }, [cancelPinch, cancelPointerPan, isStudent]);
+
+  useEffect(() => {
+    if (!isGestureLocked) return;
+    cancelPointerPan();
+    cancelPinch();
+  }, [cancelPinch, cancelPointerPan, isGestureLocked]);
 
   useEffect(() => {
     if (!isStudent) return;
@@ -210,10 +226,11 @@ export function useViewportInteraction(
 
     const handleTouchStart = (event: TouchEvent) => {
       if (isStudent) return;
+      if (isGestureLocked) return;
       if (event.touches.length < 2) return;
       const distance = getTouchDistance(event.touches);
       if (distance <= 0) return;
-      const { viewport } = useUIStore.getState();
+      const { viewport } = useViewportStore.getState();
       pinchStateRef.current = {
         active: true,
         startDistance: distance,
@@ -229,6 +246,10 @@ export function useViewportInteraction(
 
     const handleTouchMove = (event: TouchEvent) => {
       if (isStudent) return;
+      if (isGestureLocked) {
+        cancelPinch();
+        return;
+      }
       const pinchState = pinchStateRef.current;
       if (!pinchState.active || event.touches.length < 2) return;
       const distance = getTouchDistance(event.touches);
@@ -278,20 +299,23 @@ export function useViewportInteraction(
     };
   }, [
     cancelPointerPan,
+    cancelPinch,
     containerRef,
     applyViewport,
     isStudent,
+    isGestureLocked,
     setViewportInteracting,
   ]);
 
   const handlePointerDownCapture = useCallback(
     (event: ReactPointerEvent<HTMLDivElement>) => {
       if (isStudent) return;
-      const state = useUIStore.getState();
+      const viewportState = useViewportStore.getState();
+      if (viewportState.isGestureLocked) return;
       const isMiddleButton = event.button === 1;
       const isSpacePan =
         spacePressedRef.current && !isEditableElement(document.activeElement);
-      const isHandPan = state.activeTool === "hand";
+      const isHandPan = activeTool === "hand";
       if (!isMiddleButton && !isSpacePan && !isHandPan) return;
       if (pinchStateRef.current.active) return;
       if (event.pointerType === "mouse" && !isMiddleButton && event.button !== 0) {
@@ -303,19 +327,23 @@ export function useViewportInteraction(
         pointerId: event.pointerId,
         startX: event.clientX,
         startY: event.clientY,
-        originPan: { ...state.viewport.panOffset },
+        originPan: { ...viewportState.viewport.panOffset },
       };
       setViewportInteracting(true);
       event.currentTarget.setPointerCapture(event.pointerId);
       event.preventDefault();
       event.stopPropagation();
     },
-    [isStudent, setViewportInteracting]
+    [activeTool, isStudent, setViewportInteracting]
   );
 
   const handlePointerMoveCapture = useCallback(
     (event: ReactPointerEvent<HTMLDivElement>) => {
       if (isStudent) return;
+      if (isGestureLocked) {
+        cancelPointerPan();
+        return;
+      }
       const panState = panStateRef.current;
       if (!panState.active || panState.pointerId !== event.pointerId) return;
       const dx = event.clientX - panState.startX;
@@ -328,7 +356,7 @@ export function useViewportInteraction(
       event.preventDefault();
       event.stopPropagation();
     },
-    [applyViewportPan, isStudent]
+    [applyViewportPan, cancelPointerPan, isGestureLocked, isStudent]
   );
 
   const handlePointerUpCapture = useCallback(
@@ -359,9 +387,11 @@ export function useViewportInteraction(
       if (isStudent) return;
       const container = containerRef.current;
       if (!container || event.deltaY === 0) return;
+      const viewportState = useViewportStore.getState();
+      if (viewportState.isGestureLocked) return;
       event.preventDefault();
 
-      const { viewport } = useUIStore.getState();
+      const { viewport } = viewportState;
       const intensity = event.ctrlKey ? 0.008 : 0.002;
       const zoomFactor = Math.exp(-event.deltaY * intensity);
       const nextZoom = clamp(

@@ -5,6 +5,7 @@ import type { PointerEvent as ReactPointerEvent } from "react";
 
 import { useUIStore, type LaserType, type PenType } from "@features/store/useUIStoreBridge";
 import type { Point, StrokeItem } from "@core/types/canvas";
+import { getRenderPerfProfile } from "@core/config/perfProfile";
 
 type LaserPoint = { x: number; y: number; t: number };
 
@@ -34,8 +35,11 @@ const inputConfig: InputConfig = {
   },
 };
 
-const TOUCH_PALM_REJECTION_MS = 520;
+const TOUCH_PALM_REJECTION_MS = 560;
+const TOUCH_PALM_CONTACT_THRESHOLD_PX = 24;
+const TOUCH_ACTIVE_PEN_CONTACT_THRESHOLD_PX = 18;
 const TOUCH_DISTANCE_FACTOR = 1.25;
+const OVERLAY_GESTURE_LOCK_OWNER = "overlay.draw";
 
 const laserDefaults: Record<
   LaserType,
@@ -47,6 +51,26 @@ const laserDefaults: Record<
 
 const clamp = (value: number, min: number, max: number) =>
   Math.min(Math.max(value, min), max);
+
+const getPointerTimestamp = (event: PointerEvent) =>
+  event.timeStamp || performance.now();
+
+const samplePointerEvents = (events: PointerEvent[], maxEvents: number) => {
+  if (!Number.isFinite(maxEvents)) return events;
+  const targetSize = Math.max(1, Math.floor(maxEvents));
+  if (events.length <= targetSize) return events;
+  if (targetSize === 1) {
+    return [events[events.length - 1]];
+  }
+
+  const sampled: PointerEvent[] = [];
+  const stride = (events.length - 1) / (targetSize - 1);
+  for (let index = 0; index < targetSize; index += 1) {
+    const sampleIndex = Math.round(index * stride);
+    sampled.push(events[Math.min(sampleIndex, events.length - 1)]);
+  }
+  return sampled;
+};
 
 const toRgba = (color: string, alpha: number) => {
   const r = Number.parseInt(color.slice(1, 3), 16);
@@ -110,6 +134,9 @@ export function useOverlayCanvas() {
   const laserColorRef = useRef<string>("#FF3B30");
   const laserWidthRef = useRef<number>(10);
   const lastPenInputAtRef = useRef<number>(0);
+  const activePenPointerIdRef = useRef<number | null>(null);
+  const suppressedTouchPointerIdsRef = useRef<Set<number>>(new Set());
+  const hasGestureLockRef = useRef(false);
 
   const {
     activeTool,
@@ -121,7 +148,12 @@ export function useOverlayCanvas() {
     laserColor,
     laserWidth,
     isViewportInteracting,
+    releaseGestureLock,
   } = useUIStore();
+  const perfProfile = useMemo(() => getRenderPerfProfile(), []);
+  const laserTrailMaxLifeMs = perfProfile.laserTrailMaxLifeMs;
+  const laserShadowMultiplier = perfProfile.laserShadowMultiplier;
+  const maxCoalescedEvents = perfProfile.maxCoalescedEvents;
 
   const getCanvasPoint = useCallback((clientX: number, clientY: number) => {
     const canvas = canvasRef.current;
@@ -143,12 +175,15 @@ export function useOverlayCanvas() {
   }, []);
 
   const getCoalescedEvents = useCallback((event: PointerEvent) => {
+    let events: PointerEvent[] = [event];
     if (typeof event.getCoalescedEvents === "function") {
-      const events = event.getCoalescedEvents();
-      if (events && events.length > 0) return events;
+      const coalesced = event.getCoalescedEvents();
+      if (coalesced && coalesced.length > 0) {
+        events = coalesced;
+      }
     }
-    return [event];
-  }, []);
+    return samplePointerEvents(events, maxCoalescedEvents);
+  }, [maxCoalescedEvents]);
 
   const makePoint = useCallback(
     (event: PointerEvent) => {
@@ -157,7 +192,7 @@ export function useOverlayCanvas() {
         x: point.x,
         y: point.y,
         p: getPointerPressure(event),
-        t: event.timeStamp || performance.now(),
+        t: getPointerTimestamp(event),
       } satisfies Point;
     },
     [getCanvasPoint, getPointerPressure]
@@ -184,15 +219,81 @@ export function useOverlayCanvas() {
     } satisfies Point;
   }, []);
 
+  const releaseDrawGestureLock = useCallback(() => {
+    if (!hasGestureLockRef.current) return;
+    releaseGestureLock(OVERLAY_GESTURE_LOCK_OWNER);
+    hasGestureLockRef.current = false;
+  }, [releaseGestureLock]);
+
+  const tryAcquireDrawGestureLock = useCallback(() => {
+    if (hasGestureLockRef.current) return true;
+    const state = useUIStore.getState();
+    if (state.isGestureLocked) return false;
+    state.acquireGestureLock(OVERLAY_GESTURE_LOCK_OWNER);
+    hasGestureLockRef.current = true;
+    return true;
+  }, []);
+
   const markPenActivity = useCallback((event: PointerEvent) => {
     if (event.pointerType !== "pen") return;
-    lastPenInputAtRef.current = event.timeStamp || performance.now();
+    const hasPenContact =
+      event.type === "pointerdown" ||
+      event.type === "pointerup" ||
+      event.type === "pointercancel" ||
+      event.buttons !== 0 ||
+      event.pressure > 0;
+    if (!hasPenContact) return;
+
+    lastPenInputAtRef.current = getPointerTimestamp(event);
+    if (event.type === "pointerdown") {
+      activePenPointerIdRef.current = event.pointerId;
+      return;
+    }
+
+    if (
+      (event.type === "pointerup" ||
+        event.type === "pointercancel" ||
+        event.type === "pointerleave") &&
+      activePenPointerIdRef.current === event.pointerId
+    ) {
+      activePenPointerIdRef.current = null;
+    }
   }, []);
 
   const shouldSuppressTouch = useCallback((event: PointerEvent) => {
     if (event.pointerType !== "touch") return false;
-    const now = event.timeStamp || performance.now();
-    return now - lastPenInputAtRef.current < TOUCH_PALM_REJECTION_MS;
+
+    if (
+      event.type === "pointerup" ||
+      event.type === "pointercancel" ||
+      event.type === "pointerleave"
+    ) {
+      const wasSuppressed = suppressedTouchPointerIdsRef.current.delete(
+        event.pointerId
+      );
+      return wasSuppressed;
+    }
+
+    if (suppressedTouchPointerIdsRef.current.has(event.pointerId)) {
+      return true;
+    }
+
+    const now = getPointerTimestamp(event);
+    const recentPenActivity =
+      now - lastPenInputAtRef.current <= TOUCH_PALM_REJECTION_MS;
+    const contactSize = Math.max(event.width || 0, event.height || 0);
+    const coarsePalmContact = contactSize >= TOUCH_PALM_CONTACT_THRESHOLD_PX;
+    const activePenContact =
+      contactSize >= TOUCH_ACTIVE_PEN_CONTACT_THRESHOLD_PX;
+    const hasActivePen = activePenPointerIdRef.current !== null;
+    const likelyPalm =
+      (recentPenActivity && coarsePalmContact) ||
+      (hasActivePen && (activePenContact || event.isPrimary === false));
+
+    if (likelyPalm) {
+      suppressedTouchPointerIdsRef.current.add(event.pointerId);
+    }
+    return likelyPalm;
   }, []);
 
   const drawStoredStroke = useCallback(
@@ -276,7 +377,10 @@ export function useOverlayCanvas() {
       lastDrawPointRef.current = null;
       renderAll(overlayStrokesRef.current);
     }
-  }, [clearLaserCanvas, renderAll]);
+    activePenPointerIdRef.current = null;
+    suppressedTouchPointerIdsRef.current.clear();
+    releaseDrawGestureLock();
+  }, [clearLaserCanvas, releaseDrawGestureLock, renderAll]);
 
   const scheduleLaserFrame = useCallback(() => {
     if (laserRafRef.current !== null) return;
@@ -290,7 +394,7 @@ export function useOverlayCanvas() {
       }
 
       const now = performance.now();
-      const maxLife = 1200;
+      const maxLife = laserTrailMaxLifeMs;
       laserPointsRef.current = laserPointsRef.current.filter(
         (point) => now - point.t < maxLife
       );
@@ -310,7 +414,7 @@ export function useOverlayCanvas() {
         ctx.lineWidth = width || settings.width;
 
         if (type === "standard") {
-          ctx.shadowBlur = settings.shadow;
+          ctx.shadowBlur = settings.shadow * laserShadowMultiplier;
           ctx.shadowColor = color;
           for (let i = 1; i < laserPointsRef.current.length; i += 1) {
             const p1 = laserPointsRef.current[i - 1];
@@ -346,7 +450,7 @@ export function useOverlayCanvas() {
     };
 
     laserRafRef.current = requestAnimationFrame(loop);
-  }, []);
+  }, [laserShadowMultiplier, laserTrailMaxLifeMs]);
 
   const handlePointerDown = useCallback(
     (event: ReactPointerEvent<HTMLDivElement>) => {
@@ -355,6 +459,7 @@ export function useOverlayCanvas() {
       if (shouldSuppressTouch(nativeEvent)) return;
       if (isViewportInteracting) return;
       if (activeTool !== "pen" && activeTool !== "laser") return;
+      if (!tryAcquireDrawGestureLock()) return;
 
       if (activeTool === "laser") {
         isLaserRef.current = true;
@@ -406,6 +511,7 @@ export function useOverlayCanvas() {
       renderAll,
       scheduleLaserFrame,
       shouldSuppressTouch,
+      tryAcquireDrawGestureLock,
     ]
   );
 
@@ -518,10 +624,14 @@ export function useOverlayCanvas() {
       }
       if (isLaserRef.current) {
         isLaserRef.current = false;
+        releaseDrawGestureLock();
         return;
       }
 
-      if (!isDrawingRef.current || !activeStrokeRef.current) return;
+      if (!isDrawingRef.current || !activeStrokeRef.current) {
+        releaseDrawGestureLock();
+        return;
+      }
       isDrawingRef.current = false;
       const finishedStroke = {
         ...activeStrokeRef.current,
@@ -534,11 +644,13 @@ export function useOverlayCanvas() {
       lastRawPointRef.current = null;
       lastSmoothPointRef.current = null;
       lastDrawPointRef.current = null;
+      releaseDrawGestureLock();
     },
     [
       cancelActiveStroke,
       isViewportInteracting,
       markPenActivity,
+      releaseDrawGestureLock,
       renderAll,
       shouldSuppressTouch,
     ]
@@ -617,12 +729,16 @@ export function useOverlayCanvas() {
   }, [cancelActiveStroke, isViewportInteracting]);
 
   useEffect(() => {
+    const suppressedTouchPointerIds = suppressedTouchPointerIdsRef.current;
     return () => {
       if (laserRafRef.current !== null) {
         cancelAnimationFrame(laserRafRef.current);
       }
+      releaseDrawGestureLock();
+      suppressedTouchPointerIds.clear();
+      activePenPointerIdRef.current = null;
     };
-  }, []);
+  }, [releaseDrawGestureLock]);
 
   const bind = useMemo(
     () => ({
