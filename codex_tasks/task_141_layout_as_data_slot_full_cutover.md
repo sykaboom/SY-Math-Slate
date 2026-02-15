@@ -1,61 +1,50 @@
-# Task <id>: <short title>
+# Task 141: Layout-as-Data Full Slot Cutover
 
-Status: PENDING | APPROVED | COMPLETED
+Status: PENDING
 Owner: Codex (spec / review / implementation)
-Target: v10/   # or root/ (must choose one)
-Date: YYYY-MM-DD
+Target: v10/
+Date: 2026-02-15
 
 ---
 
 ## Goal (Base Required)
 - What to change:
-  - (concise, observable change)
+  - Complete cutover of top/bottom/side app shell regions to slot-driven layout composition.
+  - Keep role/policy visibility while removing hardcoded region wiring.
 - What must NOT change:
-  - (explicit non-goals / invariants)
+  - No pointer-path blocking regression on tablet viewports.
 
 ---
 
 ## Scope (Base Required)
 
 Touched files/directories:
-- (explicit, minimal list)
+- `v10/src/features/layout/AppLayout.tsx`
+- `v10/src/features/extensions/ui/ExtensionSlot.tsx`
+- `v10/src/features/extensions/ui/registerCoreSlots.ts`
+- `v10/src/features/extensions/ui/CoreSlotComponents.tsx`
+- `v10/src/features/extensions/ui/ExtensionRuntimeBootstrap.tsx`
 
 Out of scope:
-- (explicit list; anything not listed above is out of scope)
+- Visual redesign.
+- Mod Studio GUI editor.
 
 ---
 
 ## Dependencies / Constraints (Base Required)
 
-- New dependencies allowed: NO (default)
-  - If YES, list and justify explicitly.
+- New dependencies allowed: NO
 - Boundary rules:
-  - (layer/import/runtime constraints)
+  - Use existing slot registry/runtime abstractions.
+  - Keep policy checks separate from slot render mechanics.
 - Compatibility:
-  - (backward compatibility expectations, if relevant)
-
----
-
-## DAG / Wave Metadata (Base Required)
-
-- Wave ID:
-  - (e.g., W1 / W2 / HOTFIX)
-- Depends on tasks:
-  - (e.g., `task_140`, `task_141`; use `[]` when none)
-- Enables tasks:
-  - (list downstream tasks unlocked by this task)
-- Parallel group:
-  - (e.g., G1-core / G2-ui / G3-infra)
-- Max parallel slots:
-  - 6 (default)
-- Verification stage for this task:
-  - `mid` (changed-lint + script checks) | `end` (full lint + full build + script checks)
+  - Feature-flag or phased path required for safe cutover.
 
 ---
 
 ## Optional Block A — Layout / SVG Gate
 
-- [ ] Applies: YES / NO
+- [ ] Applies: YES
 - If YES, fill all items:
   - [ ] SVG path in `design_drafts/`
   - [ ] SVG has explicit `viewBox` (width / height / ratio)
@@ -68,22 +57,24 @@ Out of scope:
 
 ## Optional Block B — Delegated Execution
 
-- [ ] Applies: YES / NO
+- [ ] Applies: YES
 - If YES:
   - Execution mode: DELEGATED
   - Delegation chain scope:
-    - (task IDs / boundaries)
+    - task_139~157
   - Assigned roles:
-    - Spec-Writer:
-    - Spec-Reviewer:
-    - Implementer-A:
-    - Implementer-B:
-    - Implementer-C:
-    - Reviewer+Verifier:
+    - Spec-Writer: Codex
+    - Spec-Reviewer: Codex
+    - Implementer-A: Codex
+    - Implementer-B: Codex
+    - Implementer-C: Codex
+    - Reviewer+Verifier: Codex
   - File ownership lock plan:
-    - (one file = one implementer)
+    - A: slot registry/bootstrap
+    - B: app layout region cutover
+    - C: core slot components
   - Parallel slot plan:
-    - (max 6 active slots)
+    - max 6 active slots
 
 If NO:
 - Execution mode: MANUAL
@@ -92,31 +83,19 @@ If NO:
 
 ## Optional Block C — Hotfix Exception
 
-- [ ] Applies: YES / NO
-- If YES:
-  - Explicit user hotfix approval quote:
-    - (chat message)
-  - Exact hotfix scope/files:
-    - ...
-  - Hotfix log path:
-    - `codex_tasks/hotfix/hotfix_<id>_<slug>.md`
+- [ ] Applies: NO
 
 ---
 
 ## Optional Block D — Speculative Defense Check
 
-- [ ] Applies: YES / NO
-- If YES:
-  - Evidence (real input, spec, or bug report):
-    - (link / file / sample)
-  - Sunset criteria:
-    - (explicit removal condition)
+- [ ] Applies: NO
 
 ---
 
 ## Optional Block E — Documentation Update Check
 
-- [ ] Applies: YES / NO
+- [ ] Applies: YES
 - If YES:
   - [ ] Structure changes (file/folder add/move/delete):
     - Run `node scripts/gen_ai_read_me_map.mjs`
@@ -128,34 +107,38 @@ If NO:
 
 ## Acceptance Criteria (Base Required)
 
-- [ ] AC-1: (observable pass/fail condition)
-- [ ] AC-2: (observable pass/fail condition)
-- [ ] AC-3: ...
+- [ ] AC-1: Top/bottom/side regions render via slot hosts.
+- [ ] AC-2: Role visibility behavior remains policy-correct.
+- [ ] AC-3: Tablet viewport interaction remains reachable and uninterrupted.
+- [ ] AC-4: Layer/lint/build checks pass.
 
 ---
 
 ## Manual Verification Steps (Base Required)
 
-> Each step should map to one or more Acceptance Criteria.
-
 1) Step:
-   - Command / click path:
-   - Expected result:
-   - Covers: AC-#
+   - Command / click path: open app at 768x1024 / 820x1180 / 1024x768 / 1180x820.
+   - Expected result: controls reachable, writing continuity maintained.
+   - Covers: AC-2, AC-3
 
 2) Step:
-   - Command / click path:
-   - Expected result:
-   - Covers: AC-#
+   - Command / click path: `scripts/check_layer_rules.sh`
+   - Expected result: PASS.
+   - Covers: AC-4
+
+3) Step:
+   - Command / click path: `cd v10 && npm run lint && npm run build`
+   - Expected result: PASS.
+   - Covers: AC-4
 
 ---
 
 ## Risks / Roll-back Notes (Base Required)
 
 - Risks:
-  - (what could go wrong, why)
+  - Slot ordering mistakes may hide key controls.
 - Roll-back:
-  - (exact revert strategy)
+  - Revert phased region commits and disable cutover flag.
 
 ---
 
@@ -190,16 +173,16 @@ Commands run (only if user asked or required by spec):
 ## Failure Classification (Codex fills when any gate fails)
 
 - Pre-existing failures:
-  - (file / command / reason)
+  - ...
 - Newly introduced failures:
-  - (file / command / reason)
+  - ...
 - Blocking:
   - YES / NO
 - Mitigation:
-  - (rollback or follow-up task)
+  - ...
 
 Manual verification notes:
-- (results vs Acceptance Criteria)
+- ...
 
 Notes:
-- (pre-existing failures vs new issues, if any)
+- ...

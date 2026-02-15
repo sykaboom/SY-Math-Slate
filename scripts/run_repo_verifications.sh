@@ -4,6 +4,18 @@ set -euo pipefail
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$repo_root"
 
+verify_stage="${VERIFY_STAGE:-mid}"
+if [[ "${1:-}" == "--stage" ]]; then
+  verify_stage="${2:-}"
+fi
+
+if [[ "$verify_stage" != "mid" && "$verify_stage" != "end" ]]; then
+  echo "[verify-sh] FAIL: VERIFY_STAGE must be 'mid' or 'end'."
+  exit 1
+fi
+
+echo "[verify-sh] Stage: ${verify_stage}"
+
 mapfile -t candidates < <(
   {
     find scripts -maxdepth 1 -type f -name "*.sh" 2>/dev/null
@@ -31,7 +43,19 @@ for script in "${selected[@]}"; do
     continue
   fi
   echo "[verify-sh] Running: $script"
-  "$script"
+  if [[ "$(basename "$script")" == "check_v10_changed_lint.sh" ]]; then
+    if [[ "$verify_stage" == "end" ]]; then
+      VERIFY_LINT_SCOPE="${VERIFY_LINT_SCOPE:-full}" \
+      VERIFY_FULL_BUILD="${VERIFY_FULL_BUILD:-1}" \
+      "$script"
+    else
+      VERIFY_LINT_SCOPE="${VERIFY_LINT_SCOPE:-changed}" \
+      VERIFY_FULL_BUILD="${VERIFY_FULL_BUILD:-0}" \
+      "$script"
+    fi
+  else
+    "$script"
+  fi
 done
 
 echo "[verify-sh] Done"

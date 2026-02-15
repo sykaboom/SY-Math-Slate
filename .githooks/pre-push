@@ -32,7 +32,7 @@ if [[ -z "$changed_files" ]]; then
   echo "[pre-push] No changed files detected from push refs. Running shell verifications only."
   echo "[pre-push] Checking AI_READ_ME_MAP freshness ..."
   node scripts/gen_ai_read_me_map.mjs --check
-  bash scripts/run_repo_verifications.sh
+  VERIFY_STAGE="mid" bash scripts/run_repo_verifications.sh
   echo "[pre-push] OK"
   exit 0
 fi
@@ -40,6 +40,7 @@ fi
 needs_v10_build=0
 needs_root_build=0
 needs_map_check=0
+verify_stage="mid"
 
 while IFS= read -r path; do
   if [[ "$path" == v10/* ]]; then
@@ -61,11 +62,7 @@ while IFS= read -r path; do
 done <<< "$changed_files"
 
 if [[ "$needs_v10_build" -eq 1 ]]; then
-  echo "[pre-push] Running v10 build ..."
-  (
-    cd v10
-    npm run build
-  )
+  verify_stage="end"
 fi
 
 if [[ "$needs_root_build" -eq 1 ]]; then
@@ -78,7 +75,7 @@ if [[ "$needs_map_check" -eq 1 ]]; then
   node scripts/gen_ai_read_me_map.mjs --check
 fi
 
-echo "[pre-push] Running shell verifications ..."
-bash scripts/run_repo_verifications.sh
+echo "[pre-push] Running shell verifications (stage: ${verify_stage}) ..."
+VERIFY_STAGE="$verify_stage" bash scripts/run_repo_verifications.sh
 
 echo "[pre-push] OK"

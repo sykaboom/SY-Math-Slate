@@ -430,18 +430,25 @@ Located in `features/extensions/`:
 
 ---
 
-## Migration Baseline (Task 119~138)
+## Migration Baseline (Task 119~158)
 - Baseline info check:
   - `scripts/check_v10_migration_baseline.sh`
 - Legacy freeze guard:
   - `scripts/check_v10_legacy_freeze.sh`
+  - threshold source: `codex_tasks/workflow/legacy_budget.env`
+  - update helper: `scripts/update_legacy_budget.sh`
 - Layer boundary check:
   - `scripts/check_layer_rules.sh`
 - Repository shell verification bundle:
-  - `bash scripts/run_repo_verifications.sh`
+  - middle wave: `VERIFY_STAGE=mid bash scripts/run_repo_verifications.sh`
+  - end wave: `VERIFY_STAGE=end bash scripts/run_repo_verifications.sh`
+- Lint/build stage helper:
+  - `scripts/check_v10_changed_lint.sh`
 - Build gates:
   - `cd v10 && npm run lint`
   - `cd v10 && npm run build`
+- Task generation helper (DAG metadata template-based):
+  - `scripts/new_codex_task.sh`
 
 Current migration command domains (source of truth):
 - `features/extensions/commands/registerCoreCommands.ts` -> `COMMAND_MIGRATION_MAP`

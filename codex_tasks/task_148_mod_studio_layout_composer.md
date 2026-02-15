@@ -1,61 +1,48 @@
-# Task <id>: <short title>
+# Task 148: Mod Studio Layout Composer (Slot Placement GUI)
 
-Status: PENDING | APPROVED | COMPLETED
+Status: PENDING
 Owner: Codex (spec / review / implementation)
-Target: v10/   # or root/ (must choose one)
-Date: YYYY-MM-DD
+Target: v10/
+Date: 2026-02-15
 
 ---
 
 ## Goal (Base Required)
 - What to change:
-  - (concise, observable change)
+  - Add GUI layout composer for slot placement/order/visibility presets.
+  - Persist layout manifest data without direct JSX edits.
 - What must NOT change:
-  - (explicit non-goals / invariants)
+  - No runtime slot injection bypassing whitelist constraints.
 
 ---
 
 ## Scope (Base Required)
 
 Touched files/directories:
-- (explicit, minimal list)
+- `v10/src/features/mod-studio/layout/**` (new)
+- `v10/src/features/extensions/ui/**`
+- `v10/src/core/extensions/pluginLoader.ts`
 
 Out of scope:
-- (explicit list; anything not listed above is out of scope)
+- Policy editor semantics.
+- Theme token editor.
 
 ---
 
 ## Dependencies / Constraints (Base Required)
 
-- New dependencies allowed: NO (default)
-  - If YES, list and justify explicitly.
+- New dependencies allowed: NO
 - Boundary rules:
-  - (layer/import/runtime constraints)
+  - Composer outputs declarative manifest only.
+  - Slot names must be registry-known literals.
 - Compatibility:
-  - (backward compatibility expectations, if relevant)
-
----
-
-## DAG / Wave Metadata (Base Required)
-
-- Wave ID:
-  - (e.g., W1 / W2 / HOTFIX)
-- Depends on tasks:
-  - (e.g., `task_140`, `task_141`; use `[]` when none)
-- Enables tasks:
-  - (list downstream tasks unlocked by this task)
-- Parallel group:
-  - (e.g., G1-core / G2-ui / G3-infra)
-- Max parallel slots:
-  - 6 (default)
-- Verification stage for this task:
-  - `mid` (changed-lint + script checks) | `end` (full lint + full build + script checks)
+  - Existing layout manifest remains loadable.
 
 ---
 
 ## Optional Block A — Layout / SVG Gate
 
-- [ ] Applies: YES / NO
+- [ ] Applies: YES
 - If YES, fill all items:
   - [ ] SVG path in `design_drafts/`
   - [ ] SVG has explicit `viewBox` (width / height / ratio)
@@ -68,22 +55,24 @@ Out of scope:
 
 ## Optional Block B — Delegated Execution
 
-- [ ] Applies: YES / NO
+- [ ] Applies: YES
 - If YES:
   - Execution mode: DELEGATED
   - Delegation chain scope:
-    - (task IDs / boundaries)
+    - task_139~157
   - Assigned roles:
-    - Spec-Writer:
-    - Spec-Reviewer:
-    - Implementer-A:
-    - Implementer-B:
-    - Implementer-C:
-    - Reviewer+Verifier:
+    - Spec-Writer: Codex
+    - Spec-Reviewer: Codex
+    - Implementer-A: Codex
+    - Implementer-B: Codex
+    - Implementer-C: Codex
+    - Reviewer+Verifier: Codex
   - File ownership lock plan:
-    - (one file = one implementer)
+    - A: layout model + manifest serializer
+    - B: GUI composer widgets
+    - C: runtime preview integration
   - Parallel slot plan:
-    - (max 6 active slots)
+    - max 6 active slots
 
 If NO:
 - Execution mode: MANUAL
@@ -92,31 +81,19 @@ If NO:
 
 ## Optional Block C — Hotfix Exception
 
-- [ ] Applies: YES / NO
-- If YES:
-  - Explicit user hotfix approval quote:
-    - (chat message)
-  - Exact hotfix scope/files:
-    - ...
-  - Hotfix log path:
-    - `codex_tasks/hotfix/hotfix_<id>_<slug>.md`
+- [ ] Applies: NO
 
 ---
 
 ## Optional Block D — Speculative Defense Check
 
-- [ ] Applies: YES / NO
-- If YES:
-  - Evidence (real input, spec, or bug report):
-    - (link / file / sample)
-  - Sunset criteria:
-    - (explicit removal condition)
+- [ ] Applies: NO
 
 ---
 
 ## Optional Block E — Documentation Update Check
 
-- [ ] Applies: YES / NO
+- [ ] Applies: YES
 - If YES:
   - [ ] Structure changes (file/folder add/move/delete):
     - Run `node scripts/gen_ai_read_me_map.mjs`
@@ -128,34 +105,38 @@ If NO:
 
 ## Acceptance Criteria (Base Required)
 
-- [ ] AC-1: (observable pass/fail condition)
-- [ ] AC-2: (observable pass/fail condition)
-- [ ] AC-3: ...
+- [ ] AC-1: GUI can reorder/place modules by slot.
+- [ ] AC-2: Produced manifest validates against plugin loader guards.
+- [ ] AC-3: Runtime preview reflects manifest without rebuild.
+- [ ] AC-4: lint/build checks pass.
 
 ---
 
 ## Manual Verification Steps (Base Required)
 
-> Each step should map to one or more Acceptance Criteria.
-
 1) Step:
-   - Command / click path:
-   - Expected result:
-   - Covers: AC-#
+   - Command / click path: edit slot placements in composer.
+   - Expected result: preview updates correctly.
+   - Covers: AC-1, AC-3
 
 2) Step:
-   - Command / click path:
-   - Expected result:
-   - Covers: AC-#
+   - Command / click path: validate/save manifest.
+   - Expected result: guard-validated save succeeds; invalid payload rejected.
+   - Covers: AC-2
+
+3) Step:
+   - Command / click path: `cd v10 && npm run lint && npm run build`
+   - Expected result: PASS.
+   - Covers: AC-4
 
 ---
 
 ## Risks / Roll-back Notes (Base Required)
 
 - Risks:
-  - (what could go wrong, why)
+  - Incorrect slot maps can hide critical controls.
 - Roll-back:
-  - (exact revert strategy)
+  - Restore previous layout manifest snapshot.
 
 ---
 
@@ -190,16 +171,16 @@ Commands run (only if user asked or required by spec):
 ## Failure Classification (Codex fills when any gate fails)
 
 - Pre-existing failures:
-  - (file / command / reason)
+  - ...
 - Newly introduced failures:
-  - (file / command / reason)
+  - ...
 - Blocking:
   - YES / NO
 - Mitigation:
-  - (rollback or follow-up task)
+  - ...
 
 Manual verification notes:
-- (results vs Acceptance Criteria)
+- ...
 
 Notes:
-- (pre-existing failures vs new issues, if any)
+- ...
