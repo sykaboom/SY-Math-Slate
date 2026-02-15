@@ -143,15 +143,15 @@ export function ModuleStudioSection() {
       <section className="grid gap-1 rounded border border-white/10 bg-white/5 p-2">
         <div className="text-[11px] font-semibold text-white/75">Diagnostics</div>
         {diagnostics.length === 0 ? (
-          <div className="text-[11px] text-emerald-200">no conflicts</div>
+          <div className="text-[11px] text-[var(--theme-success)]">no conflicts</div>
         ) : (
           diagnostics.map((item, index) => (
             <div
               key={`${item.code}-${index}`}
               className={
                 item.level === "error"
-                  ? "text-[11px] text-rose-200"
-                  : "text-[11px] text-amber-200"
+                  ? "text-[11px] text-[var(--theme-danger)]"
+                  : "text-[11px] text-[var(--theme-warning)]"
               }
             >
               [{item.code}] {item.message}

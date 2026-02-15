@@ -3,6 +3,7 @@
 import { ChevronLeft, ChevronRight, Minus, Plus, Trash2 } from "lucide-react";
 
 import { dispatchCommand } from "@core/engine/commandBus";
+import { useDocumentOutline } from "@features/hooks/useDocumentOutline";
 import { useCanvasStore } from "@features/store/useCanvasStore";
 import { useUIStore } from "@features/store/useUIStoreBridge";
 import { Popover, PopoverTrigger } from "@ui/components/popover";
@@ -26,6 +27,13 @@ export function PageNavigator() {
   const canDecrease = columnCount > 1;
   const canIncrease = columnCount < 4;
   const canPageJump = totalPages > 1;
+  const {
+    entries: outlineEntries,
+    currentEntry,
+    currentStepIndex,
+    jumpToStep,
+  } = useDocumentOutline();
+  const canOutlineJump = outlineEntries.length > 0;
   const pageSliderValue = Math.min(currentIndex + 1, totalPages);
 
   const dispatchPageCommand = (commandId: string, payload: unknown = {}) => {
@@ -75,6 +83,44 @@ export function PageNavigator() {
               <span className="w-10 text-right text-xs text-toolbar-text/80">
                 {currentIndex + 1}/{totalPages}
               </span>
+            </div>
+          </ToolbarPanel>
+        )}
+      </Popover>
+      <Popover>
+        <PopoverTrigger asChild>
+          <button
+            type="button"
+            className="whitespace-nowrap rounded-full px-2 py-1 text-[11px] text-toolbar-text/70 hover:text-toolbar-text disabled:text-toolbar-muted/40"
+            disabled={isOverviewMode || !canOutlineJump}
+            title={currentEntry?.label ?? "Outline"}
+          >
+            Outline {canOutlineJump ? currentStepIndex + 1 : 0}/{outlineEntries.length}
+          </button>
+        </PopoverTrigger>
+        {canOutlineJump && (
+          <ToolbarPanel side="top" align="center" sideOffset={18} className="w-72 p-2">
+            <div className="max-h-64 space-y-1 overflow-y-auto pr-1">
+              {outlineEntries.map((entry) => {
+                const isActive = entry.stepIndex === currentStepIndex;
+                return (
+                  <button
+                    key={entry.stepId}
+                    type="button"
+                    className={`flex w-full flex-col rounded-lg border px-2 py-1.5 text-left transition ${
+                      isActive
+                        ? "border-toolbar-border/40 bg-toolbar-chip/20 text-toolbar-text"
+                        : "border-transparent text-toolbar-text/70 hover:border-toolbar-border/25 hover:bg-toolbar-chip/10"
+                    }`}
+                    onClick={() => jumpToStep(entry.stepIndex)}
+                  >
+                    <span className="text-[10px] uppercase tracking-wide text-toolbar-muted/50">
+                      Step {entry.stepIndex + 1}
+                    </span>
+                    <span className="truncate text-xs">{entry.preview}</span>
+                  </button>
+                );
+              })}
             </div>
           </ToolbarPanel>
         )}

@@ -17,6 +17,7 @@ import { PlayerBar } from "@features/layout/PlayerBar";
 import { ExtensionSlot } from "@features/extensions/ui/ExtensionSlot";
 import { ModStudioShell } from "@features/mod-studio";
 import { reportPolicyBooleanDiffBatch } from "@features/policy/policyShadow";
+import { useAuthoringShortcuts } from "@features/shortcuts/useAuthoringShortcuts";
 import { useAsymmetricSessionSync } from "@features/sync/useAsymmetricSessionSync";
 import { Button } from "@ui/components/button";
 import { useLocalStore } from "@features/store/useLocalStore";
@@ -125,6 +126,9 @@ export function AppLayout({ children }: AppLayoutProps) {
     !isPresentation && legacyRoleVisibility.showHostToolchips;
   const showHostToolchipsPolicy =
     !isPresentation && roleVisibilityPolicy.showHostToolchips;
+  useAuthoringShortcuts({
+    enabled: showHostToolchipsPolicy,
+  });
 
   const showStudentPlayerBarLegacy =
     !isPresentation && legacyRoleVisibility.showStudentPlayerBar;

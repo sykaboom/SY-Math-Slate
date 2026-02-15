@@ -1,4 +1,9 @@
 import type { RolePolicyDocument } from "@core/config/rolePolicyGuards";
+import type {
+  ThemeGlobalTokenMap,
+  ThemeModuleScopedTokenMap,
+  ThemePresetId,
+} from "@core/config/themeTokens";
 import type { UISlotName } from "@core/extensions/registry";
 
 export const MOD_STUDIO_TABS = [
@@ -38,8 +43,9 @@ export type ModuleDraft = {
 };
 
 export type ThemeDraft = {
-  globalTokens: Record<string, string>;
-  moduleScopedTokens: Record<string, Record<string, string>>;
+  presetId: ThemePresetId;
+  globalTokens: ThemeGlobalTokenMap;
+  moduleScopedTokens: ThemeModuleScopedTokenMap;
 };
 
 export type StudioDraftBundle = {

@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 
+import { extractImageFilesFromClipboard } from "@features/canvas/paste/pasteNormalization";
 import { useImageInsert } from "@features/hooks/useImageInsert";
 import { useUIStore } from "@features/store/useUIStoreBridge";
 
@@ -20,19 +21,11 @@ export function PasteHelperModal() {
   if (typeof document === "undefined" || !isPasteHelperOpen) return null;
 
   const handlePaste = async (event: React.ClipboardEvent<HTMLDivElement>) => {
-    const items = event.clipboardData?.items;
-    if (!items) return;
-    for (const item of Array.from(items)) {
-      if (item.type.startsWith("image/")) {
-        const file = item.getAsFile();
-        if (file) {
-          event.preventDefault();
-          await insertImageFile(file);
-          closePasteHelper();
-          return;
-        }
-      }
-    }
+    const [imageFile] = extractImageFilesFromClipboard(event);
+    if (!imageFile) return;
+    event.preventDefault();
+    await insertImageFile(imageFile);
+    closePasteHelper();
   };
 
   return createPortal(
@@ -40,8 +33,8 @@ export function PasteHelperModal() {
       className="fixed inset-0 flex items-center justify-center bg-black/70 backdrop-blur-sm"
       style={{ zIndex: "var(--z-modal)" }}
     >
-      <div className="w-[360px] max-w-[90vw] rounded-2xl border border-white/10 bg-slate-900/95 p-6 text-center text-white shadow-xl">
-        <p className="text-sm font-semibold text-amber-300">태블릿 붙여넣기 도우미</p>
+      <div className="w-[360px] max-w-[90vw] rounded-2xl border border-[var(--theme-border)] bg-[var(--theme-surface-overlay)] p-6 text-center text-[var(--theme-text)] shadow-xl">
+        <p className="text-sm font-semibold text-[var(--theme-warning)]">태블릿 붙여넣기 도우미</p>
         <p className="mt-2 text-xs text-white/60">
           아래 박스를 길게 눌러 ‘붙여넣기’를 선택하세요.
         </p>
@@ -50,7 +43,7 @@ export function PasteHelperModal() {
           onPaste={handlePaste}
           contentEditable
           suppressContentEditableWarning
-          className="mt-4 flex h-32 items-center justify-center rounded-xl border-2 border-dashed border-cyan-300/70 bg-black/40 text-sm text-white/70 outline-none"
+          className="mt-4 flex h-32 items-center justify-center rounded-xl border-2 border-dashed border-[var(--theme-accent)] bg-[var(--theme-surface-soft)] text-sm text-[var(--theme-text-muted)] outline-none"
         >
           여기를 길게 터치하여<br />&apos;붙여넣기&apos;를 선택하세요.
         </div>

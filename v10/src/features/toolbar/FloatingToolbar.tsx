@@ -77,16 +77,17 @@ export function FloatingToolbar() {
     setCapabilityProfile,
   } = useUIStore();
   const {
-    undo,
     pages,
     currentPageId,
     currentStep,
+    strokeRedoByPage,
   } = useCanvasStore();
 
   const isPenOpen = openPanel === "pen";
   const isLaserOpen = openPanel === "laser";
   const currentItems = pages[currentPageId] ?? [];
   const canUndo = currentItems.some((item) => item.type === "stroke");
+  const canRedo = (strokeRedoByPage[currentPageId]?.length ?? 0) > 0;
   const maxStep = Object.values(pages).reduce((max, items) => {
     return items.reduce((innerMax, item) => {
       if (item.type !== "text" && item.type !== "image") return innerMax;
@@ -668,15 +669,16 @@ export function FloatingToolbar() {
                     <ToolButton
                       icon={Undo2}
                       label="Undo"
-                      onClick={undo}
+                      onClick={() => dispatchToolbarCommand("undo")}
                       disabled={!canUndo || isOverviewMode}
                       className="h-8 w-8"
                     />
                     <ToolButton
                       icon={Redo2}
-                      label="Redo (coming soon)"
-                      disabled
-                      className="h-8 w-8 text-toolbar-muted/40 hover:text-toolbar-muted/40"
+                      label="Redo"
+                      onClick={() => dispatchToolbarCommand("redo")}
+                      disabled={!canRedo || isOverviewMode}
+                      className="h-8 w-8"
                     />
                   </div>
                 </div>

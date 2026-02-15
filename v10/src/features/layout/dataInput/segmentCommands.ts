@@ -1,15 +1,34 @@
+import {
+  captureCaretSelectionSnapshot,
+  isCaretSelectionSnapshot,
+  resolveCaretSelectionSnapshot,
+} from "@features/editor-core/selection/caretEngine";
 import type {
   SegmentHtmlUpdater,
   SegmentRefMap,
   SelectionRefMap,
 } from "./types";
 
-const getActiveRange = (id: string, selectionRefs: SelectionRefMap) => {
+const isRangeValue = (value: unknown): value is Range =>
+  typeof Range !== "undefined" && value instanceof Range;
+
+const getActiveRange = (
+  id: string,
+  host: HTMLDivElement,
+  selectionRefs: SelectionRefMap
+) => {
   const stored = selectionRefs[id];
-  if (stored) return stored;
+  if (isRangeValue(stored)) return stored.cloneRange();
+  if (isCaretSelectionSnapshot(stored)) {
+    if (stored.segmentId !== id) return null;
+    const resolved = resolveCaretSelectionSnapshot(host, stored);
+    if (resolved) return resolved;
+  }
   const selection = window.getSelection();
   if (!selection || selection.rangeCount === 0) return null;
-  return selection.getRangeAt(0);
+  const active = selection.getRangeAt(0);
+  if (!host.contains(active.commonAncestorContainer)) return null;
+  return active.cloneRange();
 };
 
 export const captureSelection = (
@@ -19,12 +38,16 @@ export const captureSelection = (
   const selection = window.getSelection();
   if (!selection || selection.rangeCount === 0) return;
   const range = selection.getRangeAt(0);
-  const hostEntry = Object.entries(segmentRefs).find(([, el]) =>
-    el ? el.contains(range.commonAncestorContainer) : false
+  const hostEntry = Object.entries(segmentRefs).find(
+    (entry): entry is [string, HTMLDivElement] => {
+      const [, el] = entry;
+      return Boolean(el && el.contains(range.commonAncestorContainer));
+    }
   );
   if (!hostEntry) return;
-  const [segmentId] = hostEntry;
-  selectionRefs[segmentId] = range.cloneRange();
+  const [segmentId, host] = hostEntry;
+  const snapshot = captureCaretSelectionSnapshot(segmentId, host, selection);
+  selectionRefs[segmentId] = snapshot ?? range.cloneRange();
 };
 
 const applySelectionWrap = (
@@ -37,7 +60,7 @@ const applySelectionWrap = (
 ) => {
   const host = segmentRefs[id];
   if (!host) return;
-  const range = getActiveRange(id, selectionRefs);
+  const range = getActiveRange(id, host, selectionRefs);
   if (!range) return;
   if (!allowCollapsed && range.collapsed) return;
   if (!host.contains(range.commonAncestorContainer)) return;

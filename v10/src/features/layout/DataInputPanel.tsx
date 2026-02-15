@@ -18,8 +18,6 @@ import { cn } from "@core/utils";
 import { Button } from "@ui/components/button";
 import type {
   ImageItem,
-  StepBlockKind,
-  StepSegment,
   StepSegmentType,
   TextItem,
 } from "@core/types/canvas";
@@ -33,17 +31,25 @@ import {
   normalizeTextSegmentStyle,
 } from "@core/config/typography";
 import { runAutoLayout } from "@features/layout/autoLayout";
+import { buildEditorSurfaceModel } from "@features/editor-core/model/editorSurface";
 import {
   blocksToRawText,
   buildBlocksFromFlowItems,
-  createBlockId,
-  createMediaSegment,
-  createTextSegment,
   normalizeBlocksDraft,
-  normalizeSegments,
-  sanitizeDraftHtml,
   syncBlocksFromRawText,
 } from "@features/layout/dataInput/blockDraft";
+import {
+  type BreakBlockKind,
+  clampBlockInsertionIndex,
+  deleteBlockById,
+  insertBreakBlockAt,
+  moveBlockById as moveBlockByIdOp,
+  moveBlockByIndex as moveBlockByIndexOp,
+  reindexBlockStructure,
+} from "@features/layout/dataInput/blockStructureOps";
+import {
+  reduceInlineEditCommand,
+} from "@features/layout/dataInput/inlineEditCommands";
 import {
   captureSelection,
   wrapSelectionWithClass,
@@ -94,8 +100,18 @@ const DEFAULT_FONT_SIZE_PX = parseFontSizePx(
   28
 );
 
-const clampFontSizePx = (value: number) =>
-  Math.max(FONT_SIZE_MIN_PX, Math.min(FONT_SIZE_MAX_PX, value));
+const EDITOR_SURFACE_PREVIEW_LABELS = {
+  imageToken: "[이미지]",
+  videoToken: "[비디오]",
+  empty: "내용 없음",
+};
+
+const EDITOR_SURFACE_BREAK_LABELS = {
+  lineBreak: "줄바꿈",
+  columnBreak: "단 나눔",
+  pageBreak: "페이지 이동",
+  fallback: "구분선",
+};
 
 export function DataInputPanel() {
   const {
@@ -175,37 +191,27 @@ export function DataInputPanel() {
     ? "leading-[1.25]"
     : "leading-[1.6]";
 
-  const normalizePreviewText = (value: string) =>
-    value
-      .replace(/<br\s*\/?>/gi, " ")
-      .replace(/<[^>]*>/g, " ")
-      .replace(/&nbsp;/gi, " ")
-      .replace(/&amp;/gi, "&")
-      .replace(/&lt;/gi, "<")
-      .replace(/&gt;/gi, ">")
-      .replace(/\s+/g, " ")
-      .trim();
-
-  const getBlockPreview = (block: StepBlockDraft) => {
-    const parts = block.segments
-      .map((segment) => {
-        if (segment.type === "text") {
-          return normalizePreviewText(segment.html);
-        }
-        if (segment.type === "image") {
-          return "[이미지]";
-        }
-        return "[비디오]";
-      })
-      .filter((part) => part.length > 0);
-    if (parts.length === 0) return "내용 없음";
-    return parts.join(" ").slice(0, 96);
-  };
-
   const fallbackBlocks = useMemo(
     () => buildBlocksFromFlowItems(flowItems),
     [flowItems]
   );
+
+  const editorSurface = useMemo(
+    () =>
+      buildEditorSurfaceModel(blocks, insertionIndex, {
+        previewLabels: EDITOR_SURFACE_PREVIEW_LABELS,
+        breakLabels: EDITOR_SURFACE_BREAK_LABELS,
+      }),
+    [blocks, insertionIndex]
+  );
+
+  const contentOrderByBlockId = useMemo(() => {
+    const map: Record<string, number | null> = {};
+    reindexBlockStructure(blocks).forEach((entry) => {
+      map[entry.blockId] = entry.contentOrder;
+    });
+    return map;
+  }, [blocks]);
 
   useEffect(() => {
     if (!isDataInputOpen) {
@@ -263,8 +269,12 @@ export function DataInputPanel() {
   }, [blocks, expandedBlockId]);
 
   useEffect(() => {
-    if (blocks.length < insertionIndex) {
-      writeInsertionIndex(blocks.length);
+    const nextInsertionIndex = clampBlockInsertionIndex(
+      insertionIndex,
+      blocks.length
+    );
+    if (nextInsertionIndex !== insertionIndex) {
+      writeInsertionIndex(nextInsertionIndex);
     }
   }, [blocks.length, insertionIndex, writeInsertionIndex]);
 
@@ -289,28 +299,33 @@ export function DataInputPanel() {
   if (!isDataInputOpen) return null;
 
   const renderInsertionMarker = (index: number) => {
-    const isActive = insertionIndex === index;
+    const marker = editorSurface.insertionMarkers[index];
+    const isActive = marker?.isActive ?? false;
     return (
       <button
         type="button"
         className={cn(
           "group flex w-full items-center gap-2 rounded-full px-2 py-1 text-[10px] uppercase tracking-[0.2em]",
-          isActive ? "text-cyan-200" : "text-white/30 hover:text-white/60"
+          isActive
+            ? "text-[var(--theme-text)]"
+            : "text-[var(--theme-text-subtle)] hover:text-[var(--theme-text-muted)]"
         )}
         onClick={() => writeInsertionIndex(index)}
       >
         <span
           className={cn(
             "h-px flex-1 transition-colors",
-            isActive ? "bg-cyan-300/80" : "bg-white/10 group-hover:bg-white/20"
+            isActive
+              ? "bg-[var(--theme-accent-strong)]"
+              : "bg-[var(--theme-surface-soft)] group-hover:bg-[var(--theme-border)]"
           )}
         />
         <span
           className={cn(
             "rounded-full border px-2 py-0.5",
             isActive
-              ? "border-cyan-300/70 bg-cyan-400/10"
-              : "border-white/10 bg-white/5"
+              ? "border-[var(--theme-accent)] bg-[var(--theme-accent-soft)]"
+              : "border-[var(--theme-border)] bg-[var(--theme-surface-soft)]"
           )}
         >
           삽입
@@ -318,7 +333,9 @@ export function DataInputPanel() {
         <span
           className={cn(
             "h-px flex-1 transition-colors",
-            isActive ? "bg-cyan-300/80" : "bg-white/10 group-hover:bg-white/20"
+            isActive
+              ? "bg-[var(--theme-accent-strong)]"
+              : "bg-[var(--theme-surface-soft)] group-hover:bg-[var(--theme-border)]"
           )}
         />
       </button>
@@ -353,21 +370,16 @@ export function DataInputPanel() {
     markerRailRef.current.style.transform = `translateY(-${event.currentTarget.scrollTop}px)`;
   };
 
+  const applyInlineCommand = (command: Parameters<typeof reduceInlineEditCommand>[1]) => {
+    setBlocks((prev) => reduceInlineEditCommand(prev, command));
+  };
+
   const updateSegmentHtml = (segmentId: string, html: string) => {
-    const cleaned = sanitizeDraftHtml(html);
-    setBlocks((prev) =>
-      prev.map((block) => ({
-        ...block,
-        segments: block.segments.map((segment) =>
-          segment.id === segmentId && segment.type === "text"
-            ? {
-                ...segment,
-                html: cleaned.trim() === "" ? "&nbsp;" : cleaned,
-              }
-            : segment
-        ),
-      }))
-    );
+    applyInlineCommand({
+      type: "segment/set-html",
+      segmentId,
+      html,
+    });
   };
 
   const handleSegmentCommit = (segmentId: string) => {
@@ -377,24 +389,15 @@ export function DataInputPanel() {
   };
 
   const handleDeleteBlock = (id: string) => {
-    setBlocks((prev) => prev.filter((block) => block.id !== id));
+    const result = deleteBlockById(blocks, id, insertionIndex);
+    setBlocks(result.blocks);
+    if (result.insertionIndex !== insertionIndex) {
+      writeInsertionIndex(result.insertionIndex);
+    }
   };
 
   const toggleBlockExpanded = (blockId: string) => {
     setExpandedBlockId((prev) => (prev === blockId ? null : blockId));
-  };
-
-  const updateBlockSegments = (
-    blockId: string,
-    updater: (segments: StepSegment[]) => StepSegment[]
-  ) => {
-    setBlocks((prev) =>
-      prev.map((block) =>
-        block.id === blockId
-          ? { ...block, segments: normalizeSegments(updater(block.segments)) }
-          : block
-      )
-    );
   };
 
   const updateTextSegmentStyle = (
@@ -402,18 +405,12 @@ export function DataInputPanel() {
     segmentId: string,
     partial: Partial<ReturnType<typeof normalizeTextSegmentStyle>>
   ) => {
-    updateBlockSegments(blockId, (segments) =>
-      segments.map((segment) => {
-        if (segment.id !== segmentId || segment.type !== "text") return segment;
-        return {
-          ...segment,
-          style: normalizeTextSegmentStyle({
-            ...segment.style,
-            ...partial,
-          }),
-        };
-      })
-    );
+    applyInlineCommand({
+      type: "block/update-text-style",
+      blockId,
+      segmentId,
+      partialStyle: partial,
+    });
   };
 
   const adjustTextSegmentFontSize = (
@@ -421,32 +418,22 @@ export function DataInputPanel() {
     segmentId: string,
     deltaPx: number
   ) => {
-    updateBlockSegments(blockId, (segments) =>
-      segments.map((segment) => {
-        if (segment.id !== segmentId || segment.type !== "text") return segment;
-        const normalizedStyle = normalizeTextSegmentStyle(segment.style);
-        const currentPx = parseFontSizePx(
-          normalizedStyle.fontSize,
-          DEFAULT_FONT_SIZE_PX
-        );
-        const nextPx = clampFontSizePx(currentPx + deltaPx);
-        if (nextPx === currentPx) return segment;
-        return {
-          ...segment,
-          style: normalizeTextSegmentStyle({
-            ...normalizedStyle,
-            fontSize: `${nextPx}px`,
-          }),
-        };
-      })
-    );
+    applyInlineCommand({
+      type: "block/adjust-text-font-size",
+      blockId,
+      segmentId,
+      deltaPx,
+      minPx: FONT_SIZE_MIN_PX,
+      maxPx: FONT_SIZE_MAX_PX,
+      fallbackPx: DEFAULT_FONT_SIZE_PX,
+    });
   };
 
   const addTextSegment = (blockId: string) => {
-    updateBlockSegments(blockId, (segments) => [
-      ...segments,
-      createTextSegment("&nbsp;", segments.length),
-    ]);
+    applyInlineCommand({
+      type: "block/add-text-segment",
+      blockId,
+    });
   };
 
   const addMediaSegment = (
@@ -456,72 +443,46 @@ export function DataInputPanel() {
     width: number,
     height: number
   ) => {
-    updateBlockSegments(blockId, (segments) => [
-      ...segments,
-      createMediaSegment(type, src, width, height, segments.length),
-    ]);
+    applyInlineCommand({
+      type: "block/add-media-segment",
+      blockId,
+      mediaType: type,
+      src,
+      width,
+      height,
+    });
   };
 
   const removeSegment = (blockId: string, segmentId: string) => {
-    updateBlockSegments(blockId, (segments) => {
-      const next = segments.filter((segment) => segment.id !== segmentId);
-      const hasText = next.some((segment) => segment.type === "text");
-      if (!hasText) {
-        return [createTextSegment("&nbsp;", 0), ...next];
-      }
-      return next;
+    applyInlineCommand({
+      type: "block/remove-segment",
+      blockId,
+      segmentId,
+      fallbackTextHtml: "&nbsp;",
     });
   };
 
   const moveSegment = (blockId: string, fromId: string, toId: string) => {
-    if (fromId === toId) return;
-    updateBlockSegments(blockId, (segments) => {
-      const fromIndex = segments.findIndex((segment) => segment.id === fromId);
-      const toIndex = segments.findIndex((segment) => segment.id === toId);
-      if (fromIndex === -1 || toIndex === -1) return segments;
-      const next = [...segments];
-      const [moved] = next.splice(fromIndex, 1);
-      next.splice(toIndex, 0, moved);
-      return next;
+    applyInlineCommand({
+      type: "block/move-segment",
+      blockId,
+      fromId,
+      toId,
     });
   };
 
   const moveBlock = (fromId: string, toId: string) => {
-    if (fromId === toId) return;
-    setBlocks((prev) => {
-      const fromIndex = prev.findIndex((block) => block.id === fromId);
-      const toIndex = prev.findIndex((block) => block.id === toId);
-      if (fromIndex === -1 || toIndex === -1) return prev;
-      const next = [...prev];
-      const [moved] = next.splice(fromIndex, 1);
-      next.splice(toIndex, 0, moved);
-      return next;
-    });
+    setBlocks((prev) => moveBlockByIdOp(prev, fromId, toId));
   };
 
   const moveBlockByIndex = (index: number, delta: -1 | 1) => {
-    setBlocks((prev) => {
-      const targetIndex = index + delta;
-      if (targetIndex < 0 || targetIndex >= prev.length) return prev;
-      const next = [...prev];
-      const [moved] = next.splice(index, 1);
-      next.splice(targetIndex, 0, moved);
-      return next;
-    });
+    setBlocks((prev) => moveBlockByIndexOp(prev, index, delta));
   };
 
-  const insertBreakBlock = (kind: StepBlockKind) => {
-    const safeIndex = Math.max(0, Math.min(insertionIndex, blocks.length));
-    setBlocks((prev) => {
-      const next = [...prev];
-      next.splice(safeIndex, 0, {
-        id: createBlockId(),
-        kind,
-        segments: [],
-      });
-      return next;
-    });
-    writeInsertionIndex(Math.min(safeIndex + 1, blocks.length + 1));
+  const insertBreakBlock = (kind: BreakBlockKind) => {
+    const result = insertBreakBlockAt(blocks, insertionIndex, kind);
+    setBlocks(result.blocks);
+    writeInsertionIndex(result.insertionIndex);
   };
 
   const handleApply = () => {
@@ -606,7 +567,7 @@ export function DataInputPanel() {
   return (
     <aside
       data-layout-state="state_input_mode"
-      className="fixed inset-0 z-50 flex h-[100dvh] w-full flex-col bg-slate-900/95 px-4 py-4 backdrop-blur-md overscroll-contain xl:static xl:z-auto xl:h-full xl:w-[420px] xl:min-w-[420px] xl:shrink-0 xl:border-l xl:border-white/10 xl:bg-black/40"
+      className="fixed inset-0 z-50 flex h-[100dvh] w-full flex-col bg-[var(--theme-surface-overlay)] px-4 py-4 backdrop-blur-md overscroll-contain xl:static xl:z-auto xl:h-full xl:w-[420px] xl:min-w-[420px] xl:shrink-0 xl:border-l xl:border-[var(--theme-border)] xl:bg-[var(--theme-surface-soft)]"
     >
       <input
         ref={imageInputRef}
@@ -636,7 +597,7 @@ export function DataInputPanel() {
                 "h-11 min-w-[84px] rounded-full px-4 text-xs font-semibold transition-colors",
                 isAdvancedControls
                   ? "text-white/60 hover:bg-white/10 hover:text-white"
-                  : "bg-sky-500 text-white"
+                  : "bg-[var(--theme-accent)] text-[var(--theme-accent-text)]"
               )}
               onClick={() => setIsAdvancedControls(false)}
               data-layout-id="action_mode_compact"
@@ -648,7 +609,7 @@ export function DataInputPanel() {
               className={cn(
                 "h-11 min-w-[84px] rounded-full px-4 text-xs font-semibold transition-colors",
                 isAdvancedControls
-                  ? "bg-sky-500 text-white"
+                  ? "bg-[var(--theme-accent)] text-[var(--theme-accent-text)]"
                   : "text-white/60 hover:bg-white/10 hover:text-white"
               )}
               onClick={() => setIsAdvancedControls(true)}
@@ -779,35 +740,29 @@ export function DataInputPanel() {
             </Button>
           </div>
           <div className="flex flex-col gap-3 pr-1">
-            {(() => {
-              let contentIndex = 0;
-              return blocks.map((block, index) => {
-                let imageIndex = 0;
-                let videoIndex = 0;
-                const isBreakBlock =
-                  Boolean(block.kind) && block.kind !== "content";
-                const stepNumber = isBreakBlock ? null : ++contentIndex;
-                const breakLabel =
-                  block.kind === "line-break"
-                    ? "줄바꿈"
-                    : block.kind === "column-break"
-                      ? "단 나눔"
-                      : block.kind === "page-break"
-                        ? "페이지 이동"
-                        : "구분선";
-                const isExpanded =
-                  !isBreakBlock && expandedBlockId === block.id;
-                const blockPreview =
-                  isBreakBlock ? "" : getBlockPreview(block);
-                return (
+            {editorSurface.blockEntries.map((entry) => {
+              const block = blocks[entry.blockIndex];
+              if (!block) return null;
+              let imageIndex = 0;
+              let videoIndex = 0;
+              const index = entry.blockIndex;
+              const isBreakBlock = entry.isBreakBlock;
+              const contentOrder = contentOrderByBlockId[entry.blockId];
+              const stepNumber =
+                typeof contentOrder === "number" ? contentOrder + 1 : null;
+              const breakLabel = entry.breakLabel ?? EDITOR_SURFACE_BREAK_LABELS.fallback;
+              const isExpanded =
+                !isBreakBlock && expandedBlockId === block.id;
+              const blockPreview = entry.preview;
+              return (
                   <Fragment key={block.id}>
                     {renderInsertionMarker(index)}
                     <div
                       className={cn(
                         "group rounded-lg border bg-white/5",
                         isBreakBlock
-                          ? "min-h-9 border-dashed border-fuchsia-300/40 bg-fuchsia-500/5 px-3 py-2"
-                          : "border-white/10 p-3"
+                          ? "min-h-9 border-dashed border-[var(--theme-accent)] bg-[var(--theme-accent-soft)] px-3 py-2"
+                          : "border-[var(--theme-border)] p-3"
                       )}
                       draggable
                       onDragStart={(event) => {
@@ -832,7 +787,7 @@ export function DataInputPanel() {
                           <GripVertical className="h-4 w-4" />
                         </div>
                         {isBreakBlock ? (
-                          <span className="flex-1 text-xs font-semibold uppercase tracking-[0.16em] text-fuchsia-100/90 break-label">
+                          <span className="flex-1 text-xs font-semibold uppercase tracking-[0.16em] text-[var(--theme-text)] break-label">
                             {breakLabel}
                           </span>
                         ) : (
@@ -1023,7 +978,7 @@ export function DataInputPanel() {
                                             >
                                               A-
                                             </Button>
-                                            <span className="min-w-[56px] border-x border-white/10 px-2 text-center text-[11px] font-semibold text-cyan-100">
+                                            <span className="min-w-[56px] border-x border-[var(--theme-border)] px-2 text-center text-[11px] font-semibold text-[var(--theme-text)]">
                                               {fontSizePx}px
                                             </span>
                                             <Button
@@ -1222,32 +1177,31 @@ export function DataInputPanel() {
                   </div>
                   </Fragment>
                 );
-              });
-            })()}
+              })}
             {renderInsertionMarker(blocks.length)}
           </div>
         </div>
       </div>
 
       {unmatchedBlocks.length > 0 && (
-        <div className="mt-3 rounded-lg border border-amber-300/40 bg-amber-400/10 p-3 text-amber-100">
+        <div className="mt-3 rounded-lg border border-[var(--theme-warning)] bg-[var(--theme-warning-soft)] p-3 text-[var(--theme-text)]">
           <p className="text-xs font-semibold">
             보존 블록 {unmatchedBlocks.length}개가 임시 보관 중입니다.
           </p>
-          <p className="mt-1 text-[11px] text-amber-100/80">
+          <p className="mt-1 text-[11px] text-[var(--theme-text-muted)]">
             적용 전 복원 또는 폐기를 선택해야 데이터 유실 없이 진행됩니다.
           </p>
           <div className="mt-2 flex flex-wrap gap-2">
             <Button
               variant="outline"
-              className="h-10 border-amber-200/40 text-xs text-amber-50 hover:bg-amber-300/10"
+              className="h-10 border-[var(--theme-warning)] text-xs text-[var(--theme-text)] hover:bg-[var(--theme-warning-soft)]"
               onClick={handleRestoreUnmatched}
             >
               보존 블록 복원
             </Button>
             <Button
               variant="ghost"
-              className="h-10 text-xs text-amber-100/90 hover:text-amber-50"
+              className="h-10 text-xs text-[var(--theme-text-muted)] hover:text-[var(--theme-text)]"
               onClick={handleDiscardUnmatched}
             >
               보존 블록 폐기
@@ -1258,7 +1212,7 @@ export function DataInputPanel() {
 
       <div
         data-layout-id="region_drafting_actions"
-        className="sticky bottom-0 mt-4 border-t border-white/10 bg-slate-900/95 pb-[env(safe-area-inset-bottom)] pt-3 xl:bg-black/40"
+        className="sticky bottom-0 mt-4 border-t border-[var(--theme-border)] bg-[var(--theme-surface-overlay)] pb-[env(safe-area-inset-bottom)] pt-3 xl:bg-[var(--theme-surface-soft)]"
       >
         <div className="grid grid-cols-2 gap-2">
           <Button
@@ -1280,14 +1234,14 @@ export function DataInputPanel() {
         <div className="mt-2 grid grid-cols-2 gap-2">
           <Button
             variant="outline"
-            className="h-11 border-cyan-200/40 bg-cyan-500/5 text-cyan-100 hover:bg-cyan-500/15"
+            className="h-11 border-[var(--theme-accent)] bg-[var(--theme-accent-soft)] text-[var(--theme-text)] hover:bg-[var(--theme-accent-strong)]"
             onClick={handleAutoLayout}
             disabled={isLayoutRunning}
           >
             {isLayoutRunning ? "배치 중..." : "Auto Layout"}
           </Button>
           <Button
-            className="h-11 bg-blue-600 text-white hover:bg-blue-500 disabled:bg-blue-900/40 disabled:text-white/50"
+            className="h-11 bg-[var(--theme-accent)] text-[var(--theme-accent-text)] hover:bg-[var(--theme-accent-strong)] disabled:bg-[var(--theme-surface-soft)] disabled:text-[var(--theme-text-subtle)]"
             onClick={handleApply}
             disabled={unmatchedBlocks.length > 0}
           >

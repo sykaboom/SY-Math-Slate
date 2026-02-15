@@ -44,7 +44,9 @@ v10/src/
 |   |   |-- capabilities.ts
 |   |   |-- rolePolicy.ts
 |   |   |-- rolePolicyGuards.ts
-|   |   \-- typography.ts
+|   |   |-- themeTokens.ts
+|   |   |-- typography.ts
+|   |   \-- viewportContract.ts
 |   |-- contracts/
 |   |   |-- fromPersistedDoc.ts
 |   |   |-- index.ts
@@ -76,7 +78,8 @@ v10/src/
 |   |-- sanitize/
 |   |   \-- richTextSanitizer.ts
 |   |-- themes/
-|   |   \-- chalkTheme.ts
+|   |   |-- chalkTheme.ts
+|   |   \-- presets.ts
 |   |-- types/
 |   |   \-- canvas.ts
 |   \-- utils.ts
@@ -107,6 +110,8 @@ v10/src/
 |   |   |-- editing/
 |   |   |-- objects/
 |   |   |   \-- ImageBlock.tsx
+|   |   |-- paste/
+|   |   |   \-- pasteNormalization.ts
 |   |   |-- viewport/
 |   |   |   \-- useViewportInteraction.ts
 |   |   |-- AnchorIndicator.tsx
@@ -120,6 +125,13 @@ v10/src/
 |   |   |-- PageViewport.tsx
 |   |   |-- PasteHelperModal.tsx
 |   |   \-- StaticStrokeLayer.tsx
+|   |-- editor-core/
+|   |   |-- model/
+|   |   |   \-- editorSurface.ts
+|   |   |-- outline/
+|   |   |   \-- documentOutline.ts
+|   |   \-- selection/
+|   |       \-- caretEngine.ts
 |   |-- extensions/
 |   |   |-- adapters/
 |   |   |   |-- index.ts
@@ -140,6 +152,7 @@ v10/src/
 |   |   |-- useAudioPlayer.ts
 |   |   |-- useBoardTransform.ts
 |   |   |-- useCanvas.ts
+|   |   |-- useDocumentOutline.ts
 |   |   |-- useFileIO.ts
 |   |   |-- useImageInsert.ts
 |   |   |-- useOverlayCanvas.ts
@@ -150,6 +163,8 @@ v10/src/
 |   |-- layout/
 |   |   |-- dataInput/
 |   |   |   |-- blockDraft.ts
+|   |   |   |-- blockStructureOps.ts
+|   |   |   |-- inlineEditCommands.ts
 |   |   |   |-- mediaIO.ts
 |   |   |   |-- segmentCommands.ts
 |   |   |   \-- types.ts
@@ -185,6 +200,8 @@ v10/src/
 |   |   \-- auditLogger.ts
 |   |-- policy/
 |   |   \-- policyShadow.ts
+|   |-- shortcuts/
+|   |   \-- useAuthoringShortcuts.ts
 |   |-- store/
 |   |   |-- useCanvasStore.ts
 |   |   |-- useCapabilityStore.ts

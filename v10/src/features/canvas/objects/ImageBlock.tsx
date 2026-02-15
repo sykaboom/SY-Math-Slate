@@ -15,7 +15,7 @@ import { useSnap } from "@features/hooks/useSnap";
 type ResizeCorner = "nw" | "ne" | "sw" | "se";
 
 const HANDLE_CLASS =
-  "absolute h-3 w-3 rounded-full bg-cyan-300 border-2 border-white shadow-[0_0_10px_rgba(var(--neon-cyan-rgb,0,255,255),0.5)]";
+  "absolute h-3 w-3 rounded-full bg-[var(--theme-accent)] border-2 border-[var(--theme-accent-text)] shadow-[0_0_10px_var(--theme-accent-soft)]";
 
 export function ImageBlock({
   item,
@@ -296,7 +296,7 @@ export function ImageBlock({
       style={{ width: style.width, aspectRatio: style.aspectRatio, maxWidth: "100%" }}
     >
       {isSelected && (
-        <div className="absolute -top-12 left-1/2 z-30 flex -translate-x-1/2 items-center gap-2 rounded-full border border-white/10 bg-slate-900/90 px-3 py-1 text-xs text-white/70 shadow-lg backdrop-blur">
+        <div className="absolute -top-12 left-1/2 z-30 flex -translate-x-1/2 items-center gap-2 rounded-full border border-[var(--theme-border)] bg-[var(--theme-surface-overlay)] px-3 py-1 text-xs text-[var(--theme-text-muted)] shadow-lg backdrop-blur">
           <button
             className="flex h-7 w-7 items-center justify-center rounded-full hover:bg-white/10"
             onClick={(event) => {
@@ -329,7 +329,7 @@ export function ImageBlock({
           </button>
           <div className="h-4 w-px bg-white/20" />
           <button
-            className="flex h-7 w-7 items-center justify-center rounded-full text-rose-300 hover:bg-rose-500/20"
+            className="flex h-7 w-7 items-center justify-center rounded-full text-[var(--theme-danger)] hover:bg-[var(--theme-danger-soft)]"
             onClick={(event) => {
               event.stopPropagation();
               handleDelete();

@@ -1,4 +1,5 @@
 import type { StepBlock } from "@core/types/canvas";
+import type { CaretSelectionSnapshot } from "@features/editor-core/selection/caretEngine";
 
 export type StepBlockDraft = StepBlock;
 export type RawSyncReason =
@@ -20,5 +21,6 @@ export interface RawSyncResult {
 }
 
 export type SegmentRefMap = Record<string, HTMLDivElement | null>;
-export type SelectionRefMap = Record<string, Range | null>;
+export type SelectionRefValue = Range | CaretSelectionSnapshot | null;
+export type SelectionRefMap = Record<string, SelectionRefValue>;
 export type SegmentHtmlUpdater = (segmentId: string, html: string) => void;

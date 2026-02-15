@@ -1,4 +1,10 @@
 import { validateRolePolicyPublishCandidate } from "@core/config/rolePolicy";
+import {
+  DEFAULT_THEME_PRESET_ID,
+  isThemePresetId,
+  normalizeThemeGlobalTokenMap,
+  normalizeThemeModuleScopedTokenMap,
+} from "@core/config/themeTokens";
 import { migrateStudioConfigPayload } from "@core/migrations/modStudioMigration";
 import { listKnownUISlotNames } from "@core/extensions/registry";
 import type { StudioDraftBundle } from "@features/mod-studio/core/types";
@@ -44,7 +50,21 @@ const hasValidTheme = (theme: unknown): boolean => {
   if (!isPlainRecord(theme)) return false;
   if (!isPlainRecord(theme.globalTokens)) return false;
   if (!isPlainRecord(theme.moduleScopedTokens)) return false;
-  return Object.values(theme.globalTokens).every((value) => typeof value === "string");
+  const globalTokens = normalizeThemeGlobalTokenMap(theme.globalTokens);
+  const moduleScopedTokens = normalizeThemeModuleScopedTokenMap(
+    theme.moduleScopedTokens
+  );
+  const hasValidPreset =
+    theme.presetId === undefined ||
+    theme.presetId === null ||
+    isThemePresetId(theme.presetId);
+  return (
+    hasValidPreset &&
+    Object.values(globalTokens).every((value) => typeof value === "string") &&
+    Object.values(moduleScopedTokens).every((tokens) =>
+      Object.values(tokens).every((value) => typeof value === "string")
+    )
+  );
 };
 
 export const exportStudioDraftBundle = (bundle: StudioDraftBundle): string =>
@@ -98,7 +118,18 @@ export const importStudioDraftBundle = (payloadText: string): ImportResult => {
       policy: policyCheck.value,
       layout: migrated.value.layout as StudioDraftBundle["layout"],
       modules,
-      theme: migrated.value.theme as StudioDraftBundle["theme"],
+      theme: (() => {
+        const rawTheme = migrated.value.theme as Record<string, unknown>;
+        return {
+          presetId: isThemePresetId(rawTheme.presetId)
+            ? rawTheme.presetId
+            : DEFAULT_THEME_PRESET_ID,
+          globalTokens: normalizeThemeGlobalTokenMap(rawTheme.globalTokens),
+          moduleScopedTokens: normalizeThemeModuleScopedTokenMap(
+            rawTheme.moduleScopedTokens
+          ),
+        } as StudioDraftBundle["theme"];
+      })(),
     },
   };
 };

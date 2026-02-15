@@ -23,6 +23,8 @@ mapfile -t candidates < <(
   } | sort -u
 )
 
+# Theme/module scope guard scripts are auto-discovered via `check_*.sh` naming.
+
 selected=()
 for script in "${candidates[@]}"; do
   base_name="$(basename "$script")"

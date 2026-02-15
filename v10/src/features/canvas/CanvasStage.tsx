@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import type { DragEvent, ReactNode } from "react";
 
+import { extractImageFilesFromClipboard } from "@features/canvas/paste/pasteNormalization";
 import { CanvasLayer } from "@features/canvas/CanvasLayer";
 import { ContentLayer } from "@features/canvas/ContentLayer";
 import { PageViewport } from "@features/canvas/PageViewport";
@@ -99,19 +100,12 @@ function NormalCanvasStage({
       if (active?.isContentEditable || active?.tagName === "INPUT" || active?.tagName === "TEXTAREA") {
         return;
       }
-      const items = event.clipboardData?.items;
-      if (!items) return;
-      let handled = false;
-      for (const item of Array.from(items)) {
-        if (item.type.startsWith("image/")) {
-          const file = item.getAsFile();
-          if (file) {
-            insertImageFile(file);
-            handled = true;
-          }
-        }
+      const imageFiles = extractImageFilesFromClipboard(event);
+      if (imageFiles.length === 0) return;
+      for (const imageFile of imageFiles) {
+        insertImageFile(imageFile);
       }
-      if (handled) event.preventDefault();
+      event.preventDefault();
     };
 
     window.addEventListener("paste", handlePaste);

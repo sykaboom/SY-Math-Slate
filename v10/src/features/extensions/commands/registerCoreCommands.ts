@@ -19,6 +19,8 @@ import {
   type Tool,
 } from "@features/store/useUIStoreBridge";
 
+const canvasStore = useCanvasStore;
+
 export type CommandMigrationDomain =
   | "doc-core"
   | "tooling"
@@ -56,6 +58,8 @@ export const COMMAND_MIGRATION_MAP: Record<
     "nextPage",
     "prevPage",
     "goToPage",
+    "undo",
+    "redo",
     "addPage",
     "deletePage",
     "setColumnCount",
@@ -403,11 +407,11 @@ const cloneStepBlock = (block: StepBlock): StepBlock => ({
 });
 
 const syncDocFromCanvas = (): void => {
-  useDocStore.getState().syncFromCanvas(useCanvasStore.getState());
+  useDocStore.getState().syncFromCanvas(canvasStore.getState());
 };
 
 const commitStepBlocks = (blocks: StepBlock[]): void => {
-  const canvas = useCanvasStore.getState();
+  const canvas = canvasStore.getState();
   canvas.importStepBlocks(blocks.map((block) => cloneStepBlock(block)));
   syncDocFromCanvas();
 };
@@ -1373,10 +1377,36 @@ const executeTriggerSkip = () => {
   };
 };
 
+const executeUndo = () => {
+  const canvas = canvasStore.getState();
+  canvas.undo();
+  syncDocFromCanvas();
+  const next = canvasStore.getState();
+  const currentItems = next.pages[next.currentPageId] ?? [];
+  return {
+    currentPageId: next.currentPageId,
+    strokeCount: currentItems.filter((item) => item.type === "stroke").length,
+    redoDepth: next.strokeRedoByPage[next.currentPageId]?.length ?? 0,
+  };
+};
+
+const executeRedo = () => {
+  const canvas = canvasStore.getState();
+  canvas.redo();
+  syncDocFromCanvas();
+  const next = canvasStore.getState();
+  const currentItems = next.pages[next.currentPageId] ?? [];
+  return {
+    currentPageId: next.currentPageId,
+    strokeCount: currentItems.filter((item) => item.type === "stroke").length,
+    redoDepth: next.strokeRedoByPage[next.currentPageId]?.length ?? 0,
+  };
+};
+
 const executeNextStep = () => {
-  const canvas = useCanvasStore.getState();
+  const canvas = canvasStore.getState();
   canvas.nextStep();
-  const next = useCanvasStore.getState();
+  const next = canvasStore.getState();
   return {
     currentStep: next.currentStep,
     currentPageId: next.currentPageId,
@@ -1384,9 +1414,9 @@ const executeNextStep = () => {
 };
 
 const executePrevStep = () => {
-  const canvas = useCanvasStore.getState();
+  const canvas = canvasStore.getState();
   canvas.prevStep();
-  const next = useCanvasStore.getState();
+  const next = canvasStore.getState();
   return {
     currentStep: next.currentStep,
     currentPageId: next.currentPageId,
@@ -1394,9 +1424,9 @@ const executePrevStep = () => {
 };
 
 const executeGoToStep = (payload: GoToStepPayload) => {
-  const canvas = useCanvasStore.getState();
+  const canvas = canvasStore.getState();
   canvas.goToStep(payload.step);
-  const next = useCanvasStore.getState();
+  const next = canvasStore.getState();
   return {
     requestedStep: payload.step,
     currentStep: next.currentStep,
@@ -1405,9 +1435,9 @@ const executeGoToStep = (payload: GoToStepPayload) => {
 };
 
 const executeNextPage = () => {
-  const canvas = useCanvasStore.getState();
+  const canvas = canvasStore.getState();
   canvas.nextPage();
-  const next = useCanvasStore.getState();
+  const next = canvasStore.getState();
   return {
     currentPageId: next.currentPageId,
     totalPages: next.pageOrder.length,
@@ -1415,9 +1445,9 @@ const executeNextPage = () => {
 };
 
 const executePrevPage = () => {
-  const canvas = useCanvasStore.getState();
+  const canvas = canvasStore.getState();
   canvas.prevPage();
-  const next = useCanvasStore.getState();
+  const next = canvasStore.getState();
   return {
     currentPageId: next.currentPageId,
     totalPages: next.pageOrder.length,
@@ -1425,21 +1455,21 @@ const executePrevPage = () => {
 };
 
 const executeGoToPage = (payload: GoToPagePayload) => {
-  const canvas = useCanvasStore.getState();
+  const canvas = canvasStore.getState();
   if (!canvas.pageOrder.includes(payload.pageId)) {
     throw new Error(`page '${payload.pageId}' was not found.`);
   }
   canvas.goToPage(payload.pageId);
   return {
-    currentPageId: useCanvasStore.getState().currentPageId,
+    currentPageId: canvasStore.getState().currentPageId,
   };
 };
 
 const executeAddPage = () => {
-  const canvas = useCanvasStore.getState();
+  const canvas = canvasStore.getState();
   canvas.addPage();
   syncDocFromCanvas();
-  const next = useCanvasStore.getState();
+  const next = canvasStore.getState();
   return {
     currentPageId: next.currentPageId,
     totalPages: next.pageOrder.length,
@@ -1447,10 +1477,10 @@ const executeAddPage = () => {
 };
 
 const executeDeletePage = (payload: DeletePagePayload) => {
-  const canvas = useCanvasStore.getState();
+  const canvas = canvasStore.getState();
   canvas.deletePage(payload.pageId);
   syncDocFromCanvas();
-  const next = useCanvasStore.getState();
+  const next = canvasStore.getState();
   return {
     currentPageId: next.currentPageId,
     totalPages: next.pageOrder.length,
@@ -1458,10 +1488,10 @@ const executeDeletePage = (payload: DeletePagePayload) => {
 };
 
 const executeSetColumnCount = (payload: SetColumnCountPayload) => {
-  const canvas = useCanvasStore.getState();
+  const canvas = canvasStore.getState();
   canvas.setColumnCount(payload.count);
   syncDocFromCanvas();
-  const next = useCanvasStore.getState();
+  const next = canvasStore.getState();
   return {
     currentPageId: next.currentPageId,
     columnCount: next.pageColumnCounts?.[next.currentPageId] ?? payload.count,
@@ -1469,13 +1499,13 @@ const executeSetColumnCount = (payload: SetColumnCountPayload) => {
 };
 
 const executeInsertBreak = (payload: InsertBreakPayload) => {
-  const canvas = useCanvasStore.getState();
+  const canvas = canvasStore.getState();
   canvas.insertBreak(
     payload.type,
     payload.panelOpen === undefined ? undefined : { panelOpen: payload.panelOpen }
   );
   syncDocFromCanvas();
-  const next = useCanvasStore.getState();
+  const next = canvasStore.getState();
   return {
     type: payload.type,
     totalBlocks: next.stepBlocks.length,
@@ -1486,7 +1516,7 @@ const executeInsertBreak = (payload: InsertBreakPayload) => {
 
 const executeImportStepBlocks = (payload: ImportStepBlocksPayload) => {
   commitStepBlocks(payload.blocks);
-  const next = useCanvasStore.getState();
+  const next = canvasStore.getState();
   return {
     totalBlocks: next.stepBlocks.length,
     currentStep: next.currentStep,
@@ -1495,19 +1525,19 @@ const executeImportStepBlocks = (payload: ImportStepBlocksPayload) => {
 };
 
 const executeSetInsertionIndex = (payload: SetInsertionIndexPayload) => {
-  const canvas = useCanvasStore.getState();
+  const canvas = canvasStore.getState();
   canvas.setInsertionIndex(payload.index);
   syncDocFromCanvas();
   return {
-    insertionIndex: useCanvasStore.getState().insertionIndex,
+    insertionIndex: canvasStore.getState().insertionIndex,
   };
 };
 
 const executeSetAnimationModInput = (payload: SetAnimationModInputPayload) => {
-  const canvas = useCanvasStore.getState();
+  const canvas = canvasStore.getState();
   canvas.setAnimationModInput(cloneModInput(payload.input));
   syncDocFromCanvas();
-  const next = useCanvasStore.getState();
+  const next = canvasStore.getState();
   return {
     hasInput: next.animationModInput !== null,
     format: next.animationModInput?.format ?? null,
@@ -1515,11 +1545,11 @@ const executeSetAnimationModInput = (payload: SetAnimationModInputPayload) => {
 };
 
 const executeClearAllAudio = () => {
-  const canvas = useCanvasStore.getState();
+  const canvas = canvasStore.getState();
   canvas.clearAllAudio();
   syncDocFromCanvas();
   return {
-    totalAudio: Object.keys(useCanvasStore.getState().audioByStep).length,
+    totalAudio: Object.keys(canvasStore.getState().audioByStep).length,
   };
 };
 
@@ -1918,6 +1948,34 @@ const triggerSkipCommand: AppCommand<EmptyPayload, { skipSignal: number }> = {
   execute: executeTriggerSkip,
 };
 
+const undoCommand: AppCommand<
+  EmptyPayload,
+  { currentPageId: string; strokeCount: number; redoDepth: number }
+> = {
+  id: "undo",
+  description: "Undo the latest stroke on the current page.",
+  mutationScope: "doc",
+  requiresApproval: true,
+  auditTag: "command.undo",
+  schema: EMPTY_OBJECT_SCHEMA,
+  validatePayload: validateEmptyPayload,
+  execute: executeUndo,
+};
+
+const redoCommand: AppCommand<
+  EmptyPayload,
+  { currentPageId: string; strokeCount: number; redoDepth: number }
+> = {
+  id: "redo",
+  description: "Redo the latest undone stroke on the current page.",
+  mutationScope: "doc",
+  requiresApproval: true,
+  auditTag: "command.redo",
+  schema: EMPTY_OBJECT_SCHEMA,
+  validatePayload: validateEmptyPayload,
+  execute: executeRedo,
+};
+
 const nextStepCommand: AppCommand<
   EmptyPayload,
   { currentStep: number; currentPageId: string }
@@ -2200,6 +2258,8 @@ const CORE_COMMANDS: readonly AppCommand<unknown, unknown>[] = [
   triggerPlayCommand as AppCommand<unknown, unknown>,
   triggerStopCommand as AppCommand<unknown, unknown>,
   triggerSkipCommand as AppCommand<unknown, unknown>,
+  undoCommand as AppCommand<unknown, unknown>,
+  redoCommand as AppCommand<unknown, unknown>,
   nextStepCommand as AppCommand<unknown, unknown>,
   prevStepCommand as AppCommand<unknown, unknown>,
   goToStepCommand as AppCommand<unknown, unknown>,

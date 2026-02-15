@@ -89,7 +89,7 @@ export function PlayerBar({ readOnly = false }: PlayerBarProps) {
 
   return (
     <div className="w-[min(780px,92vw)]">
-      <div className="flex items-center gap-3 rounded-full border border-white/10 bg-slate-900/80 px-4 py-3 text-white shadow-[0_12px_30px_rgba(0,0,0,0.45)] backdrop-blur-md">
+      <div className="flex items-center gap-3 rounded-full border border-[var(--theme-border)] bg-[var(--theme-surface)] px-4 py-3 text-[var(--theme-text)] shadow-[var(--toolbar-shell-shadow)] backdrop-blur-md">
         <button
           type="button"
           className={cn(

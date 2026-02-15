@@ -1,7 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
+import { isThemePresetId, type ThemePresetId } from "@core/config/themeTokens";
+import { getThemePreset, listThemePresets } from "@core/themes/presets";
 import {
   applyThemeDraftPreview,
   toGlobalThemeVariable,
@@ -11,16 +13,32 @@ import { useModStudioStore } from "@features/store/useModStudioStore";
 
 export function ThemeStudioSection() {
   const themeDraft = useModStudioStore((state) => state.draft.theme);
+  const setThemePreset = useModStudioStore((state) => state.setThemePreset);
   const setThemeToken = useModStudioStore((state) => state.setThemeToken);
   const setModuleThemeToken = useModStudioStore((state) => state.setModuleThemeToken);
+  const presets = useMemo(() => listThemePresets(), []);
   const [globalTokenKey, setGlobalTokenKey] = useState("surface");
-  const [globalTokenValue, setGlobalTokenValue] = useState("#111827");
+  const [globalTokenValue, setGlobalTokenValue] = useState("var(--theme-surface)");
   const [moduleId, setModuleId] = useState("core-toolbar");
   const [moduleTokenKey, setModuleTokenKey] = useState("accent");
-  const [moduleTokenValue, setModuleTokenValue] = useState("#22d3ee");
+  const [moduleTokenValue, setModuleTokenValue] = useState("var(--theme-accent)");
+
+  const applyPreset = (nextPresetId: ThemePresetId) => {
+    const preset = getThemePreset(nextPresetId);
+    setThemePreset(nextPresetId);
+    applyThemeDraftPreview(
+      preset.globalTokens,
+      preset.moduleScopedTokens,
+      nextPresetId
+    );
+  };
 
   const preview = () => {
-    applyThemeDraftPreview(themeDraft.globalTokens, themeDraft.moduleScopedTokens);
+    applyThemeDraftPreview(
+      themeDraft.globalTokens,
+      themeDraft.moduleScopedTokens,
+      themeDraft.presetId
+    );
   };
 
   return (
@@ -28,6 +46,34 @@ export function ThemeStudioSection() {
       <div className="text-[11px] uppercase tracking-[0.18em] text-white/60">
         Theme Tokens
       </div>
+
+      <section className="grid gap-2 rounded border border-white/10 bg-white/5 p-2">
+        <div className="text-[11px] font-semibold text-white/80">Preset</div>
+        <div className="grid gap-2 sm:grid-cols-[minmax(0,1fr)_auto]">
+          <select
+            value={themeDraft.presetId}
+            onChange={(event) => {
+              const nextValue = event.target.value;
+              if (!isThemePresetId(nextValue)) return;
+              applyPreset(nextValue);
+            }}
+            className="rounded border border-white/20 bg-black/40 px-2 py-1 text-xs text-white"
+          >
+            {presets.map((preset) => (
+              <option key={preset.id} value={preset.id}>
+                {preset.label}
+              </option>
+            ))}
+          </select>
+          <button
+            type="button"
+            onClick={() => applyPreset(themeDraft.presetId)}
+            className="rounded border border-white/20 px-2 py-1 text-[11px] text-white/80 hover:bg-white/10"
+          >
+            Apply Preset
+          </button>
+        </div>
+      </section>
 
       <section className="grid gap-2 rounded border border-white/10 bg-white/5 p-2">
         <div className="text-[11px] font-semibold text-white/80">Global token</div>
@@ -100,7 +146,7 @@ export function ThemeStudioSection() {
       <button
         type="button"
         onClick={preview}
-        className="w-fit rounded border border-cyan-400/40 bg-cyan-500/15 px-2 py-1 text-[11px] text-cyan-100 hover:bg-cyan-500/25"
+        className="w-fit rounded border border-[var(--theme-border-strong)] bg-[var(--theme-accent-soft)] px-2 py-1 text-[11px] text-[var(--theme-text)] hover:bg-[var(--theme-accent-strong)]"
       >
         Apply Preview
       </button>

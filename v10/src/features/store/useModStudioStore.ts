@@ -1,7 +1,17 @@
 import { create } from "zustand";
 
 import { getRolePolicyDocument } from "@core/config/rolePolicy";
+import {
+  DEFAULT_THEME_PRESET_ID,
+  normalizeThemeGlobalTokenMap,
+  normalizeThemeModuleScopedTokenMap,
+  resolveThemePresetId,
+  sanitizeThemeModuleId,
+  sanitizeThemeTokenKey,
+  type ThemePresetId,
+} from "@core/config/themeTokens";
 import { listKnownUISlotNames, type UISlotName } from "@core/extensions/registry";
+import { getThemePreset } from "@core/themes/presets";
 import {
   MOD_STUDIO_TABS,
   type LayoutDraft,
@@ -37,16 +47,27 @@ const cloneModuleDraft = (module: ModuleDraft): ModuleDraft => ({
   },
 });
 
+const cloneThemeTokenMap = (tokens: Record<string, string>): Record<string, string> => ({
+  ...tokens,
+});
+
 const cloneThemeDraft = (theme: ThemeDraft): ThemeDraft => {
-  const moduleScopedTokens: Record<string, Record<string, string>> = {};
+  const moduleScopedTokens: ThemeDraft["moduleScopedTokens"] = {};
   Object.entries(theme.moduleScopedTokens).forEach(([moduleId, tokens]) => {
-    moduleScopedTokens[moduleId] = { ...tokens };
+    moduleScopedTokens[moduleId] = cloneThemeTokenMap(tokens);
   });
   return {
-    globalTokens: { ...theme.globalTokens },
+    presetId: resolveThemePresetId(theme.presetId, DEFAULT_THEME_PRESET_ID),
+    globalTokens: cloneThemeTokenMap(theme.globalTokens),
     moduleScopedTokens,
   };
 };
+
+const normalizeThemeDraft = (theme: Partial<ThemeDraft> | ThemeDraft): ThemeDraft => ({
+  presetId: resolveThemePresetId(theme.presetId, DEFAULT_THEME_PRESET_ID),
+  globalTokens: normalizeThemeGlobalTokenMap(theme.globalTokens),
+  moduleScopedTokens: normalizeThemeModuleScopedTokenMap(theme.moduleScopedTokens),
+});
 
 const cloneDraftBundle = (bundle: StudioDraftBundle): StudioDraftBundle => ({
   policy: JSON.parse(JSON.stringify(bundle.policy)),
@@ -64,8 +85,20 @@ const createDefaultLayoutDraft = (): LayoutDraft => ({
 });
 
 const createDefaultThemeDraft = (): ThemeDraft => ({
-  globalTokens: {},
-  moduleScopedTokens: {},
+  ...(() => {
+    const preset = getThemePreset(DEFAULT_THEME_PRESET_ID);
+    return {
+      presetId: preset.id,
+      globalTokens: cloneThemeTokenMap(preset.globalTokens),
+      moduleScopedTokens: (() => {
+        const moduleScoped: ThemeDraft["moduleScopedTokens"] = {};
+        Object.entries(preset.moduleScopedTokens).forEach(([moduleId, tokens]) => {
+          moduleScoped[moduleId] = cloneThemeTokenMap(tokens);
+        });
+        return moduleScoped;
+      })(),
+    };
+  })(),
 });
 
 const createDefaultDraftBundle = (): StudioDraftBundle => ({
@@ -106,6 +139,7 @@ type ModStudioState = {
   ) => void;
   upsertModuleDraft: (module: ModuleDraft) => void;
   removeModuleDraft: (moduleId: string) => void;
+  setThemePreset: (presetId: ThemePresetId) => void;
   setThemeToken: (tokenKey: string, tokenValue: string) => void;
   setModuleThemeToken: (
     moduleId: string,
@@ -133,7 +167,10 @@ export const useModStudioStore = create<ModStudioState>((set, get) => ({
     })),
   setDraftBundle: (next) =>
     set(() => ({
-      draft: cloneDraftBundle(next),
+      draft: {
+        ...cloneDraftBundle(next),
+        theme: normalizeThemeDraft(next.theme),
+      },
     })),
   updatePolicyDraft: (policy) =>
     set((state) => ({
@@ -190,35 +227,105 @@ export const useModStudioStore = create<ModStudioState>((set, get) => ({
         modules: state.draft.modules.filter((entry) => entry.id !== moduleId),
       },
     })),
-  setThemeToken: (tokenKey, tokenValue) =>
-    set((state) => ({
-      draft: {
-        ...state.draft,
-        theme: {
-          ...state.draft.theme,
-          globalTokens: {
-            ...state.draft.theme.globalTokens,
-            [tokenKey]: tokenValue,
+  setThemePreset: (presetId) =>
+    set((state) => {
+      const preset = getThemePreset(presetId);
+      return {
+        draft: {
+          ...state.draft,
+          theme: {
+            presetId: preset.id,
+            globalTokens: cloneThemeTokenMap(preset.globalTokens),
+            moduleScopedTokens: normalizeThemeModuleScopedTokenMap(
+              preset.moduleScopedTokens
+            ),
           },
         },
-      },
-    })),
-  setModuleThemeToken: (moduleId, tokenKey, tokenValue) =>
-    set((state) => ({
-      draft: {
-        ...state.draft,
-        theme: {
-          ...state.draft.theme,
-          moduleScopedTokens: {
-            ...state.draft.theme.moduleScopedTokens,
-            [moduleId]: {
-              ...(state.draft.theme.moduleScopedTokens[moduleId] ?? {}),
-              [tokenKey]: tokenValue,
+      };
+    }),
+  setThemeToken: (tokenKey, tokenValue) =>
+    set((state) => {
+      const normalizedKey = sanitizeThemeTokenKey(tokenKey);
+      const normalizedValue = tokenValue.trim();
+      if (!normalizedValue) {
+        if (!(normalizedKey in state.draft.theme.globalTokens)) {
+          return state;
+        }
+        const nextGlobalTokens = { ...state.draft.theme.globalTokens };
+        delete nextGlobalTokens[normalizedKey];
+        return {
+          draft: {
+            ...state.draft,
+            theme: {
+              ...state.draft.theme,
+              globalTokens: nextGlobalTokens,
+            },
+          },
+        };
+      }
+      return {
+        draft: {
+          ...state.draft,
+          theme: {
+            ...state.draft.theme,
+            globalTokens: {
+              ...state.draft.theme.globalTokens,
+              [normalizedKey]: normalizedValue,
             },
           },
         },
-      },
-    })),
+      };
+    }),
+  setModuleThemeToken: (moduleId, tokenKey, tokenValue) =>
+    set((state) => {
+      const normalizedModuleId = sanitizeThemeModuleId(moduleId);
+      const normalizedKey = sanitizeThemeTokenKey(tokenKey);
+      const normalizedValue = tokenValue.trim();
+      if (!normalizedValue) {
+        const existingModuleTokens =
+          state.draft.theme.moduleScopedTokens[normalizedModuleId];
+        if (!existingModuleTokens || !(normalizedKey in existingModuleTokens)) {
+          return state;
+        }
+        const nextModuleTokens = { ...existingModuleTokens };
+        delete nextModuleTokens[normalizedKey];
+
+        const nextModuleScopedTokens = {
+          ...state.draft.theme.moduleScopedTokens,
+        };
+        if (Object.keys(nextModuleTokens).length === 0) {
+          delete nextModuleScopedTokens[normalizedModuleId];
+        } else {
+          nextModuleScopedTokens[normalizedModuleId] = nextModuleTokens;
+        }
+
+        return {
+          draft: {
+            ...state.draft,
+            theme: {
+              ...state.draft.theme,
+              moduleScopedTokens: nextModuleScopedTokens,
+            },
+          },
+        };
+      }
+
+      return {
+        draft: {
+          ...state.draft,
+          theme: {
+            ...state.draft.theme,
+            moduleScopedTokens: {
+              ...state.draft.theme.moduleScopedTokens,
+              [normalizedModuleId]: {
+                ...(state.draft.theme.moduleScopedTokens[normalizedModuleId] ?? {}),
+                [normalizedKey]: normalizedValue,
+              },
+            },
+          },
+        },
+      };
+    }),
   setLastPublishResult: (result) => set(() => ({ lastPublishResult: result })),
   addSnapshot: (reason, bundle) => {
     const snapshot: StudioSnapshot = {

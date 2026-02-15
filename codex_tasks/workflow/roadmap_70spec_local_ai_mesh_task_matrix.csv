@@ -1,0 +1,71 @@
+task_id,slug,title,wave,objective_axis,depends_on_wave,parallel_group,verify_stage,status
+161,governance_invariants_and_gate_contract,Governance Invariants and Gate Contract,W0,governance,[],G0-governance,mid,COMPLETED
+162,hardcoding_token_detection_gate,Hardcoding Token Detection Gate,W0,governance,[],G0-governance,mid,COMPLETED
+163,tablet_mobile_viewport_contract_baseline,Tablet/Mobile Viewport Contract Baseline,W0,mobile,[],G0-platform,mid,COMPLETED
+164,performance_budget_baseline_tablet_mobile,Performance Budget Baseline for Tablet/Mobile,W0,performance,[],G0-platform,mid,COMPLETED
+165,command_mutation_trace_baseline,Command Mutation Trace Baseline,W0,architecture,[],G0-architecture,mid,COMPLETED
+166,feature_flag_rollout_governance,Feature Flag Rollout Governance,W0,release,[],G0-release,end,COMPLETED
+167,theme_token_schema_v2,Theme Token Schema V2,W1,theme,W0,G1-theme,mid,COMPLETED
+168,global_theme_variable_mapping_completion,Global Theme Variable Mapping Completion,W1,theme,W0,G1-theme,mid,COMPLETED
+169,module_scoped_theme_boundaries,Module-Scoped Theme Boundaries,W1,theme,W0,G1-theme,mid,COMPLETED
+170,parchment_notebook_theme_preset_pack,Parchment + Notebook Theme Preset Pack,W1,theme,W0,G1-theme,mid,COMPLETED
+171,theme_preset_switcher_and_preview,Theme Preset Switcher and Preview,W1,theme,W0,G1-theme,mid,COMPLETED
+172,hardcoded_style_elimination_pass_a,Hardcoded Style Elimination Pass A,W1,theme,W0,G1-theme,mid,COMPLETED
+173,hardcoded_style_elimination_pass_b,Hardcoded Style Elimination Pass B,W1,theme,W0,G1-theme,mid,COMPLETED
+174,visual_regression_theme_gate,Visual Regression Theme Gate,W1,theme,W0,G1-theme,end,COMPLETED
+175,editor_surface_domain_model_v1,Editor Surface Domain Model V1,W2,editor,W1,G2-editor,mid,COMPLETED
+176,selection_caret_engine_foundation,Selection/Caret Engine Foundation,W2,editor,W1,G2-editor,mid,COMPLETED
+177,inline_richtext_edit_commandization,Inline RichText Edit Commandization,W2,editor,W1,G2-editor,mid,COMPLETED
+178,block_structure_ops_suite,Block Structure Operations Suite,W2,editor,W1,G2-editor,mid,COMPLETED
+179,clipboard_paste_normalization_pipeline,Clipboard Paste Normalization Pipeline,W2,editor,W1,G2-editor,mid,COMPLETED
+180,undo_redo_command_unification,Undo/Redo Command Unification,W2,editor,W1,G2-editor,mid,COMPLETED
+181,document_outline_navigation_map,Document Outline and Navigation Map,W2,editor,W1,G2-editor,mid,COMPLETED
+182,desktop_authoring_shortcuts_layer,Desktop Authoring Shortcuts Layer,W2,editor,W1,G2-editor,end,COMPLETED
+183,datainput_panel_modular_decomposition,DataInput Panel Modular Decomposition,W3,input_studio,W2,G3-input,mid,PENDING
+184,datainput_headless_logic_hooks,DataInput Headless Logic Hooks,W3,input_studio,W2,G3-input,mid,PENDING
+185,structured_schema_editor_for_content,Structured Schema Editor for Content,W3,input_studio,W2,G3-input,mid,PENDING
+186,llm_draft_request_workflow,LLM Draft Request Workflow,W3,input_studio,W2,G3-input,mid,PENDING
+187,llm_diff_preview_apply_pipeline,LLM Diff Preview and Apply Pipeline,W3,input_studio,W2,G3-input,mid,PENDING
+188,approval_queue_integration_for_drafts,Approval Queue Integration for Drafts,W3,input_studio,W2,G3-input,mid,PENDING
+189,batch_transform_validation_pipeline,Batch Transform and Validation Pipeline,W3,input_studio,W2,G3-input,mid,PENDING
+190,input_studio_publish_rollback,Input Studio Publish and Rollback,W3,input_studio,W2,G3-input,end,PENDING
+191,multimodal_toolresult_contract_v2,Multimodal ToolResult Contract V2,W4,multi_ai,W3,G4-multiai,mid,PENDING
+192,provider_adapter_abi_v1,Provider Adapter ABI V1,W4,multi_ai,W3,G4-multiai,mid,PENDING
+193,llm_provider_reference_adapter,LLM Provider Reference Adapter,W4,multi_ai,W3,G4-multiai,mid,PENDING
+194,image_provider_reference_adapter,Image Provider Reference Adapter,W4,multi_ai,W3,G4-multiai,mid,PENDING
+195,video_provider_reference_adapter,Video Provider Reference Adapter,W4,multi_ai,W3,G4-multiai,mid,PENDING
+196,audio_provider_reference_adapter,Audio Provider Reference Adapter,W4,multi_ai,W3,G4-multiai,mid,PENDING
+197,capability_cost_latency_router,Capability/Cost/Latency Router,W4,multi_ai,W3,G4-routing,mid,PENDING
+198,multimodal_registry_observability,Multimodal Registry Observability,W4,multi_ai,W3,G4-observability,end,PENDING
+199,local_runtime_handshake_protocol,Local Runtime Handshake Protocol,W5,local_ai,W4,G5-local-ai,mid,PENDING
+200,local_ollama_adapter,Local Ollama Adapter,W5,local_ai,W4,G5-local-ai,mid,PENDING
+201,local_lmstudio_adapter,Local LM Studio Adapter,W5,local_ai,W4,G5-local-ai,mid,PENDING
+202,local_webgpu_onnx_adapter,Local WebGPU/ONNX Adapter,W5,local_ai,W4,G5-local-ai,mid,PENDING
+203,async_job_orchestrator_v1,Async Job Orchestrator V1,W5,local_ai,W4,G5-orchestration,mid,PENDING
+204,ai_output_asset_pipeline,AI Output Asset Pipeline,W5,local_ai,W4,G5-orchestration,mid,PENDING
+205,local_cloud_fallback_chain,Local-Cloud Fallback Chain,W5,local_ai,W4,G5-routing,mid,PENDING
+206,local_ai_sandbox_permissions,Local AI Sandbox Permissions,W5,local_ai,W4,G5-security,end,PENDING
+207,tablet_layout_shell_rewrite,Tablet Layout Shell Rewrite,W6,mobile,W2+W3,G6-mobile,mid,PENDING
+208,thumb_zone_toolbar_recomposition,Thumb-Zone Toolbar Recomposition,W6,mobile,W2+W3,G6-mobile,mid,PENDING
+209,pointer_gesture_conflict_resolution,Pointer Gesture Conflict Resolution,W6,mobile,W2+W3,G6-mobile,mid,PENDING
+210,stylus_palm_rejection_heuristics,Stylus Palm-Rejection Heuristics,W6,mobile,W2+W3,G6-mobile,mid,PENDING
+211,low_end_tablet_render_optimization,Low-End Tablet Render Optimization,W6,mobile,W2+W3,G6-perf,mid,PENDING
+212,offline_first_session_draft_queue,Offline-First Session Draft Queue,W6,mobile,W2+W3,G6-mobile,end,PENDING
+213,internet_realtime_backplane,Internet Realtime Backplane,W7,collaboration,W5+W6,G7-collab,mid,PENDING
+214,host_student_role_sync_hardening,Host/Student Role Sync Hardening,W7,collaboration,W5+W6,G7-collab,mid,PENDING
+215,shared_presence_laser_stream,Shared Presence and Laser Stream,W7,collaboration,W5+W6,G7-collab,mid,PENDING
+216,collaborative_conflict_resolution_policy,Collaborative Conflict Resolution Policy,W7,collaboration,W5+W6,G7-collab,mid,PENDING
+217,community_core_post_comment_report,Community Core Post/Comment/Report,W7,platform,W5+W6,G7-platform,mid,PENDING
+218,moderation_console_audit_trail,Moderation Console and Audit Trail,W7,platform,W5+W6,G7-platform,end,PENDING
+219,ugc_safety_filter_pipeline,UGC Safety Filter Pipeline,W8,safety,W7,G8-safety,mid,PENDING
+220,rights_claim_takedown_workflow,Rights Claim and Takedown Workflow,W8,safety,W7,G8-safety,mid,PENDING
+221,ad_policy_enforcement_gates,Ad Policy Enforcement Gates,W8,ads,W7,G8-ads,mid,PENDING
+222,invalid_traffic_detection_telemetry,Invalid Traffic Detection Telemetry,W8,ads,W7,G8-ads,mid,PENDING
+223,trust_safety_slo_oncall_runbooks,Trust/Safety SLO + Oncall Runbooks,W8,operations,W7,G8-ops,end,PENDING
+224,chaos_recovery_drills,Chaos and Recovery Drills,W9,release,W8,G9-release,mid,PENDING
+225,legacy_path_final_purge,Legacy Path Final Purge,W9,release,W8,G9-release,mid,PENDING
+226,beta_release_gate_v2,Beta Release Gate V2,W9,release,W8,G9-release,mid,PENDING
+227,release_candidate_signoff_checklist,Release Candidate Signoff Checklist,W9,release,W8,G9-release,end,PENDING
+228,modding_sdk_cli_scaffold,Modding SDK + CLI Scaffold,W10,growth,W8+W9,G10-growth,mid,PENDING
+229,experimentation_ab_flag_layer,Experimentation A/B Flag Layer,W10,growth,W8+W9,G10-growth,mid,PENDING
+230,extension_marketplace_readiness,Extension Marketplace Readiness,W10,growth,W8+W9,G10-growth,end,PENDING

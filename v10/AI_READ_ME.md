@@ -51,14 +51,14 @@ app/
 core/
   engine/        (headless command bus: command registry, preflight, idempotency)
   contracts/     (NormalizedContent/RenderPlan/TTSScript/ToolResult/ToolRegistry contract types, guards, mappers)
-  config/        (boardSpec, capabilities, typography defaults, rolePolicy + guards)
+  config/        (boardSpec, capabilities, typography defaults, rolePolicy + guards, theme token schema)
   export/        (export pipeline scaffold)
   extensions/    (manifest, registry, connectors, pluginLoader, mcpGateway, runtime scaffold)
   math/          (MathJax loader/render)
   migrations/    (migrateToV2 + modStudioMigration)
   persistence/   (buildPersistedDoc and doc-only shaping helpers)
   sanitize/      (richTextSanitizer)
-  themes/        (chalk theme)
+  themes/        (theme presets + chalk actor theme)
   types/         (canvas data types)
   utils.ts       (shared utility helpers)
 features/
@@ -117,6 +117,7 @@ ui/
 - `useSyncStore`: shared/session-sync authority (`globalStep`, `laserPosition`, `sharedViewport`, `pendingAIQueue`)
 - `useLocalStore`: local device/role authority (`role`, `trustedRoleClaim`, `isPanelOpen`, `localViewport`)
 - `useModStudioStore`: mod-studio draft authority (`policy/layout/modules/theme`, snapshots, publish result)
+  - `theme` draft now uses `presetId + globalTokens + moduleScopedTokens` (preset-first with override merge).
 
 ### Legacy interaction stores (still active)
 - `useCanvasStore`: canvas mutation + layout/session actions (draw, page/step/block mutation facade)
@@ -446,6 +447,24 @@ Located in `features/extensions/`:
   - update helper: `scripts/update_legacy_budget.sh`
 - Layer boundary check:
   - `scripts/check_layer_rules.sh`
+- Hardcoding budget gate (theme/style regression guard):
+  - `scripts/check_v10_hardcoding_budget.sh`
+  - budget source: `codex_tasks/workflow/style_budget.env`
+- Module-scoped theme boundary guard:
+  - `scripts/check_v10_module_theme_scope.sh`
+  - checks sanitized `--mod-*`/`--theme-*` variable generation path.
+- Theme visual contract gate:
+  - `scripts/check_v10_theme_visual_gate.sh`
+  - contract test: `v10/tests/theme_visual_gate.mjs`
+- Viewport contract gate (tablet/mobile baseline):
+  - `scripts/check_v10_viewport_contract.sh`
+  - contract source: `src/core/config/viewportContract.ts`
+- Command write-path baseline gate:
+  - `scripts/check_v10_command_write_path.sh`
+  - budget source: `codex_tasks/workflow/command_path_budget.env`
+- Public feature-flag governance gate:
+  - `scripts/check_v10_feature_flag_registry.sh`
+  - registry source: `codex_tasks/workflow/feature_flag_registry.env`
 - Repository shell verification bundle:
   - middle wave: `VERIFY_STAGE=mid bash scripts/run_repo_verifications.sh`
   - end wave: `VERIFY_STAGE=end bash scripts/run_repo_verifications.sh`
@@ -456,6 +475,8 @@ Located in `features/extensions/`:
   - `cd v10 && npm run build`
 - Beta release gate:
   - `bash scripts/run_beta_quality_gate.sh`
+  - includes: layer guard + theme visual gate + lint/build + smoke/perf/a11y
+  - perf budget source: `codex_tasks/workflow/perf_budget.env`
 - Task generation helper (DAG metadata template-based):
   - `scripts/new_codex_task.sh`
 

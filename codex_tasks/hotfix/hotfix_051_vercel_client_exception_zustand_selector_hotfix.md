@@ -1,4 +1,4 @@
-# Task 159: Vercel Client Exception Hotfix (Zustand Selector Stability)
+# Hotfix 051: Vercel Client Exception (Zustand Selector Stability)
 
 Status: COMPLETED
 Owner: Codex (spec / review / implementation)

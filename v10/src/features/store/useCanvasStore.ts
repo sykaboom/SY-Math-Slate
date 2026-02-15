@@ -22,9 +22,15 @@ export type StrokeInput = Omit<
 > &
   Partial<Pick<StrokeItem, "id" | "x" | "y" | "zIndex">>;
 
+type StrokeRedoEntry = {
+  index: number;
+  stroke: StrokeItem;
+};
+
 interface CanvasState extends PersistedCanvasV2 {
   currentStroke: StrokeItem | null;
   selectedItemId: string | null;
+  strokeRedoByPage: Record<string, StrokeRedoEntry[]>;
   stepBlocks: StepBlock[];
   audioByStep: Record<number, StepAudio>;
   animationModInput: ModInput | null;
@@ -48,6 +54,7 @@ interface CanvasState extends PersistedCanvasV2 {
   goToPage: (pageId: string) => void;
   isPageEmpty: (pageId: string) => boolean;
   undo: () => void;
+  redo: () => void;
   clear: () => void;
   importStepBlocks: (blocks: StepBlock[]) => void;
   setAnimationModInput: (input: ModInput | null) => void;
@@ -106,6 +113,7 @@ const createInitialState = () => {
     insertionIndex: 0,
     anchorMap: null,
     layoutSnapshot: null,
+    strokeRedoByPage: {} as Record<string, StrokeRedoEntry[]>,
   };
 };
 
@@ -187,6 +195,16 @@ const createStrokeItem = (
     y: stroke.y ?? 0,
     zIndex: stroke.zIndex ?? zIndexFallback,
   };
+};
+
+const clearStrokeRedoForPage = (
+  historyByPage: Record<string, StrokeRedoEntry[]>,
+  pageId: string
+) => {
+  if (!(pageId in historyByPage)) return historyByPage;
+  const next = { ...historyByPage };
+  delete next[pageId];
+  return next;
 };
 
 const CONTENT_PADDING = getBoardPadding();
@@ -423,6 +441,7 @@ export const useCanvasStore = create<CanvasState>((set, get) => {
     insertionIndex: initial.insertionIndex,
     anchorMap: initial.anchorMap,
     layoutSnapshot: initial.layoutSnapshot,
+    strokeRedoByPage: initial.strokeRedoByPage,
     setCurrentStroke: (stroke) => set(() => ({ currentStroke: stroke })),
     addStroke: (stroke) =>
       set((state) => {
@@ -435,6 +454,10 @@ export const useCanvasStore = create<CanvasState>((set, get) => {
             [pageId]: [...existing, item],
           },
           currentStroke: null,
+          strokeRedoByPage: clearStrokeRedoForPage(
+            state.strokeRedoByPage,
+            pageId
+          ),
         };
       }),
     seedItems: (items) =>
@@ -447,6 +470,10 @@ export const useCanvasStore = create<CanvasState>((set, get) => {
             ...state.pages,
             [pageId]: items,
           },
+          strokeRedoByPage: clearStrokeRedoForPage(
+            state.strokeRedoByPage,
+            pageId
+          ),
         };
       }),
     addItem: (item) =>
@@ -463,6 +490,10 @@ export const useCanvasStore = create<CanvasState>((set, get) => {
             ...state.pages,
             [pageId]: [...existing, normalized],
           },
+          strokeRedoByPage: clearStrokeRedoForPage(
+            state.strokeRedoByPage,
+            pageId
+          ),
         };
       }),
     selectItem: (id) => set(() => ({ selectedItemId: id })),
@@ -486,6 +517,10 @@ export const useCanvasStore = create<CanvasState>((set, get) => {
             ...state.pages,
             [pageId]: next,
           },
+          strokeRedoByPage: clearStrokeRedoForPage(
+            state.strokeRedoByPage,
+            pageId
+          ),
         };
       }),
     deleteItem: (id) =>
@@ -501,6 +536,10 @@ export const useCanvasStore = create<CanvasState>((set, get) => {
           },
           selectedItemId:
             state.selectedItemId === id ? null : state.selectedItemId,
+          strokeRedoByPage: clearStrokeRedoForPage(
+            state.strokeRedoByPage,
+            pageId
+          ),
         };
       }),
     bringToFront: (id) =>
@@ -516,7 +555,13 @@ export const useCanvasStore = create<CanvasState>((set, get) => {
         const next = existing.map((item) =>
           item.id === id ? { ...item, zIndex: maxZ + 1 } : item
         );
-        return { pages: { ...state.pages, [pageId]: next } };
+        return {
+          pages: { ...state.pages, [pageId]: next },
+          strokeRedoByPage: clearStrokeRedoForPage(
+            state.strokeRedoByPage,
+            pageId
+          ),
+        };
       }),
     sendToBack: (id) =>
       set((state) => {
@@ -531,7 +576,13 @@ export const useCanvasStore = create<CanvasState>((set, get) => {
         const next = existing.map((item) =>
           item.id === id ? { ...item, zIndex: minZ - 1 } : item
         );
-        return { pages: { ...state.pages, [pageId]: next } };
+        return {
+          pages: { ...state.pages, [pageId]: next },
+          strokeRedoByPage: clearStrokeRedoForPage(
+            state.strokeRedoByPage,
+            pageId
+          ),
+        };
       }),
     setColumnCount: (count) =>
       set((state) => {
@@ -624,6 +675,10 @@ export const useCanvasStore = create<CanvasState>((set, get) => {
           currentPageId: nextCurrent ?? state.currentPageId,
           pageColumnCounts: nextColumns,
           anchorMap: nextAnchorMap,
+          strokeRedoByPage: clearStrokeRedoForPage(
+            state.strokeRedoByPage,
+            targetId
+          ),
         };
       }),
     goToPage: (pageId) =>
@@ -650,11 +705,41 @@ export const useCanvasStore = create<CanvasState>((set, get) => {
           }
         }
         if (lastStrokeIndex === -1) return {};
+        const stroke = existing[lastStrokeIndex];
+        if (stroke.type !== "stroke") return {};
+        const history = state.strokeRedoByPage[pageId] ?? [];
         return {
           pages: {
             ...state.pages,
             [pageId]: existing.filter((_, index) => index !== lastStrokeIndex),
           },
+          strokeRedoByPage: {
+            ...state.strokeRedoByPage,
+            [pageId]: [...history, { index: lastStrokeIndex, stroke }],
+          },
+        };
+      }),
+    redo: () =>
+      set((state) => {
+        const pageId = state.currentPageId;
+        const history = state.strokeRedoByPage[pageId] ?? [];
+        if (history.length === 0) return {};
+        const entry = history[history.length - 1];
+        const existing = state.pages[pageId] ?? [];
+        const insertIndex = Math.max(0, Math.min(entry.index, existing.length));
+        const nextPageItems = [...existing];
+        nextPageItems.splice(insertIndex, 0, entry.stroke);
+        const nextHistory = history.slice(0, -1);
+        const nextHistoryByPage =
+          nextHistory.length > 0
+            ? { ...state.strokeRedoByPage, [pageId]: nextHistory }
+            : clearStrokeRedoForPage(state.strokeRedoByPage, pageId);
+        return {
+          pages: {
+            ...state.pages,
+            [pageId]: nextPageItems,
+          },
+          strokeRedoByPage: nextHistoryByPage,
         };
       }),
     clear: () =>
@@ -666,6 +751,10 @@ export const useCanvasStore = create<CanvasState>((set, get) => {
             [pageId]: [],
           },
           currentStroke: null,
+          strokeRedoByPage: clearStrokeRedoForPage(
+            state.strokeRedoByPage,
+            pageId
+          ),
         };
       }),
     importStepBlocks: (blocks) =>
@@ -682,6 +771,7 @@ export const useCanvasStore = create<CanvasState>((set, get) => {
           stepBlocks: blocks,
           insertionIndex: blocks.length,
           anchorMap: null,
+          strokeRedoByPage: {},
         };
       }),
     setAnimationModInput: (input) =>
@@ -735,6 +825,7 @@ export const useCanvasStore = create<CanvasState>((set, get) => {
           pageColumnCounts: built.pageColumnCounts,
           stepBlocks: nextBlocks,
           anchorMap: null,
+          strokeRedoByPage: {},
         };
       }),
     applyAutoLayout: (payload) =>
@@ -751,6 +842,7 @@ export const useCanvasStore = create<CanvasState>((set, get) => {
           anchorMap: payload.anchorMap,
           stepBlocks: payload.stepBlocks ?? state.stepBlocks,
           insertionIndex: (payload.stepBlocks ?? state.stepBlocks).length,
+          strokeRedoByPage: {},
         };
       }),
     captureLayoutSnapshot: () =>
@@ -783,6 +875,7 @@ export const useCanvasStore = create<CanvasState>((set, get) => {
           audioByStep: snapshot.audioByStep ?? state.audioByStep,
           animationModInput: snapshot.animationModInput ?? null,
           layoutSnapshot: null,
+          strokeRedoByPage: {},
         };
       }),
     nextStep: () =>
@@ -922,6 +1015,7 @@ export const useCanvasStore = create<CanvasState>((set, get) => {
         insertionIndex: stepBlocks.length,
         anchorMap: data.anchorMap ?? null,
         layoutSnapshot: null,
+        strokeRedoByPage: {},
       }));
     },
   };

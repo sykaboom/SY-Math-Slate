@@ -13,6 +13,7 @@ import {
 } from "@core/extensions/pluginLoader";
 import {
   applyThemeDraftPreview,
+  resolveThemeDraftTokens,
   toGlobalThemeVariable,
   toModuleScopedThemeVariable,
 } from "@features/mod-studio/theme/themeIsolation";
@@ -93,7 +94,11 @@ const buildManifestFromDraft = (
 };
 
 const applyThemeDraft = (themeDraft: ThemeDraft): void => {
-  applyThemeDraftPreview(themeDraft.globalTokens, themeDraft.moduleScopedTokens);
+  applyThemeDraftPreview(
+    themeDraft.globalTokens,
+    themeDraft.moduleScopedTokens,
+    themeDraft.presetId
+  );
 };
 
 export type StudioPublishPreflightResult =
@@ -189,11 +194,16 @@ export const rollbackStudioSnapshot = (
 export const exportThemeVariables = (
   theme: ThemeDraft
 ): Record<string, string> => {
+  const resolved = resolveThemeDraftTokens(
+    theme.globalTokens,
+    theme.moduleScopedTokens,
+    theme.presetId
+  );
   const result: Record<string, string> = {};
-  Object.entries(theme.globalTokens).forEach(([tokenKey, value]) => {
+  Object.entries(resolved.globalTokens).forEach(([tokenKey, value]) => {
     result[toGlobalThemeVariable(tokenKey)] = value;
   });
-  Object.entries(theme.moduleScopedTokens).forEach(([moduleId, tokens]) => {
+  Object.entries(resolved.moduleScopedTokens).forEach(([moduleId, tokens]) => {
     Object.entries(tokens).forEach(([tokenKey, value]) => {
       result[toModuleScopedThemeVariable(moduleId, tokenKey)] = value;
     });

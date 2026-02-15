@@ -84,7 +84,7 @@ export function PolicyStudioSection() {
           <button
             type="button"
             onClick={handlePublish}
-            className="rounded border border-emerald-400/40 bg-emerald-500/15 px-2 py-1 text-[11px] text-emerald-100 hover:bg-emerald-500/25"
+            className="rounded border border-[var(--theme-success)] bg-[var(--theme-success-soft)] px-2 py-1 text-[11px] text-[var(--theme-text)] hover:bg-[var(--theme-success-soft)]"
           >
             Publish Policy
           </button>
@@ -92,7 +92,7 @@ export function PolicyStudioSection() {
       </div>
 
       {error ? (
-        <div className="rounded border border-rose-400/35 bg-rose-500/10 px-2 py-1.5 text-rose-100">
+        <div className="rounded border border-[var(--theme-danger)] bg-[var(--theme-danger-soft)] px-2 py-1.5 text-[var(--theme-text)]">
           {error}
         </div>
       ) : null}

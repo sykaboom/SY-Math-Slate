@@ -35,10 +35,18 @@ for (const entry of files) {
   totalBytes += fs.statSync(fullPath).size;
 }
 
-const maxBytes = 3_200_000;
+const maxBytesFromEnv = Number.parseInt(
+  process.env.BETA_JS_BUNDLE_MAX_BYTES ?? "",
+  10
+);
+const maxBytes = Number.isFinite(maxBytesFromEnv) && maxBytesFromEnv > 0
+  ? maxBytesFromEnv
+  : 3_200_000;
 assert(
   totalBytes <= maxBytes,
   `JS bundle budget exceeded: ${totalBytes} > ${maxBytes}`
 );
 
-console.log(`[beta_gate_perf_a11y] PASS (js_bytes=${totalBytes})`);
+console.log(
+  `[beta_gate_perf_a11y] PASS (js_bytes=${totalBytes}, budget=${maxBytes})`
+);
