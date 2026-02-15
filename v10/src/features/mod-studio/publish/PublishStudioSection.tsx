@@ -11,21 +11,14 @@ import { emitAuditEvent } from "@features/observability/auditLogger";
 import { useModStudioStore } from "@features/store/useModStudioStore";
 
 export function PublishStudioSection() {
-  const {
-    draft,
-    snapshots,
-    addSnapshot,
-    setDraftBundle,
-    setLastPublishResult,
-    lastPublishResult,
-  } = useModStudioStore((state) => ({
-    draft: state.draft,
-    snapshots: state.snapshots,
-    addSnapshot: state.addSnapshot,
-    setDraftBundle: state.setDraftBundle,
-    setLastPublishResult: state.setLastPublishResult,
-    lastPublishResult: state.lastPublishResult,
-  }));
+  const draft = useModStudioStore((state) => state.draft);
+  const snapshots = useModStudioStore((state) => state.snapshots);
+  const addSnapshot = useModStudioStore((state) => state.addSnapshot);
+  const setDraftBundle = useModStudioStore((state) => state.setDraftBundle);
+  const setLastPublishResult = useModStudioStore(
+    (state) => state.setLastPublishResult
+  );
+  const lastPublishResult = useModStudioStore((state) => state.lastPublishResult);
   const [selectedSnapshotId, setSelectedSnapshotId] = useState<string>("");
 
   const handlePreflight = () => {

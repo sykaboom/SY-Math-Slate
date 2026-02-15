@@ -28,11 +28,9 @@ const renderTabSection = (tab: ModStudioTab) => {
 };
 
 export function ModStudioPanel() {
-  const { activeTab, setActiveTab, close } = useModStudioStore((state) => ({
-    activeTab: state.activeTab,
-    setActiveTab: state.setActiveTab,
-    close: state.close,
-  }));
+  const activeTab = useModStudioStore((state) => state.activeTab);
+  const setActiveTab = useModStudioStore((state) => state.setActiveTab);
+  const close = useModStudioStore((state) => state.close);
 
   return (
     <section

@@ -7,10 +7,8 @@ import { ModStudioPanel } from "./ModStudioPanel";
 
 export function ModStudioShell() {
   const role = useLocalStore((state) => state.role);
-  const { isOpen, toggle } = useModStudioStore((state) => ({
-    isOpen: state.isOpen,
-    toggle: state.toggle,
-  }));
+  const isOpen = useModStudioStore((state) => state.isOpen);
+  const toggle = useModStudioStore((state) => state.toggle);
 
   if (role !== "host") return null;
 

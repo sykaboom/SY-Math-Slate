@@ -420,6 +420,7 @@ Located in `features/extensions/`:
 - **Sanitize HTML**: any `innerHTML` must be sanitized upstream (DOMPurify or allowlist sanitizer).
 - **Layer boundaries**: `core` must not import `features` or `ui`.
 - **JSON-safe persistence**: no DOM/Function in persisted payloads.
+- **Zustand selector stability**: avoid inline object selectors like `useStore((s) => ({ ... }))` unless shallow-equality is applied; prefer primitive/function selectors to prevent client render-loop crashes.
 
 ---
 
