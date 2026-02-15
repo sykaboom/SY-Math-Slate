@@ -6,7 +6,7 @@ import {
 
 export type AuditEvent = {
   timestamp: number;
-  channel: "command" | "policy" | "approval" | "publish";
+  channel: "command" | "policy" | "approval" | "publish" | "extension";
   eventType: string;
   correlationId: string;
   payload: Record<string, unknown>;
@@ -24,6 +24,10 @@ const SECRET_LIKE_KEYS = new Set([
 const auditEventBuffer: AuditEvent[] = [];
 const auditEventListeners = new Set<(event: AuditEvent) => void>();
 const MAX_AUDIT_EVENTS = 500;
+const MAX_JSON_DEPTH = 6;
+const MAX_JSON_ARRAY_LENGTH = 24;
+const MAX_JSON_OBJECT_KEYS = 40;
+const MAX_JSON_STRING_LENGTH = 400;
 
 const shouldEnableAuditLog = (): boolean =>
   process.env.NEXT_PUBLIC_AUDIT_LOG === "1";
@@ -45,6 +49,49 @@ const redactObject = (value: unknown): unknown => {
   });
   return next;
 };
+
+const toJsonSafeAuditValue = (value: unknown, depth = 0): unknown => {
+  if (
+    value === null ||
+    typeof value === "boolean" ||
+    typeof value === "string" ||
+    typeof value === "number"
+  ) {
+    if (typeof value === "number" && !Number.isFinite(value)) {
+      return null;
+    }
+    if (typeof value === "string" && value.length > MAX_JSON_STRING_LENGTH) {
+      return `${value.slice(0, MAX_JSON_STRING_LENGTH)}...[TRUNCATED]`;
+    }
+    return value;
+  }
+
+  if (depth >= MAX_JSON_DEPTH) {
+    return "[TRUNCATED_DEPTH]";
+  }
+
+  if (Array.isArray(value)) {
+    return value
+      .slice(0, MAX_JSON_ARRAY_LENGTH)
+      .map((entry) => toJsonSafeAuditValue(entry, depth + 1));
+  }
+
+  if (!isRecord(value)) {
+    return String(value);
+  }
+
+  const next: Record<string, unknown> = {};
+  const entries = Object.entries(value).slice(0, MAX_JSON_OBJECT_KEYS);
+  entries.forEach(([key, entry]) => {
+    next[key] = toJsonSafeAuditValue(entry, depth + 1);
+  });
+  return next;
+};
+
+const toJsonSafeAuditPayload = (
+  payload: Record<string, unknown>
+): Record<string, unknown> =>
+  toJsonSafeAuditValue(payload) as Record<string, unknown>;
 
 const pushAuditEvent = (event: AuditEvent): void => {
   auditEventBuffer.push(event);
@@ -69,6 +116,102 @@ export const emitAuditEvent = (
     payload: redactObject(payload) as Record<string, unknown>,
   };
   pushAuditEvent(event);
+};
+
+export type AdapterRegistrationAuditPayload = {
+  adapterId: string;
+  supports: string[];
+  source: string;
+};
+
+export type AdapterRoutingDecisionAuditPayload = {
+  toolId: string;
+  selectedAdapterId: string | null;
+  fallbackUsed: boolean;
+  reason: string;
+  candidateCount: number;
+  rankedCandidates: Array<{
+    adapterId: string;
+    eligible: boolean;
+    capabilityScore: number;
+    estimatedCostUsd: number;
+    estimatedLatencyMs: number;
+    rejectionReason?: string;
+  }>;
+};
+
+export type AdapterExecutionResultAuditPayload = {
+  toolId: string;
+  requestedAdapterId: string;
+  selectedAdapterId: string | null;
+  ok: boolean;
+  status?: string;
+  code?: string;
+  error?: string;
+  latencyMs?: number;
+  costUsd?: number;
+  warnings?: string[];
+};
+
+const toSafeSupports = (supports: string[]): string[] =>
+  supports
+    .filter((item) => typeof item === "string")
+    .map((item) => item.trim())
+    .filter((item) => item !== "");
+
+export const emitAdapterRegistrationAuditEvent = (
+  payload: AdapterRegistrationAuditPayload
+): void => {
+  emitAuditEvent(
+    "extension",
+    "adapter-registration",
+    `adapter-registration:${payload.adapterId}:${Date.now()}`,
+    toJsonSafeAuditPayload({
+      adapterId: payload.adapterId,
+      supports: toSafeSupports(payload.supports),
+      source: payload.source,
+    })
+  );
+};
+
+export const emitAdapterRoutingDecisionAuditEvent = (
+  payload: AdapterRoutingDecisionAuditPayload
+): void => {
+  emitAuditEvent(
+    "extension",
+    "adapter-routing-decision",
+    `adapter-routing:${payload.toolId}:${Date.now()}`,
+    toJsonSafeAuditPayload({
+      toolId: payload.toolId,
+      selectedAdapterId: payload.selectedAdapterId,
+      fallbackUsed: payload.fallbackUsed,
+      reason: payload.reason,
+      candidateCount: payload.candidateCount,
+      rankedCandidates: payload.rankedCandidates,
+    })
+  );
+};
+
+export const emitAdapterExecutionResultAuditEvent = (
+  payload: AdapterExecutionResultAuditPayload
+): void => {
+  emitAuditEvent(
+    "extension",
+    "adapter-execution-result",
+    `adapter-execution:${payload.toolId}:${Date.now()}`,
+    toJsonSafeAuditPayload({
+      toolId: payload.toolId,
+      requestedAdapterId: payload.requestedAdapterId,
+      selectedAdapterId: payload.selectedAdapterId,
+      ok: payload.ok,
+      status: payload.status ?? null,
+      code: payload.code ?? null,
+      error: payload.error ?? null,
+      latencyMs: payload.latencyMs ?? null,
+      costUsd: payload.costUsd ?? null,
+      warnings: payload.warnings ?? [],
+    })
+  );
 };
 
 export const listAuditEvents = (): AuditEvent[] => [...auditEventBuffer];

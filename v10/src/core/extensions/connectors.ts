@@ -58,9 +58,20 @@ export type RegisteredToolExecutionRequest = {
   role?: ToolExecutionRole;
 };
 
+export type ToolExecutionAdapterRouteContext = {
+  request: RegisteredToolExecutionRequest;
+  registeredTool: ToolRegistryEntry;
+  fallbackAdapterId: string;
+};
+
+export type ToolExecutionAdapterRouteHook = (
+  context: ToolExecutionAdapterRouteContext
+) => string | null | undefined;
+
 export type RegisteredToolExecutionOptions = {
   getToolById?: (toolId: string) => ToolRegistryEntry | null;
   getAdapterById: (adapterId: string) => ConnectorAdapterInvoker | null;
+  resolveAdapterId?: ToolExecutionAdapterRouteHook;
 };
 
 export type ToolExecutionRole = "host" | "student";
@@ -213,7 +224,23 @@ export const executeRegisteredToolRequest = async (
     );
   }
 
-  const adapterId = resolveToolExecutionAdapterId(registeredTool);
+  const fallbackAdapterId = resolveToolExecutionAdapterId(registeredTool);
+  let adapterId = fallbackAdapterId;
+  if (options.resolveAdapterId) {
+    try {
+      const routedAdapterId = options.resolveAdapterId({
+        request,
+        registeredTool,
+        fallbackAdapterId,
+      });
+      if (typeof routedAdapterId === "string" && routedAdapterId.trim() !== "") {
+        adapterId = routedAdapterId.trim();
+      }
+    } catch {
+      adapterId = fallbackAdapterId;
+    }
+  }
+
   const adapter = options.getAdapterById(adapterId);
   if (!adapter) {
     return failResolution(

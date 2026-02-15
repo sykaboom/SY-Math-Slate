@@ -1,5 +1,6 @@
 import type { ToolRegistryCategory } from "@core/contracts";
 import type { ConnectorRequest, ConnectorResponse } from "@core/extensions/connectors";
+import type { ProviderAdapterAbiMetadata } from "./providerAbi";
 
 export type AdapterHealth = {
   ok: boolean;
@@ -16,4 +17,5 @@ export type ExtensionAdapter = {
   supports: ToolRegistryCategory[];
   invoke: (request: AdapterInvokeRequest) => Promise<ConnectorResponse>;
   health?: () => Promise<AdapterHealth>;
+  providerAbi?: ProviderAdapterAbiMetadata;
 };

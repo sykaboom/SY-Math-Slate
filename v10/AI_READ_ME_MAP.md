@@ -50,6 +50,7 @@ v10/src/
 |   |-- contracts/
 |   |   |-- fromPersistedDoc.ts
 |   |   |-- index.ts
+|   |   |-- multimodalAsset.ts
 |   |   |-- normalizedContent.ts
 |   |   |-- renderPlan.ts
 |   |   |-- toolRegistry.ts
@@ -134,12 +135,21 @@ v10/src/
 |   |       \-- caretEngine.ts
 |   |-- extensions/
 |   |   |-- adapters/
+|   |   |   |-- audioProviderAdapter.ts
+|   |   |   |-- imageProviderAdapter.ts
 |   |   |   |-- index.ts
+|   |   |   |-- llmProviderAdapter.ts
 |   |   |   |-- mockAdapter.ts
+|   |   |   |-- providerAbi.ts
 |   |   |   |-- registry.ts
-|   |   |   \-- types.ts
+|   |   |   |-- types.ts
+|   |   |   \-- videoProviderAdapter.ts
 |   |   |-- commands/
 |   |   |   \-- registerCoreCommands.ts
+|   |   |-- routing/
+|   |   |   |-- capabilityRouter.ts
+|   |   |   |-- index.ts
+|   |   |   \-- types.ts
 |   |   |-- ui/
 |   |   |   |-- CoreSlotComponents.tsx
 |   |   |   |-- ExtensionRuntimeBootstrap.tsx

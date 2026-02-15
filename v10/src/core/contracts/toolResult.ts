@@ -1,5 +1,7 @@
 import type { NormalizedContent } from "./normalizedContent";
 import { validateNormalizedContent } from "./normalizedContent";
+import type { MultimodalAssetPayload } from "./multimodalAsset";
+import { validateMultimodalAssetPayload } from "./multimodalAsset";
 import type { RenderPlan } from "./renderPlan";
 import { validateRenderPlan } from "./renderPlan";
 import type { TTSScript } from "./ttsScript";
@@ -17,7 +19,8 @@ export type ToolResultDiagnostics = {
 export type KnownNormalizedPayload =
   | NormalizedContent
   | RenderPlan
-  | TTSScript;
+  | TTSScript
+  | MultimodalAssetPayload;
 
 export type ToolResult<TNormalized = KnownNormalizedPayload> = {
   toolId: string;
@@ -138,9 +141,26 @@ export const validateKnownNormalizedPayload = (
     }
     return okKnown(validated.value);
   }
+
+  if (
+    value.type === "ImageAssetPayload" ||
+    value.type === "VideoAssetPayload" ||
+    value.type === "AudioAssetPayload"
+  ) {
+    const multimodalValidated = validateMultimodalAssetPayload(value);
+    if (multimodalValidated.ok === false) {
+      return failKnown(
+        multimodalValidated.code,
+        multimodalValidated.message,
+        multimodalValidated.path
+      );
+    }
+    return okKnown(multimodalValidated.value);
+  }
+
   return failKnown(
     "unsupported-normalized-type",
-    "normalized.type must be one of NormalizedContent/RenderPlan/TTSScript.",
+    "normalized.type must be one of NormalizedContent/RenderPlan/TTSScript/ImageAssetPayload/VideoAssetPayload/AudioAssetPayload.",
     "type"
   );
 };
