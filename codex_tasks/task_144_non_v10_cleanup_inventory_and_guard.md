@@ -1,6 +1,6 @@
 # Task 144: Non-v10 Cleanup Inventory and Guardrail Plan
 
-Status: PENDING
+Status: COMPLETED
 Owner: Codex (spec / review / implementation)
 Target: root/
 Date: 2026-02-15
@@ -149,8 +149,8 @@ If NO:
 
 ## Approval Gate (Base Required)
 
-- [ ] Spec self-reviewed by Codex
-- [ ] Explicit user approval received (or delegated chain approval reference)
+- [x] Spec self-reviewed by Codex
+- [x] Explicit user approval received (or delegated chain approval reference)
 
 > Implementation MUST NOT begin until both boxes are checked.
 
@@ -161,33 +161,37 @@ If NO:
 Status: COMPLETED
 
 Changed files:
-- ...
+- `codex_tasks/cleanup/non_v10_inventory.md` (new)
+- `codex_tasks/cleanup/non_v10_cleanup_matrix.md` (new)
 
 Commands run (only if user asked or required by spec):
-- ...
+- `find . -maxdepth 1 -mindepth 1 -printf '%P\\n' | sort`
+- `rg -n "src/main\\.js|index\\.html|vite\\.config\\.js|backup/single-file-v9\\.9\\.html|수학_판서도구_v9\\.9\\.html|해설생성프롬프트\\.txt|oc_tools" ...`
+- `sed -n '1,240p' .github/workflows/gh-pages.yml`
 
 ## Gate Results (Codex fills)
 
 - Lint:
-  - PASS | FAIL | N/A
+  - N/A
 - Build:
-  - PASS | FAIL | N/A
+  - N/A
 - Script checks:
-  - PASS | FAIL | N/A
+  - N/A
 
 ## Failure Classification (Codex fills when any gate fails)
 
 - Pre-existing failures:
-  - ...
+  - None
 - Newly introduced failures:
-  - ...
+  - None
 - Blocking:
-  - YES / NO
+  - NO
 - Mitigation:
-  - ...
+  - N/A
 
 Manual verification notes:
-- ...
+- Root non-v10 자산을 분류표로 정리했고, `ARCHIVE-P1` / `DELETE-FINAL` 게이트를 명시함.
+- GH Pages workflow가 root Vite 경로를 사용 중임을 증거로 남겨 `src/index/vite/package`는 keep/final-only로 제한.
 
 Notes:
-- ...
+- 본 태스크는 계획 산출물 전용(삭제/이동 없음).
