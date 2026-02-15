@@ -153,6 +153,18 @@ export type AdapterExecutionResultAuditPayload = {
   warnings?: string[];
 };
 
+export type AdapterSandboxDecisionAuditPayload = {
+  toolId: string;
+  adapterId: string;
+  role?: string;
+  decision: "allow" | "deny";
+  code: string;
+  reason: string;
+  handshakeSessionId?: string | null;
+  handshakeValid?: boolean | null;
+  meta?: Record<string, unknown> | null;
+};
+
 const toSafeSupports = (supports: string[]): string[] =>
   supports
     .filter((item) => typeof item === "string")
@@ -210,6 +222,27 @@ export const emitAdapterExecutionResultAuditEvent = (
       latencyMs: payload.latencyMs ?? null,
       costUsd: payload.costUsd ?? null,
       warnings: payload.warnings ?? [],
+    })
+  );
+};
+
+export const emitAdapterSandboxDecisionAuditEvent = (
+  payload: AdapterSandboxDecisionAuditPayload
+): void => {
+  emitAuditEvent(
+    "extension",
+    "adapter-sandbox-decision",
+    `adapter-sandbox:${payload.toolId}:${payload.adapterId}:${Date.now()}`,
+    toJsonSafeAuditPayload({
+      toolId: payload.toolId,
+      adapterId: payload.adapterId,
+      role: payload.role ?? null,
+      decision: payload.decision,
+      code: payload.code,
+      reason: payload.reason,
+      handshakeSessionId: payload.handshakeSessionId ?? null,
+      handshakeValid: payload.handshakeValid ?? null,
+      meta: payload.meta ?? null,
     })
   );
 };

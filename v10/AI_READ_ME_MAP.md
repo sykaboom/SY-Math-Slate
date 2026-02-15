@@ -61,7 +61,10 @@ v10/src/
 |   |-- export/
 |   |   \-- exportPipeline.ts
 |   |-- extensions/
+|   |   |-- aiOutputAssetPipeline.ts
 |   |   |-- connectors.ts
+|   |   |-- localAiSandboxPolicy.ts
+|   |   |-- localRuntimeHandshake.ts
 |   |   |-- manifest.ts
 |   |   |-- mcpGateway.ts
 |   |   |-- pluginLoader.ts
@@ -139,16 +142,24 @@ v10/src/
 |   |   |   |-- imageProviderAdapter.ts
 |   |   |   |-- index.ts
 |   |   |   |-- llmProviderAdapter.ts
+|   |   |   |-- lmStudioLocalAdapter.ts
 |   |   |   |-- mockAdapter.ts
+|   |   |   |-- ollamaLocalAdapter.ts
 |   |   |   |-- providerAbi.ts
 |   |   |   |-- registry.ts
 |   |   |   |-- types.ts
-|   |   |   \-- videoProviderAdapter.ts
+|   |   |   |-- videoProviderAdapter.ts
+|   |   |   \-- webgpuOnnxLocalAdapter.ts
 |   |   |-- commands/
 |   |   |   \-- registerCoreCommands.ts
+|   |   |-- jobs/
+|   |   |   |-- asyncJobOrchestrator.ts
+|   |   |   |-- index.ts
+|   |   |   \-- types.ts
 |   |   |-- routing/
 |   |   |   |-- capabilityRouter.ts
 |   |   |   |-- index.ts
+|   |   |   |-- localCloudFallback.ts
 |   |   |   \-- types.ts
 |   |   |-- ui/
 |   |   |   |-- CoreSlotComponents.tsx

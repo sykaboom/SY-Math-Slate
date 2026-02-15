@@ -45,7 +45,8 @@ export type ConnectorResolutionErrorCode =
   | "unregistered-tool"
   | "unknown-adapter"
   | "adapter-invoke-failed"
-  | "approval-required";
+  | "approval-required"
+  | "sandbox-denied";
 
 export type ConnectorToolResultResolution =
   | { ok: true; toolResult: ToolResult<KnownNormalizedPayload> }
@@ -68,10 +69,50 @@ export type ToolExecutionAdapterRouteHook = (
   context: ToolExecutionAdapterRouteContext
 ) => string | null | undefined;
 
+export type ToolExecutionPreflightContext = {
+  request: RegisteredToolExecutionRequest;
+  registeredTool: ToolRegistryEntry;
+  adapterId: string;
+  fallbackAdapterId: string;
+};
+
+export type ToolExecutionPreflightAllowDecision = {
+  ok: true;
+};
+
+export type ToolExecutionPreflightDenyDecision = {
+  ok: false;
+  code: string;
+  error: string;
+};
+
+export type ToolExecutionPreflightDecision =
+  | ToolExecutionPreflightAllowDecision
+  | ToolExecutionPreflightDenyDecision;
+
+export type ToolExecutionPreflightHook = (
+  context: ToolExecutionPreflightContext
+) =>
+  | ToolExecutionPreflightDecision
+  | Promise<ToolExecutionPreflightDecision>;
+
+let toolExecutionPreflightHook: ToolExecutionPreflightHook | null = null;
+
+export const configureToolExecutionPreflightHook = (
+  hook: ToolExecutionPreflightHook
+): void => {
+  toolExecutionPreflightHook = hook;
+};
+
+export const resetToolExecutionPreflightHook = (): void => {
+  toolExecutionPreflightHook = null;
+};
+
 export type RegisteredToolExecutionOptions = {
   getToolById?: (toolId: string) => ToolRegistryEntry | null;
   getAdapterById: (adapterId: string) => ConnectorAdapterInvoker | null;
   resolveAdapterId?: ToolExecutionAdapterRouteHook;
+  preflight?: ToolExecutionPreflightHook;
 };
 
 export type ToolExecutionRole = "host" | "student";
@@ -247,6 +288,41 @@ export const executeRegisteredToolRequest = async (
       "unknown-adapter",
       `adapter '${adapterId}' is not registered for tool '${request.toolId}'.`
     );
+  }
+
+  const preflightHook = options.preflight ?? toolExecutionPreflightHook;
+  if (preflightHook) {
+    try {
+      const preflight = await preflightHook({
+        request,
+        registeredTool,
+        adapterId,
+        fallbackAdapterId,
+      });
+      if (!preflight.ok) {
+        const preflightCode =
+          typeof preflight.code === "string" && preflight.code.trim() !== ""
+            ? preflight.code.trim()
+            : "sandbox-denied";
+        const preflightError =
+          typeof preflight.error === "string" && preflight.error.trim() !== ""
+            ? preflight.error.trim()
+            : "tool execution was denied by preflight policy.";
+        return failResolution(
+          "sandbox-denied",
+          `preflight denied adapter '${adapterId}' for tool '${request.toolId}': ${preflightCode} (${preflightError})`
+        );
+      }
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : "unknown preflight policy evaluation failure";
+      return failResolution(
+        "sandbox-denied",
+        `preflight failed for adapter '${adapterId}' and tool '${request.toolId}': ${message}`
+      );
+    }
   }
 
   try {

@@ -83,3 +83,66 @@ export type CapabilityRouterAuditSummary = {
     rejectionReason?: CapabilityRouterRejectionReason;
   }>;
 };
+
+export type LocalCloudFallbackHealthState =
+  | "healthy"
+  | "degraded"
+  | "unhealthy"
+  | "unknown";
+
+export type LocalCloudFallbackCandidate = {
+  adapterId: string;
+  eligible?: boolean;
+  isLocal?: boolean;
+  estimatedCostUsd?: number;
+  estimatedLatencyMs?: number;
+};
+
+export type LocalCloudFallbackHealthHint = {
+  adapterId: string;
+  state?: LocalCloudFallbackHealthState;
+  healthy?: boolean;
+};
+
+export type LocalCloudFallbackRequest = {
+  candidates: LocalCloudFallbackCandidate[];
+  preferredLocalAdapterIds?: string[];
+  healthHints?: LocalCloudFallbackHealthHint[];
+  fallbackAdapterId?: string;
+};
+
+export type LocalCloudFallbackDecisionReason =
+  | "local-first-selected"
+  | "cloud-selected-local-unavailable"
+  | "cloud-selected-no-local"
+  | "fallback-adapter-selected"
+  | "first-eligible-selected"
+  | "no-candidates"
+  | "no-selectable-candidate";
+
+export type LocalCloudFallbackChainEntry = {
+  adapterId: string;
+  isLocal: boolean;
+  preferredLocal: boolean;
+  eligible: boolean;
+  healthState: LocalCloudFallbackHealthState;
+  healthHinted: boolean;
+  estimatedCostUsd: number;
+  estimatedLatencyMs: number;
+};
+
+export type LocalCloudFallbackDecision = {
+  orderedChain: LocalCloudFallbackChainEntry[];
+  selectedAdapterId: string | null;
+  reason: LocalCloudFallbackDecisionReason;
+  fallbackUsed: boolean;
+};
+
+export type LocalCloudFallbackAuditSummary = {
+  selectedAdapterId: string | null;
+  reason: LocalCloudFallbackDecisionReason;
+  fallbackUsed: boolean;
+  chainCount: number;
+  localCandidateCount: number;
+  orderedChain: LocalCloudFallbackChainEntry[];
+};

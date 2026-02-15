@@ -4,6 +4,15 @@ import { useEffect } from "react";
 
 import { dispatchCommand, listAppCommands } from "@core/engine/commandBus";
 import {
+  configureToolExecutionPreflightHook,
+  resetToolExecutionPreflightHook,
+} from "@core/extensions/connectors";
+import { evaluateLocalAiSandboxPolicy } from "@core/extensions/localAiSandboxPolicy";
+import {
+  createLocalRuntimeSessionEnvelope,
+  type LocalRuntimeHandshakeRole,
+} from "@core/extensions/localRuntimeHandshake";
+import {
   initializeMcpGatewayRuntime,
   type McpGatewayDispatchRequest,
   type McpGatewayDispatchResponse,
@@ -30,8 +39,13 @@ import {
 import { registerCoreCommands } from "@features/extensions/commands/registerCoreCommands";
 import {
   routeAdapterByCapabilityCostLatency,
+  resolveLocalCloudFallbackChain,
   toCapabilityRouterAuditSummary,
+  toLocalCloudFallbackAuditSummary,
   type CapabilityRouterRequestShape,
+  type LocalCloudFallbackChainEntry,
+  type LocalCloudFallbackHealthHint,
+  type LocalCloudFallbackHealthState,
 } from "@features/extensions/routing";
 import {
   registerToolExecutionPolicy,
@@ -41,6 +55,7 @@ import {
   emitAdapterExecutionResultAuditEvent,
   emitAdapterRegistrationAuditEvent,
   emitAdapterRoutingDecisionAuditEvent,
+  emitAdapterSandboxDecisionAuditEvent,
   registerObservabilityRuntime,
   resetObservabilityRuntime,
 } from "@features/observability/auditLogger";
@@ -112,12 +127,248 @@ const pickRoutingRequestShape = (
   };
 };
 
+const appendUniqueAdapterId = (
+  target: string[],
+  seen: Set<string>,
+  value: unknown
+): void => {
+  if (typeof value !== "string") return;
+  const trimmed = value.trim();
+  if (trimmed === "" || seen.has(trimmed)) return;
+  seen.add(trimmed);
+  target.push(trimmed);
+};
+
+const appendAdapterIds = (
+  target: string[],
+  seen: Set<string>,
+  value: unknown
+): void => {
+  if (typeof value === "string") {
+    appendUniqueAdapterId(target, seen, value);
+    return;
+  }
+
+  if (!Array.isArray(value)) return;
+  value.forEach((entry) => {
+    appendUniqueAdapterId(target, seen, entry);
+  });
+};
+
+const pickPreferredLocalAdapterIds = (
+  meta: Record<string, unknown> | undefined,
+  fallbackAdapterId: string
+): string[] => {
+  const preferred: string[] = [];
+  const seen = new Set<string>();
+  appendUniqueAdapterId(preferred, seen, fallbackAdapterId);
+
+  const metaRecord = isRecord(meta) ? meta : null;
+  if (!metaRecord) return preferred;
+
+  appendAdapterIds(preferred, seen, metaRecord.preferredLocalAdapterIds);
+  appendAdapterIds(preferred, seen, metaRecord.localPreferredAdapterIds);
+  appendAdapterIds(preferred, seen, metaRecord.localAdapterIds);
+
+  return preferred;
+};
+
+const parseLocalHealthState = (
+  value: unknown
+): LocalCloudFallbackHealthState | undefined => {
+  if (typeof value !== "string") return undefined;
+  const token = value.trim().toLowerCase();
+  if (
+    token === "healthy" ||
+    token === "degraded" ||
+    token === "unhealthy" ||
+    token === "unknown"
+  ) {
+    return token;
+  }
+  return undefined;
+};
+
+const normalizeHealthHint = (
+  hint: LocalCloudFallbackHealthHint
+): LocalCloudFallbackHealthHint | null => {
+  const adapterId = hint.adapterId.trim();
+  if (adapterId === "") return null;
+
+  const normalizedState = parseLocalHealthState(hint.state);
+  const normalizedHealthy =
+    typeof hint.healthy === "boolean" ? hint.healthy : undefined;
+
+  return {
+    adapterId,
+    ...(normalizedState ? { state: normalizedState } : {}),
+    ...(normalizedHealthy !== undefined ? { healthy: normalizedHealthy } : {}),
+  };
+};
+
+const toHealthHintFromRecord = (value: unknown): LocalCloudFallbackHealthHint | null => {
+  if (!isRecord(value)) return null;
+  const adapterId =
+    readStringFromRecord(value, "adapterId") ?? readStringFromRecord(value, "id");
+  if (!adapterId) return null;
+  const hint: LocalCloudFallbackHealthHint = {
+    adapterId,
+    ...(parseLocalHealthState(value.state)
+      ? { state: parseLocalHealthState(value.state) }
+      : {}),
+    ...(typeof value.healthy === "boolean" ? { healthy: value.healthy } : {}),
+  };
+  return normalizeHealthHint(hint);
+};
+
+const toHealthHintFromMapValue = (
+  adapterId: string,
+  value: unknown
+): LocalCloudFallbackHealthHint | null => {
+  const trimmedAdapterId = adapterId.trim();
+  if (trimmedAdapterId === "") return null;
+
+  if (typeof value === "boolean") {
+    return {
+      adapterId: trimmedAdapterId,
+      healthy: value,
+    };
+  }
+
+  const state = parseLocalHealthState(value);
+  if (state) {
+    return {
+      adapterId: trimmedAdapterId,
+      state,
+    };
+  }
+
+  if (!isRecord(value)) return null;
+  const recordState = parseLocalHealthState(value.state);
+  const recordHealthy = typeof value.healthy === "boolean" ? value.healthy : undefined;
+  return normalizeHealthHint({
+    adapterId: trimmedAdapterId,
+    ...(recordState ? { state: recordState } : {}),
+    ...(recordHealthy !== undefined ? { healthy: recordHealthy } : {}),
+  });
+};
+
+const appendUniqueHealthHint = (
+  target: LocalCloudFallbackHealthHint[],
+  seen: Set<string>,
+  hint: LocalCloudFallbackHealthHint | null
+): void => {
+  if (!hint) return;
+  const normalized = normalizeHealthHint(hint);
+  if (!normalized) return;
+  if (seen.has(normalized.adapterId)) return;
+  seen.add(normalized.adapterId);
+  target.push(normalized);
+};
+
+const appendHealthHintsFromArray = (
+  target: LocalCloudFallbackHealthHint[],
+  seen: Set<string>,
+  value: unknown
+): void => {
+  if (!Array.isArray(value)) return;
+  value.forEach((entry) => {
+    appendUniqueHealthHint(target, seen, toHealthHintFromRecord(entry));
+  });
+};
+
+const appendHealthHintsFromMap = (
+  target: LocalCloudFallbackHealthHint[],
+  seen: Set<string>,
+  value: unknown
+): void => {
+  if (!isRecord(value)) return;
+  Object.entries(value).forEach(([adapterId, entry]) => {
+    appendUniqueHealthHint(target, seen, toHealthHintFromMapValue(adapterId, entry));
+  });
+};
+
+const pickLocalHealthHints = (
+  meta: Record<string, unknown> | undefined
+): LocalCloudFallbackHealthHint[] => {
+  const metaRecord = isRecord(meta) ? meta : null;
+  if (!metaRecord) return [];
+
+  const hints: LocalCloudFallbackHealthHint[] = [];
+  const seen = new Set<string>();
+
+  appendHealthHintsFromArray(hints, seen, metaRecord.adapterHealthHints);
+  appendHealthHintsFromArray(hints, seen, metaRecord.localAdapterHealthHints);
+  appendHealthHintsFromArray(hints, seen, metaRecord.healthHints);
+  appendHealthHintsFromMap(hints, seen, metaRecord.adapterHealthById);
+  appendHealthHintsFromMap(hints, seen, metaRecord.localAdapterHealthById);
+
+  return hints;
+};
+
+const toFallbackAuditReason = (
+  fallbackReason: string,
+  baselineReason: string
+): string => `local-cloud-fallback:${fallbackReason}:baseline=${baselineReason}`;
+
+const toFallbackAuditRankedCandidates = (orderedChain: LocalCloudFallbackChainEntry[]) =>
+  orderedChain.map((entry) => {
+    const healthSelectable = entry.healthState !== "unhealthy";
+    const eligible = entry.eligible && healthSelectable;
+    const capabilityScore =
+      (entry.isLocal ? 2_000 : 1_000) +
+      (entry.preferredLocal ? 200 : 0) +
+      (entry.healthState === "healthy"
+        ? 80
+        : entry.healthState === "degraded"
+          ? 40
+          : entry.healthState === "unknown"
+            ? 20
+            : 0);
+
+    return {
+      adapterId: entry.adapterId,
+      eligible,
+      capabilityScore,
+      estimatedCostUsd: entry.estimatedCostUsd,
+      estimatedLatencyMs: entry.estimatedLatencyMs,
+      rejectionReason: !entry.eligible
+        ? "router-ineligible"
+        : !healthSelectable
+          ? "health-unhealthy"
+          : undefined,
+    };
+  });
+
 type AdapterRoutingHint = {
   estimatedCostUsd?: number;
   estimatedLatencyMs?: number;
   costTier?: string;
   latencyTier?: "low" | "medium" | "high";
 };
+
+const LOCAL_SENSITIVE_ADAPTER_IDS = [
+  "local.ollama",
+  "local.lmstudio",
+  "local.webgpu-onnx",
+] as const;
+
+const resolveHandshakeRole = (role: "host" | "student"): LocalRuntimeHandshakeRole =>
+  role === "host" ? "host" : "student";
+
+const createRuntimeHandshakeSession = (
+  role: LocalRuntimeHandshakeRole,
+  adapterId: string
+) =>
+  createLocalRuntimeSessionEnvelope({
+    sessionId: `local-runtime:${adapterId}:${role}:${Date.now()}`,
+    adapterId,
+    role,
+    meta: {
+      source: "extension-runtime-bootstrap",
+      channel: "local-ai-preflight",
+    },
+  });
 
 const ADAPTER_ROUTING_HINTS: Record<string, AdapterRoutingHint> = {
   "local.mock": {
@@ -295,16 +546,50 @@ const createRoutedAdapter = ({
     });
 
     const decisionSummary = toCapabilityRouterAuditSummary(decision);
-    emitAdapterRoutingDecisionAuditEvent({
-      toolId,
-      selectedAdapterId: decisionSummary.selectedAdapterId,
-      fallbackUsed: decisionSummary.fallbackUsed,
-      reason: decisionSummary.reason,
-      candidateCount: decisionSummary.candidateCount,
-      rankedCandidates: decisionSummary.rankedCandidates,
+    const baselineSelectedAdapterId = decision.selectedAdapterId ?? routedAdapterId;
+    const fallbackDecision = resolveLocalCloudFallbackChain({
+      candidates: decision.rankedCandidates.map((candidate) => ({
+        adapterId: candidate.adapterId,
+        eligible: candidate.eligible,
+        estimatedCostUsd: candidate.estimatedCostUsd,
+        estimatedLatencyMs: candidate.estimatedLatencyMs,
+      })),
+      preferredLocalAdapterIds: pickPreferredLocalAdapterIds(
+        request.meta,
+        toolEntry.execution.localRuntimeId ?? routedAdapterId
+      ),
+      healthHints: pickLocalHealthHints(request.meta),
+      fallbackAdapterId: baselineSelectedAdapterId,
     });
+    const fallbackSummary = toLocalCloudFallbackAuditSummary(fallbackDecision);
+    const selectedAdapterId =
+      fallbackDecision.selectedAdapterId ?? baselineSelectedAdapterId;
 
-    const selectedAdapterId = decision.selectedAdapterId ?? routedAdapterId;
+    const fallbackPathUsed =
+      selectedAdapterId !== baselineSelectedAdapterId || fallbackSummary.fallbackUsed;
+
+    if (fallbackPathUsed) {
+      emitAdapterRoutingDecisionAuditEvent({
+        toolId,
+        selectedAdapterId,
+        fallbackUsed: true,
+        reason: toFallbackAuditReason(fallbackSummary.reason, decisionSummary.reason),
+        candidateCount: fallbackSummary.chainCount,
+        rankedCandidates: toFallbackAuditRankedCandidates(
+          fallbackSummary.orderedChain
+        ),
+      });
+    } else {
+      emitAdapterRoutingDecisionAuditEvent({
+        toolId,
+        selectedAdapterId: decisionSummary.selectedAdapterId,
+        fallbackUsed: decisionSummary.fallbackUsed,
+        reason: decisionSummary.reason,
+        candidateCount: decisionSummary.candidateCount,
+        rankedCandidates: decisionSummary.rankedCandidates,
+      });
+    }
+
     const selectedDelegate =
       delegates.get(selectedAdapterId) ?? delegates.get(routedAdapterId);
 
@@ -579,6 +864,52 @@ export function ExtensionRuntimeBootstrap() {
     registerCoreCommands();
     registerCommandExecutionPolicy();
     registerToolExecutionPolicy();
+    const handshakeRole = resolveHandshakeRole(role);
+    const handshakeByAdapterId = new Map<string, unknown>();
+    LOCAL_SENSITIVE_ADAPTER_IDS.forEach((adapterId) => {
+      handshakeByAdapterId.set(
+        adapterId,
+        createRuntimeHandshakeSession(handshakeRole, adapterId)
+      );
+    });
+    configureToolExecutionPreflightHook((context) => {
+      const decision = evaluateLocalAiSandboxPolicy(
+        {
+          adapterId: context.adapterId,
+          toolId: context.registeredTool.toolId,
+          role: handshakeRole,
+          meta: context.request.meta,
+          handshakeSession: handshakeByAdapterId.get(context.adapterId),
+        },
+        {
+          localAdapterPrefixes: LOCAL_SENSITIVE_ADAPTER_IDS,
+        }
+      );
+
+      emitAdapterSandboxDecisionAuditEvent({
+        toolId: context.registeredTool.toolId,
+        adapterId: context.adapterId,
+        role: handshakeRole,
+        decision: decision.ok ? "allow" : "deny",
+        code: decision.code,
+        reason: decision.ok ? "sandbox-allow" : decision.error,
+        handshakeSessionId: decision.handshakeSessionId,
+        handshakeValid: decision.ok,
+        meta: {
+          requiresHandshake: decision.requiresHandshake,
+          fallbackAdapterId: context.fallbackAdapterId,
+        },
+      });
+
+      if (decision.ok) {
+        return { ok: true };
+      }
+      return {
+        ok: false,
+        code: decision.code,
+        error: decision.error,
+      };
+    });
     registerObservabilityRuntime();
     const enableCoreManifest =
       process.env.NEXT_PUBLIC_CORE_MANIFEST_SHADOW === "1" ||
@@ -610,6 +941,7 @@ export function ExtensionRuntimeBootstrap() {
       resetObservabilityRuntime();
       resetCommandExecutionPolicy();
       resetToolExecutionPolicy();
+      resetToolExecutionPreflightHook();
     };
   }, [clearTrustedRoleClaim, role, setTrustedRoleClaim]);
 

@@ -53,7 +53,7 @@ core/
   contracts/     (NormalizedContent/RenderPlan/TTSScript/MultimodalAssetPayload/ToolResult/ToolRegistry contract types, guards, mappers)
   config/        (boardSpec, capabilities, typography defaults, rolePolicy + guards, theme token schema)
   export/        (export pipeline scaffold)
-  extensions/    (manifest, registry, connectors, pluginLoader, mcpGateway, runtime scaffold)
+  extensions/    (manifest, registry, connectors, pluginLoader, mcpGateway, runtime scaffold, local runtime handshake/sandbox, AI asset pipeline)
   math/          (MathJax loader/render)
   migrations/    (migrateToV2 + modStudioMigration)
   persistence/   (buildPersistedDoc and doc-only shaping helpers)
@@ -64,7 +64,7 @@ core/
 features/
   animation/     (animation model, plan/measure/runtime, modding contract)
   canvas/        (rendering layers, actors, objects, viewport)
-  extensions/    (tool adapter interfaces/registry/provider ABI adapters/routing, command policy + command registrations)
+  extensions/    (tool adapter interfaces/registry/provider ABI adapters/routing, local adapters, async jobs, command policy + command registrations)
   input-studio/  (DataInput headless hooks, schema editor, LLM draft/diff, approval queue payload, publish/rollback, validation pipeline)
   hooks/         (useSequence, usePersistence, useFileIO, useAudioPlayer, ...)
   layout/        (AppLayout, autoLayout, overview)
@@ -211,10 +211,14 @@ ui/
 5) Export/interchange 경로는 `NormalizedContent`만 수용하며, 나머지 타입은 deterministic error로 반환한다.
 6) Provider adapter ABI(`provider-adapter-abi.v1`)는 `features/extensions/adapters/providerAbi.ts`에서 deterministic request/response envelope을 강제한다.
 7) Connector path(`core/extensions/connectors.ts`)는 registered-tool adapter lookup -> invoke -> ToolResult validate 경로를 담당하고, optional adapter route hook을 지원한다.
-8) Capability router(`features/extensions/routing/capabilityRouter.ts`)는 category/capability/cost/latency 기반으로 adapter 후보를 deterministic selection한다.
-9) MCP `call_tool` command route는 command bus 경로를 사용하며, connector path와 별도로 정책/검증을 적용한다.
-10) Provider/MCP specific transport adapters stay in `features/extensions/adapters/**`.
-11) Extension observability(`features/observability/auditLogger.ts`)는 adapter registration/routing/execution 이벤트를 redacted JSON-safe payload로 기록한다.
+8) Connector preflight hook은 local runtime sandbox 정책(`core/extensions/localAiSandboxPolicy.ts`)을 통해 local adapter 실행을 allow/deny한다.
+9) Capability router(`features/extensions/routing/capabilityRouter.ts`)는 category/capability/cost/latency 기반으로 adapter 후보를 deterministic selection한다.
+10) Local-cloud fallback resolver(`features/extensions/routing/localCloudFallback.ts`)는 local-first 체인으로 adapter를 재선정한다.
+11) MCP `call_tool` command route는 command bus 경로를 사용하며, connector path와 별도로 정책/검증을 적용한다.
+12) Provider/MCP/local transport adapters stay in `features/extensions/adapters/**`.
+13) Extension observability(`features/observability/auditLogger.ts`)는 adapter registration/routing/execution/sandbox 이벤트를 redacted JSON-safe payload로 기록한다.
+14) Local runtime handshake(`core/extensions/localRuntimeHandshake.ts`)는 local adapter 실행에 필요한 session envelope validation/expiry check를 제공한다.
+15) AI output asset pipeline(`core/extensions/aiOutputAssetPipeline.ts`)는 multimodal payload를 deterministic descriptor로 normalize한다.
 
 ### Command Bus / Plugin / MCP (Current Runtime)
 1) Declarative plugin clicks and MCP `call_tool` command route 모두 `core/engine/commandBus.ts`로 진입한다.
