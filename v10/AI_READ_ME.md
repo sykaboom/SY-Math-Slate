@@ -87,6 +87,7 @@ ui/
 ## Recent W6 Additions (task_207~212)
 - Tablet shell profile:
   - `features/layout/useTabletShellProfile.ts` provides deterministic viewport class/orientation/safe-area profile.
+  - Hotfix 2026-02-15: `useSyncExternalStore` viewport snapshot path now reuses stable snapshot references to prevent React #185 render-loop recurrence.
   - `features/layout/AppLayout.tsx` uses profile flags for compact insets, left-panel overlay, and bottom chrome safe-area padding.
 - Thumb-zone toolbar:
   - `features/toolbar/ThumbZoneDock.tsx` adds compact mobile/tablet dock shell.

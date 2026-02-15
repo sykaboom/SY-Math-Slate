@@ -39,6 +39,22 @@ const FALLBACK_VIEWPORT: ViewportSnapshot = {
   height: 900,
 };
 
+let cachedViewportSnapshot: ViewportSnapshot = FALLBACK_VIEWPORT;
+
+const toStableViewportSnapshot = (
+  width: number,
+  height: number
+): ViewportSnapshot => {
+  if (
+    cachedViewportSnapshot.width === width &&
+    cachedViewportSnapshot.height === height
+  ) {
+    return cachedViewportSnapshot;
+  }
+  cachedViewportSnapshot = { width, height };
+  return cachedViewportSnapshot;
+};
+
 const readViewportSnapshot = (): ViewportSnapshot => {
   if (typeof window === "undefined") {
     return FALLBACK_VIEWPORT;
@@ -46,10 +62,7 @@ const readViewportSnapshot = (): ViewportSnapshot => {
   const visualViewport = window.visualViewport;
   const width = Math.round(visualViewport?.width ?? window.innerWidth);
   const height = Math.round(visualViewport?.height ?? window.innerHeight);
-  return {
-    width: Math.max(0, width),
-    height: Math.max(0, height),
-  };
+  return toStableViewportSnapshot(Math.max(0, width), Math.max(0, height));
 };
 
 const subscribeToViewportSnapshot = (
@@ -59,11 +72,15 @@ const subscribeToViewportSnapshot = (
     return () => undefined;
   }
 
+  let lastSnapshot = readViewportSnapshot();
   let frameId = 0;
   const notify = () => {
     if (frameId !== 0) return;
     frameId = window.requestAnimationFrame(() => {
       frameId = 0;
+      const nextSnapshot = readViewportSnapshot();
+      if (nextSnapshot === lastSnapshot) return;
+      lastSnapshot = nextSnapshot;
       onStoreChange();
     });
   };
