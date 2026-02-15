@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef } from "react";
 
 import { getBoardSize } from "@core/config/boardSpec";
-import { useUIStore } from "@features/store/useUIStore";
+import { useUIStore } from "@features/store/useUIStoreBridge";
 
 export type BoardTransform = {
   scale: number;

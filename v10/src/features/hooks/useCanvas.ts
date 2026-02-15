@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import type { PointerEvent as ReactPointerEvent } from "react";
 
-import { useUIStore, type LaserType, type PenType } from "@features/store/useUIStore";
+import { useUIStore, type LaserType, type PenType } from "@features/store/useUIStoreBridge";
 import { useCanvasStore } from "@features/store/useCanvasStore";
 import type { CanvasItem, Point, StrokeItem } from "@core/types/canvas";
 import { getBoardSize } from "@core/config/boardSpec";

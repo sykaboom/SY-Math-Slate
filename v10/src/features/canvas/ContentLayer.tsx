@@ -3,7 +3,7 @@ import { useMemo } from "react";
 import type { CSSProperties } from "react";
 
 import { useCanvasStore } from "@features/store/useCanvasStore";
-import { useUIStore } from "@features/store/useUIStore";
+import { useUIStore } from "@features/store/useUIStoreBridge";
 import type { CanvasItem, ImageItem, TextItem } from "@core/types/canvas";
 import { getBoardPadding } from "@core/config/boardSpec";
 import { sanitizeRichTextHtml } from "@core/sanitize/richTextSanitizer";

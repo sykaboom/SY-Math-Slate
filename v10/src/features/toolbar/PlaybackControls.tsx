@@ -4,8 +4,9 @@ import { useMemo } from "react";
 
 import { Popover, PopoverTrigger } from "@ui/components/popover";
 import { Slider } from "@ui/components/slider";
+import { dispatchCommand } from "@core/engine/commandBus";
 import { cn } from "@core/utils";
-import { useUIStore } from "@features/store/useUIStore";
+import { useUIStore } from "@features/store/useUIStoreBridge";
 import { useCanvasStore } from "@features/store/useCanvasStore";
 import {
   ChevronLeft,
@@ -23,21 +24,13 @@ import { ToolbarPanel } from "./atoms/ToolbarPanel";
 export function PlaybackControls() {
   const {
     isAutoPlay,
-    setAutoPlay,
-    triggerPlay,
-    togglePause,
-    triggerStop,
     playbackSpeed,
     autoPlayDelayMs,
-    setPlaybackSpeed,
-    setAutoPlayDelay,
     isAnimating,
     isPaused,
-    setPaused,
     isCapabilityEnabled,
   } = useUIStore();
-  const { pages, currentStep, prevStep, nextStep, goToStep, stepBlocks } =
-    useCanvasStore();
+  const { pages, currentStep, stepBlocks } = useCanvasStore();
   const maxStep = useMemo(() => {
     if (stepBlocks.length > 0) return stepBlocks.length - 1;
     return Object.values(pages).reduce((max, items) => {
@@ -67,35 +60,41 @@ export function PlaybackControls() {
   const canTiming = isCapabilityEnabled("playback.timing");
   const showSettings = canAutoPlay || canTiming;
 
+  const dispatchPlaybackCommand = (commandId: string, payload: unknown = {}) => {
+    void dispatchCommand(commandId, payload, {
+      meta: { source: "toolbar.playback-controls" },
+    }).catch(() => undefined);
+  };
+
   const handlePlayToggle = () => {
     if (isAnimating) {
-      togglePause();
+      dispatchPlaybackCommand("togglePause");
       return;
     }
     if (isPaused) {
-      setPaused(false);
+      dispatchPlaybackCommand("togglePause");
     }
     if (currentStep > maxStep) return;
-    triggerPlay();
+    dispatchPlaybackCommand("triggerPlay");
   };
 
   const handleAutoToggle = () => {
     if (isAutoPlay) {
-      setAutoPlay(false);
+      dispatchPlaybackCommand("toggleAutoPlay");
       return;
     }
-    setAutoPlay(true);
+    dispatchPlaybackCommand("toggleAutoPlay");
     if (isPaused) {
-      setPaused(false);
+      dispatchPlaybackCommand("togglePause");
     }
     if (currentStep > maxStep) return;
-    triggerPlay();
+    dispatchPlaybackCommand("triggerPlay");
   };
 
   const handleStepJump = (value: number) => {
     const target = Math.round(value);
     if (target < 0 || target > maxStep + 1) return;
-    goToStep(target);
+    dispatchPlaybackCommand("goToStep", { step: target });
   };
 
   return (
@@ -109,7 +108,7 @@ export function PlaybackControls() {
       <ToolButton
         icon={Square}
         label="Stop"
-        onClick={triggerStop}
+        onClick={() => dispatchPlaybackCommand("triggerStop")}
         disabled={!isAnimating && !isPaused}
         className="h-8 w-8"
       />
@@ -117,7 +116,7 @@ export function PlaybackControls() {
         <ToolButton
           icon={ChevronLeft}
           label="Previous Step"
-          onClick={prevStep}
+          onClick={() => dispatchPlaybackCommand("prevStep")}
           disabled={!canStepPrev}
           className="h-7 w-7"
         />
@@ -151,7 +150,7 @@ export function PlaybackControls() {
         <ToolButton
           icon={ChevronRight}
           label="Next Step"
-          onClick={nextStep}
+          onClick={() => dispatchPlaybackCommand("nextStep")}
           disabled={!canStepNext}
           className="h-7 w-7"
         />
@@ -198,7 +197,11 @@ export function PlaybackControls() {
                     min={0.1}
                     max={2}
                     step={0.05}
-                    onValueChange={(value) => setPlaybackSpeed(value[0])}
+                    onValueChange={(value) =>
+                      dispatchPlaybackCommand("setPlaybackSpeed", {
+                        speed: value[0] ?? playbackSpeed,
+                      })
+                    }
                   />
                 </div>
               )}
@@ -214,7 +217,11 @@ export function PlaybackControls() {
                     min={300}
                     max={3000}
                     step={100}
-                    onValueChange={(value) => setAutoPlayDelay(value[0])}
+                    onValueChange={(value) =>
+                      dispatchPlaybackCommand("setAutoPlayDelay", {
+                        delayMs: value[0] ?? autoPlayDelayMs,
+                      })
+                    }
                   />
                 </div>
               )}

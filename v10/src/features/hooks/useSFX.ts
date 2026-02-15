@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef } from "react";
 
-import { useUIStore } from "@features/store/useUIStore";
+import { useUIStore } from "@features/store/useUIStoreBridge";
 
 type SfxType = "chalk" | "marker";
 

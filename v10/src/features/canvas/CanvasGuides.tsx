@@ -3,7 +3,7 @@
 import { useMemo } from "react";
 
 import { getBoardSize } from "@core/config/boardSpec";
-import { useUIStore } from "@features/store/useUIStore";
+import { useUIStore } from "@features/store/useUIStoreBridge";
 
 export function CanvasGuides() {
   const { guides, overviewViewportRatio, viewMode } = useUIStore();

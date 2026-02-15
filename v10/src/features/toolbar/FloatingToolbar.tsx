@@ -9,9 +9,10 @@ import { useImageInsert } from "@features/hooks/useImageInsert";
 import { usePersistence } from "@features/hooks/usePersistence";
 import { useSFX } from "@features/hooks/useSFX";
 import { ExtensionSlot } from "@features/extensions/ui/ExtensionSlot";
+import { dispatchCommand, getAppCommandById } from "@core/engine/commandBus";
 import { cn } from "@core/utils";
 import { useCanvasStore } from "@features/store/useCanvasStore";
-import { useUIStore, type Tool } from "@features/store/useUIStore";
+import { useUIStore, type Tool } from "@features/store/useUIStoreBridge";
 import {
   ChevronsLeft,
   ChevronsRight,
@@ -121,6 +122,8 @@ export function FloatingToolbar() {
   ] as const;
   const menuButtonClass =
     "rounded-md border border-toolbar-border/10 bg-toolbar-menu-bg/20 px-2 py-1.5 text-left text-[11px] text-toolbar-text/70 hover:border-toolbar-border/30";
+  const useDeclarativeCoreToolbar =
+    process.env.NEXT_PUBLIC_CORE_TOOLBAR_CUTOVER === "1";
 
   const handleTool = (tool: Tool) => () => setTool(tool);
 
@@ -232,6 +235,25 @@ export function FloatingToolbar() {
       return;
     }
     window.location.reload();
+  };
+
+  const handleInsertBreak = (type: "line" | "column" | "page") => {
+    const fallback = () => insertBreak(type, { panelOpen: isDataInputOpen });
+    if (!getAppCommandById("insertBreak")) {
+      fallback();
+      return;
+    }
+    void dispatchCommand(
+      "insertBreak",
+      { type, options: { panelOpen: isDataInputOpen } },
+      { meta: { source: "floating-toolbar", region: "break-actions" } }
+    )
+      .then((result) => {
+        if (!result.ok && result.code !== "approval-required") {
+          fallback();
+        }
+      })
+      .catch(() => fallback());
   };
 
   useEffect(() => {
@@ -349,34 +371,36 @@ export function FloatingToolbar() {
               : "action_enter_fullscreen_ink_toolbar"
           }
         />
-        <PlaybackControls />
-        <PageNavigator />
+        {!useDeclarativeCoreToolbar && <PlaybackControls />}
+        {!useDeclarativeCoreToolbar && <PageNavigator />}
         <div data-extension-slot-host="toolbar-inline" className="flex items-center">
           <ExtensionSlot slot="toolbar-inline" />
         </div>
-        <div className="flex items-center gap-1 rounded-full border border-toolbar-border/10 bg-toolbar-chip/5 px-2 py-1 text-[11px] text-toolbar-text/70">
-          <ToolButton
-            icon={CornerDownLeft}
-            label="Line Break"
-            onClick={() => insertBreak("line", { panelOpen: isDataInputOpen })}
-            disabled={isOverviewMode}
-            className="h-8 w-8"
-          />
-          <ToolButton
-            icon={Columns}
-            label="Column Break"
-            onClick={() => insertBreak("column", { panelOpen: isDataInputOpen })}
-            disabled={isOverviewMode}
-            className="h-8 w-8"
-          />
-          <ToolButton
-            icon={FilePlus}
-            label="Page Break"
-            onClick={() => insertBreak("page", { panelOpen: isDataInputOpen })}
-            disabled={isOverviewMode}
-            className="h-8 w-8"
-          />
-        </div>
+        {!useDeclarativeCoreToolbar && (
+          <div className="flex items-center gap-1 rounded-full border border-toolbar-border/10 bg-toolbar-chip/5 px-2 py-1 text-[11px] text-toolbar-text/70">
+            <ToolButton
+              icon={CornerDownLeft}
+              label="Line Break"
+              onClick={() => handleInsertBreak("line")}
+              disabled={isOverviewMode}
+              className="h-8 w-8"
+            />
+            <ToolButton
+              icon={Columns}
+              label="Column Break"
+              onClick={() => handleInsertBreak("column")}
+              disabled={isOverviewMode}
+              className="h-8 w-8"
+            />
+            <ToolButton
+              icon={FilePlus}
+              label="Page Break"
+              onClick={() => handleInsertBreak("page")}
+              disabled={isOverviewMode}
+              className="h-8 w-8"
+            />
+          </div>
+        )}
         <Popover>
           <PopoverTrigger asChild>
             <ToolButton icon={MoreHorizontal} label="More" />

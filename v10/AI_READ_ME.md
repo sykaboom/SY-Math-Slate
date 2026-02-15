@@ -115,7 +115,14 @@ ui/
 
 ### Legacy interaction stores (still active)
 - `useCanvasStore`: canvas mutation + layout/session actions (draw, page/step/block mutation facade)
-- `useUIStore`: UI interaction/presentation controls (toolbar/playback/panel/view mode)
+
+### UI domain split stores (task_127 scaffold)
+- `useToolStore`: tool/pen/laser state
+- `useViewportStore`: overview/viewport/view-mode/guides state
+- `usePlaybackStore`: autoplay/playback/sound state
+- `useChromeStore`: panel/paste-helper/data-input/fullscreen/chrome toggles
+- `useCapabilityStore`: capability profile and capability checks
+- `useUIStoreBridge`: compatibility hook exposing legacy `useUIStore` shape over split stores
 
 ### useCanvasStore (state essentials)
 - `pages: Record<pageId, CanvasItem[]>`
@@ -137,16 +144,12 @@ ui/
   - `currentStep = 0`
   - `currentPageId = first page`
 
-### useUIStore (state essentials)
-- Tooling: `activeTool`, `penColor`, `penWidth`, `penOpacity`, `penType`
-- Laser: `laserType`, `laserColor`, `laserWidth`
-- Panels: `isPanelOpen`, `openPanel`, `isDataInputOpen`, `isPasteHelperOpen`
-- Playback: `isAutoPlay`, `playSignal`, `playbackSpeed`, `autoPlayDelayMs`, `isPaused`, `skipSignal`, `stopSignal`, `isAnimating`
-- Overview: `isOverviewMode`, `overviewZoom`, `overviewViewportRatio`
-- Viewport: `viewport` (zoomLevel, panOffset), `isViewportInteracting`
-- Sound: `isSoundEnabled`
-- Capabilities: `capabilityProfile`, `isCapabilityEnabled(...)`
-- Guides: `guides` (alignment snaps), `showBreakGuides`, `showCanvasBorder`
+### useUIStoreBridge (compat essentials)
+- Tooling/Laser read-write delegates to `useToolStore`.
+- Overview/Viewport/View mode/Guides delegates to `useViewportStore`.
+- Playback/Sound delegates to `usePlaybackStore`.
+- Panels/Fullscreen/Chrome toggles delegates to `useChromeStore`.
+- Capability profile/check delegates to `useCapabilityStore`.
 
 ---
 
@@ -241,7 +244,7 @@ app   -> features + ui
   - `@core/config/boardSpec`
   - `@core/config/typography`
   - `@features/store/useCanvasStore`
-  - `@features/store/useUIStore`
+  - `@features/store/useUIStoreBridge`
 - `features/hooks/useFileIO.ts`
   - `@core/migrations/migrateToV2`
   - `@core/persistence/buildPersistedDoc`
@@ -339,7 +342,7 @@ app   -> features + ui
 - `nextPage / prevPage`: session-only page navigation.
 - `captureLayoutSnapshot / restoreLayoutSnapshot`: doc snapshot + restore.
 
-### useUIStore (selected actions)
+### useUIStoreBridge (selected actions)
 - `triggerPlay / triggerStop / triggerSkip`: increments signal counters.
 - `toggleBreakGuides / toggleCanvasBorder`: layout guide visibility toggles.
 - `setAutoPlay / setPaused`: playback controls.
@@ -394,6 +397,7 @@ Located in `features/extensions/`:
 - `toolExecutionPolicy.ts`: connector tool execution role/approval queue policy hooks
 - `commands/registerCoreCommands.ts`: core command registrations for doc mutation facade
 - `ui/ExtensionRuntimeBootstrap.tsx`: slot/adapters/policy/command/mcp runtime bootstrap
+- `ui/registerCoreDeclarativeManifest.ts`: declarative core toolbar shadow/cutover manifest registration
 
 **Permission scope examples**
 - `canvas:read`, `canvas:write`, `net:http`, `llm:invoke`
@@ -417,3 +421,22 @@ Located in `features/extensions/`:
 - File I/O: `features/hooks/useFileIO.ts`
 - Data input panel: `features/layout/DataInputPanel.tsx`
 - Auto layout: `features/layout/autoLayout.ts`
+
+---
+
+## Migration Baseline (Task 119~132)
+- Baseline info check:
+  - `scripts/check_v10_migration_baseline.sh`
+- Layer boundary check:
+  - `scripts/check_layer_rules.sh`
+- Repository shell verification bundle:
+  - `bash scripts/run_repo_verifications.sh`
+- Build gates:
+  - `cd v10 && npm run lint`
+  - `cd v10 && npm run build`
+
+Current migration command domains (source of truth):
+- `features/extensions/commands/registerCoreCommands.ts` -> `COMMAND_MIGRATION_MAP`
+- Optional shadow/cutover flags:
+  - `NEXT_PUBLIC_CORE_MANIFEST_SHADOW=1`: enable declarative core toolbar shadow manifest injection.
+  - `NEXT_PUBLIC_CORE_TOOLBAR_CUTOVER=1`: enable declarative toolbar cutover path for playback/page/break controls.

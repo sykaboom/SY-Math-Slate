@@ -13,7 +13,7 @@ import { ActorLayer } from "@features/canvas/actors/ActorLayer";
 import { AnchorIndicator } from "@features/canvas/AnchorIndicator";
 import { useViewportInteraction } from "@features/canvas/viewport/useViewportInteraction";
 import { useCanvasStore } from "@features/store/useCanvasStore";
-import { useUIStore } from "@features/store/useUIStore";
+import { useUIStore } from "@features/store/useUIStoreBridge";
 import { useImageInsert } from "@features/hooks/useImageInsert";
 import { useSequence } from "@features/hooks/useSequence";
 

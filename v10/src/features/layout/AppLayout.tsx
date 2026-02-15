@@ -11,7 +11,7 @@ import { PlayerBar } from "@features/layout/PlayerBar";
 import { ExtensionSlot } from "@features/extensions/ui/ExtensionSlot";
 import { Button } from "@ui/components/button";
 import { useLocalStore } from "@features/store/useLocalStore";
-import { useUIStore } from "@features/store/useUIStore";
+import { useUIStore } from "@features/store/useUIStoreBridge";
 import { Maximize2, Minimize2, Minus, MonitorPlay, Plus, ZoomIn } from "lucide-react";
 
 const FloatingToolbar = dynamic(

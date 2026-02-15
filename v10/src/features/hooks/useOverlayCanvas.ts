@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import type { PointerEvent as ReactPointerEvent } from "react";
 
-import { useUIStore, type LaserType, type PenType } from "@features/store/useUIStore";
+import { useUIStore, type LaserType, type PenType } from "@features/store/useUIStoreBridge";
 import type { Point, StrokeItem } from "@core/types/canvas";
 
 type LaserPoint = { x: number; y: number; t: number };

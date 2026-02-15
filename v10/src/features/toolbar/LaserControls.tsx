@@ -4,8 +4,9 @@ import {
   ToggleGroup,
   ToggleGroupItem,
 } from "@ui/components/toggle-group";
+import { dispatchCommand } from "@core/engine/commandBus";
 import { cn } from "@core/utils";
-import { useUIStore, type LaserType } from "@features/store/useUIStore";
+import { useUIStore, type LaserType } from "@features/store/useUIStoreBridge";
 
 const laserColors = [
   { label: "Red", value: "#FF3B30", className: "bg-toolbar-danger" },
@@ -14,7 +15,13 @@ const laserColors = [
 ];
 
 export function LaserControls() {
-  const { laserType, laserColor, setLaserType, setLaserColor } = useUIStore();
+  const { laserType, laserColor } = useUIStore();
+
+  const dispatchLaserCommand = (commandId: string, payload: unknown) => {
+    void dispatchCommand(commandId, payload, {
+      meta: { source: "toolbar.laser-controls" },
+    }).catch(() => undefined);
+  };
 
   return (
     <div className="flex w-72 flex-col gap-4">
@@ -25,7 +32,10 @@ export function LaserControls() {
         <ToggleGroup
           type="single"
           value={laserType}
-          onValueChange={(value) => value && setLaserType(value as LaserType)}
+          onValueChange={(value) =>
+            value &&
+            dispatchLaserCommand("setLaserType", { type: value as LaserType })
+          }
           className="mt-3 grid grid-cols-2 gap-2"
         >
           <ToggleGroupItem value="standard" className="text-xs">
@@ -46,7 +56,9 @@ export function LaserControls() {
             <button
               key={color.value}
               type="button"
-              onClick={() => setLaserColor(color.value)}
+              onClick={() =>
+                dispatchLaserCommand("setLaserColor", { color: color.value })
+              }
               className={cn(
                 "h-7 w-7 rounded-full border border-toolbar-border/10 transition",
                 color.className,

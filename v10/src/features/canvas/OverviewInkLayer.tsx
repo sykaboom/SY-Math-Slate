@@ -2,7 +2,7 @@
 
 import { cn } from "@core/utils";
 import { useOverlayCanvas } from "@features/hooks/useOverlayCanvas";
-import { useUIStore } from "@features/store/useUIStore";
+import { useUIStore } from "@features/store/useUIStoreBridge";
 
 export function OverviewInkLayer() {
   const { canvasRef, laserCanvasRef, bind } = useOverlayCanvas();

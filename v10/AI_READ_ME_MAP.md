@@ -124,6 +124,7 @@ v10/src/
 |   |   |-- ui/
 |   |   |   |-- ExtensionRuntimeBootstrap.tsx
 |   |   |   |-- ExtensionSlot.tsx
+|   |   |   |-- registerCoreDeclarativeManifest.ts
 |   |   |   \-- registerCoreSlots.ts
 |   |   |-- commandExecutionPolicy.ts
 |   |   \-- toolExecutionPolicy.ts
@@ -152,10 +153,15 @@ v10/src/
 |   |   \-- Prompter.tsx
 |   |-- store/
 |   |   |-- useCanvasStore.ts
+|   |   |-- useCapabilityStore.ts
+|   |   |-- useChromeStore.ts
 |   |   |-- useDocStore.ts
 |   |   |-- useLocalStore.ts
+|   |   |-- usePlaybackStore.ts
 |   |   |-- useSyncStore.ts
-|   |   \-- useUIStore.ts
+|   |   |-- useToolStore.ts
+|   |   |-- useUIStoreBridge.ts
+|   |   \-- useViewportStore.ts
 |   \-- toolbar/
 |       |-- atoms/
 |       |   |-- ToolbarPanel.tsx

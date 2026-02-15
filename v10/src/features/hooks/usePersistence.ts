@@ -8,7 +8,7 @@ import { toTextItemStyle } from "@core/config/typography";
 import { buildPersistedDoc } from "@core/persistence/buildPersistedDoc";
 import { useCanvasStore } from "@features/store/useCanvasStore";
 import { useDocStore } from "@features/store/useDocStore";
-import { useUIStore } from "@features/store/useUIStore";
+import { useUIStore } from "@features/store/useUIStoreBridge";
 import type { PersistedSlateDoc } from "@core/types/canvas";
 
 const STORAGE_KEY = "v10_board_data";

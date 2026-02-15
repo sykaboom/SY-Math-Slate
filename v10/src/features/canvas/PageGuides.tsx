@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 
 import { getBoardPadding, getBoardSize } from "@core/config/boardSpec";
 import { cn } from "@core/utils";
-import { useUIStore } from "@features/store/useUIStore";
+import { useUIStore } from "@features/store/useUIStoreBridge";
 import { usePageScale } from "@features/canvas/PageViewport";
 
 type PageGuidesProps = {

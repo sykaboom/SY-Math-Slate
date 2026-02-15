@@ -6,7 +6,7 @@ import type { PointerEvent as ReactPointerEvent } from "react";
 import { cn } from "@core/utils";
 import { getBoardSize } from "@core/config/boardSpec";
 import { useCanvasStore } from "@features/store/useCanvasStore";
-import { useUIStore } from "@features/store/useUIStore";
+import { useUIStore } from "@features/store/useUIStoreBridge";
 import type { ImageItem } from "@core/types/canvas";
 import { ArrowDown, ArrowUp, SunMoon, Trash2 } from "lucide-react";
 import { useBoardTransform } from "@features/hooks/useBoardTransform";
@@ -341,6 +341,8 @@ export function ImageBlock({
         </div>
       )}
 
+      {/* Canvas object renderer needs raw img element to preserve pointer behavior. */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={item.src}
         alt="Inserted"

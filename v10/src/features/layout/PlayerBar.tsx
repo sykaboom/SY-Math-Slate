@@ -2,9 +2,10 @@
 
 import { useMemo } from "react";
 
+import { dispatchCommand } from "@core/engine/commandBus";
 import { cn } from "@core/utils";
 import { useCanvasStore } from "@features/store/useCanvasStore";
-import { useUIStore } from "@features/store/useUIStore";
+import { useUIStore } from "@features/store/useUIStoreBridge";
 import { Pause, Play, Square, X } from "lucide-react";
 import { Popover, PopoverTrigger } from "@ui/components/popover";
 import { Slider } from "@ui/components/slider";
@@ -17,20 +18,19 @@ type PlayerBarProps = {
 export function PlayerBar({ readOnly = false }: PlayerBarProps) {
   const { pages, currentPageId, currentStep } = useCanvasStore();
   const {
-    triggerPlay,
-    togglePause,
-    triggerStop,
-    setAutoPlay,
+    isAutoPlay,
     playbackSpeed,
     autoPlayDelayMs,
-    setPlaybackSpeed,
-    setAutoPlayDelay,
     isAnimating,
     isPaused,
-    setPaused,
-    setViewMode,
     isCapabilityEnabled,
   } = useUIStore();
+
+  const dispatchPlayerCommand = (commandId: string, payload: unknown = {}) => {
+    void dispatchCommand(commandId, payload, {
+      meta: { source: "layout.player-bar" },
+    }).catch(() => undefined);
+  };
 
   const maxStep = useMemo(() => {
     const items = pages[currentPageId] ?? [];
@@ -48,22 +48,28 @@ export function PlayerBar({ readOnly = false }: PlayerBarProps) {
 
   const handlePlay = () => {
     if (readOnly) return;
-    setAutoPlay(true);
-    if (isPaused) setPaused(false);
+    if (!isAutoPlay) {
+      dispatchPlayerCommand("toggleAutoPlay");
+    }
+    if (isPaused) {
+      dispatchPlayerCommand("togglePause");
+    }
     if (currentStep > maxStep) return;
-    triggerPlay();
+    dispatchPlayerCommand("triggerPlay");
   };
 
   const handleStop = () => {
     if (readOnly) return;
-    setAutoPlay(false);
-    triggerStop();
+    if (isAutoPlay) {
+      dispatchPlayerCommand("toggleAutoPlay");
+    }
+    dispatchPlayerCommand("triggerStop");
   };
 
   const handlePlayPause = () => {
     if (readOnly) return;
     if (isAnimating) {
-      togglePause();
+      dispatchPlayerCommand("togglePause");
       return;
     }
     handlePlay();
@@ -71,7 +77,7 @@ export function PlayerBar({ readOnly = false }: PlayerBarProps) {
 
   const handleExitPresentation = () => {
     if (readOnly) return;
-    setViewMode("edit");
+    dispatchPlayerCommand("setViewMode", { mode: "edit" });
   };
 
   const speedLabel = useMemo(() => playbackSpeed.toFixed(2), [playbackSpeed]);
@@ -155,7 +161,11 @@ export function PlayerBar({ readOnly = false }: PlayerBarProps) {
                     min={0.1}
                     max={2}
                     step={0.05}
-                    onValueChange={(value) => setPlaybackSpeed(value[0])}
+                    onValueChange={(value) =>
+                      dispatchPlayerCommand("setPlaybackSpeed", {
+                        speed: value[0] ?? playbackSpeed,
+                      })
+                    }
                   />
                   <span className="w-10 text-right text-xs text-white/80">
                     {speedLabel}x
@@ -191,7 +201,11 @@ export function PlayerBar({ readOnly = false }: PlayerBarProps) {
                     min={300}
                     max={3000}
                     step={100}
-                    onValueChange={(value) => setAutoPlayDelay(value[0])}
+                    onValueChange={(value) =>
+                      dispatchPlayerCommand("setAutoPlayDelay", {
+                        delayMs: value[0] ?? autoPlayDelayMs,
+                      })
+                    }
                   />
                   <span className="w-10 text-right text-xs text-white/80">
                     {delayLabel}s

@@ -4,7 +4,7 @@ import { useLayoutEffect, useMemo, useState } from "react";
 
 import { cn } from "@core/utils";
 import { useCanvasStore } from "@features/store/useCanvasStore";
-import { useUIStore } from "@features/store/useUIStore";
+import { useUIStore } from "@features/store/useUIStoreBridge";
 import { getBoardPadding } from "@core/config/boardSpec";
 import { useBoardTransform } from "@features/hooks/useBoardTransform";
 import { chalkTheme } from "@core/themes/chalkTheme";

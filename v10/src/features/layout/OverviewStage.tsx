@@ -6,7 +6,7 @@ import { ContentLayer } from "@features/canvas/ContentLayer";
 import { OverviewInkLayer } from "@features/canvas/OverviewInkLayer";
 import { StaticStrokeLayer } from "@features/canvas/StaticStrokeLayer";
 import { useCanvasStore } from "@features/store/useCanvasStore";
-import { useUIStore } from "@features/store/useUIStore";
+import { useUIStore } from "@features/store/useUIStoreBridge";
 import { cn } from "@core/utils";
 import { getBoardSize } from "@core/config/boardSpec";
 

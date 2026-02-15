@@ -14,7 +14,7 @@ import type {
 import { getBoardPadding } from "@core/config/boardSpec";
 import { toTextItemStyle } from "@core/config/typography";
 import { runAutoLayout } from "@features/layout/autoLayout";
-import { useUIStore } from "@features/store/useUIStore";
+import { useUIStore } from "@features/store/useUIStoreBridge";
 
 export type StrokeInput = Omit<
   StrokeItem,

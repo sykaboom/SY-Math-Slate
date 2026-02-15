@@ -2,8 +2,9 @@
 
 import { ChevronLeft, ChevronRight, Minus, Plus, Trash2 } from "lucide-react";
 
+import { dispatchCommand } from "@core/engine/commandBus";
 import { useCanvasStore } from "@features/store/useCanvasStore";
-import { useUIStore } from "@features/store/useUIStore";
+import { useUIStore } from "@features/store/useUIStoreBridge";
 import { Popover, PopoverTrigger } from "@ui/components/popover";
 import { Slider } from "@ui/components/slider";
 
@@ -15,13 +16,7 @@ export function PageNavigator() {
     pageOrder,
     currentPageId,
     pageColumnCounts,
-    prevPage,
-    nextPage,
-    addPage,
-    deletePage,
-    goToPage,
     isPageEmpty,
-    setColumnCount,
   } = useCanvasStore();
   const { isOverviewMode } = useUIStore();
   const totalPages = pageOrder.length || 1;
@@ -33,12 +28,18 @@ export function PageNavigator() {
   const canPageJump = totalPages > 1;
   const pageSliderValue = Math.min(currentIndex + 1, totalPages);
 
+  const dispatchPageCommand = (commandId: string, payload: unknown = {}) => {
+    void dispatchCommand(commandId, payload, {
+      meta: { source: "toolbar.page-navigator" },
+    }).catch(() => undefined);
+  };
+
   const handleJump = (value: number) => {
     const target = Math.round(value);
     const clamped = Math.max(1, Math.min(totalPages, target));
     const nextId = pageOrder[clamped - 1];
     if (nextId) {
-      goToPage(nextId);
+      dispatchPageCommand("goToPage", { pageId: nextId });
     }
   };
 
@@ -47,7 +48,7 @@ export function PageNavigator() {
       <ToolButton
         icon={ChevronLeft}
         label="Previous Page"
-        onClick={prevPage}
+        onClick={() => dispatchPageCommand("prevPage")}
         disabled={currentIndex === 0 || isOverviewMode}
         className="h-7 w-7"
       />
@@ -81,21 +82,21 @@ export function PageNavigator() {
       <ToolButton
         icon={ChevronRight}
         label="Next Page"
-        onClick={nextPage}
+        onClick={() => dispatchPageCommand("nextPage")}
         disabled={currentIndex >= totalPages - 1 || isOverviewMode}
         className="h-7 w-7"
       />
       <ToolButton
         icon={Plus}
         label="Add Page"
-        onClick={addPage}
+        onClick={() => dispatchPageCommand("addPage")}
         disabled={isOverviewMode}
         className="h-7 w-7"
       />
       <ToolButton
         icon={Trash2}
         label="Delete Page"
-        onClick={() => deletePage()}
+        onClick={() => dispatchPageCommand("deletePage")}
         disabled={!canDelete || isOverviewMode}
         className="h-7 w-7"
       />
@@ -104,7 +105,9 @@ export function PageNavigator() {
         <ToolButton
           icon={Minus}
           label="Decrease Columns"
-          onClick={() => setColumnCount(columnCount - 1)}
+          onClick={() =>
+            dispatchPageCommand("setColumnCount", { count: columnCount - 1 })
+          }
           disabled={!canDecrease || isOverviewMode}
           className="h-6 w-6"
         />
@@ -114,7 +117,9 @@ export function PageNavigator() {
         <ToolButton
           icon={Plus}
           label="Increase Columns"
-          onClick={() => setColumnCount(columnCount + 1)}
+          onClick={() =>
+            dispatchPageCommand("setColumnCount", { count: columnCount + 1 })
+          }
           disabled={!canIncrease || isOverviewMode}
           className="h-6 w-6"
         />

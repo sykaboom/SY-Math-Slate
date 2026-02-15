@@ -3,8 +3,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { RefObject } from "react";
 
+import { dispatchCommand } from "@core/engine/commandBus";
 import { useCanvasStore } from "@features/store/useCanvasStore";
-import { useUIStore } from "@features/store/useUIStore";
+import { useUIStore } from "@features/store/useUIStoreBridge";
 import type { CanvasItem, TextItem } from "@core/types/canvas";
 import { useAudioPlayer } from "@features/hooks/useAudioPlayer";
 import { useSFX } from "@features/hooks/useSFX";
@@ -46,7 +47,6 @@ export function useSequence({
     pages,
     currentPageId,
     currentStep,
-    nextStep,
     audioByStep,
   } = useCanvasStore();
   const {
@@ -58,10 +58,6 @@ export function useSequence({
     skipSignal,
     stopSignal,
     isAnimating: storeIsAnimating,
-    setAnimating,
-    setAutoPlay,
-    setPaused,
-    triggerPlay,
   } = useUIStore();
   const { play, stop } = useSFX();
   const { play: playAudio, stop: stopAudio } = useAudioPlayer();
@@ -77,6 +73,15 @@ export function useSequence({
   const itemsRef = useRef<TextItem[]>([]);
   const lastSoundToolRef = useRef<"chalk" | "marker" | null>(null);
   const autoTimerRef = useRef<number | null>(null);
+
+  const dispatchSequenceCommand = useCallback(
+    (commandId: string, payload: unknown = {}) => {
+      void dispatchCommand(commandId, payload, {
+        meta: { source: "hook.use-sequence" },
+      }).catch(() => undefined);
+    },
+    []
+  );
 
   const moveActor = useCallback(
     (pos: { x: number; y: number }, tool?: "chalk" | "marker") => {
@@ -165,27 +170,25 @@ export function useSequence({
 
   const handleStepComplete = useCallback(() => {
     if (currentStep > maxStep) return;
-    nextStep();
+    dispatchSequenceCommand("nextStep");
     if (!isAutoPlay || isPaused) return;
     const nextIndex = currentStep + 1;
     if (nextIndex > maxStep) {
-      setAutoPlay(false);
+      dispatchSequenceCommand("toggleAutoPlay");
       return;
     }
     clearAutoTimer();
     autoTimerRef.current = window.setTimeout(() => {
-      triggerPlay();
+      dispatchSequenceCommand("triggerPlay");
     }, autoPlayDelayMs);
   }, [
     autoPlayDelayMs,
     clearAutoTimer,
     currentStep,
+    dispatchSequenceCommand,
     isAutoPlay,
     isPaused,
     maxStep,
-    nextStep,
-    setAutoPlay,
-    triggerPlay,
   ]);
 
   const runSequence = useCallback(async () => {
@@ -196,7 +199,7 @@ export function useSequence({
     runIdRef.current += 1;
     const runId = runIdRef.current;
 
-    setAnimating(true);
+    dispatchSequenceCommand("setAnimating", { value: true });
 
     const audio = audioByStep[currentStep];
     const audioPromise = audio ? playAudio(audio.src) : Promise.resolve();
@@ -225,15 +228,15 @@ export function useSequence({
     setActiveItemId(null);
     setActor((prev) => ({ ...prev, isMoving: false, visible: false }));
     stop();
-    setAnimating(false);
+    dispatchSequenceCommand("setAnimating", { value: false });
     handleStepComplete();
   }, [
     audioByStep,
     cancelActive,
+    dispatchSequenceCommand,
     enabled,
     handleStepComplete,
     setActor,
-    setAnimating,
     stop,
     playAudio,
     currentStep,
@@ -246,7 +249,7 @@ export function useSequence({
     if (currentStep > maxStep) return;
     if (isPaused) {
       window.setTimeout(() => {
-        setPaused(false);
+        dispatchSequenceCommand("togglePause");
       }, 0);
     }
     clearAutoTimer();
@@ -254,7 +257,16 @@ export function useSequence({
       void runSequence();
     }, 0);
     return () => window.clearTimeout(id);
-  }, [clearAutoTimer, currentStep, enabled, isPaused, maxStep, playSignal, runSequence, setPaused]);
+  }, [
+    clearAutoTimer,
+    currentStep,
+    dispatchSequenceCommand,
+    enabled,
+    isPaused,
+    maxStep,
+    playSignal,
+    runSequence,
+  ]);
 
   useEffect(() => {
     if (!enabled) return;
@@ -268,13 +280,22 @@ export function useSequence({
     }, 0);
     stop();
     stopAudio();
-    setAnimating(false);
+    dispatchSequenceCommand("setAnimating", { value: false });
     clearAutoTimer();
     if (isPaused) {
-      setPaused(false);
+      dispatchSequenceCommand("togglePause");
     }
     return () => window.clearTimeout(id);
-  }, [cancelActive, clearAutoTimer, enabled, isPaused, setAnimating, setPaused, stop, stopAudio, stopSignal]);
+  }, [
+    cancelActive,
+    clearAutoTimer,
+    dispatchSequenceCommand,
+    enabled,
+    isPaused,
+    stop,
+    stopAudio,
+    stopSignal,
+  ]);
 
   useEffect(() => {
     if (!isPaused) return;
@@ -292,23 +313,23 @@ export function useSequence({
       cancelActive();
       stop();
       stopAudio();
-      setAnimating(false);
+      dispatchSequenceCommand("setAnimating", { value: false });
       clearAutoTimer();
     };
-  }, [cancelActive, clearAutoTimer, setAnimating, stop, stopAudio]);
+  }, [cancelActive, clearAutoTimer, dispatchSequenceCommand, stop, stopAudio]);
 
   useEffect(() => {
     if (enabled) return;
     cancelActive();
     stop();
     stopAudio();
-    setAnimating(false);
+    dispatchSequenceCommand("setAnimating", { value: false });
     const id = window.setTimeout(() => {
       setActiveItemId(null);
       setActor(idleActor);
     }, 0);
     return () => window.clearTimeout(id);
-  }, [cancelActive, enabled, setAnimating, stop, stopAudio]);
+  }, [cancelActive, dispatchSequenceCommand, enabled, stop, stopAudio]);
 
   return {
     activeItemId,

@@ -9,7 +9,7 @@ import type {
 
 import { useLocalStore } from "@features/store/useLocalStore";
 import { useSyncStore } from "@features/store/useSyncStore";
-import { useUIStore } from "@features/store/useUIStore";
+import { useUIStore } from "@features/store/useUIStoreBridge";
 
 type Point = { x: number; y: number };
 

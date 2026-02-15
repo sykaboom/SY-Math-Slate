@@ -5,8 +5,9 @@ import {
   ToggleGroup,
   ToggleGroupItem,
 } from "@ui/components/toggle-group";
+import { dispatchCommand } from "@core/engine/commandBus";
 import { cn } from "@core/utils";
-import { useUIStore, type PenType } from "@features/store/useUIStore";
+import { useUIStore, type PenType } from "@features/store/useUIStoreBridge";
 
 const colorPresets = [
   { label: "Yellow", value: "#FFFF00", className: "bg-neon-yellow" },
@@ -17,16 +18,13 @@ const colorPresets = [
 ];
 
 export function PenControls() {
-  const {
-    penColor,
-    penWidth,
-    penOpacity,
-    penType,
-    setColor,
-    setPenWidth,
-    setPenOpacity,
-    setPenType,
-  } = useUIStore();
+  const { penColor, penWidth, penOpacity, penType } = useUIStore();
+
+  const dispatchPenCommand = (commandId: string, payload: unknown) => {
+    void dispatchCommand(commandId, payload, {
+      meta: { source: "toolbar.pen-controls" },
+    }).catch(() => undefined);
+  };
 
   return (
     <div className="flex w-80 flex-col gap-4">
@@ -37,7 +35,10 @@ export function PenControls() {
         <ToggleGroup
           type="single"
           value={penType}
-          onValueChange={(value) => value && setPenType(value as PenType)}
+          onValueChange={(value) =>
+            value &&
+            dispatchPenCommand("setPenType", { type: value as PenType })
+          }
           className="mt-3 grid grid-cols-3 gap-2"
         >
           <ToggleGroupItem value="ink" className="text-xs">
@@ -61,7 +62,9 @@ export function PenControls() {
             <button
               key={preset.value}
               type="button"
-              onClick={() => setColor(preset.value)}
+              onClick={() =>
+                dispatchPenCommand("setPenColor", { color: preset.value })
+              }
               className={cn(
                 "h-7 w-7 rounded-full border border-toolbar-border/10 transition",
                 preset.className,
@@ -78,7 +81,9 @@ export function PenControls() {
             <input
               type="color"
               value={penColor}
-              onChange={(event) => setColor(event.target.value)}
+              onChange={(event) =>
+                dispatchPenCommand("setPenColor", { color: event.target.value })
+              }
               className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
               aria-label="Custom color"
             />
@@ -97,7 +102,9 @@ export function PenControls() {
           min={1}
           max={18}
           step={1}
-          onValueChange={(value) => setPenWidth(value[0] ?? penWidth)}
+          onValueChange={(value) =>
+            dispatchPenCommand("setPenWidth", { width: value[0] ?? penWidth })
+          }
           className="mt-2"
         />
       </div>
@@ -112,7 +119,9 @@ export function PenControls() {
           min={10}
           max={100}
           step={5}
-          onValueChange={(value) => setPenOpacity(value[0] ?? penOpacity)}
+          onValueChange={(value) =>
+            dispatchPenCommand("setPenOpacity", { opacity: value[0] ?? penOpacity })
+          }
           className="mt-2"
         />
       </div>

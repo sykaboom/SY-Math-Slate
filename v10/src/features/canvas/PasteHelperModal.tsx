@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 
 import { useImageInsert } from "@features/hooks/useImageInsert";
-import { useUIStore } from "@features/store/useUIStore";
+import { useUIStore } from "@features/store/useUIStoreBridge";
 
 export function PasteHelperModal() {
   const { isPasteHelperOpen, closePasteHelper } = useUIStore();

@@ -1,6 +1,7 @@
 "use client";
 import {
   Fragment,
+  useCallback,
   useEffect,
   useMemo,
   useRef,
@@ -11,7 +12,8 @@ import {
 } from "react";
 
 import { useCanvasStore } from "@features/store/useCanvasStore";
-import { useUIStore } from "@features/store/useUIStore";
+import { useUIStore } from "@features/store/useUIStoreBridge";
+import { dispatchCommand, getAppCommandById } from "@core/engine/commandBus";
 import { cn } from "@core/utils";
 import { Button } from "@ui/components/button";
 import type {
@@ -133,6 +135,46 @@ export function DataInputPanel() {
   const canMath = isCapabilityEnabled("data.math");
   const canHighlight = isCapabilityEnabled("data.highlight");
 
+  const writeInsertionIndex = useCallback(
+    (index: number) => {
+      const fallback = () => setInsertionIndex(index);
+      if (!getAppCommandById("setInsertionIndex")) {
+        fallback();
+        return;
+      }
+      void dispatchCommand("setInsertionIndex", { index }, {
+        meta: { source: "data-input-panel" },
+      })
+        .then((result) => {
+          if (!result.ok && result.code !== "approval-required") {
+            fallback();
+          }
+        })
+        .catch(() => fallback());
+    },
+    [setInsertionIndex]
+  );
+
+  const writeImportStepBlocks = useCallback(
+    (nextBlocks: StepBlockDraft[]) => {
+      const fallback = () => importStepBlocks(nextBlocks);
+      if (!getAppCommandById("importStepBlocks")) {
+        fallback();
+        return;
+      }
+      void dispatchCommand("importStepBlocks", { blocks: nextBlocks }, {
+        meta: { source: "data-input-panel" },
+      })
+        .then((result) => {
+          if (!result.ok && result.code !== "approval-required") {
+            fallback();
+          }
+        })
+        .catch(() => fallback());
+    },
+    [importStepBlocks]
+  );
+
   const flowItems = useMemo(() => {
     const items = pages[currentPageId] ?? [];
     return items.filter(
@@ -208,9 +250,9 @@ export function DataInputPanel() {
     setUnmatchedBlocks([]);
     setSyncDecisions([]);
     setRawText(blocksToRawText(initialBlocks));
-    setInsertionIndex(initialBlocks.length);
+    writeInsertionIndex(initialBlocks.length);
     setExpandedBlockId(null);
-  }, [fallbackBlocks, isDataInputOpen, setInsertionIndex, stepBlocks]);
+  }, [fallbackBlocks, isDataInputOpen, stepBlocks, writeInsertionIndex]);
 
   useEffect(() => {
     if (!isDataInputOpen || !hasInitializedRef.current) return;
@@ -244,9 +286,9 @@ export function DataInputPanel() {
 
   useEffect(() => {
     if (blocks.length < insertionIndex) {
-      setInsertionIndex(blocks.length);
+      writeInsertionIndex(blocks.length);
     }
-  }, [blocks.length, insertionIndex, setInsertionIndex]);
+  }, [blocks.length, insertionIndex, writeInsertionIndex]);
 
   useEffect(() => {
     if (!isDataInputOpen) return;
@@ -277,7 +319,7 @@ export function DataInputPanel() {
           "group flex w-full items-center gap-2 rounded-full px-2 py-1 text-[10px] uppercase tracking-[0.2em]",
           isActive ? "text-cyan-200" : "text-white/30 hover:text-white/60"
         )}
-        onClick={() => setInsertionIndex(index)}
+        onClick={() => writeInsertionIndex(index)}
       >
         <span
           className={cn(
@@ -501,13 +543,13 @@ export function DataInputPanel() {
       });
       return next;
     });
-    setInsertionIndex(Math.min(safeIndex + 1, blocks.length + 1));
+    writeInsertionIndex(Math.min(safeIndex + 1, blocks.length + 1));
   };
 
   const handleApply = () => {
     if (unmatchedBlocks.length > 0) return;
     const normalizedBlocks = normalizeBlocksDraft(blocks);
-    importStepBlocks(normalizedBlocks);
+    writeImportStepBlocks(normalizedBlocks);
   };
 
   const handleMediaPick = (blockId: string, type: StepSegmentType) => {

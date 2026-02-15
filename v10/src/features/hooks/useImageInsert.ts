@@ -5,7 +5,7 @@ import { useCallback } from "react";
 import { useCanvasStore } from "@features/store/useCanvasStore";
 import type { ImageItem } from "@core/types/canvas";
 import { getBoardSize } from "@core/config/boardSpec";
-import { useUIStore } from "@features/store/useUIStore";
+import { useUIStore } from "@features/store/useUIStoreBridge";
 
 const createItemId = () => {
   if (typeof crypto !== "undefined" && "randomUUID" in crypto) {

@@ -3,7 +3,6 @@
 import {
   createContext,
   useContext,
-  useEffect,
   useLayoutEffect,
   useMemo,
   useRef,
@@ -13,7 +12,7 @@ import type { ReactNode } from "react";
 
 import { cn } from "@core/utils";
 import { getBoardSize, type BoardRatio } from "@core/config/boardSpec";
-import { useUIStore } from "@features/store/useUIStore";
+import { useUIStore } from "@features/store/useUIStoreBridge";
 
 const PageScaleContext = createContext(1);
 

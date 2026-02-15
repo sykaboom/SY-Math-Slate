@@ -23,6 +23,7 @@ import {
 } from "@features/extensions/toolExecutionPolicy";
 
 import { registerCoreSlots } from "./registerCoreSlots";
+import { registerCoreDeclarativeManifest } from "./registerCoreDeclarativeManifest";
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
@@ -160,6 +161,12 @@ export function ExtensionRuntimeBootstrap() {
     registerCoreCommands();
     registerCommandExecutionPolicy();
     registerToolExecutionPolicy();
+    const enableCoreManifest =
+      process.env.NEXT_PUBLIC_CORE_MANIFEST_SHADOW === "1" ||
+      process.env.NEXT_PUBLIC_CORE_TOOLBAR_CUTOVER === "1";
+    if (enableCoreManifest) {
+      registerCoreDeclarativeManifest();
+    }
 
     const runtime = createBrowserMcpRuntime();
     const gateway = runtime

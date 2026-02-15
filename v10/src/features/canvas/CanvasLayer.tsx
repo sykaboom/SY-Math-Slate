@@ -3,7 +3,7 @@
 import { useCanvas } from "@features/hooks/useCanvas";
 import { cn } from "@core/utils";
 import { useLocalStore } from "@features/store/useLocalStore";
-import { useUIStore } from "@features/store/useUIStore";
+import { useUIStore } from "@features/store/useUIStoreBridge";
 
 export function CanvasLayer() {
   const { canvasRef, laserCanvasRef, bind } = useCanvas();
