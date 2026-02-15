@@ -1,6 +1,6 @@
 # Task 146: Mod Studio Foundation (GUI Modding Base)
 
-Status: PENDING
+Status: COMPLETED
 Owner: Codex (spec / review / implementation)
 Target: v10/
 Date: 2026-02-15
@@ -42,14 +42,18 @@ Out of scope:
 
 ## Optional Block A — Layout / SVG Gate
 
-- [ ] Applies: YES
+- [x] Applies: YES
 - If YES, fill all items:
-  - [ ] SVG path in `design_drafts/`
-  - [ ] SVG has explicit `viewBox` (width / height / ratio)
-  - [ ] Tablet viewport checks considered:
+  - [x] SVG path in `design_drafts/`
+    - `design_drafts/layout_writer_shell_768x1024.svg`
+    - `design_drafts/layout_writer_shell_820x1180.svg`
+    - `design_drafts/layout_writer_shell_1024x768.svg`
+    - `design_drafts/layout_writer_shell_1180x820.svg`
+  - [x] SVG has explicit `viewBox` (width / height / ratio)
+  - [x] Tablet viewport checks considered:
     - 768x1024 / 820x1180 / 1024x768 / 1180x820
-  - [ ] Numeric redlines recorded in spec
-  - [ ] Codex verified SVG exists before implementation
+  - [x] Numeric redlines recorded in spec
+  - [x] Codex verified SVG exists before implementation
 
 ---
 
@@ -142,8 +146,8 @@ If NO:
 
 ## Approval Gate (Base Required)
 
-- [ ] Spec self-reviewed by Codex
-- [ ] Explicit user approval received (or delegated chain approval reference)
+- [x] Spec self-reviewed by Codex
+- [x] Explicit user approval received (or delegated chain approval reference)
 
 > Implementation MUST NOT begin until both boxes are checked.
 
@@ -154,33 +158,41 @@ If NO:
 Status: COMPLETED
 
 Changed files:
-- ...
+- `v10/src/features/mod-studio/core/ModStudioShell.tsx`
+- `v10/src/features/mod-studio/core/ModStudioPanel.tsx`
+- `v10/src/features/mod-studio/core/types.ts`
+- `v10/src/features/mod-studio/index.ts`
+- `v10/src/features/store/useModStudioStore.ts`
+- `v10/src/features/layout/AppLayout.tsx`
 
 Commands run (only if user asked or required by spec):
-- ...
+- `scripts/check_layer_rules.sh`
+- `cd v10 && npm run lint && npm run build`
 
 ## Gate Results (Codex fills)
 
 - Lint:
-  - PASS | FAIL | N/A
+  - PASS
 - Build:
-  - PASS | FAIL | N/A
+  - PASS
 - Script checks:
-  - PASS | FAIL | N/A
+  - PASS
 
 ## Failure Classification (Codex fills when any gate fails)
 
 - Pre-existing failures:
-  - ...
+  - None
 - Newly introduced failures:
-  - ...
+  - None
 - Blocking:
-  - YES / NO
+  - NO
 - Mitigation:
-  - ...
+  - N/A
 
 Manual verification notes:
-- ...
+- Host role에서 Studio 토글/패널 로드 확인, student role에서는 비노출 확인.
+- Draft 상태 편집은 store 내부에서만 반영되고 런타임 직접 변이 없음.
+- Numeric redline: Studio panel `top=56px`, `right=12px`, `max-width=820px`, `max-height<=78vh` 유지.
 
 Notes:
-- ...
+- Layout gate는 기존 writer shell SVG 기준으로 상단 chrome 내부 탑재 범위 내에서 구현.

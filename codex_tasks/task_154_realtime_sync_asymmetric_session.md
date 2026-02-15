@@ -1,6 +1,6 @@
 # Task 154: Realtime Asymmetric Sync and Session Resilience
 
-Status: PENDING
+Status: COMPLETED
 Owner: Codex (spec / review / implementation)
 Target: v10/
 Date: 2026-02-15
@@ -140,8 +140,8 @@ If NO:
 
 ## Approval Gate (Base Required)
 
-- [ ] Spec self-reviewed by Codex
-- [ ] Explicit user approval received (or delegated chain approval reference)
+- [x] Spec self-reviewed by Codex
+- [x] Explicit user approval received (or delegated chain approval reference)
 
 > Implementation MUST NOT begin until both boxes are checked.
 
@@ -152,33 +152,39 @@ If NO:
 Status: COMPLETED
 
 Changed files:
-- ...
+- `v10/src/features/sync/useAsymmetricSessionSync.ts`
+- `v10/src/features/layout/AppLayout.tsx`
+- `v10/src/features/store/useSyncStore.ts` (existing API reused)
 
 Commands run (only if user asked or required by spec):
-- ...
+- `scripts/check_layer_rules.sh`
+- `cd v10 && npm run lint && npm run build`
+- `scripts/run_beta_quality_gate.sh`
 
 ## Gate Results (Codex fills)
 
 - Lint:
-  - PASS | FAIL | N/A
+  - PASS
 - Build:
-  - PASS | FAIL | N/A
+  - PASS
 - Script checks:
-  - PASS | FAIL | N/A
+  - PASS
 
 ## Failure Classification (Codex fills when any gate fails)
 
 - Pre-existing failures:
-  - ...
+  - None
 - Newly introduced failures:
-  - ...
+  - None
 - Blocking:
-  - YES / NO
+  - NO
 - Mitigation:
-  - ...
+  - N/A
 
 Manual verification notes:
-- ...
+- BroadcastChannel 기반 host->student step/viewport/laser 동기화 경로 탑재.
+- student 접속 시 state-request, host 응답(state-update) 핸드셰이크로 재연결 복원 경로 확보.
+- student 문서 변경은 기존 approval queue 경로 유지.
 
 Notes:
-- ...
+- 외부 transport dependency 없이 single-user 호환 모드 보존.

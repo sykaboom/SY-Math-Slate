@@ -55,7 +55,7 @@ core/
   export/        (export pipeline scaffold)
   extensions/    (manifest, registry, connectors, pluginLoader, mcpGateway, runtime scaffold)
   math/          (MathJax loader/render)
-  migrations/    (migrateToV2)
+  migrations/    (migrateToV2 + modStudioMigration)
   persistence/   (buildPersistedDoc and doc-only shaping helpers)
   sanitize/      (richTextSanitizer)
   themes/        (chalk theme)
@@ -67,8 +67,11 @@ features/
   extensions/    (tool adapter interfaces/registry/mock adapter, command policy + command registrations)
   hooks/         (useSequence, usePersistence, useFileIO, useAudioPlayer, ...)
   layout/        (AppLayout, autoLayout, overview)
+  mod-studio/    (GUI modding shell: policy/layout/modules/theme/publish/io)
+  observability/ (audit logger runtime + redaction)
   policy/        (policy shadow comparison telemetry helpers)
   store/         (zustand state)
+  sync/          (host/student asymmetric session sync hook)
   toolbar/       (toolbar + panels)
 ui/
   components/    (pure UI building blocks)
@@ -112,7 +115,8 @@ ui/
 ### 3-tier stores (authority layer)
 - `useDocStore`: persisted document authority (`pages`, `pageOrder`, `pageColumnCounts`, `stepBlocks`, `anchorMap`, `audioByStep`, `animationModInput`)
 - `useSyncStore`: shared/session-sync authority (`globalStep`, `laserPosition`, `sharedViewport`, `pendingAIQueue`)
-- `useLocalStore`: local device/role authority (`role`, `isPanelOpen`, `localViewport`)
+- `useLocalStore`: local device/role authority (`role`, `trustedRoleClaim`, `isPanelOpen`, `localViewport`)
+- `useModStudioStore`: mod-studio draft authority (`policy/layout/modules/theme`, snapshots, publish result)
 
 ### Legacy interaction stores (still active)
 - `useCanvasStore`: canvas mutation + layout/session actions (draw, page/step/block mutation facade)
@@ -422,6 +426,8 @@ Located in `features/extensions/`:
 ## Common Entry Points
 - Next app shell: `app/layout.tsx`
 - Layout root: `features/layout/AppLayout.tsx`
+- Mod Studio shell: `features/mod-studio/core/ModStudioShell.tsx`
+- Realtime sync hook: `features/sync/useAsymmetricSessionSync.ts`
 - Playback engine: `features/hooks/useSequence.ts`
 - Persistence: `features/hooks/usePersistence.ts`
 - File I/O: `features/hooks/useFileIO.ts`
@@ -447,6 +453,8 @@ Located in `features/extensions/`:
 - Build gates:
   - `cd v10 && npm run lint`
   - `cd v10 && npm run build`
+- Beta release gate:
+  - `bash scripts/run_beta_quality_gate.sh`
 - Task generation helper (DAG metadata template-based):
   - `scripts/new_codex_task.sh`
 

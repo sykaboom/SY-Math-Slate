@@ -9,6 +9,7 @@ import {
   shouldQueueCommandApprovalByPolicyForRole,
 } from "@core/config/rolePolicy";
 import { reportPolicyBooleanDiff } from "@features/policy/policyShadow";
+import { emitAuditEvent } from "@features/observability/auditLogger";
 import { useLocalStore } from "@features/store/useLocalStore";
 import { useSyncStore } from "@features/store/useSyncStore";
 
@@ -42,7 +43,8 @@ const enqueuePendingCommand = (entry: PendingCommandApprovalEntry): void => {
 };
 
 const resolveCommandExecutionRole = (): "host" | "student" => {
-  const role = useLocalStore.getState().role;
+  const localState = useLocalStore.getState();
+  const role = localState.trustedRoleClaim ?? localState.role;
   if (!canDispatchCommandForRole(role)) {
     return "student";
   }
@@ -50,7 +52,8 @@ const resolveCommandExecutionRole = (): "host" | "student" => {
 };
 
 const shouldQueuePendingCommand = (entry: PendingCommandApprovalEntry): boolean => {
-  const role = useLocalStore.getState().role;
+  const localState = useLocalStore.getState();
+  const role = localState.trustedRoleClaim ?? localState.role;
   const policyValue = shouldQueueCommandApprovalByPolicyForRole(role);
   const legacyValue = true;
   reportPolicyBooleanDiff({
@@ -61,8 +64,21 @@ const shouldQueuePendingCommand = (entry: PendingCommandApprovalEntry): boolean 
     metadata: {
       commandId: entry.commandId,
       hasIdempotencyKey: entry.idempotencyKey ? true : false,
+      trustedRoleClaim: localState.trustedRoleClaim,
     },
   });
+  emitAuditEvent(
+    "approval",
+    "command-queue-decision",
+    entry.idempotencyKey ?? `approval-${Date.now()}-${entry.commandId}`,
+    {
+      commandId: entry.commandId,
+      role,
+      trustedRoleClaim: localState.trustedRoleClaim,
+      policyValue,
+      mutationScope: entry.mutationScope,
+    }
+  );
   return policyValue;
 };
 

@@ -11,6 +11,7 @@ v10/
 |-- prisma/
 |-- public/
 |-- src/
+|-- tests/
 |-- AI_READ_ME.md
 |-- components.json
 |-- eslint.config.mjs
@@ -30,6 +31,9 @@ v10/
 ```text
 v10/src/
 |-- app/
+|   |-- api/
+|   |   \-- trust/
+|   |       \-- role/
 |   |-- favicon.ico
 |   |-- globals.css
 |   |-- layout.tsx
@@ -65,7 +69,8 @@ v10/src/
 |   |   |-- render.ts
 |   |   \-- rules.ts
 |   |-- migrations/
-|   |   \-- migrateToV2.ts
+|   |   |-- migrateToV2.ts
+|   |   \-- modStudioMigration.ts
 |   |-- persistence/
 |   |   \-- buildPersistedDoc.ts
 |   |-- sanitize/
@@ -154,6 +159,30 @@ v10/src/
 |   |   |-- OverviewStage.tsx
 |   |   |-- PlayerBar.tsx
 |   |   \-- Prompter.tsx
+|   |-- mod-studio/
+|   |   |-- core/
+|   |   |   |-- ModStudioPanel.tsx
+|   |   |   |-- ModStudioShell.tsx
+|   |   |   \-- types.ts
+|   |   |-- io/
+|   |   |   |-- ioStudio.ts
+|   |   |   \-- IoStudioSection.tsx
+|   |   |-- layout/
+|   |   |   \-- LayoutStudioSection.tsx
+|   |   |-- modules/
+|   |   |   |-- moduleDiagnostics.ts
+|   |   |   \-- ModuleStudioSection.tsx
+|   |   |-- policy/
+|   |   |   \-- PolicyStudioSection.tsx
+|   |   |-- publish/
+|   |   |   |-- publishStudioDraft.ts
+|   |   |   \-- PublishStudioSection.tsx
+|   |   |-- theme/
+|   |   |   |-- themeIsolation.ts
+|   |   |   \-- ThemeStudioSection.tsx
+|   |   \-- index.ts
+|   |-- observability/
+|   |   \-- auditLogger.ts
 |   |-- policy/
 |   |   \-- policyShadow.ts
 |   |-- store/
@@ -162,11 +191,14 @@ v10/src/
 |   |   |-- useChromeStore.ts
 |   |   |-- useDocStore.ts
 |   |   |-- useLocalStore.ts
+|   |   |-- useModStudioStore.ts
 |   |   |-- usePlaybackStore.ts
 |   |   |-- useSyncStore.ts
 |   |   |-- useToolStore.ts
 |   |   |-- useUIStoreBridge.ts
 |   |   \-- useViewportStore.ts
+|   |-- sync/
+|   |   \-- useAsymmetricSessionSync.ts
 |   \-- toolbar/
 |       |-- atoms/
 |       |   |-- ToolbarPanel.tsx

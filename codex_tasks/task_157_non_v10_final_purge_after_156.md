@@ -153,36 +153,37 @@ If NO:
 
 ## Implementation Log (Codex fills)
 
-Status: COMPLETED
+Status: PENDING (blocked: stabilization window prerequisite)
 
 Changed files:
-- ...
+- None (execution deferred)
 
 Commands run (only if user asked or required by spec):
-- ...
+- `rg -n "Status:" codex_tasks/task_157_non_v10_final_purge_after_156.md`
 
 ## Gate Results (Codex fills)
 
 - Lint:
-  - PASS | FAIL | N/A
+  - N/A
 - Build:
-  - PASS | FAIL | N/A
+  - N/A
 - Script checks:
-  - PASS | FAIL | N/A
+  - N/A
 
 ## Failure Classification (Codex fills when any gate fails)
 
 - Pre-existing failures:
-  - ...
+  - N/A
 - Newly introduced failures:
-  - ...
+  - N/A
 - Blocking:
-  - YES / NO
+  - YES
 - Mitigation:
-  - ...
+  - Wait for Task 156 post-release stabilization evidence (7~14 days) before purge execution.
 
 Manual verification notes:
-- ...
+- Task 157 hard prerequisites are not yet satisfiable in the same execution window.
+- Final purge remains intentionally deferred to avoid unsafe destructive cleanup.
 
 Notes:
-- ...
+- Pending by design under governance gate.

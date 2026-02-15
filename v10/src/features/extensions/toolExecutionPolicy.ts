@@ -9,6 +9,7 @@ import {
   shouldQueueToolApprovalByPolicyForRole,
 } from "@core/config/rolePolicy";
 import { reportPolicyBooleanDiff } from "@features/policy/policyShadow";
+import { emitAuditEvent } from "@features/observability/auditLogger";
 import { useLocalStore } from "@features/store/useLocalStore";
 import { useSyncStore } from "@features/store/useSyncStore";
 
@@ -31,7 +32,8 @@ const enqueuePendingApproval = (entry: PendingApprovalEntry): void => {
 };
 
 const resolveToolExecutionRole = (): "host" | "student" => {
-  const role = useLocalStore.getState().role;
+  const localState = useLocalStore.getState();
+  const role = localState.trustedRoleClaim ?? localState.role;
   if (!canExecuteToolForRole(role)) {
     return "student";
   }
@@ -39,7 +41,8 @@ const resolveToolExecutionRole = (): "host" | "student" => {
 };
 
 const shouldQueuePendingApproval = (entry: PendingApprovalEntry): boolean => {
-  const role = useLocalStore.getState().role;
+  const localState = useLocalStore.getState();
+  const role = localState.trustedRoleClaim ?? localState.role;
   const policyValue = shouldQueueToolApprovalByPolicyForRole(role);
   const legacyValue = true;
   reportPolicyBooleanDiff({
@@ -50,8 +53,21 @@ const shouldQueuePendingApproval = (entry: PendingApprovalEntry): boolean => {
     metadata: {
       toolId: entry.request.toolId,
       adapterId: entry.adapterId,
+      trustedRoleClaim: localState.trustedRoleClaim,
     },
   });
+  emitAuditEvent(
+    "approval",
+    "tool-queue-decision",
+    `tool-${entry.request.toolId}-${Date.now()}`,
+    {
+      toolId: entry.request.toolId,
+      adapterId: entry.adapterId,
+      role,
+      trustedRoleClaim: localState.trustedRoleClaim,
+      policyValue,
+    }
+  );
   return policyValue;
 };
 

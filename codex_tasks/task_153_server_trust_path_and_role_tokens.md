@@ -1,6 +1,6 @@
 # Task 153: Server Trust Path and Role Token Hardening
 
-Status: PENDING
+Status: COMPLETED
 Owner: Codex (spec / review / implementation)
 Target: v10/
 Date: 2026-02-15
@@ -136,8 +136,8 @@ If NO:
 
 ## Approval Gate (Base Required)
 
-- [ ] Spec self-reviewed by Codex
-- [ ] Explicit user approval received (or delegated chain approval reference)
+- [x] Spec self-reviewed by Codex
+- [x] Explicit user approval received (or delegated chain approval reference)
 
 > Implementation MUST NOT begin until both boxes are checked.
 
@@ -148,33 +148,42 @@ If NO:
 Status: COMPLETED
 
 Changed files:
-- ...
+- `v10/src/app/api/trust/role/route.ts`
+- `v10/src/core/extensions/mcpGateway.ts`
+- `v10/src/features/extensions/commandExecutionPolicy.ts`
+- `v10/src/features/extensions/toolExecutionPolicy.ts`
+- `v10/src/features/store/useLocalStore.ts`
+- `v10/src/features/extensions/ui/ExtensionRuntimeBootstrap.tsx`
 
 Commands run (only if user asked or required by spec):
-- ...
+- `scripts/check_layer_rules.sh`
+- `cd v10 && npm run lint && npm run build`
+- `scripts/run_beta_quality_gate.sh`
 
 ## Gate Results (Codex fills)
 
 - Lint:
-  - PASS | FAIL | N/A
+  - PASS
 - Build:
-  - PASS | FAIL | N/A
+  - PASS
 - Script checks:
-  - PASS | FAIL | N/A
+  - PASS
 
 ## Failure Classification (Codex fills when any gate fails)
 
 - Pre-existing failures:
-  - ...
+  - None
 - Newly introduced failures:
-  - ...
+  - None
 - Blocking:
-  - YES / NO
+  - NO
 - Mitigation:
-  - ...
+  - N/A
 
 Manual verification notes:
-- ...
+- MCP `init`에서 trust API 검증 실패 시 host 세션 발급 거부 확인.
+- client-local role 단독 변경만으로 mcp host session 획득이 불가한 경로 확인.
+- command/tool policy는 `trustedRoleClaim` 우선 경로로 role 해석.
 
 Notes:
-- ...
+- 기존 host/student UI 플로우는 유지하되, 고권한 mcp 경로에 trust boundary를 추가.

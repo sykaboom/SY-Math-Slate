@@ -486,14 +486,22 @@ const validateCommandTargets = (
   return null;
 };
 
+export const validateDeclarativePluginManifest = (
+  input: unknown
+): PluginManifestValidationError | { ok: true; value: DeclarativePluginManifestV1 } => {
+  const parsed = parseManifest(input);
+  if ("ok" in parsed) return parsed;
+  const commandTargetError = validateCommandTargets(parsed);
+  if (commandTargetError) return commandTargetError;
+  return { ok: true, value: parsed };
+};
+
 export const registerDeclarativePluginManifest = (
   input: unknown
 ): PluginManifestRegisterResult => {
-  const parsed = parseManifest(input);
-  if ("ok" in parsed) return parsed;
-
-  const commandTargetError = validateCommandTargets(parsed);
-  if (commandTargetError) return commandTargetError;
+  const validated = validateDeclarativePluginManifest(input);
+  if (!validated.ok) return validated;
+  const parsed = validated.value;
 
   const replaced = manifestRegistry.has(parsed.pluginId);
   manifestRegistry.set(parsed.pluginId, parsed);
@@ -535,6 +543,10 @@ export const clearDeclarativePluginManifests = (pluginId?: string): void => {
   if (!manifestRegistry.has(pluginId)) return;
   manifestRegistry.delete(pluginId);
   notifyManifestRegistryUpdated();
+};
+
+export const removeDeclarativePluginManifest = (pluginId: string): void => {
+  clearDeclarativePluginManifests(pluginId);
 };
 
 export const subscribeDeclarativePluginManifests = (

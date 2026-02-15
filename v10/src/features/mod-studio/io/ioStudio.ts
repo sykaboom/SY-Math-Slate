@@ -1,0 +1,104 @@
+import { validateRolePolicyPublishCandidate } from "@core/config/rolePolicy";
+import { migrateStudioConfigPayload } from "@core/migrations/modStudioMigration";
+import { listKnownUISlotNames } from "@core/extensions/registry";
+import type { StudioDraftBundle } from "@features/mod-studio/core/types";
+import { getModuleDiagnostics } from "@features/mod-studio/modules/moduleDiagnostics";
+
+type ImportResult =
+  | { ok: true; value: StudioDraftBundle; migratedFrom: number | null }
+  | { ok: false; error: string };
+
+const isPlainRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null && !Array.isArray(value);
+
+const hasValidLayoutSlots = (layout: unknown): boolean => {
+  if (!isPlainRecord(layout) || !Array.isArray(layout.slots)) return false;
+  const knownSlots = new Set<string>(listKnownUISlotNames());
+  return layout.slots.every((slot) => {
+    if (!isPlainRecord(slot)) return false;
+    if (typeof slot.slot !== "string" || !knownSlots.has(slot.slot)) return false;
+    if (!Array.isArray(slot.moduleOrder)) return false;
+    if (!slot.moduleOrder.every((entry) => typeof entry === "string")) return false;
+    return typeof slot.hidden === "boolean";
+  });
+};
+
+const hasValidModules = (modules: unknown): boolean => {
+  if (!Array.isArray(modules)) return false;
+  const knownSlots = new Set<string>(listKnownUISlotNames());
+  return modules.every((module) => {
+    if (!isPlainRecord(module)) return false;
+    if (typeof module.id !== "string" || module.id.trim() === "") return false;
+    if (typeof module.label !== "string") return false;
+    if (typeof module.slot !== "string" || !knownSlots.has(module.slot)) return false;
+    if (typeof module.enabled !== "boolean") return false;
+    if (typeof module.order !== "number" || !Number.isFinite(module.order)) return false;
+    if (!isPlainRecord(module.action)) return false;
+    if (typeof module.action.commandId !== "string") return false;
+    if (!isPlainRecord(module.action.payload)) return false;
+    return true;
+  });
+};
+
+const hasValidTheme = (theme: unknown): boolean => {
+  if (!isPlainRecord(theme)) return false;
+  if (!isPlainRecord(theme.globalTokens)) return false;
+  if (!isPlainRecord(theme.moduleScopedTokens)) return false;
+  return Object.values(theme.globalTokens).every((value) => typeof value === "string");
+};
+
+export const exportStudioDraftBundle = (bundle: StudioDraftBundle): string =>
+  JSON.stringify(
+    {
+      version: 1,
+      policy: bundle.policy,
+      layout: bundle.layout,
+      modules: bundle.modules,
+      theme: bundle.theme,
+    },
+    null,
+    2
+  );
+
+export const importStudioDraftBundle = (payloadText: string): ImportResult => {
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(payloadText);
+  } catch {
+    return { ok: false, error: "invalid JSON syntax." };
+  }
+
+  const migrated = migrateStudioConfigPayload(parsed);
+  if (!migrated.ok) return { ok: false, error: migrated.error };
+
+  const policyCheck = validateRolePolicyPublishCandidate(migrated.value.policy);
+  if (!policyCheck.ok) return { ok: false, error: policyCheck.error };
+
+  if (!hasValidLayoutSlots(migrated.value.layout)) {
+    return { ok: false, error: "invalid layout payload." };
+  }
+  if (!hasValidModules(migrated.value.modules)) {
+    return { ok: false, error: "invalid modules payload." };
+  }
+  if (!hasValidTheme(migrated.value.theme)) {
+    return { ok: false, error: "invalid theme payload." };
+  }
+
+  const modules = migrated.value.modules as StudioDraftBundle["modules"];
+  const moduleDiagnostics = getModuleDiagnostics(modules);
+  const blocking = moduleDiagnostics.find((entry) => entry.level === "error");
+  if (blocking) {
+    return { ok: false, error: `[${blocking.code}] ${blocking.message}` };
+  }
+
+  return {
+    ok: true,
+    migratedFrom: migrated.migratedFrom,
+    value: {
+      policy: policyCheck.value,
+      layout: migrated.value.layout as StudioDraftBundle["layout"],
+      modules,
+      theme: migrated.value.theme as StudioDraftBundle["theme"],
+    },
+  };
+};

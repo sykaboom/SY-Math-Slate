@@ -247,6 +247,32 @@ const normalizeRole = (value: unknown): ToolExecutionRole | null => {
   return null;
 };
 
+const verifyTrustedRoleClaim = async (
+  requestedRole: ToolExecutionRole,
+  roleToken: string
+): Promise<ToolExecutionRole | null> => {
+  if (requestedRole === "student") return "student";
+  if (typeof fetch !== "function") return null;
+  try {
+    const response = await fetch("/api/trust/role", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+      },
+      body: JSON.stringify({
+        requestedRole,
+        roleToken,
+      }),
+    });
+    if (!response.ok) return null;
+    const body = (await response.json()) as Record<string, unknown>;
+    const trustedRole = normalizeRole(body.role);
+    return trustedRole;
+  } catch {
+    return null;
+  }
+};
+
 const isSecretLikeKey = (key: string): boolean =>
   SECRET_LIKE_KEYS.has(key.replace(/[\s-]/g, "").toLowerCase());
 
@@ -750,7 +776,19 @@ export const initializeMcpGatewayRuntime = (
           return;
         }
 
-        const resolvedRole = requestedRole ?? "host";
+        const roleTokenCandidate = params.roleToken ?? request.roleToken;
+        const roleToken = typeof roleTokenCandidate === "string" ? roleTokenCandidate : "";
+        const desiredRole = requestedRole ?? "student";
+        const trustedRole = await verifyTrustedRoleClaim(desiredRole, roleToken);
+        if (!trustedRole) {
+          respondError(event, id, method, {
+            code: "role-trust-verification-failed",
+            message: "requested role could not be verified by trust path.",
+          });
+          return;
+        }
+
+        const resolvedRole = trustedRole;
         const token = createSessionToken(options.runtime);
         const expiry = getNow(options.runtime) + sessionTtlMs;
         sessions.set(token, {
@@ -764,6 +802,7 @@ export const initializeMcpGatewayRuntime = (
         respondSuccess(event, id, method, {
           sessionToken: token,
           role: resolvedRole,
+          trustedRole: trustedRole,
           expiry,
         });
         return;
@@ -821,7 +860,11 @@ export const initializeMcpGatewayRuntime = (
             const dispatchResult = await options.commandBus.dispatch({
               type: parsedRequest.value.commandId,
               payload: parsedRequest.value.payload,
-              meta: parsedRequest.value.meta,
+              meta: {
+                ...(parsedRequest.value.meta ?? {}),
+                source: "mcp-gateway",
+                trustedRole: session.role,
+              },
               role: session.role,
             });
 

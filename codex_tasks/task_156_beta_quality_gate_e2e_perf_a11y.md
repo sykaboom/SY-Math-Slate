@@ -1,6 +1,6 @@
 # Task 156: Beta Quality Gate (E2E/Perf/A11y)
 
-Status: PENDING
+Status: COMPLETED
 Owner: Codex (spec / review / implementation)
 Target: v10/
 Date: 2026-02-15
@@ -135,8 +135,8 @@ If NO:
 
 ## Approval Gate (Base Required)
 
-- [ ] Spec self-reviewed by Codex
-- [ ] Explicit user approval received (or delegated chain approval reference)
+- [x] Spec self-reviewed by Codex
+- [x] Explicit user approval received (or delegated chain approval reference)
 
 > Implementation MUST NOT begin until both boxes are checked.
 
@@ -147,33 +147,41 @@ If NO:
 Status: COMPLETED
 
 Changed files:
-- ...
+- `scripts/run_beta_quality_gate.sh`
+- `v10/tests/beta_gate_smoke.mjs`
+- `v10/tests/beta_gate_perf_a11y.mjs`
+- `v10/AI_READ_ME.md`
+- `codex_tasks/task_156_beta_quality_gate_e2e_perf_a11y.md`
 
 Commands run (only if user asked or required by spec):
-- ...
+- `scripts/run_beta_quality_gate.sh`
+- `VERIFY_STAGE=mid bash scripts/run_repo_verifications.sh`
+- `cd v10 && npm run lint && npm run build`
 
 ## Gate Results (Codex fills)
 
 - Lint:
-  - PASS | FAIL | N/A
+  - PASS
 - Build:
-  - PASS | FAIL | N/A
+  - PASS
 - Script checks:
-  - PASS | FAIL | N/A
+  - PASS
 
 ## Failure Classification (Codex fills when any gate fails)
 
 - Pre-existing failures:
-  - ...
+  - None
 - Newly introduced failures:
-  - ...
+  - None
 - Blocking:
-  - YES / NO
+  - NO
 - Mitigation:
-  - ...
+  - N/A
 
 Manual verification notes:
-- ...
+- host/student core 경로, 정책/커맨드 가드, studio/approval 흐름에 대한 smoke assertion 추가.
+- perf baseline: `.next/static/chunks` JS 총량 예산(3.2MB) 체크.
+- a11y baseline: 핵심 UI aria label 존재 체크.
 
 Notes:
-- ...
+- 외부 e2e 패키지 추가 없이 로컬/CI 공통 실행 가능한 beta gate 스크립트로 구성.

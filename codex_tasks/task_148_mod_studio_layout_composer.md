@@ -1,6 +1,6 @@
 # Task 148: Mod Studio Layout Composer (Slot Placement GUI)
 
-Status: PENDING
+Status: COMPLETED
 Owner: Codex (spec / review / implementation)
 Target: v10/
 Date: 2026-02-15
@@ -42,14 +42,18 @@ Out of scope:
 
 ## Optional Block A — Layout / SVG Gate
 
-- [ ] Applies: YES
+- [x] Applies: YES
 - If YES, fill all items:
-  - [ ] SVG path in `design_drafts/`
-  - [ ] SVG has explicit `viewBox` (width / height / ratio)
-  - [ ] Tablet viewport checks considered:
+  - [x] SVG path in `design_drafts/`
+    - `design_drafts/layout_writer_shell_768x1024.svg`
+    - `design_drafts/layout_writer_shell_820x1180.svg`
+    - `design_drafts/layout_writer_shell_1024x768.svg`
+    - `design_drafts/layout_writer_shell_1180x820.svg`
+  - [x] SVG has explicit `viewBox` (width / height / ratio)
+  - [x] Tablet viewport checks considered:
     - 768x1024 / 820x1180 / 1024x768 / 1180x820
-  - [ ] Numeric redlines recorded in spec
-  - [ ] Codex verified SVG exists before implementation
+  - [x] Numeric redlines recorded in spec
+  - [x] Codex verified SVG exists before implementation
 
 ---
 
@@ -142,8 +146,8 @@ If NO:
 
 ## Approval Gate (Base Required)
 
-- [ ] Spec self-reviewed by Codex
-- [ ] Explicit user approval received (or delegated chain approval reference)
+- [x] Spec self-reviewed by Codex
+- [x] Explicit user approval received (or delegated chain approval reference)
 
 > Implementation MUST NOT begin until both boxes are checked.
 
@@ -154,33 +158,38 @@ If NO:
 Status: COMPLETED
 
 Changed files:
-- ...
+- `v10/src/features/mod-studio/layout/LayoutStudioSection.tsx`
+- `v10/src/features/store/useModStudioStore.ts`
+- `v10/src/features/mod-studio/core/types.ts`
 
 Commands run (only if user asked or required by spec):
-- ...
+- `scripts/check_layer_rules.sh`
+- `cd v10 && npm run lint && npm run build`
 
 ## Gate Results (Codex fills)
 
 - Lint:
-  - PASS | FAIL | N/A
+  - PASS
 - Build:
-  - PASS | FAIL | N/A
+  - PASS
 - Script checks:
-  - PASS | FAIL | N/A
+  - PASS
 
 ## Failure Classification (Codex fills when any gate fails)
 
 - Pre-existing failures:
-  - ...
+  - None
 - Newly introduced failures:
-  - ...
+  - None
 - Blocking:
-  - YES / NO
+  - NO
 - Mitigation:
-  - ...
+  - N/A
 
 Manual verification notes:
-- ...
+- 슬롯별 hidden/moduleOrder를 GUI에서 편집하고 draft에 반영됨을 확인.
+- Layout composer 출력은 declarative manifest 생성 입력으로만 사용됨.
+- Numeric redline: composer control row height `>=32px`, panel inner padding `12px`, tablet viewport에서 canvas 접근 경로를 가리지 않는 우측 상단 고정 배치 확인.
 
 Notes:
-- ...
+- Layout gate는 기존 tablet writer shell SVG 범위에서 구조 확장 없이 side panel 내부 구성으로 처리.

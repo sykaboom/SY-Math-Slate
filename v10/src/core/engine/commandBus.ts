@@ -85,6 +85,30 @@ export type CommandExecutionPolicyHooks = {
   shouldQueue?: (entry: PendingCommandApprovalEntry) => boolean;
 };
 
+export type CommandAuditEventType =
+  | "dispatch-request"
+  | "dispatch-invalid-command"
+  | "dispatch-invalid-payload"
+  | "dispatch-queued-for-approval"
+  | "dispatch-approval-required"
+  | "dispatch-executed"
+  | "dispatch-execution-failed";
+
+export type CommandAuditEvent = {
+  eventType: CommandAuditEventType;
+  correlationId: string;
+  commandId: string;
+  role: CommandExecutionRole;
+  auditTag?: string;
+  mutationScope?: AppCommandMutationScope;
+  meta: Record<string, unknown> | null;
+  error?: string;
+};
+
+export type CommandAuditHooks = {
+  emit?: (event: CommandAuditEvent) => void;
+};
+
 export type AppCommandDispatchErrorCode =
   | "unknown-command"
   | "invalid-payload"
@@ -138,6 +162,7 @@ const appCommandRegistry: AppCommandRegistry = new Map();
 const idempotencyCache = new Map<string, IdempotencyCacheEntry>();
 
 let commandExecutionPolicyHooks: CommandExecutionPolicyHooks | null = null;
+let commandAuditHooks: CommandAuditHooks | null = null;
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
@@ -352,6 +377,14 @@ export const resetCommandExecutionPolicyHooks = (): void => {
   commandExecutionPolicyHooks = null;
 };
 
+export const configureCommandAuditHooks = (hooks: CommandAuditHooks): void => {
+  commandAuditHooks = hooks;
+};
+
+export const resetCommandAuditHooks = (): void => {
+  commandAuditHooks = null;
+};
+
 export const registerAppCommand = (
   command: AppCommand<unknown, unknown>
 ): RegisterAppCommandResult => {
@@ -408,6 +441,20 @@ export const dispatchCommand = async <TResult = unknown>(
   const normalizedIdempotencyKey = normalizeIdempotencyKey(context.idempotencyKey);
   const ttlMs = normalizeIdempotencyTtlMs(context.idempotencyTtlMs);
   const role = resolveRole(context.role);
+  const correlationId =
+    normalizedIdempotencyKey ??
+    `cmd-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+
+  const emitAudit = (event: Omit<CommandAuditEvent, "correlationId">): void => {
+    try {
+      commandAuditHooks?.emit?.({
+        ...event,
+        correlationId,
+      });
+    } catch {
+      return;
+    }
+  };
   const cacheKey = buildIdempotencyCacheKey(
     normalizedCommandId,
     role,
@@ -419,6 +466,13 @@ export const dispatchCommand = async <TResult = unknown>(
     return cached;
   }
 
+  emitAudit({
+    eventType: "dispatch-request",
+    commandId: normalizedCommandId || commandId || "(empty)",
+    role,
+    meta: normalizeMeta(context.meta),
+  });
+
   if (!normalizedCommandId) {
     const failed = failDispatch(
       "unknown-command",
@@ -428,6 +482,13 @@ export const dispatchCommand = async <TResult = unknown>(
       normalizedIdempotencyKey
     );
     storeIdempotencyResult(cacheKey, ttlMs, now, failed);
+    emitAudit({
+      eventType: "dispatch-invalid-command",
+      commandId: commandId || "(empty)",
+      role,
+      meta: normalizeMeta(context.meta),
+      error: failed.error,
+    });
     return failed;
   }
 
@@ -441,6 +502,13 @@ export const dispatchCommand = async <TResult = unknown>(
       normalizedIdempotencyKey
     );
     storeIdempotencyResult(cacheKey, ttlMs, now, failed);
+    emitAudit({
+      eventType: "dispatch-invalid-command",
+      commandId: normalizedCommandId,
+      role,
+      meta: normalizeMeta(context.meta),
+      error: failed.error,
+    });
     return failed;
   }
 
@@ -454,6 +522,15 @@ export const dispatchCommand = async <TResult = unknown>(
       normalizedIdempotencyKey
     );
     storeIdempotencyResult(cacheKey, ttlMs, now, failed);
+    emitAudit({
+      eventType: "dispatch-invalid-payload",
+      commandId: normalizedCommandId,
+      role,
+      auditTag: command.auditTag,
+      mutationScope: command.mutationScope,
+      meta: normalizeMeta(context.meta),
+      error: failed.error,
+    });
     return failed;
   }
 
@@ -486,8 +563,26 @@ export const dispatchCommand = async <TResult = unknown>(
     );
     if (queueFailure) {
       storeIdempotencyResult(cacheKey, ttlMs, now, queueFailure);
+      emitAudit({
+        eventType: "dispatch-execution-failed",
+        commandId: normalizedCommandId,
+        role,
+        auditTag: command.auditTag,
+        mutationScope: command.mutationScope,
+        meta: normalizedMeta,
+        error: queueFailure.error,
+      });
       return queueFailure;
     }
+
+    emitAudit({
+      eventType: "dispatch-queued-for-approval",
+      commandId: normalizedCommandId,
+      role,
+      auditTag: command.auditTag,
+      mutationScope: command.mutationScope,
+      meta: normalizedMeta,
+    });
 
     const approvalRequired = failDispatch(
       "approval-required",
@@ -497,6 +592,15 @@ export const dispatchCommand = async <TResult = unknown>(
       normalizedIdempotencyKey
     );
     storeIdempotencyResult(cacheKey, ttlMs, now, approvalRequired);
+    emitAudit({
+      eventType: "dispatch-approval-required",
+      commandId: normalizedCommandId,
+      role,
+      auditTag: command.auditTag,
+      mutationScope: command.mutationScope,
+      meta: normalizedMeta,
+      error: approvalRequired.error,
+    });
     return approvalRequired;
   }
 
@@ -514,6 +618,14 @@ export const dispatchCommand = async <TResult = unknown>(
       result: executionResult as TResult,
     };
     storeIdempotencyResult(cacheKey, ttlMs, now, succeeded);
+    emitAudit({
+      eventType: "dispatch-executed",
+      commandId: normalizedCommandId,
+      role,
+      auditTag: command.auditTag,
+      mutationScope: command.mutationScope,
+      meta: normalizedMeta,
+    });
     return succeeded;
   } catch (error) {
     const message = error instanceof Error ? error.message : "unknown failure";
@@ -525,6 +637,15 @@ export const dispatchCommand = async <TResult = unknown>(
       normalizedIdempotencyKey
     );
     storeIdempotencyResult(cacheKey, ttlMs, now, failed);
+    emitAudit({
+      eventType: "dispatch-execution-failed",
+      commandId: normalizedCommandId,
+      role,
+      auditTag: command.auditTag,
+      mutationScope: command.mutationScope,
+      meta: normalizedMeta,
+      error: failed.error,
+    });
     return failed;
   }
 };

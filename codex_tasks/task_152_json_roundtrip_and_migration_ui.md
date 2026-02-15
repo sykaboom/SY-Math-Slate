@@ -1,6 +1,6 @@
 # Task 152: JSON Roundtrip and Migration UI
 
-Status: PENDING
+Status: COMPLETED
 Owner: Codex (spec / review / implementation)
 Target: v10/
 Date: 2026-02-15
@@ -135,8 +135,8 @@ If NO:
 
 ## Approval Gate (Base Required)
 
-- [ ] Spec self-reviewed by Codex
-- [ ] Explicit user approval received (or delegated chain approval reference)
+- [x] Spec self-reviewed by Codex
+- [x] Explicit user approval received (or delegated chain approval reference)
 
 > Implementation MUST NOT begin until both boxes are checked.
 
@@ -147,33 +147,41 @@ If NO:
 Status: COMPLETED
 
 Changed files:
-- ...
+- `v10/src/features/mod-studio/io/ioStudio.ts`
+- `v10/src/features/mod-studio/io/IoStudioSection.tsx`
+- `v10/src/core/migrations/modStudioMigration.ts`
+- `v10/src/core/config/rolePolicy.ts` (import validation path)
+- `v10/src/core/extensions/pluginLoader.ts` (manifest validation path)
 
 Commands run (only if user asked or required by spec):
-- ...
+- `scripts/check_layer_rules.sh`
+- `cd v10 && npm run lint && npm run build`
+- `scripts/run_beta_quality_gate.sh`
 
 ## Gate Results (Codex fills)
 
 - Lint:
-  - PASS | FAIL | N/A
+  - PASS
 - Build:
-  - PASS | FAIL | N/A
+  - PASS
 - Script checks:
-  - PASS | FAIL | N/A
+  - PASS
 
 ## Failure Classification (Codex fills when any gate fails)
 
 - Pre-existing failures:
-  - ...
+  - None
 - Newly introduced failures:
-  - ...
+  - None
 - Blocking:
-  - YES / NO
+  - NO
 - Mitigation:
-  - ...
+  - N/A
 
 Manual verification notes:
-- ...
+- export JSON 생성 후 재 import 시 draft roundtrip 적용 확인.
+- malformed/unsupported version payload는 deterministic error로 즉시 거부 확인.
+- v0 키(`policyDoc/layoutSlots/moduleList/themeTokens`) 마이그레이션 경로 확인.
 
 Notes:
-- ...
+- import 경로는 validate -> migrate -> stage 순서 고정.

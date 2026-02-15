@@ -1,6 +1,6 @@
 # Task 155: Observability and Audit Pipeline
 
-Status: PENDING
+Status: COMPLETED
 Owner: Codex (spec / review / implementation)
 Target: v10/
 Date: 2026-02-15
@@ -135,8 +135,8 @@ If NO:
 
 ## Approval Gate (Base Required)
 
-- [ ] Spec self-reviewed by Codex
-- [ ] Explicit user approval received (or delegated chain approval reference)
+- [x] Spec self-reviewed by Codex
+- [x] Explicit user approval received (or delegated chain approval reference)
 
 > Implementation MUST NOT begin until both boxes are checked.
 
@@ -147,33 +147,42 @@ If NO:
 Status: COMPLETED
 
 Changed files:
-- ...
+- `v10/src/features/observability/auditLogger.ts`
+- `v10/src/core/engine/commandBus.ts`
+- `v10/src/features/extensions/commandExecutionPolicy.ts`
+- `v10/src/features/extensions/toolExecutionPolicy.ts`
+- `v10/src/features/mod-studio/publish/PublishStudioSection.tsx`
+- `v10/src/features/extensions/ui/ExtensionRuntimeBootstrap.tsx`
 
 Commands run (only if user asked or required by spec):
-- ...
+- `scripts/check_layer_rules.sh`
+- `cd v10 && npm run lint && npm run build`
+- `scripts/run_beta_quality_gate.sh`
 
 ## Gate Results (Codex fills)
 
 - Lint:
-  - PASS | FAIL | N/A
+  - PASS
 - Build:
-  - PASS | FAIL | N/A
+  - PASS
 - Script checks:
-  - PASS | FAIL | N/A
+  - PASS
 
 ## Failure Classification (Codex fills when any gate fails)
 
 - Pre-existing failures:
-  - ...
+  - None
 - Newly introduced failures:
-  - ...
+  - None
 - Blocking:
-  - YES / NO
+  - NO
 - Mitigation:
-  - ...
+  - N/A
 
 Manual verification notes:
-- ...
+- command dispatch lifecycle/request/approval/failure 이벤트가 구조화 이벤트로 발행됨.
+- correlationId 기반으로 요청-결정-결과 체인 연결 가능.
+- secret-like 키(token/password/secret/credentials 등)는 `[REDACTED]` 처리.
 
 Notes:
-- ...
+- `NEXT_PUBLIC_AUDIT_LOG=1` 일 때만 runtime audit emission 활성화.

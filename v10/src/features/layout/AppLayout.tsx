@@ -15,7 +15,9 @@ import { DataInputPanel } from "@features/layout/DataInputPanel";
 import { Prompter } from "@features/layout/Prompter";
 import { PlayerBar } from "@features/layout/PlayerBar";
 import { ExtensionSlot } from "@features/extensions/ui/ExtensionSlot";
+import { ModStudioShell } from "@features/mod-studio";
 import { reportPolicyBooleanDiffBatch } from "@features/policy/policyShadow";
+import { useAsymmetricSessionSync } from "@features/sync/useAsymmetricSessionSync";
 import { Button } from "@ui/components/button";
 import { useLocalStore } from "@features/store/useLocalStore";
 import { useUIStore } from "@features/store/useUIStoreBridge";
@@ -42,6 +44,7 @@ type LayoutRoleVisibilityPolicy = {
 };
 
 export function AppLayout({ children }: AppLayoutProps) {
+  useAsymmetricSessionSync();
   const layoutRootRef = useRef<HTMLDivElement | null>(null);
   const role = useLocalStore((state) => state.role);
   const {
@@ -347,6 +350,7 @@ export function AppLayout({ children }: AppLayoutProps) {
                 <ZoomIn className="h-4 w-4" />
                 <span className="hidden sm:inline">View</span>
               </Button>
+              <ModStudioShell />
               <div data-extension-slot-host="chrome-top-toolbar" className="flex items-center">
                 <ExtensionSlot slot="chrome-top-toolbar" />
               </div>

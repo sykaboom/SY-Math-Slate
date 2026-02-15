@@ -1,6 +1,6 @@
 # Task 147: Mod Studio Policy Editor (Role/Permission GUI)
 
-Status: PENDING
+Status: COMPLETED
 Owner: Codex (spec / review / implementation)
 Target: v10/
 Date: 2026-02-15
@@ -135,8 +135,8 @@ If NO:
 
 ## Approval Gate (Base Required)
 
-- [ ] Spec self-reviewed by Codex
-- [ ] Explicit user approval received (or delegated chain approval reference)
+- [x] Spec self-reviewed by Codex
+- [x] Explicit user approval received (or delegated chain approval reference)
 
 > Implementation MUST NOT begin until both boxes are checked.
 
@@ -147,33 +147,37 @@ If NO:
 Status: COMPLETED
 
 Changed files:
-- ...
+- `v10/src/features/mod-studio/policy/PolicyStudioSection.tsx`
+- `v10/src/core/config/rolePolicy.ts`
+- `v10/src/core/config/rolePolicyGuards.ts` (validation path reused)
 
 Commands run (only if user asked or required by spec):
-- ...
+- `scripts/check_layer_rules.sh`
+- `cd v10 && npm run lint && npm run build`
 
 ## Gate Results (Codex fills)
 
 - Lint:
-  - PASS | FAIL | N/A
+  - PASS
 - Build:
-  - PASS | FAIL | N/A
+  - PASS
 - Script checks:
-  - PASS | FAIL | N/A
+  - PASS
 
 ## Failure Classification (Codex fills when any gate fails)
 
 - Pre-existing failures:
-  - ...
+  - None
 - Newly introduced failures:
-  - ...
+  - None
 - Blocking:
-  - YES / NO
+  - NO
 - Mitigation:
-  - ...
+  - N/A
 
 Manual verification notes:
-- ...
+- Policy draft GUI에서 role/surface/action decision 편집 가능.
+- publish 경로는 `validateRolePolicyPublishCandidate` + unknown grant 차단 로직으로 실패/성공이 결정됨.
 
 Notes:
-- ...
+- deny-by-default 기본값 유지.

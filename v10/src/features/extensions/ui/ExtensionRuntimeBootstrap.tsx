@@ -21,6 +21,11 @@ import {
   registerToolExecutionPolicy,
   resetToolExecutionPolicy,
 } from "@features/extensions/toolExecutionPolicy";
+import {
+  registerObservabilityRuntime,
+  resetObservabilityRuntime,
+} from "@features/observability/auditLogger";
+import { useLocalStore } from "@features/store/useLocalStore";
 
 import { registerCoreSlots } from "./registerCoreSlots";
 import { registerCoreDeclarativeManifest } from "./registerCoreDeclarativeManifest";
@@ -155,12 +160,55 @@ const registerGatewayPlugin = async (
 };
 
 export function ExtensionRuntimeBootstrap() {
+  const role = useLocalStore((state) => state.role);
+  const setTrustedRoleClaim = useLocalStore((state) => state.setTrustedRoleClaim);
+  const clearTrustedRoleClaim = useLocalStore(
+    (state) => state.clearTrustedRoleClaim
+  );
+
   useEffect(() => {
+    const verifyTrustedRole = async () => {
+      if (typeof window === "undefined") return;
+      if (role === "student") {
+        setTrustedRoleClaim("student");
+        return;
+      }
+      const roleToken = process.env.NEXT_PUBLIC_ROLE_TRUST_TOKEN;
+      if (!roleToken) {
+        clearTrustedRoleClaim();
+        return;
+      }
+      try {
+        const response = await fetch("/api/trust/role", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({
+            requestedRole: role,
+            roleToken,
+          }),
+        });
+        if (!response.ok) {
+          clearTrustedRoleClaim();
+          return;
+        }
+        const body = (await response.json()) as { role?: unknown };
+        if (body.role === "host" || body.role === "student") {
+          setTrustedRoleClaim(body.role);
+          return;
+        }
+        clearTrustedRoleClaim();
+      } catch {
+        clearTrustedRoleClaim();
+      }
+    };
+    void verifyTrustedRole();
+
     registerCoreSlots();
     registerDefaultExtensionAdapters();
     registerCoreCommands();
     registerCommandExecutionPolicy();
     registerToolExecutionPolicy();
+    registerObservabilityRuntime();
     const enableCoreManifest =
       process.env.NEXT_PUBLIC_CORE_MANIFEST_SHADOW === "1" ||
       process.env.NEXT_PUBLIC_CORE_TOOLBAR_CUTOVER !== "0";
@@ -188,10 +236,11 @@ export function ExtensionRuntimeBootstrap() {
 
     return () => {
       gateway?.stop();
+      resetObservabilityRuntime();
       resetCommandExecutionPolicy();
       resetToolExecutionPolicy();
     };
-  }, []);
+  }, [clearTrustedRoleClaim, role, setTrustedRoleClaim]);
 
   return null;
 }
