@@ -12,7 +12,7 @@ import {
 const LEFT_PANEL_SLOT: UISlotName = "left-panel";
 const TOOLBAR_BOTTOM_SLOT: UISlotName = "toolbar-bottom";
 const LAYOUT_SLOT_CUTOVER_ENABLED =
-  process.env.NEXT_PUBLIC_LAYOUT_SLOT_CUTOVER === "1";
+  process.env.NEXT_PUBLIC_LAYOUT_SLOT_CUTOVER !== "0";
 
 let hasRegisteredCoreSlots = false;
 

@@ -1,6 +1,6 @@
 # Task 140: Command-Only Write Path Completion
 
-Status: PENDING
+Status: COMPLETED
 Owner: Codex (spec / review / implementation)
 Target: v10/
 Date: 2026-02-15
@@ -138,8 +138,8 @@ If NO:
 
 ## Approval Gate (Base Required)
 
-- [ ] Spec self-reviewed by Codex
-- [ ] Explicit user approval received (or delegated chain approval reference)
+- [x] Spec self-reviewed by Codex
+- [x] Explicit user approval received (or delegated chain approval reference)
 
 > Implementation MUST NOT begin until both boxes are checked.
 
@@ -150,33 +150,40 @@ If NO:
 Status: COMPLETED
 
 Changed files:
-- ...
+- `v10/src/features/toolbar/FloatingToolbar.tsx`
+- `v10/src/features/layout/AppLayout.tsx`
+- `v10/src/features/extensions/ui/registerCoreDeclarativeManifest.ts`
 
 Commands run (only if user asked or required by spec):
-- ...
+- `rg -n "useCanvasStore\\(\\).*\\.|dispatchCommand\\(" v10/src/features/toolbar v10/src/features/layout v10/src/features/hooks`
+- `scripts/check_v10_migration_baseline.sh`
+- `scripts/check_v10_legacy_freeze.sh`
+- `cd v10 && npm run lint && npm run build`
 
 ## Gate Results (Codex fills)
 
 - Lint:
-  - PASS | FAIL | N/A
+  - PASS
 - Build:
-  - PASS | FAIL | N/A
+  - PASS
 - Script checks:
-  - PASS | FAIL | N/A
+  - PASS
 
 ## Failure Classification (Codex fills when any gate fails)
 
 - Pre-existing failures:
-  - ...
+  - None
 - Newly introduced failures:
-  - ...
+  - None
 - Blocking:
-  - YES / NO
+  - NO
 - Mitigation:
-  - ...
+  - N/A
 
 Manual verification notes:
-- ...
+- `setTool` / `setViewMode` UI write path를 command dispatch 경유로 이관.
+- core declarative manifest `insertBreak` payload 호환 키를 `type`으로 정합화.
+- migration/freeze 지표: `dispatchCommand` 참조 14건으로 증가, freeze 임계치 통과.
 
 Notes:
-- ...
+- Direct write path 제거는 점진 이관 원칙으로 유지(레거시 store 전면 삭제는 후속 wave).

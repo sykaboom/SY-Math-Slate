@@ -1,6 +1,6 @@
 # Task 142: Core UI Dogfooding via Manifest Runtime
 
-Status: PENDING
+Status: COMPLETED
 Owner: Codex (spec / review / implementation)
 Target: v10/
 Date: 2026-02-15
@@ -136,8 +136,8 @@ If NO:
 
 ## Approval Gate (Base Required)
 
-- [ ] Spec self-reviewed by Codex
-- [ ] Explicit user approval received (or delegated chain approval reference)
+- [x] Spec self-reviewed by Codex
+- [x] Explicit user approval received (or delegated chain approval reference)
 
 > Implementation MUST NOT begin until both boxes are checked.
 
@@ -148,33 +148,39 @@ If NO:
 Status: COMPLETED
 
 Changed files:
-- ...
+- `v10/src/features/extensions/ui/registerCoreDeclarativeManifest.ts`
+- `v10/src/features/extensions/ui/ExtensionRuntimeBootstrap.tsx`
+- `v10/src/features/toolbar/FloatingToolbar.tsx`
 
 Commands run (only if user asked or required by spec):
-- ...
+- `rg -n "commandId:\\s*\\\"insertBreak\\\"|payload:\\s*\\{\\s*breakType" v10/src/features/extensions/ui/registerCoreDeclarativeManifest.ts`
+- `scripts/check_v10_migration_baseline.sh`
+- `cd v10 && npm run lint && npm run build`
 
 ## Gate Results (Codex fills)
 
 - Lint:
-  - PASS | FAIL | N/A
+  - PASS
 - Build:
-  - PASS | FAIL | N/A
+  - PASS
 - Script checks:
-  - PASS | FAIL | N/A
+  - PASS
 
 ## Failure Classification (Codex fills when any gate fails)
 
 - Pre-existing failures:
-  - ...
+  - None
 - Newly introduced failures:
-  - ...
+  - None
 - Blocking:
-  - YES / NO
+  - NO
 - Mitigation:
-  - ...
+  - N/A
 
 Manual verification notes:
-- ...
+- Core declarative manifest 등록이 기본 활성(`NEXT_PUBLIC_CORE_TOOLBAR_CUTOVER !== "0"`)으로 전환됨.
+- `FloatingToolbar`의 playback/page/break UI는 declarative slot(`toolbar-inline`) 경유 경로를 기본 사용.
+- Manifest action payload와 command schema 간 키 정합(`type`) 확인.
 
 Notes:
-- ...
+- `NEXT_PUBLIC_CORE_TOOLBAR_CUTOVER=0`으로 즉시 rollback 가능.

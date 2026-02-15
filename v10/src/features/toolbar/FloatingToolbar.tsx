@@ -51,7 +51,6 @@ export function FloatingToolbar() {
     activeTool,
     openPanel,
     openPasteHelper,
-    setTool,
     togglePanel,
     isOverviewMode,
     overviewZoom,
@@ -120,21 +119,22 @@ export function FloatingToolbar() {
   const menuButtonClass =
     "rounded-md border border-toolbar-border/10 bg-toolbar-menu-bg/20 px-2 py-1.5 text-left text-[11px] text-toolbar-text/70 hover:border-toolbar-border/30";
   const useDeclarativeCoreToolbar =
-    process.env.NEXT_PUBLIC_CORE_TOOLBAR_CUTOVER === "1";
+    process.env.NEXT_PUBLIC_CORE_TOOLBAR_CUTOVER !== "0";
   const dispatchToolbarCommand = (commandId: string, payload: unknown = {}) => {
     void dispatchCommand(commandId, payload, {
       meta: { source: "toolbar.floating-toolbar" },
     }).catch(() => undefined);
   };
 
-  const handleTool = (tool: Tool) => () => setTool(tool);
+  const handleTool = (tool: Tool) => () =>
+    dispatchToolbarCommand("setTool", { tool });
 
   const handlePenClick = () => {
     if (activeTool === "pen") {
       togglePanel("pen");
       return;
     }
-    setTool("pen");
+    dispatchToolbarCommand("setTool", { tool: "pen" });
   };
 
   const handleLaserClick = () => {
@@ -142,7 +142,7 @@ export function FloatingToolbar() {
       togglePanel("laser");
       return;
     }
-    setTool("laser");
+    dispatchToolbarCommand("setTool", { tool: "laser" });
   };
 
   const handleOpenClick = () => {

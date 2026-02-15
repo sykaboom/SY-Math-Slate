@@ -6,7 +6,7 @@ import {
 import {
   canDispatchCommandForRole,
   resolveExecutionRole,
-  shouldQueueCommandApprovalForRole,
+  shouldQueueCommandApprovalByPolicyForRole,
 } from "@core/config/rolePolicy";
 import { reportPolicyBooleanDiff } from "@features/policy/policyShadow";
 import { useLocalStore } from "@features/store/useLocalStore";
@@ -51,8 +51,7 @@ const resolveCommandExecutionRole = (): "host" | "student" => {
 
 const shouldQueuePendingCommand = (entry: PendingCommandApprovalEntry): boolean => {
   const role = useLocalStore.getState().role;
-  const policyValue =
-    canDispatchCommandForRole(role) && shouldQueueCommandApprovalForRole(role);
+  const policyValue = shouldQueueCommandApprovalByPolicyForRole(role);
   const legacyValue = true;
   reportPolicyBooleanDiff({
     decisionKey: "command-policy.should-queue-pending-command",

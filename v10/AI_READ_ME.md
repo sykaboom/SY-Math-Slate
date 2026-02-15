@@ -454,6 +454,6 @@ Current migration command domains (source of truth):
 - `features/extensions/commands/registerCoreCommands.ts` -> `COMMAND_MIGRATION_MAP`
 - Optional policy/shadow/cutover flags:
   - `NEXT_PUBLIC_POLICY_SHADOW=1`: enable policy shadow diff telemetry (legacy vs policy decisions).
-  - `NEXT_PUBLIC_CORE_MANIFEST_SHADOW=1`: enable declarative core toolbar shadow manifest injection.
-  - `NEXT_PUBLIC_CORE_TOOLBAR_CUTOVER=1`: enable declarative toolbar cutover path for playback/page/break controls.
-  - `NEXT_PUBLIC_LAYOUT_SLOT_CUTOVER=1`: enable phased layout slot cutover path (left panel + bottom region slot composition).
+  - `NEXT_PUBLIC_CORE_MANIFEST_SHADOW=1`: force-enable declarative core manifest shadow registration.
+  - `NEXT_PUBLIC_CORE_TOOLBAR_CUTOVER=0`: disable declarative toolbar cutover path (default is enabled).
+  - `NEXT_PUBLIC_LAYOUT_SLOT_CUTOVER=0`: disable layout slot cutover path (default is enabled).

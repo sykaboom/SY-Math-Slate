@@ -6,7 +6,7 @@ import {
 import {
   canExecuteToolForRole,
   resolveExecutionRole,
-  shouldQueueToolApprovalForRole,
+  shouldQueueToolApprovalByPolicyForRole,
 } from "@core/config/rolePolicy";
 import { reportPolicyBooleanDiff } from "@features/policy/policyShadow";
 import { useLocalStore } from "@features/store/useLocalStore";
@@ -40,8 +40,7 @@ const resolveToolExecutionRole = (): "host" | "student" => {
 
 const shouldQueuePendingApproval = (entry: PendingApprovalEntry): boolean => {
   const role = useLocalStore.getState().role;
-  const policyValue =
-    canExecuteToolForRole(role) && shouldQueueToolApprovalForRole(role);
+  const policyValue = shouldQueueToolApprovalByPolicyForRole(role);
   const legacyValue = true;
   reportPolicyBooleanDiff({
     decisionKey: "tool-policy.should-queue-pending-approval",

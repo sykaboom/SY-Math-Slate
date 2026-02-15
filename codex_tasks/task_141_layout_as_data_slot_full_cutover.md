@@ -1,6 +1,6 @@
 # Task 141: Layout-as-Data Full Slot Cutover
 
-Status: PENDING
+Status: COMPLETED
 Owner: Codex (spec / review / implementation)
 Target: v10/
 Date: 2026-02-15
@@ -44,14 +44,18 @@ Out of scope:
 
 ## Optional Block A — Layout / SVG Gate
 
-- [ ] Applies: YES
+- [x] Applies: YES
 - If YES, fill all items:
-  - [ ] SVG path in `design_drafts/`
-  - [ ] SVG has explicit `viewBox` (width / height / ratio)
-  - [ ] Tablet viewport checks considered:
+  - [x] SVG path in `design_drafts/`
+    - `design_drafts/layout_writer_shell_768x1024.svg`
+    - `design_drafts/layout_writer_shell_820x1180.svg`
+    - `design_drafts/layout_writer_shell_1024x768.svg`
+    - `design_drafts/layout_writer_shell_1180x820.svg`
+  - [x] SVG has explicit `viewBox` (width / height / ratio)
+  - [x] Tablet viewport checks considered:
     - 768x1024 / 820x1180 / 1024x768 / 1180x820
-  - [ ] Numeric redlines recorded in spec
-  - [ ] Codex verified SVG exists before implementation
+  - [x] Numeric redlines recorded in spec
+  - [x] Codex verified SVG exists before implementation
 
 ---
 
@@ -144,8 +148,8 @@ If NO:
 
 ## Approval Gate (Base Required)
 
-- [ ] Spec self-reviewed by Codex
-- [ ] Explicit user approval received (or delegated chain approval reference)
+- [x] Spec self-reviewed by Codex
+- [x] Explicit user approval received (or delegated chain approval reference)
 
 > Implementation MUST NOT begin until both boxes are checked.
 
@@ -156,33 +160,38 @@ If NO:
 Status: COMPLETED
 
 Changed files:
-- ...
+- `v10/src/features/layout/AppLayout.tsx`
+- `v10/src/features/extensions/ui/registerCoreSlots.ts`
 
 Commands run (only if user asked or required by spec):
-- ...
+- `find design_drafts -maxdepth 2 -type f | sort`
+- `scripts/check_layer_rules.sh`
+- `cd v10 && npm run lint && npm run build`
 
 ## Gate Results (Codex fills)
 
 - Lint:
-  - PASS | FAIL | N/A
+  - PASS
 - Build:
-  - PASS | FAIL | N/A
+  - PASS
 - Script checks:
-  - PASS | FAIL | N/A
+  - PASS
 
 ## Failure Classification (Codex fills when any gate fails)
 
 - Pre-existing failures:
-  - ...
+  - None
 - Newly introduced failures:
-  - ...
+  - None
 - Blocking:
-  - YES / NO
+  - NO
 - Mitigation:
-  - ...
+  - N/A
 
 Manual verification notes:
-- ...
+- Slot cutover는 기본 활성(`NEXT_PUBLIC_LAYOUT_SLOT_CUTOVER !== "0"`)으로 전환하고, `0` 설정 시 fallback 경로 유지.
+- Top/left/bottom slot host 구조(`chrome-top-toolbar`, `left-panel`, `toolbar-bottom`)가 layout 트리에 유지됨을 확인.
+- Tablet redline 기준: 상단/하단 고정 chrome의 터치 목표 영역을 유지하고 canvas 중심 영역을 침범하지 않음(기존 SVG shell 대비 구조 불변).
 
 Notes:
-- ...
+- Phase-safe cutover를 위해 환경변수 기반 rollback 스위치(`=0`) 유지.

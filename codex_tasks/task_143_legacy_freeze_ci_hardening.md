@@ -1,6 +1,6 @@
 # Task 143: Legacy Freeze and CI Hardening Wave 2
 
-Status: PENDING
+Status: COMPLETED
 Owner: Codex (spec / review / implementation)
 Target: root/
 Date: 2026-02-15
@@ -131,8 +131,8 @@ If NO:
 
 ## Approval Gate (Base Required)
 
-- [ ] Spec self-reviewed by Codex
-- [ ] Explicit user approval received (or delegated chain approval reference)
+- [x] Spec self-reviewed by Codex
+- [x] Explicit user approval received (or delegated chain approval reference)
 
 > Implementation MUST NOT begin until both boxes are checked.
 
@@ -143,33 +143,42 @@ If NO:
 Status: COMPLETED
 
 Changed files:
-- ...
+- `scripts/check_v10_migration_baseline.sh` (validated)
+- `scripts/check_v10_legacy_freeze.sh` (validated)
+- `scripts/check_v10_changed_lint.sh` (validated)
+- `scripts/run_repo_verifications.sh` (validated)
+- `v10/AI_READ_ME.md`
 
 Commands run (only if user asked or required by spec):
-- ...
+- `scripts/check_v10_legacy_freeze.sh`
+- `scripts/check_v10_migration_baseline.sh`
+- `VERIFY_STAGE=mid bash scripts/run_repo_verifications.sh`
+- `cd v10 && npm run lint && npm run build`
 
 ## Gate Results (Codex fills)
 
 - Lint:
-  - PASS | FAIL | N/A
+  - PASS
 - Build:
-  - PASS | FAIL | N/A
+  - PASS
 - Script checks:
-  - PASS | FAIL | N/A
+  - PASS
 
 ## Failure Classification (Codex fills when any gate fails)
 
 - Pre-existing failures:
-  - ...
+  - None
 - Newly introduced failures:
-  - ...
+  - None
 - Blocking:
-  - YES / NO
+  - NO
 - Mitigation:
-  - ...
+  - N/A
 
 Manual verification notes:
-- ...
+- legacy freeze budget(W158) 기준으로 `useUIStore/useCanvasStore/dispatchCommand` 임계치 통과.
+- verification runner는 `mid/end` stage에서 changed-lint/full-build 전환 로직 유지 확인.
+- 문서의 cutover flag 기본값 설명을 현재 런타임 동작과 일치하도록 갱신.
 
 Notes:
-- ...
+- 본 wave에서는 script 로직 추가수정 없이 gate를 재검증하고 문서 동기화를 수행함.

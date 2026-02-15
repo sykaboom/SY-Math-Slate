@@ -163,7 +163,7 @@ export function ExtensionRuntimeBootstrap() {
     registerToolExecutionPolicy();
     const enableCoreManifest =
       process.env.NEXT_PUBLIC_CORE_MANIFEST_SHADOW === "1" ||
-      process.env.NEXT_PUBLIC_CORE_TOOLBAR_CUTOVER === "1";
+      process.env.NEXT_PUBLIC_CORE_TOOLBAR_CUTOVER !== "0";
     if (enableCoreManifest) {
       registerCoreDeclarativeManifest();
     }

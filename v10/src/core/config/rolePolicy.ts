@@ -26,6 +26,14 @@ export const ROLE_POLICY_ACTIONS = {
   UI_SHOW_STUDENT_PLAYER_BAR: "show-student-player-bar",
 } as const;
 
+export type LayoutRoleVisibilitySnapshot = {
+  showTopChrome: boolean;
+  showDataInputPanel: boolean;
+  showHostToolchips: boolean;
+  showStudentPlayerBar: boolean;
+  showPasteHelperModal: boolean;
+};
+
 type RolePolicySurface =
   (typeof ROLE_POLICY_SURFACES)[keyof typeof ROLE_POLICY_SURFACES];
 type RolePolicyAction = (typeof ROLE_POLICY_ACTIONS)[keyof typeof ROLE_POLICY_ACTIONS];
@@ -87,6 +95,26 @@ const DENY_ALL_POLICY: RolePolicyDocument = {
   version: 1,
   defaultDecision: "deny",
   roles: {},
+};
+
+const LEGACY_LAYOUT_VISIBILITY_BY_ROLE: Record<
+  RuntimeRole,
+  LayoutRoleVisibilitySnapshot
+> = {
+  host: {
+    showTopChrome: true,
+    showDataInputPanel: true,
+    showHostToolchips: true,
+    showStudentPlayerBar: false,
+    showPasteHelperModal: true,
+  },
+  student: {
+    showTopChrome: false,
+    showDataInputPanel: false,
+    showHostToolchips: false,
+    showStudentPlayerBar: true,
+    showPasteHelperModal: false,
+  },
 };
 
 const POLICY_VALIDATION = validateRolePolicyDocument(ROLE_POLICY_SOURCE);
@@ -182,6 +210,27 @@ export const canAccessLayoutVisibilityForRole = (
   action: RolePolicyAction | string
 ): boolean => {
   return isRolePolicyAllowed(role, ROLE_POLICY_SURFACES.UI_VISIBILITY, action);
+};
+
+export const shouldQueueCommandApprovalByPolicyForRole = (
+  role: unknown
+): boolean => {
+  return canDispatchCommandForRole(role) && shouldQueueCommandApprovalForRole(role);
+};
+
+export const shouldQueueToolApprovalByPolicyForRole = (
+  role: unknown
+): boolean => {
+  return canExecuteToolForRole(role) && shouldQueueToolApprovalForRole(role);
+};
+
+export const resolveLegacyLayoutVisibilityForRole = (
+  role: unknown
+): LayoutRoleVisibilitySnapshot => {
+  if (role === "student") {
+    return LEGACY_LAYOUT_VISIBILITY_BY_ROLE.student;
+  }
+  return LEGACY_LAYOUT_VISIBILITY_BY_ROLE.host;
 };
 
 export const getRolePolicyDocument = (): RolePolicyDocument => ACTIVE_ROLE_POLICY;

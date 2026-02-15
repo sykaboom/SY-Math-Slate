@@ -65,7 +65,7 @@ export const registerCoreDeclarativeManifest = (): void => {
         props: { label: "L-Break", icon: "↩" },
         action: {
           commandId: "insertBreak",
-          payload: { breakType: "line", panelOpen: false },
+          payload: { type: "line", panelOpen: false },
         },
       },
       {
@@ -75,7 +75,7 @@ export const registerCoreDeclarativeManifest = (): void => {
         props: { label: "C-Break", icon: "║" },
         action: {
           commandId: "insertBreak",
-          payload: { breakType: "column", panelOpen: false },
+          payload: { type: "column", panelOpen: false },
         },
       },
       {
@@ -85,7 +85,7 @@ export const registerCoreDeclarativeManifest = (): void => {
         props: { label: "P-Break", icon: "⤓" },
         action: {
           commandId: "insertBreak",
-          payload: { breakType: "page", panelOpen: false },
+          payload: { type: "page", panelOpen: false },
         },
       },
     ],

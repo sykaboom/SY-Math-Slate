@@ -5,9 +5,11 @@ import dynamic from "next/dynamic";
 
 import { CanvasStage } from "@features/canvas/CanvasStage";
 import { PasteHelperModal } from "@features/canvas/PasteHelperModal";
+import { dispatchCommand } from "@core/engine/commandBus";
 import {
   ROLE_POLICY_ACTIONS,
   canAccessLayoutVisibilityForRole,
+  resolveLegacyLayoutVisibilityForRole,
 } from "@core/config/rolePolicy";
 import { DataInputPanel } from "@features/layout/DataInputPanel";
 import { Prompter } from "@features/layout/Prompter";
@@ -48,7 +50,6 @@ export function AppLayout({ children }: AppLayoutProps) {
     overviewZoom,
     setOverviewZoom,
     toggleOverviewMode,
-    setViewMode,
     openDataInput,
     closeDataInput,
     isDataInputOpen,
@@ -57,13 +58,12 @@ export function AppLayout({ children }: AppLayoutProps) {
     enterFullscreenInkFallback,
     exitFullscreenInk,
   } = useUIStore();
-  const legacyIsStudentRole = role === "student";
   const isPresentation = viewMode === "presentation";
   const isNativeFullscreen = fullscreenInkMode === "native";
   const isAppFullscreen = fullscreenInkMode === "app";
   const isFullscreenInkActive = fullscreenInkMode !== "off";
   const useLayoutSlotCutover =
-    process.env.NEXT_PUBLIC_LAYOUT_SLOT_CUTOVER === "1";
+    process.env.NEXT_PUBLIC_LAYOUT_SLOT_CUTOVER !== "0";
   const roleVisibilityPolicy: LayoutRoleVisibilityPolicy = {
     showTopChrome: canAccessLayoutVisibilityForRole(
       role,
@@ -97,13 +97,8 @@ export function AppLayout({ children }: AppLayoutProps) {
         ? "state_input_mode"
         : "state_canvas_mode";
   const zoomLabel = isOverviewMode ? Math.round(overviewZoom * 100) : 100;
-  const legacyRoleVisibility = {
-    showTopChrome: !legacyIsStudentRole,
-    showDataInputPanel: !legacyIsStudentRole,
-    showHostToolchips: !legacyIsStudentRole,
-    showStudentPlayerBar: legacyIsStudentRole,
-    showPasteHelperModal: !legacyIsStudentRole,
-  };
+  const legacyRoleVisibility: LayoutRoleVisibilityPolicy =
+    resolveLegacyLayoutVisibilityForRole(role);
 
   const showTopChromeLegacy =
     !isPresentation &&
@@ -141,6 +136,12 @@ export function AppLayout({ children }: AppLayoutProps) {
   const handleHeaderZoom = (delta: number) => {
     if (!isOverviewMode) return;
     setOverviewZoom(overviewZoom + delta);
+  };
+
+  const handleEnterPresentation = () => {
+    void dispatchCommand("setViewMode", { mode: "presentation" }, {
+      meta: { source: "layout.app-layout" },
+    }).catch(() => undefined);
   };
 
   const handleEnterFullscreenInk = async () => {
@@ -329,7 +330,7 @@ export function AppLayout({ children }: AppLayoutProps) {
                 variant="outline"
                 size="icon"
                 className="border-white/15 bg-white/5 text-white/70 hover:bg-white/10 hover:text-white disabled:text-white/30"
-                onClick={() => setViewMode("presentation")}
+                onClick={handleEnterPresentation}
                 disabled={isOverviewMode}
                 aria-label="발표 모드"
                 title="발표 모드"
