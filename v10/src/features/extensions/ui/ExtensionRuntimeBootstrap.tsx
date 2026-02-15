@@ -10,7 +10,10 @@ import {
   type McpGatewayMessageRuntime,
 } from "@core/extensions/mcpGateway";
 import { registerDeclarativePluginManifest } from "@core/extensions/pluginLoader";
-import { listKnownUISlotNames } from "@core/extensions/registry";
+import {
+  listKnownUISlotNames,
+  registerToolRegistryEntry,
+} from "@core/extensions/registry";
 import { registerDefaultExtensionAdapters } from "@features/extensions/adapters";
 import {
   registerCommandExecutionPolicy,
@@ -25,6 +28,7 @@ import {
   registerObservabilityRuntime,
   resetObservabilityRuntime,
 } from "@features/observability/auditLogger";
+import { INPUT_STUDIO_LLM_DRAFT_TOOL_ENTRY } from "@features/input-studio/llm/types";
 import { useLocalStore } from "@features/store/useLocalStore";
 
 import { registerCoreSlots } from "./registerCoreSlots";
@@ -205,6 +209,7 @@ export function ExtensionRuntimeBootstrap() {
 
     registerCoreSlots();
     registerDefaultExtensionAdapters();
+    registerToolRegistryEntry(INPUT_STUDIO_LLM_DRAFT_TOOL_ENTRY);
     registerCoreCommands();
     registerCommandExecutionPolicy();
     registerToolExecutionPolicy();

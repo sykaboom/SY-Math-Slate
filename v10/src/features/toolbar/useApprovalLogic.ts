@@ -8,6 +8,11 @@ import { normalizeTextSegmentStyle } from "@core/config/typography";
 import { dispatchCommand } from "@core/engine/commandBus";
 import { sanitizeRichTextHtml } from "@core/sanitize/richTextSanitizer";
 import type { StepBlock } from "@core/types/canvas";
+import {
+  cloneInputStudioDraftBlocks,
+  isInputStudioDraftQueueMeta,
+  parseInputStudioDraftQueueEnvelope,
+} from "@features/input-studio/approval/inputStudioApproval";
 import { useCanvasStore } from "@features/store/useCanvasStore";
 import { useDocStore } from "@features/store/useDocStore";
 import { useSyncStore, type PendingAIQueueEntry } from "@features/store/useSyncStore";
@@ -229,6 +234,27 @@ export function useApprovalLogic(): UseApprovalLogicResult {
         return;
       }
 
+      const inputStudioQueue = parseInputStudioDraftQueueEnvelope(
+        entry.meta,
+        entry.payload
+      );
+      if (inputStudioQueue) {
+        const canvas = useCanvasStore.getState();
+        canvas.importStepBlocks(
+          cloneInputStudioDraftBlocks(inputStudioQueue.payload.draftBlocks)
+        );
+        useDocStore.getState().syncFromCanvas(useCanvasStore.getState());
+        markApproved(id);
+        removeQueueEntry(id);
+        return;
+      }
+
+      if (isInputStudioDraftQueueMeta(entry.meta)) {
+        markRejected(id);
+        removeQueueEntry(id);
+        return;
+      }
+
       const normalized = entry.toolResult?.normalized;
       if (isNormalizedContent(normalized)) {
         const incomingBlocks = mapNormalizedContentToStepBlocks(normalized, entry.id);
@@ -243,7 +269,7 @@ export function useApprovalLogic(): UseApprovalLogicResult {
       markApproved(id);
       removeQueueEntry(id);
     },
-    [markApproved, queue, removeQueueEntry]
+    [markApproved, markRejected, queue, removeQueueEntry]
   );
 
   const reject = useCallback(

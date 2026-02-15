@@ -160,6 +160,34 @@ v10/src/
 |   |   |-- useSequence.ts
 |   |   |-- useSFX.ts
 |   |   \-- useSnap.ts
+|   |-- input-studio/
+|   |   |-- approval/
+|   |   |   \-- inputStudioApproval.ts
+|   |   |-- components/
+|   |   |   |-- index.ts
+|   |   |   |-- InputStudioActionsSection.tsx
+|   |   |   |-- InputStudioBlocksSection.tsx
+|   |   |   |-- InputStudioHeaderSection.tsx
+|   |   |   \-- InputStudioRawSection.tsx
+|   |   |-- diff/
+|   |   |   |-- draftDiff.ts
+|   |   |   \-- types.ts
+|   |   |-- hooks/
+|   |   |   |-- types.ts
+|   |   |   \-- useInputStudioHeadless.ts
+|   |   |-- llm/
+|   |   |   |-- normalizedToDraftBlocks.ts
+|   |   |   |-- types.ts
+|   |   |   \-- useInputStudioLlmDraft.ts
+|   |   |-- publish/
+|   |   |   |-- types.ts
+|   |   |   \-- useInputStudioPublishRollback.ts
+|   |   |-- schema/
+|   |   |   |-- structuredContentSchema.ts
+|   |   |   \-- StructuredSchemaEditor.tsx
+|   |   \-- validation/
+|   |       |-- batchTransformPipeline.ts
+|   |       \-- types.ts
 |   |-- layout/
 |   |   |-- dataInput/
 |   |   |   |-- blockDraft.ts

@@ -1,6 +1,6 @@
 "use client";
+
 import {
-  Fragment,
   useCallback,
   useEffect,
   useMemo,
@@ -8,19 +8,10 @@ import {
   useState,
   type CSSProperties,
   type ChangeEvent,
-  type UIEvent,
 } from "react";
 
-import { useCanvasStore } from "@features/store/useCanvasStore";
-import { useUIStore } from "@features/store/useUIStoreBridge";
 import { dispatchCommand } from "@core/engine/commandBus";
 import { cn } from "@core/utils";
-import { Button } from "@ui/components/button";
-import type {
-  ImageItem,
-  StepSegmentType,
-  TextItem,
-} from "@core/types/canvas";
 import {
   DEFAULT_TEXT_LANE_STYLE,
   DEFAULT_TEXT_LINE_HEIGHT,
@@ -30,53 +21,62 @@ import {
   TEXT_INLINE_SIZE_OPTIONS,
   normalizeTextSegmentStyle,
 } from "@core/config/typography";
-import { runAutoLayout } from "@features/layout/autoLayout";
-import { buildEditorSurfaceModel } from "@features/editor-core/model/editorSurface";
+import type {
+  ImageItem,
+  StepSegmentType,
+  TextItem,
+} from "@core/types/canvas";
 import {
-  blocksToRawText,
+  InputStudioActionsSection,
+  InputStudioBlocksSection,
+  InputStudioHeaderSection,
+  InputStudioRawSection,
+} from "@features/input-studio/components";
+import {
+  createInputStudioDraftQueueEnvelope,
+} from "@features/input-studio/approval/inputStudioApproval";
+import type {
+  InputStudioBlockRenderArgs,
+  InputStudioMode,
+} from "@features/input-studio/hooks/types";
+import { useInputStudioHeadless } from "@features/input-studio/hooks/useInputStudioHeadless";
+import {
+  INPUT_STUDIO_LLM_DRAFT_ADAPTER_ID,
+  INPUT_STUDIO_LLM_DRAFT_TOOL_ID,
+} from "@features/input-studio/llm/types";
+import { useInputStudioLlmDraft } from "@features/input-studio/llm/useInputStudioLlmDraft";
+import { useInputStudioPublishRollback } from "@features/input-studio/publish/useInputStudioPublishRollback";
+import {
+  StructuredSchemaEditor,
+} from "@features/input-studio/schema/StructuredSchemaEditor";
+import type { StructuredContentValidationResult } from "@features/input-studio/schema/structuredContentSchema";
+import { runBatchTransformPipeline } from "@features/input-studio/validation/batchTransformPipeline";
+import type { BatchTransformDiagnostic } from "@features/input-studio/validation/types";
+import { runAutoLayout } from "@features/layout/autoLayout";
+import {
   buildBlocksFromFlowItems,
   normalizeBlocksDraft,
-  syncBlocksFromRawText,
 } from "@features/layout/dataInput/blockDraft";
-import {
-  type BreakBlockKind,
-  clampBlockInsertionIndex,
-  deleteBlockById,
-  insertBreakBlockAt,
-  moveBlockById as moveBlockByIdOp,
-  moveBlockByIndex as moveBlockByIndexOp,
-  reindexBlockStructure,
-} from "@features/layout/dataInput/blockStructureOps";
-import {
-  reduceInlineEditCommand,
-} from "@features/layout/dataInput/inlineEditCommands";
-import {
-  captureSelection,
-  wrapSelectionWithClass,
-  wrapSelectionWithHighlight,
-  wrapSelectionWithMath,
-} from "@features/layout/dataInput/segmentCommands";
+import { reduceInlineEditCommand } from "@features/layout/dataInput/inlineEditCommands";
 import {
   readImageFile,
   readImageUrl,
   readVideoFile,
   readVideoUrl,
 } from "@features/layout/dataInput/mediaIO";
-import type { RawSyncDecision, StepBlockDraft } from "@features/layout/dataInput/types";
 import {
-  ChevronDown,
-  ChevronUp,
-  Columns,
-  CornerDownLeft,
-  FilePlus,
-  GripVertical,
-  ImagePlus,
-  Minus,
-  PlaySquare,
-  Plus,
-  Trash2,
-  X,
-} from "lucide-react";
+  captureSelection,
+  wrapSelectionWithClass,
+  wrapSelectionWithHighlight,
+  wrapSelectionWithMath,
+} from "@features/layout/dataInput/segmentCommands";
+import type { StepBlockDraft } from "@features/layout/dataInput/types";
+import { useCanvasStore } from "@features/store/useCanvasStore";
+import { useLocalStore } from "@features/store/useLocalStore";
+import { useSyncStore } from "@features/store/useSyncStore";
+import { useUIStore } from "@features/store/useUIStoreBridge";
+import { Button } from "@ui/components/button";
+import { ImagePlus, Minus, PlaySquare, Plus } from "lucide-react";
 
 const FONT_SIZE_PATTERN_PX = /^(\d+(?:\.\d+)?)px$/i;
 const FONT_SIZE_STEP_PX = 2;
@@ -113,6 +113,20 @@ const EDITOR_SURFACE_BREAK_LABELS = {
   fallback: "구분선",
 };
 
+const createRequestId = (): string => {
+  if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
+    return crypto.randomUUID();
+  }
+  return `input-studio-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+};
+
+const normalizePrompt = (value: string): string => value.trim();
+
+const formatDiagnostic = (diagnostic: BatchTransformDiagnostic): string => {
+  const scope = diagnostic.stepId ? `[${diagnostic.stepId}] ` : "";
+  return `${scope}${diagnostic.phase}:${diagnostic.code} - ${diagnostic.message}`;
+};
+
 export function DataInputPanel() {
   const {
     isDataInputOpen,
@@ -131,152 +145,146 @@ export function DataInputPanel() {
     restoreLayoutSnapshot,
     layoutSnapshot,
   } = useCanvasStore();
-  const [rawText, setRawText] = useState("");
-  const [blocks, setBlocks] = useState<StepBlockDraft[]>([]);
-  const [unmatchedBlocks, setUnmatchedBlocks] = useState<StepBlockDraft[]>([]);
-  const [syncDecisions, setSyncDecisions] = useState<RawSyncDecision[]>([]);
+  const effectiveRole = useLocalStore((state) =>
+    state.trustedRoleClaim === "host" || state.role === "host"
+      ? "host"
+      : "student"
+  );
+  const enqueuePendingAI = useSyncStore((state) => state.enqueuePendingAI);
+
   const [activeTab, setActiveTab] = useState<"input" | "blocks">("input");
-  const [isAdvancedControls, setIsAdvancedControls] = useState(false);
+  const [studioMode, setStudioMode] = useState<InputStudioMode>("compact");
   const [isLayoutRunning, setIsLayoutRunning] = useState(false);
   const [expandedBlockId, setExpandedBlockId] = useState<string | null>(null);
-  const hasInitializedRef = useRef(false);
+  const [schemaJsonText, setSchemaJsonText] = useState("[]");
+  const [schemaValidation, setSchemaValidation] =
+    useState<StructuredContentValidationResult | null>(null);
+  const [llmPrompt, setLlmPrompt] = useState("");
+  const [pipelineDiagnostics, setPipelineDiagnostics] = useState<
+    BatchTransformDiagnostic[]
+  >([]);
+  const [publishMessage, setPublishMessage] = useState<string | null>(null);
+
   const segmentRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const selectionRef = useRef<Record<string, Range | null>>({});
-  const markerRailRef = useRef<HTMLDivElement | null>(null);
   const imageInputRef = useRef<HTMLInputElement | null>(null);
   const videoInputRef = useRef<HTMLInputElement | null>(null);
   const pendingMediaStepRef = useRef<string | null>(null);
+
   const canMath = isCapabilityEnabled("data.math");
   const canHighlight = isCapabilityEnabled("data.highlight");
 
-  const writeInsertionIndex = useCallback(
-    (index: number) => {
-      void dispatchCommand("setInsertionIndex", { index }, {
+  const writeInsertionIndex = useCallback((index: number) => {
+    void dispatchCommand(
+      "setInsertionIndex",
+      { index },
+      {
         meta: { source: "data-input-panel" },
-      })
-        .catch(() => undefined);
-    },
-    []
-  );
+      }
+    ).catch(() => undefined);
+  }, []);
 
-  const writeImportStepBlocks = useCallback(
-    (nextBlocks: StepBlockDraft[]) => {
-      void dispatchCommand("importStepBlocks", { blocks: nextBlocks }, {
+  const writeImportStepBlocks = useCallback((nextBlocks: StepBlockDraft[]) => {
+    void dispatchCommand(
+      "importStepBlocks",
+      { blocks: nextBlocks },
+      {
         meta: { source: "data-input-panel" },
-      })
-        .catch(() => undefined);
-    },
-    []
-  );
+      }
+    ).catch(() => undefined);
+  }, []);
 
   const flowItems = useMemo(() => {
     const items = pages[currentPageId] ?? [];
-    return items.filter(
-      (item): item is TextItem | ImageItem => {
-        if (item.type === "text") {
-          return (item.layoutMode ?? "flow") === "flow";
-        }
-        if (item.type === "image") {
-          return (item.layoutMode ?? "flow") === "flow";
-        }
-        return false;
+    return items.filter((item): item is TextItem | ImageItem => {
+      if (item.type === "text") {
+        return (item.layoutMode ?? "flow") === "flow";
       }
-    );
+      if (item.type === "image") {
+        return (item.layoutMode ?? "flow") === "flow";
+      }
+      return false;
+    });
   }, [pages, currentPageId]);
-
-  const rawLines = useMemo(() => rawText.split(/\r?\n/), [rawText]);
-  const isSingleLine = rawLines.length <= 1;
-  const lineHeight = isSingleLine ? 1.25 : 1.6;
-  const lineHeightClass = isSingleLine
-    ? "leading-[1.25]"
-    : "leading-[1.6]";
 
   const fallbackBlocks = useMemo(
     () => buildBlocksFromFlowItems(flowItems),
     [flowItems]
   );
 
-  const editorSurface = useMemo(
-    () =>
-      buildEditorSurfaceModel(blocks, insertionIndex, {
-        previewLabels: EDITOR_SURFACE_PREVIEW_LABELS,
-        breakLabels: EDITOR_SURFACE_BREAK_LABELS,
-      }),
-    [blocks, insertionIndex]
-  );
+  const {
+    rawText,
+    blocks,
+    unmatchedBlocks,
+    syncDecisions,
+    canApply,
+    editorSurface,
+    contentOrderByBlockId,
+    setBlocksDraft,
+    handleRawChange,
+    restoreUnmatchedBlocks,
+    discardUnmatchedBlocks,
+    deleteBlock,
+    moveBlock,
+    moveBlockByIndex,
+    insertBreakBlock,
+    syncRawFromBlocks,
+    applyDraft,
+  } = useInputStudioHeadless({
+    isOpen: isDataInputOpen,
+    sourceBlocks: stepBlocks,
+    fallbackBlocks,
+    insertionIndex,
+    onInsertionIndexChange: writeInsertionIndex,
+    onApplyBlocks: writeImportStepBlocks,
+    editorSurfacePreviewLabels: EDITOR_SURFACE_PREVIEW_LABELS,
+    editorSurfaceBreakLabels: EDITOR_SURFACE_BREAK_LABELS,
+  });
 
-  const contentOrderByBlockId = useMemo(() => {
-    const map: Record<string, number | null> = {};
-    reindexBlockStructure(blocks).forEach((entry) => {
-      map[entry.blockId] = entry.contentOrder;
-    });
-    return map;
-  }, [blocks]);
+  const {
+    isRequesting: isLlmRequesting,
+    candidate,
+    error: llmError,
+    requestDraft,
+    clearCandidate,
+    clearError,
+  } = useInputStudioLlmDraft({
+    currentBlocks: blocks,
+    fallbackLocale: "ko-KR",
+  });
+
+  const {
+    rollbackSnapshot,
+    publishDrafts,
+    restoreSnapshot,
+    clearSnapshots,
+  } = useInputStudioPublishRollback();
 
   useEffect(() => {
-    if (!isDataInputOpen) {
-      hasInitializedRef.current = false;
-      setUnmatchedBlocks([]);
-      setSyncDecisions([]);
-      setIsAdvancedControls(false);
-      setExpandedBlockId(null);
-      return;
-    }
-    if (hasInitializedRef.current) return;
-    hasInitializedRef.current = true;
+    if (isDataInputOpen) return;
     setActiveTab("input");
-    setIsAdvancedControls(false);
-
-    const initialBlocks = normalizeBlocksDraft(
-      stepBlocks.length > 0 ? stepBlocks : fallbackBlocks
-    );
-    setBlocks(initialBlocks);
-    setUnmatchedBlocks([]);
-    setSyncDecisions([]);
-    setRawText(blocksToRawText(initialBlocks));
-    writeInsertionIndex(initialBlocks.length);
+    setStudioMode("compact");
     setExpandedBlockId(null);
-  }, [fallbackBlocks, isDataInputOpen, stepBlocks, writeInsertionIndex]);
-
-  useEffect(() => {
-    if (!isDataInputOpen || !hasInitializedRef.current) return;
-    const stripBreaks = (list: StepBlockDraft[]) =>
-      list.filter((block) => !block.kind || block.kind === "content");
-    const localContent = stripBreaks(blocks);
-    const storeContent = stripBreaks(stepBlocks);
-    const sameContent =
-      localContent.length === storeContent.length &&
-      localContent.every((block, index) => block.id === storeContent[index]?.id);
-    if (!sameContent) return;
-    if (blocks.length === stepBlocks.length) return;
-    const normalized = normalizeBlocksDraft(stepBlocks);
-    setBlocks(normalized);
-    setUnmatchedBlocks([]);
-    setSyncDecisions([]);
-    setRawText(blocksToRawText(normalized));
-  }, [blocks, isDataInputOpen, stepBlocks]);
+    setSchemaValidation(null);
+    setSchemaJsonText("[]");
+    setLlmPrompt("");
+    setPipelineDiagnostics([]);
+    setPublishMessage(null);
+    clearCandidate();
+    clearError();
+    clearSnapshots();
+  }, [clearCandidate, clearError, clearSnapshots, isDataInputOpen]);
 
   useEffect(() => {
     if (!expandedBlockId) return;
     const hasExpandedBlock = blocks.some(
       (block) =>
-        block.id === expandedBlockId &&
-        (!block.kind || block.kind === "content")
+        block.id === expandedBlockId && (!block.kind || block.kind === "content")
     );
     if (!hasExpandedBlock) {
       setExpandedBlockId(null);
     }
   }, [blocks, expandedBlockId]);
-
-  useEffect(() => {
-    const nextInsertionIndex = clampBlockInsertionIndex(
-      insertionIndex,
-      blocks.length
-    );
-    if (nextInsertionIndex !== insertionIndex) {
-      writeInsertionIndex(nextInsertionIndex);
-    }
-  }, [blocks.length, insertionIndex, writeInsertionIndex]);
 
   useEffect(() => {
     if (!isDataInputOpen) return;
@@ -296,260 +304,244 @@ export function DataInputPanel() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [closeDataInput, isDataInputOpen]);
 
-  if (!isDataInputOpen) return null;
+  const applyInlineCommand = useCallback(
+    (command: Parameters<typeof reduceInlineEditCommand>[1]) => {
+      setBlocksDraft((previousBlocks) =>
+        reduceInlineEditCommand(previousBlocks, command)
+      );
+    },
+    [setBlocksDraft]
+  );
 
-  const renderInsertionMarker = (index: number) => {
-    const marker = editorSurface.insertionMarkers[index];
-    const isActive = marker?.isActive ?? false;
-    return (
-      <button
-        type="button"
-        className={cn(
-          "group flex w-full items-center gap-2 rounded-full px-2 py-1 text-[10px] uppercase tracking-[0.2em]",
-          isActive
-            ? "text-[var(--theme-text)]"
-            : "text-[var(--theme-text-subtle)] hover:text-[var(--theme-text-muted)]"
-        )}
-        onClick={() => writeInsertionIndex(index)}
-      >
-        <span
-          className={cn(
-            "h-px flex-1 transition-colors",
-            isActive
-              ? "bg-[var(--theme-accent-strong)]"
-              : "bg-[var(--theme-surface-soft)] group-hover:bg-[var(--theme-border)]"
-          )}
-        />
-        <span
-          className={cn(
-            "rounded-full border px-2 py-0.5",
-            isActive
-              ? "border-[var(--theme-accent)] bg-[var(--theme-accent-soft)]"
-              : "border-[var(--theme-border)] bg-[var(--theme-surface-soft)]"
-          )}
-        >
-          삽입
-        </span>
-        <span
-          className={cn(
-            "h-px flex-1 transition-colors",
-            isActive
-              ? "bg-[var(--theme-accent-strong)]"
-              : "bg-[var(--theme-surface-soft)] group-hover:bg-[var(--theme-border)]"
-          )}
-        />
-      </button>
-    );
-  };
+  const updateSegmentHtml = useCallback(
+    (segmentId: string, html: string) => {
+      applyInlineCommand({
+        type: "segment/set-html",
+        segmentId,
+        html,
+      });
+    },
+    [applyInlineCommand]
+  );
 
-  const updateBlocksFromRaw = (value: string) => {
-    const syncPool = [...blocks, ...unmatchedBlocks];
-    const result = syncBlocksFromRawText(value, syncPool);
-    setBlocks(result.blocks);
-    setUnmatchedBlocks(result.unmatchedBlocks);
-    setSyncDecisions(result.decisions);
-  };
+  const handleSegmentCommit = useCallback(
+    (segmentId: string) => {
+      const element = segmentRefs.current[segmentId];
+      if (!element) return;
+      updateSegmentHtml(segmentId, element.innerHTML);
+    },
+    [updateSegmentHtml]
+  );
 
-  const handleRawChange = (value: string) => {
-    setRawText(value);
-    updateBlocksFromRaw(value);
-  };
+  const updateTextSegmentStyle = useCallback(
+    (
+      blockId: string,
+      segmentId: string,
+      partial: Partial<ReturnType<typeof normalizeTextSegmentStyle>>
+    ) => {
+      applyInlineCommand({
+        type: "block/update-text-style",
+        blockId,
+        segmentId,
+        partialStyle: partial,
+      });
+    },
+    [applyInlineCommand]
+  );
 
-  const handleRestoreUnmatched = () => {
-    if (unmatchedBlocks.length === 0) return;
-    setBlocks((prev) => normalizeBlocksDraft([...prev, ...unmatchedBlocks]));
-    setUnmatchedBlocks([]);
-  };
+  const adjustTextSegmentFontSize = useCallback(
+    (blockId: string, segmentId: string, deltaPx: number) => {
+      applyInlineCommand({
+        type: "block/adjust-text-font-size",
+        blockId,
+        segmentId,
+        deltaPx,
+        minPx: FONT_SIZE_MIN_PX,
+        maxPx: FONT_SIZE_MAX_PX,
+        fallbackPx: DEFAULT_FONT_SIZE_PX,
+      });
+    },
+    [applyInlineCommand]
+  );
 
-  const handleDiscardUnmatched = () => {
-    setUnmatchedBlocks([]);
-  };
+  const addTextSegment = useCallback(
+    (blockId: string) => {
+      applyInlineCommand({
+        type: "block/add-text-segment",
+        blockId,
+      });
+    },
+    [applyInlineCommand]
+  );
 
-  const handleRawScroll = (event: UIEvent<HTMLTextAreaElement>) => {
-    if (!markerRailRef.current) return;
-    markerRailRef.current.style.transform = `translateY(-${event.currentTarget.scrollTop}px)`;
-  };
+  const addMediaSegment = useCallback(
+    (
+      blockId: string,
+      type: "image" | "video",
+      src: string,
+      width: number,
+      height: number
+    ) => {
+      applyInlineCommand({
+        type: "block/add-media-segment",
+        blockId,
+        mediaType: type,
+        src,
+        width,
+        height,
+      });
+    },
+    [applyInlineCommand]
+  );
 
-  const applyInlineCommand = (command: Parameters<typeof reduceInlineEditCommand>[1]) => {
-    setBlocks((prev) => reduceInlineEditCommand(prev, command));
-  };
+  const removeSegment = useCallback(
+    (blockId: string, segmentId: string) => {
+      applyInlineCommand({
+        type: "block/remove-segment",
+        blockId,
+        segmentId,
+        fallbackTextHtml: "&nbsp;",
+      });
+    },
+    [applyInlineCommand]
+  );
 
-  const updateSegmentHtml = (segmentId: string, html: string) => {
-    applyInlineCommand({
-      type: "segment/set-html",
-      segmentId,
-      html,
-    });
-  };
+  const moveSegment = useCallback(
+    (blockId: string, fromId: string, toId: string) => {
+      applyInlineCommand({
+        type: "block/move-segment",
+        blockId,
+        fromId,
+        toId,
+      });
+    },
+    [applyInlineCommand]
+  );
 
-  const handleSegmentCommit = (segmentId: string) => {
-    const el = segmentRefs.current[segmentId];
-    if (!el) return;
-    updateSegmentHtml(segmentId, el.innerHTML);
-  };
-
-  const handleDeleteBlock = (id: string) => {
-    const result = deleteBlockById(blocks, id, insertionIndex);
-    setBlocks(result.blocks);
-    if (result.insertionIndex !== insertionIndex) {
-      writeInsertionIndex(result.insertionIndex);
-    }
-  };
-
-  const toggleBlockExpanded = (blockId: string) => {
-    setExpandedBlockId((prev) => (prev === blockId ? null : blockId));
-  };
-
-  const updateTextSegmentStyle = (
-    blockId: string,
-    segmentId: string,
-    partial: Partial<ReturnType<typeof normalizeTextSegmentStyle>>
-  ) => {
-    applyInlineCommand({
-      type: "block/update-text-style",
-      blockId,
-      segmentId,
-      partialStyle: partial,
-    });
-  };
-
-  const adjustTextSegmentFontSize = (
-    blockId: string,
-    segmentId: string,
-    deltaPx: number
-  ) => {
-    applyInlineCommand({
-      type: "block/adjust-text-font-size",
-      blockId,
-      segmentId,
-      deltaPx,
-      minPx: FONT_SIZE_MIN_PX,
-      maxPx: FONT_SIZE_MAX_PX,
-      fallbackPx: DEFAULT_FONT_SIZE_PX,
-    });
-  };
-
-  const addTextSegment = (blockId: string) => {
-    applyInlineCommand({
-      type: "block/add-text-segment",
-      blockId,
-    });
-  };
-
-  const addMediaSegment = (
-    blockId: string,
-    type: "image" | "video",
-    src: string,
-    width: number,
-    height: number
-  ) => {
-    applyInlineCommand({
-      type: "block/add-media-segment",
-      blockId,
-      mediaType: type,
-      src,
-      width,
-      height,
-    });
-  };
-
-  const removeSegment = (blockId: string, segmentId: string) => {
-    applyInlineCommand({
-      type: "block/remove-segment",
-      blockId,
-      segmentId,
-      fallbackTextHtml: "&nbsp;",
-    });
-  };
-
-  const moveSegment = (blockId: string, fromId: string, toId: string) => {
-    applyInlineCommand({
-      type: "block/move-segment",
-      blockId,
-      fromId,
-      toId,
-    });
-  };
-
-  const moveBlock = (fromId: string, toId: string) => {
-    setBlocks((prev) => moveBlockByIdOp(prev, fromId, toId));
-  };
-
-  const moveBlockByIndex = (index: number, delta: -1 | 1) => {
-    setBlocks((prev) => moveBlockByIndexOp(prev, index, delta));
-  };
-
-  const insertBreakBlock = (kind: BreakBlockKind) => {
-    const result = insertBreakBlockAt(blocks, insertionIndex, kind);
-    setBlocks(result.blocks);
-    writeInsertionIndex(result.insertionIndex);
-  };
-
-  const handleApply = () => {
-    if (unmatchedBlocks.length > 0) return;
-    const normalizedBlocks = normalizeBlocksDraft(blocks);
-    writeImportStepBlocks(normalizedBlocks);
-  };
-
-  const handleMediaPick = (blockId: string, type: StepSegmentType) => {
+  const handleMediaPick = useCallback((blockId: string, type: StepSegmentType) => {
     pendingMediaStepRef.current = blockId;
     if (type === "image") {
       imageInputRef.current?.click();
-    } else if (type === "video") {
+      return;
+    }
+    if (type === "video") {
       videoInputRef.current?.click();
     }
-  };
+  }, []);
 
-
-  const handleImageInput = async (event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    event.target.value = "";
-    const blockId = pendingMediaStepRef.current;
-    pendingMediaStepRef.current = null;
-    if (!file || !blockId) return;
-    try {
-      const data = await readImageFile(file);
-      addMediaSegment(blockId, "image", data.src, data.width, data.height);
-    } catch {
-      // ignore
-    }
-  };
-
-  const handleVideoInput = async (event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    event.target.value = "";
-    const blockId = pendingMediaStepRef.current;
-    pendingMediaStepRef.current = null;
-    if (!file || !blockId) return;
-    try {
-      const data = await readVideoFile(file);
-      addMediaSegment(blockId, "video", data.src, data.width, data.height);
-    } catch {
-      // ignore
-    }
-  };
-
-  const handleMediaUrl = async (blockId: string, type: "image" | "video") => {
-    const promptLabel = type === "image" ? "이미지 URL" : "비디오 URL";
-    const url = window.prompt(promptLabel);
-    if (!url) return;
-    try {
-      if (type === "image") {
-        const data = await readImageUrl(url);
+  const handleImageInput = useCallback(
+    async (event: ChangeEvent<HTMLInputElement>) => {
+      const file = event.target.files?.[0];
+      event.target.value = "";
+      const blockId = pendingMediaStepRef.current;
+      pendingMediaStepRef.current = null;
+      if (!file || !blockId) return;
+      try {
+        const data = await readImageFile(file);
         addMediaSegment(blockId, "image", data.src, data.width, data.height);
-      } else {
+      } catch {
+        // no-op
+      }
+    },
+    [addMediaSegment]
+  );
+
+  const handleVideoInput = useCallback(
+    async (event: ChangeEvent<HTMLInputElement>) => {
+      const file = event.target.files?.[0];
+      event.target.value = "";
+      const blockId = pendingMediaStepRef.current;
+      pendingMediaStepRef.current = null;
+      if (!file || !blockId) return;
+      try {
+        const data = await readVideoFile(file);
+        addMediaSegment(blockId, "video", data.src, data.width, data.height);
+      } catch {
+        // no-op
+      }
+    },
+    [addMediaSegment]
+  );
+
+  const handleMediaUrl = useCallback(
+    async (blockId: string, type: "image" | "video") => {
+      const promptLabel = type === "image" ? "이미지 URL" : "비디오 URL";
+      const url = window.prompt(promptLabel);
+      if (!url) return;
+
+      try {
+        if (type === "image") {
+          const data = await readImageUrl(url);
+          addMediaSegment(blockId, "image", data.src, data.width, data.height);
+          return;
+        }
+
         const data = await readVideoUrl(url);
         addMediaSegment(blockId, "video", data.src, data.width, data.height);
+      } catch {
+        // no-op
       }
-    } catch {
-      // ignore
-    }
-  };
+    },
+    [addMediaSegment]
+  );
 
-  const handleAutoLayout = async () => {
+  const runNormalizePipeline = useCallback((inputBlocks: StepBlockDraft[]) => {
+    return runBatchTransformPipeline({
+      initialBlocks: inputBlocks,
+      steps: [
+        {
+          id: "normalize-draft",
+          description: "normalize step block drafts",
+          transform: (draftBlocks) => normalizeBlocksDraft(draftBlocks),
+        },
+      ],
+      stopOnError: true,
+      enforceDeterminism: true,
+    });
+  }, []);
+
+  const handleApplyToCanvas = useCallback(() => {
+    const result = applyDraft();
+    if (!result.ok) return;
+
+    const pipelineResult = runNormalizePipeline(result.blocks);
+    setPipelineDiagnostics(pipelineResult.diagnostics);
+    if (!pipelineResult.ok) return;
+
+    const publishResult = publishDrafts(
+      stepBlocks,
+      pipelineResult.blocks,
+      "input-studio-apply"
+    );
+    writeImportStepBlocks(publishResult.appliedBlocks);
+    setBlocksDraft(publishResult.appliedBlocks);
+    syncRawFromBlocks(publishResult.appliedBlocks);
+    setPublishMessage(`적용 완료: ${publishResult.appliedBlocks.length}개 블록`);
+  }, [
+    applyDraft,
+    publishDrafts,
+    runNormalizePipeline,
+    setBlocksDraft,
+    stepBlocks,
+    syncRawFromBlocks,
+    writeImportStepBlocks,
+  ]);
+
+  const handleRollback = useCallback(() => {
+    const restored = restoreSnapshot();
+    if (!restored) return;
+    writeImportStepBlocks(restored.blocks);
+    setBlocksDraft(restored.blocks);
+    syncRawFromBlocks(restored.blocks);
+    setPipelineDiagnostics([]);
+    setPublishMessage(`롤백 완료: ${restored.blocks.length}개 블록`);
+  }, [restoreSnapshot, setBlocksDraft, syncRawFromBlocks, writeImportStepBlocks]);
+
+  const handleAutoLayout = useCallback(async () => {
     if (isLayoutRunning) return;
     setIsLayoutRunning(true);
     captureLayoutSnapshot();
+
     const normalizedBlocks = normalizeBlocksDraft(blocks);
     try {
       const columnCount = pageColumnCounts?.[currentPageId] ?? 2;
@@ -562,7 +554,414 @@ export function DataInputPanel() {
     } finally {
       setIsLayoutRunning(false);
     }
+  }, [
+    applyAutoLayout,
+    blocks,
+    captureLayoutSnapshot,
+    currentPageId,
+    isLayoutRunning,
+    overviewViewportRatio,
+    pageColumnCounts,
+  ]);
+
+  const handleSchemaValidBlocks = useCallback(
+    (nextBlocks: StepBlockDraft[]) => {
+      const pipelineResult = runNormalizePipeline(nextBlocks);
+      setPipelineDiagnostics(pipelineResult.diagnostics);
+      if (!pipelineResult.ok) return;
+
+      setBlocksDraft(pipelineResult.blocks);
+      syncRawFromBlocks(pipelineResult.blocks);
+      setExpandedBlockId(null);
+      setPublishMessage(`스키마 적용: ${pipelineResult.blocks.length}개 블록`);
+    },
+    [runNormalizePipeline, setBlocksDraft, syncRawFromBlocks]
+  );
+
+  const handleRequestLlmDraft = useCallback(async () => {
+    const prompt = normalizePrompt(llmPrompt);
+    if (!prompt) return;
+    await requestDraft({
+      prompt,
+      rawText,
+      meta: {
+        source: "input-studio",
+      },
+    });
+  }, [llmPrompt, rawText, requestDraft]);
+
+  const handleApplyCandidateToDraft = useCallback(() => {
+    if (!candidate) return;
+
+    const pipelineResult = runNormalizePipeline(candidate.blocks);
+    setPipelineDiagnostics(pipelineResult.diagnostics);
+    if (!pipelineResult.ok) return;
+
+    setBlocksDraft(pipelineResult.blocks);
+    syncRawFromBlocks(pipelineResult.blocks);
+    setExpandedBlockId(null);
+    clearCandidate();
+    setPublishMessage(`LLM 초안 반영: ${pipelineResult.blocks.length}개 블록`);
+  }, [
+    candidate,
+    clearCandidate,
+    runNormalizePipeline,
+    setBlocksDraft,
+    syncRawFromBlocks,
+  ]);
+
+  const handleQueueCandidateForApproval = useCallback(() => {
+    if (!candidate) return;
+
+    const requestId = createRequestId();
+    const envelope = createInputStudioDraftQueueEnvelope({
+      requestId,
+      draftBlocks: candidate.blocks,
+      reason: "input-studio-llm-draft",
+      idempotencyKey: `input-studio-draft:${requestId}`,
+    });
+
+    enqueuePendingAI({
+      id: `input-studio-draft-${requestId}`,
+      toolId: INPUT_STUDIO_LLM_DRAFT_TOOL_ID,
+      adapterId: INPUT_STUDIO_LLM_DRAFT_ADAPTER_ID,
+      payload: envelope.payload,
+      meta: envelope.meta,
+      toolResult: null,
+    });
+
+    clearCandidate();
+    setPublishMessage("LLM 초안을 승인 큐로 전송했습니다.");
+  }, [candidate, clearCandidate, enqueuePendingAI]);
+
+  const renderExpandedContent = ({
+    block,
+  }: InputStudioBlockRenderArgs) => {
+    let imageIndex = 0;
+    let videoIndex = 0;
+
+    return (
+      <>
+        <div className="flex flex-col gap-2">
+          {block.segments.map((segment) => {
+            const label =
+              segment.type === "text"
+                ? "TXT"
+                : segment.type === "image"
+                  ? `img${String(++imageIndex).padStart(2, "0")}`
+                  : `play${String(++videoIndex).padStart(2, "0")}`;
+
+            const textStyle =
+              segment.type === "text"
+                ? normalizeTextSegmentStyle(segment.style)
+                : null;
+
+            const editorStyle: CSSProperties | undefined = textStyle
+              ? {
+                  fontFamily: textStyle.fontFamily,
+                  fontSize: textStyle.fontSize,
+                  fontWeight: textStyle.fontWeight as CSSProperties["fontWeight"],
+                  color: textStyle.color,
+                  lineHeight: DEFAULT_TEXT_LINE_HEIGHT,
+                }
+              : undefined;
+
+            const fontSizePx = textStyle
+              ? parseFontSizePx(textStyle.fontSize, DEFAULT_FONT_SIZE_PX)
+              : DEFAULT_FONT_SIZE_PX;
+            const canDecreaseFontSize = fontSizePx > FONT_SIZE_MIN_PX;
+            const canIncreaseFontSize = fontSizePx < FONT_SIZE_MAX_PX;
+
+            return (
+              <div
+                key={segment.id}
+                className="flex items-start gap-2 rounded-md border border-white/10 bg-black/30 p-2"
+                draggable
+                onDragStart={(event) => {
+                  event.dataTransfer.setData("text/plain", `${block.id}:${segment.id}`);
+                }}
+                onDragOver={(event) => event.preventDefault()}
+                onDrop={(event) => {
+                  const raw = event.dataTransfer.getData("text/plain");
+                  const [fromBlockId, fromSegmentId] = raw.split(":");
+                  if (
+                    !fromBlockId ||
+                    !fromSegmentId ||
+                    fromBlockId !== block.id
+                  ) {
+                    return;
+                  }
+                  moveSegment(block.id, fromSegmentId, segment.id);
+                }}
+              >
+                <span
+                  data-segment-drag
+                  className="rounded-full border border-white/20 bg-white/10 px-2 py-0.5 text-[10px] uppercase text-white/70"
+                >
+                  {label}
+                </span>
+
+                <div className="flex min-w-0 flex-1 flex-col gap-2">
+                  {segment.type === "text" ? (
+                    <>
+                      <div
+                        ref={(node) => {
+                          segmentRefs.current[segment.id] = node;
+                        }}
+                        className={cn(
+                          "min-h-[40px] rounded-md border border-white/10 bg-black/30 px-2 py-2 text-sm text-white/80 outline-none",
+                          "focus-within:border-white/40"
+                        )}
+                        style={editorStyle}
+                        contentEditable
+                        suppressContentEditableWarning
+                        onBlur={() => handleSegmentCommit(segment.id)}
+                        dangerouslySetInnerHTML={{
+                          __html: segment.html,
+                        }}
+                      />
+
+                      <div className="flex flex-col gap-2">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <div className="inline-flex h-11 min-w-[192px] items-center gap-2 rounded-md border border-white/15 bg-black/40 px-2">
+                            <span className="text-[10px] font-semibold uppercase tracking-[0.12em] text-white/45">
+                              폰트
+                            </span>
+                            <select
+                              className="h-9 min-w-[108px] flex-1 rounded-md border border-white/15 bg-black/50 px-2 text-[11px] text-white/80 outline-none"
+                              value={textStyle?.fontFamily ?? ""}
+                              onChange={(event) =>
+                                updateTextSegmentStyle(block.id, segment.id, {
+                                  fontFamily: event.target.value,
+                                })
+                              }
+                            >
+                              {TEXT_FONT_FAMILY_OPTIONS.map((option) => (
+                                <option key={option.value} value={option.value}>
+                                  {option.label}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+
+                          <div className="inline-flex h-11 items-center rounded-md border border-white/15 bg-black/40">
+                            <Button
+                              variant="ghost"
+                              className="h-11 rounded-r-none px-3 text-[11px] text-white/75 hover:text-white"
+                              onClick={() =>
+                                adjustTextSegmentFontSize(
+                                  block.id,
+                                  segment.id,
+                                  -FONT_SIZE_STEP_PX
+                                )
+                              }
+                              disabled={!canDecreaseFontSize}
+                            >
+                              A-
+                            </Button>
+                            <span className="min-w-[56px] border-x border-[var(--theme-border)] px-2 text-center text-[11px] font-semibold text-[var(--theme-text)]">
+                              {fontSizePx}px
+                            </span>
+                            <Button
+                              variant="ghost"
+                              className="h-11 rounded-l-none px-3 text-[11px] text-white/75 hover:text-white"
+                              onClick={() =>
+                                adjustTextSegmentFontSize(
+                                  block.id,
+                                  segment.id,
+                                  FONT_SIZE_STEP_PX
+                                )
+                              }
+                              disabled={!canIncreaseFontSize}
+                            >
+                              A+
+                            </Button>
+                          </div>
+                        </div>
+
+                        <div className="flex flex-wrap items-center gap-2">
+                          <Button
+                            variant="outline"
+                            className="h-10 px-3 text-[11px] font-bold"
+                            onMouseDown={(event) => {
+                              event.preventDefault();
+                              wrapSelectionWithClass(
+                                segment.id,
+                                TEXT_INLINE_BOLD_CLASS,
+                                segmentRefs.current,
+                                selectionRef.current,
+                                updateSegmentHtml
+                              );
+                            }}
+                          >
+                            B
+                          </Button>
+                          {canMath && (
+                            <Button
+                              variant="outline"
+                              className="h-10 px-3 text-[11px]"
+                              onMouseDown={(event) => {
+                                event.preventDefault();
+                                wrapSelectionWithMath(
+                                  segment.id,
+                                  segmentRefs.current,
+                                  selectionRef.current,
+                                  updateSegmentHtml
+                                );
+                              }}
+                            >
+                              $$
+                            </Button>
+                          )}
+                          {canHighlight && (
+                            <Button
+                              variant="outline"
+                              className="h-10 px-3 text-[11px]"
+                              onMouseDown={(event) => {
+                                event.preventDefault();
+                                wrapSelectionWithHighlight(
+                                  segment.id,
+                                  segmentRefs.current,
+                                  selectionRef.current,
+                                  updateSegmentHtml
+                                );
+                              }}
+                            >
+                              HL
+                            </Button>
+                          )}
+                        </div>
+
+                        {studioMode === "advanced" && (
+                          <div className="flex flex-wrap items-center gap-2">
+                            {TEXT_INLINE_COLOR_OPTIONS.map((option) => (
+                              <Button
+                                key={`${segment.id}-${option.className}`}
+                                variant="outline"
+                                className="h-10 px-3 text-[11px]"
+                                onMouseDown={(event) => {
+                                  event.preventDefault();
+                                  wrapSelectionWithClass(
+                                    segment.id,
+                                    option.className,
+                                    segmentRefs.current,
+                                    selectionRef.current,
+                                    updateSegmentHtml
+                                  );
+                                }}
+                              >
+                                {option.label}
+                              </Button>
+                            ))}
+                            {TEXT_INLINE_SIZE_OPTIONS.map((option) => (
+                              <Button
+                                key={`${segment.id}-${option.className}`}
+                                variant="outline"
+                                className="h-10 px-3 text-[11px]"
+                                onMouseDown={(event) => {
+                                  event.preventDefault();
+                                  wrapSelectionWithClass(
+                                    segment.id,
+                                    option.className,
+                                    segmentRefs.current,
+                                    selectionRef.current,
+                                    updateSegmentHtml
+                                  );
+                                }}
+                              >
+                                {option.label}
+                              </Button>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </>
+                  ) : (
+                    <div className="flex items-center gap-3 text-xs text-white/60">
+                      {segment.type === "image" ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={segment.src}
+                          alt="preview"
+                          className="h-12 w-12 rounded-md object-cover"
+                        />
+                      ) : (
+                        <div className="flex h-12 w-12 items-center justify-center rounded-md border border-white/20 bg-white/5 text-[10px] tracking-widest text-white/50">
+                          PLAY
+                        </div>
+                      )}
+                      <span className="truncate">
+                        {segment.type === "image" ? "이미지" : "비디오"}
+                      </span>
+                    </div>
+                  )}
+                </div>
+
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-10 w-10 text-white/50 hover:text-white"
+                  onClick={() => removeSegment(block.id, segment.id)}
+                >
+                  <Minus className="h-4 w-4" />
+                </Button>
+              </div>
+            );
+          })}
+        </div>
+
+        <div className="mt-3 flex flex-wrap items-center gap-2">
+          <Button
+            variant="outline"
+            className="h-10 px-3 text-xs"
+            onClick={() => addTextSegment(block.id)}
+          >
+            <Plus className="mr-1 h-3 w-3" />
+            Text
+          </Button>
+          <Button
+            variant="outline"
+            className="h-10 px-3 text-xs"
+            onClick={() => handleMediaPick(block.id, "image")}
+          >
+            <ImagePlus className="mr-1 h-3 w-3" />
+            Image
+          </Button>
+          <Button
+            variant="ghost"
+            className="h-10 px-3 text-[11px] text-white/60 hover:text-white"
+            onClick={() => {
+              void handleMediaUrl(block.id, "image");
+            }}
+          >
+            URL
+          </Button>
+          <Button
+            variant="outline"
+            className="h-10 px-3 text-xs"
+            onClick={() => handleMediaPick(block.id, "video")}
+          >
+            <PlaySquare className="mr-1 h-3 w-3" />
+            Video
+          </Button>
+          <Button
+            variant="ghost"
+            className="h-10 px-3 text-[11px] text-white/60 hover:text-white"
+            onClick={() => {
+              void handleMediaUrl(block.id, "video");
+            }}
+          >
+            URL
+          </Button>
+        </div>
+      </>
+    );
   };
+
+  if (!isDataInputOpen) return null;
+
+  const hasNormalizedPrompt = normalizePrompt(llmPrompt).length > 0;
+  const hasCandidate = Boolean(candidate);
 
   return (
     <aside
@@ -583,52 +982,12 @@ export function DataInputPanel() {
         className="hidden"
         onChange={handleVideoInput}
       />
-      <div
-        data-layout-id="region_drafting_header"
-        className="mb-4 flex items-center justify-between"
-      >
-        <div>
-          <p className="text-sm font-semibold text-white">데이터 입력</p>
-          <p className="text-xs text-white/50">한 줄 = 한 블록 (step)</p>
-          <div className="mt-2 inline-flex items-center rounded-full border border-white/15 bg-black/40 p-1">
-            <button
-              type="button"
-              className={cn(
-                "h-11 min-w-[84px] rounded-full px-4 text-xs font-semibold transition-colors",
-                isAdvancedControls
-                  ? "text-white/60 hover:bg-white/10 hover:text-white"
-                  : "bg-[var(--theme-accent)] text-[var(--theme-accent-text)]"
-              )}
-              onClick={() => setIsAdvancedControls(false)}
-              data-layout-id="action_mode_compact"
-            >
-              간단
-            </button>
-            <button
-              type="button"
-              className={cn(
-                "h-11 min-w-[84px] rounded-full px-4 text-xs font-semibold transition-colors",
-                isAdvancedControls
-                  ? "bg-[var(--theme-accent)] text-[var(--theme-accent-text)]"
-                  : "text-white/60 hover:bg-white/10 hover:text-white"
-              )}
-              onClick={() => setIsAdvancedControls(true)}
-              data-layout-id="action_mode_advanced"
-            >
-              상세
-            </button>
-          </div>
-        </div>
-        <Button
-          data-layout-id="action_return_to_canvas"
-          variant="ghost"
-          size="icon"
-          className="h-11 w-11 text-white/70 hover:text-white"
-          onClick={closeDataInput}
-        >
-          <X className="h-5 w-5" />
-        </Button>
-      </div>
+
+      <InputStudioHeaderSection
+        mode={studioMode}
+        onModeChange={setStudioMode}
+        onClose={closeDataInput}
+      />
 
       <div className="mb-3 flex items-center gap-2 xl:hidden">
         <Button
@@ -649,605 +1008,187 @@ export function DataInputPanel() {
 
       <div
         data-layout-id="region_drafting_content"
-        className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto pb-6 [scrollbar-gutter:stable]"
+        className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto pb-4 [scrollbar-gutter:stable]"
       >
         <div
           className={cn(
-            "flex flex-col gap-2",
+            "flex flex-col gap-3",
             activeTab === "input" ? "flex" : "hidden",
             "xl:flex"
           )}
         >
-          <label className="text-xs font-semibold text-white/60">
-            원문 입력
-          </label>
-          <div className="relative">
-            <div className="pointer-events-none absolute left-3 top-3 bottom-3 w-4 overflow-hidden text-sm text-white/25">
-              <div ref={markerRailRef} className="flex flex-col">
-                {rawLines.map((_, index) => (
-                  <span
-                    key={`marker-${index}`}
-                    style={{
-                      height: `${lineHeight}em`,
-                      lineHeight: `${lineHeight}em`,
-                    }}
-                  >
-                    ·
-                  </span>
-                ))}
-              </div>
-            </div>
-            <textarea
-              className={cn(
-                "h-40 w-full resize-none rounded-lg border border-white/10 bg-black/40 pb-3 pl-8 pr-3 pt-3 text-sm text-white/80 outline-none focus:border-white/40",
-                lineHeightClass
-              )}
-              value={rawText}
-              onChange={(event) => handleRawChange(event.target.value)}
-              onScroll={handleRawScroll}
-              placeholder="여기에 문제/풀이를 줄 단위로 붙여넣으세요."
+          <InputStudioRawSection
+            rawText={rawText}
+            onRawTextChange={handleRawChange}
+            syncDecisionCount={syncDecisions.length}
+          />
+
+          {studioMode === "advanced" && (
+            <StructuredSchemaEditor
+              jsonText={schemaJsonText}
+              onJsonTextChange={setSchemaJsonText}
+              onValidationResult={setSchemaValidation}
+              onValidBlocks={handleSchemaValidBlocks}
             />
-          </div>
-          <p className="text-[11px] text-white/40">
-            원문 수정 시 블록은 비파괴 동기화됩니다. 매칭 실패 블록은 임시 보관됩니다.
-          </p>
-          {syncDecisions.length > 0 && (
-            <p className="text-[11px] text-white/30">
-              동기화 결과: {syncDecisions.length}줄 처리
-            </p>
           )}
+
+          <section className="rounded-lg border border-white/10 bg-black/30 p-3">
+            <div className="flex items-center justify-between gap-2">
+              <p className="text-xs font-semibold text-white/70">LLM Draft</p>
+              <span className="text-[11px] text-white/45">role: {effectiveRole}</span>
+            </div>
+
+            <textarea
+              className="mt-2 h-20 w-full resize-none rounded-md border border-white/15 bg-black/40 p-2 text-xs text-white/85 outline-none focus:border-white/35"
+              value={llmPrompt}
+              onChange={(event) => {
+                setLlmPrompt(event.target.value);
+                if (llmError) {
+                  clearError();
+                }
+              }}
+              placeholder="프롬프트를 입력하고 초안 생성을 요청하세요."
+            />
+
+            <div className="mt-2 flex flex-wrap items-center gap-2">
+              <Button
+                variant="outline"
+                className="h-10 px-3 text-xs"
+                disabled={!hasNormalizedPrompt || isLlmRequesting}
+                onClick={() => {
+                  void handleRequestLlmDraft();
+                }}
+              >
+                {isLlmRequesting ? "요청 중..." : "초안 요청"}
+              </Button>
+              <Button
+                variant="ghost"
+                className="h-10 px-3 text-xs text-white/65"
+                disabled={!hasCandidate}
+                onClick={clearCandidate}
+              >
+                후보 초기화
+              </Button>
+            </div>
+
+            {llmError && (
+              <p className="mt-2 text-[11px] text-[var(--theme-warning)]">
+                요청 실패: {llmError.message}
+              </p>
+            )}
+
+            {candidate && (
+              <div className="mt-3 rounded-md border border-white/10 bg-black/30 p-2">
+                <p className="text-[11px] text-white/70">
+                  후보 블록: {candidate.diff.summary.totalCandidate}개 / 변경: {" "}
+                  {candidate.diff.summary.changed}개
+                </p>
+                <p className="mt-1 text-[11px] text-white/45">
+                  추가 {candidate.diff.summary.added} / 수정 {candidate.diff.summary.modified} / 삭제 {candidate.diff.summary.removed}
+                </p>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  <Button
+                    className="h-10 px-3 text-xs"
+                    onClick={handleApplyCandidateToDraft}
+                  >
+                    초안 반영
+                  </Button>
+                  <Button
+                    variant="outline"
+                    className="h-10 px-3 text-xs"
+                    onClick={handleQueueCandidateForApproval}
+                  >
+                    승인 큐 전송
+                  </Button>
+                </div>
+              </div>
+            )}
+          </section>
         </div>
 
         <div
           className={cn(
-            "flex min-h-0 flex-1 flex-col gap-2",
+            "flex min-h-0 flex-1 flex-col",
             activeTab === "blocks" ? "flex" : "hidden",
             "xl:flex"
           )}
         >
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-white/60">
-              블록 미리보기
-            </span>
-            <span className="text-[11px] text-white/40">
-              {blocks.length}개
-            </span>
-          </div>
-          <div className="flex flex-wrap items-center gap-2">
-            <Button
-              variant="outline"
-              className="h-10 px-3 text-xs"
-              onClick={() => insertBreakBlock("line-break")}
-            >
-              <CornerDownLeft className="mr-1 h-3 w-3" />
-              줄바꿈
-            </Button>
-            <Button
-              variant="outline"
-              className="h-10 px-3 text-xs"
-              onClick={() => insertBreakBlock("column-break")}
-            >
-              <Columns className="mr-1 h-3 w-3" />
-              단나눔
-            </Button>
-            <Button
-              variant="outline"
-              className="h-10 px-3 text-xs"
-              onClick={() => insertBreakBlock("page-break")}
-            >
-              <FilePlus className="mr-1 h-3 w-3" />
-              페이지
-            </Button>
-          </div>
-          <div className="flex flex-col gap-3 pr-1">
-            {editorSurface.blockEntries.map((entry) => {
-              const block = blocks[entry.blockIndex];
-              if (!block) return null;
-              let imageIndex = 0;
-              let videoIndex = 0;
-              const index = entry.blockIndex;
-              const isBreakBlock = entry.isBreakBlock;
-              const contentOrder = contentOrderByBlockId[entry.blockId];
-              const stepNumber =
-                typeof contentOrder === "number" ? contentOrder + 1 : null;
-              const breakLabel = entry.breakLabel ?? EDITOR_SURFACE_BREAK_LABELS.fallback;
-              const isExpanded =
-                !isBreakBlock && expandedBlockId === block.id;
-              const blockPreview = entry.preview;
-              return (
-                  <Fragment key={block.id}>
-                    {renderInsertionMarker(index)}
-                    <div
-                      className={cn(
-                        "group rounded-lg border bg-white/5",
-                        isBreakBlock
-                          ? "min-h-9 border-dashed border-[var(--theme-accent)] bg-[var(--theme-accent-soft)] px-3 py-2"
-                          : "border-[var(--theme-border)] p-3"
-                      )}
-                      draggable
-                      onDragStart={(event) => {
-                        if (
-                          (event.target as HTMLElement)?.closest(
-                            "[data-segment-drag]"
-                          )
-                        ) {
-                          event.preventDefault();
-                          return;
-                        }
-                        event.dataTransfer.setData("text/plain", block.id);
-                      }}
-                      onDragOver={(event) => event.preventDefault()}
-                      onDrop={(event) => {
-                        const fromId = event.dataTransfer.getData("text/plain");
-                        moveBlock(fromId, block.id);
-                      }}
-                    >
-                      <div className={cn("flex items-start gap-2", isBreakBlock && "items-center")}>
-                        <div className="text-white/40">
-                          <GripVertical className="h-4 w-4" />
-                        </div>
-                        {isBreakBlock ? (
-                          <span className="flex-1 text-xs font-semibold uppercase tracking-[0.16em] text-[var(--theme-text)] break-label">
-                            {breakLabel}
-                          </span>
-                        ) : (
-                          <button
-                            type="button"
-                            className="min-h-11 min-w-0 flex-1 rounded-md px-1 py-1 text-left hover:bg-white/5"
-                            onClick={() => toggleBlockExpanded(block.id)}
-                          >
-                            <span className="text-xs font-semibold text-white step-label">
-                              Step {stepNumber}
-                            </span>
-                            <p className="mt-1 truncate text-[11px] text-white/45">
-                              {blockPreview}
-                            </p>
-                          </button>
-                        )}
-                        {!isBreakBlock && (
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-11 w-11 text-white/60 hover:text-white"
-                            onClick={() => toggleBlockExpanded(block.id)}
-                            aria-label={isExpanded ? "블록 접기" : "블록 펼치기"}
-                          >
-                            <ChevronDown
-                              className={cn(
-                                "h-4 w-4 transition-transform",
-                                isExpanded ? "rotate-180" : ""
-                              )}
-                            />
-                          </Button>
-                        )}
-                        <div className="flex items-center gap-1">
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-11 w-11 text-white/50 hover:text-white"
-                            onClick={() => moveBlockByIndex(index, -1)}
-                            disabled={index === 0}
-                          >
-                            <ChevronUp className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-11 w-11 text-white/50 hover:text-white"
-                            onClick={() => moveBlockByIndex(index, 1)}
-                            disabled={index === blocks.length - 1}
-                          >
-                            <ChevronDown className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-11 w-11 text-white/50 hover:text-white"
-                            onClick={() => handleDeleteBlock(block.id)}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </div>
-
-                      {!isBreakBlock && isExpanded ? (
-                        <div className="mt-3 flex flex-col gap-2">
-                          {block.segments.map((segment) => {
-                            const label =
-                              segment.type === "text"
-                                ? "TXT"
-                                : segment.type === "image"
-                                  ? `img${String(++imageIndex).padStart(2, "0")}`
-                                  : `play${String(++videoIndex).padStart(2, "0")}`;
-                            const textStyle =
-                              segment.type === "text"
-                                ? normalizeTextSegmentStyle(segment.style)
-                                : null;
-                            const editorStyle: CSSProperties | undefined =
-                              textStyle
-                                ? {
-                                    fontFamily: textStyle.fontFamily,
-                                    fontSize: textStyle.fontSize,
-                                    fontWeight:
-                                      textStyle.fontWeight as CSSProperties["fontWeight"],
-                                    color: textStyle.color,
-                                    lineHeight: DEFAULT_TEXT_LINE_HEIGHT,
-                                  }
-                                : undefined;
-                            const fontSizePx = textStyle
-                              ? parseFontSizePx(
-                                  textStyle.fontSize,
-                                  DEFAULT_FONT_SIZE_PX
-                                )
-                              : DEFAULT_FONT_SIZE_PX;
-                            const canDecreaseFontSize =
-                              fontSizePx > FONT_SIZE_MIN_PX;
-                            const canIncreaseFontSize =
-                              fontSizePx < FONT_SIZE_MAX_PX;
-                            return (
-                              <div
-                                key={segment.id}
-                                className="flex items-start gap-2 rounded-md border border-white/10 bg-black/30 p-2"
-                                draggable
-                                onDragStart={(event) => {
-                                  event.dataTransfer.setData(
-                                    "text/plain",
-                                    `${block.id}:${segment.id}`
-                                  );
-                                }}
-                                onDragOver={(event) => event.preventDefault()}
-                                onDrop={(event) => {
-                                  const raw = event.dataTransfer.getData("text/plain");
-                                  const [fromBlockId, fromSegmentId] = raw.split(":");
-                                  if (fromBlockId !== block.id) return;
-                                  moveSegment(block.id, fromSegmentId, segment.id);
-                                }}
-                              >
-                                <div data-segment-drag className="mt-1 text-white/40">
-                                  <GripVertical className="h-4 w-4" />
-                                </div>
-                                <span className="rounded-full border border-white/20 bg-white/10 px-2 py-0.5 text-[10px] uppercase text-white/70">
-                                  {label}
-                                </span>
-                                <div className="flex min-w-0 flex-1 flex-col gap-2">
-                                  {segment.type === "text" ? (
-                                    <>
-                                      <div
-                                        ref={(node) => {
-                                          segmentRefs.current[segment.id] = node;
-                                        }}
-                                        className={cn(
-                                          "min-h-[40px] rounded-md border border-white/10 bg-black/30 px-2 py-2 text-sm text-white/80 outline-none",
-                                          "focus-within:border-white/40"
-                                        )}
-                                        style={editorStyle}
-                                        contentEditable
-                                        suppressContentEditableWarning
-                                        onBlur={() =>
-                                          handleSegmentCommit(segment.id)
-                                        }
-                                        dangerouslySetInnerHTML={{
-                                          __html: segment.html,
-                                        }}
-                                      />
-                                      <div className="flex flex-col gap-2">
-                                        <div className="flex flex-wrap items-center gap-2">
-                                          <div className="inline-flex h-11 min-w-[192px] items-center gap-2 rounded-md border border-white/15 bg-black/40 px-2">
-                                            <span className="text-[10px] font-semibold uppercase tracking-[0.12em] text-white/45">
-                                              폰트
-                                            </span>
-                                            <select
-                                              className="h-9 flex-1 min-w-[108px] rounded-md border border-white/15 bg-black/50 px-2 text-[11px] text-white/80 outline-none"
-                                              value={textStyle?.fontFamily ?? ""}
-                                              onChange={(event) =>
-                                                updateTextSegmentStyle(
-                                                  block.id,
-                                                  segment.id,
-                                                  {
-                                                    fontFamily:
-                                                      event.target.value,
-                                                  }
-                                                )
-                                              }
-                                            >
-                                              {TEXT_FONT_FAMILY_OPTIONS.map(
-                                                (option) => (
-                                                  <option
-                                                    key={option.value}
-                                                    value={option.value}
-                                                  >
-                                                    {option.label}
-                                                  </option>
-                                                )
-                                              )}
-                                            </select>
-                                          </div>
-                                          <div className="inline-flex h-11 items-center rounded-md border border-white/15 bg-black/40">
-                                            <Button
-                                              variant="ghost"
-                                              className="h-11 rounded-r-none px-3 text-[11px] text-white/75 hover:text-white"
-                                              onClick={() =>
-                                                adjustTextSegmentFontSize(
-                                                  block.id,
-                                                  segment.id,
-                                                  -FONT_SIZE_STEP_PX
-                                                )
-                                              }
-                                              disabled={!canDecreaseFontSize}
-                                              aria-label="폰트 크기 줄이기"
-                                            >
-                                              A-
-                                            </Button>
-                                            <span className="min-w-[56px] border-x border-[var(--theme-border)] px-2 text-center text-[11px] font-semibold text-[var(--theme-text)]">
-                                              {fontSizePx}px
-                                            </span>
-                                            <Button
-                                              variant="ghost"
-                                              className="h-11 rounded-l-none px-3 text-[11px] text-white/75 hover:text-white"
-                                              onClick={() =>
-                                                adjustTextSegmentFontSize(
-                                                  block.id,
-                                                  segment.id,
-                                                  FONT_SIZE_STEP_PX
-                                                )
-                                              }
-                                              disabled={!canIncreaseFontSize}
-                                              aria-label="폰트 크기 키우기"
-                                            >
-                                              A+
-                                            </Button>
-                                          </div>
-                                        </div>
-                                        <div className="flex flex-wrap items-center gap-2">
-                                          <Button
-                                            variant="outline"
-                                            className="h-10 px-3 text-[11px] font-bold"
-                                            onMouseDown={(event) => {
-                                              event.preventDefault();
-                                              wrapSelectionWithClass(
-                                                segment.id,
-                                                TEXT_INLINE_BOLD_CLASS,
-                                                segmentRefs.current,
-                                                selectionRef.current,
-                                                updateSegmentHtml
-                                              );
-                                            }}
-                                          >
-                                            B
-                                          </Button>
-                                          {canMath && (
-                                            <Button
-                                              variant="outline"
-                                              className="h-10 px-3 text-[11px]"
-                                              onMouseDown={(event) => {
-                                                event.preventDefault();
-                                                wrapSelectionWithMath(
-                                                  segment.id,
-                                                  segmentRefs.current,
-                                                  selectionRef.current,
-                                                  updateSegmentHtml
-                                                );
-                                              }}
-                                            >
-                                              $$
-                                            </Button>
-                                          )}
-                                          {canHighlight && (
-                                            <Button
-                                              variant="outline"
-                                              className="h-10 px-3 text-[11px]"
-                                              onMouseDown={(event) => {
-                                                event.preventDefault();
-                                                wrapSelectionWithHighlight(
-                                                  segment.id,
-                                                  segmentRefs.current,
-                                                  selectionRef.current,
-                                                  updateSegmentHtml
-                                                );
-                                              }}
-                                            >
-                                              HL
-                                            </Button>
-                                          )}
-                                        </div>
-                                      </div>
-                                      {isAdvancedControls && (
-                                        <div className="flex flex-wrap items-center gap-2">
-                                          {TEXT_INLINE_COLOR_OPTIONS.map((option) => (
-                                            <Button
-                                              key={`${segment.id}-${option.className}`}
-                                              variant="outline"
-                                              className="h-10 px-3 text-[11px]"
-                                              onMouseDown={(event) => {
-                                                event.preventDefault();
-                                                wrapSelectionWithClass(
-                                                  segment.id,
-                                                  option.className,
-                                                  segmentRefs.current,
-                                                  selectionRef.current,
-                                                  updateSegmentHtml
-                                                );
-                                              }}
-                                            >
-                                              {option.label}
-                                            </Button>
-                                          ))}
-                                          {TEXT_INLINE_SIZE_OPTIONS.map((option) => (
-                                            <Button
-                                              key={`${segment.id}-${option.className}`}
-                                              variant="outline"
-                                              className="h-10 px-3 text-[11px]"
-                                              onMouseDown={(event) => {
-                                                event.preventDefault();
-                                                wrapSelectionWithClass(
-                                                  segment.id,
-                                                  option.className,
-                                                  segmentRefs.current,
-                                                  selectionRef.current,
-                                                  updateSegmentHtml
-                                                );
-                                              }}
-                                            >
-                                              {option.label}
-                                            </Button>
-                                          ))}
-                                        </div>
-                                      )}
-                                    </>
-                                  ) : (
-                                    <div className="flex items-center gap-3 text-xs text-white/60">
-                                      {segment.type === "image" ? (
-                                        // eslint-disable-next-line @next/next/no-img-element
-                                        <img
-                                          src={segment.src}
-                                          alt="preview"
-                                          className="h-12 w-12 rounded-md object-cover"
-                                        />
-                                      ) : (
-                                        <div className="flex h-12 w-12 items-center justify-center rounded-md border border-white/20 bg-white/5 text-[10px] tracking-widest text-white/50">
-                                          PLAY
-                                        </div>
-                                      )}
-                                      <span className="truncate">
-                                        {segment.type === "image"
-                                          ? "이미지"
-                                          : "비디오"}
-                                      </span>
-                                    </div>
-                                  )}
-                                </div>
-                                <Button
-                                  variant="ghost"
-                                  size="icon"
-                                  className="h-10 w-10 text-white/50 hover:text-white"
-                                  onClick={() =>
-                                    removeSegment(block.id, segment.id)
-                                  }
-                                >
-                                  <Minus className="h-4 w-4" />
-                                </Button>
-                              </div>
-                            );
-                        })}
-                      </div>
-                    ) : null}
-
-                      {!isBreakBlock && isExpanded && (
-                        <div className="mt-3 flex flex-wrap items-center gap-2">
-                        <Button
-                          variant="outline"
-                          className="h-10 px-3 text-xs"
-                          onClick={() => addTextSegment(block.id)}
-                        >
-                          <Plus className="mr-1 h-3 w-3" />
-                          Text
-                        </Button>
-                        <Button
-                          variant="outline"
-                          className="h-10 px-3 text-xs"
-                          onClick={() => handleMediaPick(block.id, "image")}
-                        >
-                          <ImagePlus className="mr-1 h-3 w-3" />
-                          Image
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          className="h-10 px-3 text-[11px] text-white/60 hover:text-white"
-                          onClick={() => handleMediaUrl(block.id, "image")}
-                        >
-                          URL
-                        </Button>
-                        <Button
-                          variant="outline"
-                          className="h-10 px-3 text-xs"
-                          onClick={() => handleMediaPick(block.id, "video")}
-                        >
-                          <PlaySquare className="mr-1 h-3 w-3" />
-                          Video
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          className="h-10 px-3 text-[11px] text-white/60 hover:text-white"
-                          onClick={() => handleMediaUrl(block.id, "video")}
-                        >
-                          URL
-                        </Button>
-                      </div>
-                    )}
-                  </div>
-                  </Fragment>
-                );
-              })}
-            {renderInsertionMarker(blocks.length)}
-          </div>
+          <InputStudioBlocksSection
+            blocks={blocks}
+            editorSurface={editorSurface}
+            contentOrderByBlockId={contentOrderByBlockId}
+            expandedBlockId={expandedBlockId}
+            onExpandedBlockChange={setExpandedBlockId}
+            onMoveBlock={moveBlock}
+            onMoveBlockByIndex={moveBlockByIndex}
+            onDeleteBlock={deleteBlock}
+            onInsertionIndexChange={writeInsertionIndex}
+            onInsertBreakBlock={insertBreakBlock}
+            renderExpandedContent={renderExpandedContent}
+          />
         </div>
+
+        {pipelineDiagnostics.length > 0 && (
+          <section className="rounded-lg border border-[var(--theme-warning)] bg-[var(--theme-warning-soft)] p-3">
+            <p className="text-xs font-semibold text-[var(--theme-text)]">
+              검증/파이프라인 진단
+            </p>
+            <ul className="mt-2 list-disc space-y-1 pl-4 text-[11px] text-[var(--theme-text-muted)]">
+              {pipelineDiagnostics.map((diagnostic, index) => (
+                <li key={`${diagnostic.code}:${diagnostic.path}:${index}`}>
+                  {formatDiagnostic(diagnostic)}
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+
+        {schemaValidation && !schemaValidation.ok && (
+          <section className="rounded-lg border border-[var(--theme-warning)] bg-[var(--theme-warning-soft)] p-3 text-[11px] text-[var(--theme-text-muted)]">
+            스키마 오류 {schemaValidation.issues.length}건이 감지되었습니다.
+          </section>
+        )}
+
+        {publishMessage && (
+          <p className="rounded-md border border-[var(--theme-border)] bg-[var(--theme-surface-soft)] px-2 py-1 text-[11px] text-[var(--theme-text-muted)]">
+            {publishMessage}
+          </p>
+        )}
       </div>
 
-      {unmatchedBlocks.length > 0 && (
-        <div className="mt-3 rounded-lg border border-[var(--theme-warning)] bg-[var(--theme-warning-soft)] p-3 text-[var(--theme-text)]">
-          <p className="text-xs font-semibold">
-            보존 블록 {unmatchedBlocks.length}개가 임시 보관 중입니다.
-          </p>
-          <p className="mt-1 text-[11px] text-[var(--theme-text-muted)]">
-            적용 전 복원 또는 폐기를 선택해야 데이터 유실 없이 진행됩니다.
-          </p>
-          <div className="mt-2 flex flex-wrap gap-2">
-            <Button
-              variant="outline"
-              className="h-10 border-[var(--theme-warning)] text-xs text-[var(--theme-text)] hover:bg-[var(--theme-warning-soft)]"
-              onClick={handleRestoreUnmatched}
-            >
-              보존 블록 복원
-            </Button>
-            <Button
-              variant="ghost"
-              className="h-10 text-xs text-[var(--theme-text-muted)] hover:text-[var(--theme-text)]"
-              onClick={handleDiscardUnmatched}
-            >
-              보존 블록 폐기
-            </Button>
-          </div>
-        </div>
-      )}
+      <InputStudioActionsSection
+        onClose={closeDataInput}
+        onRestoreLayoutSnapshot={restoreLayoutSnapshot}
+        canRestoreLayoutSnapshot={Boolean(layoutSnapshot)}
+        onAutoLayout={handleAutoLayout}
+        isAutoLayoutRunning={isLayoutRunning}
+        onApply={handleApplyToCanvas}
+        canApply={canApply}
+        unmatchedBlockCount={unmatchedBlocks.length}
+        onRestoreUnmatchedBlocks={restoreUnmatchedBlocks}
+        onDiscardUnmatchedBlocks={discardUnmatchedBlocks}
+      />
 
-      <div
-        data-layout-id="region_drafting_actions"
-        className="sticky bottom-0 mt-4 border-t border-[var(--theme-border)] bg-[var(--theme-surface-overlay)] pb-[env(safe-area-inset-bottom)] pt-3 xl:bg-[var(--theme-surface-soft)]"
-      >
-        <div className="grid grid-cols-2 gap-2">
-          <Button
-            variant="ghost"
-            className="h-11 border border-white/20 bg-white/[0.03] text-white/70 hover:bg-white/10"
-            onClick={closeDataInput}
-          >
-            닫기
-          </Button>
-          <Button
-            variant="ghost"
-            className="h-11 border border-white/20 bg-white/[0.03] text-white/70 hover:bg-white/10"
-            onClick={restoreLayoutSnapshot}
-            disabled={!layoutSnapshot}
-          >
-            되돌리기
-          </Button>
-        </div>
-        <div className="mt-2 grid grid-cols-2 gap-2">
-          <Button
-            variant="outline"
-            className="h-11 border-[var(--theme-accent)] bg-[var(--theme-accent-soft)] text-[var(--theme-text)] hover:bg-[var(--theme-accent-strong)]"
-            onClick={handleAutoLayout}
-            disabled={isLayoutRunning}
-          >
-            {isLayoutRunning ? "배치 중..." : "Auto Layout"}
-          </Button>
-          <Button
-            className="h-11 bg-[var(--theme-accent)] text-[var(--theme-accent-text)] hover:bg-[var(--theme-accent-strong)] disabled:bg-[var(--theme-surface-soft)] disabled:text-[var(--theme-text-subtle)]"
-            onClick={handleApply}
-            disabled={unmatchedBlocks.length > 0}
-          >
-            캔버스에 적용
-          </Button>
-        </div>
+      <div className="mt-2 flex flex-wrap items-center gap-2">
+        <Button
+          variant="outline"
+          className="h-10 px-3 text-xs"
+          disabled={!rollbackSnapshot}
+          onClick={handleRollback}
+        >
+          입력 롤백
+        </Button>
+        <Button
+          variant="ghost"
+          className="h-10 px-3 text-xs text-white/65"
+          disabled={!rollbackSnapshot}
+          onClick={() => {
+            clearSnapshots();
+            setPublishMessage(null);
+          }}
+        >
+          스냅샷 초기화
+        </Button>
       </div>
     </aside>
   );

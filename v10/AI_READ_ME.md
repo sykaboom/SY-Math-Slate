@@ -65,6 +65,7 @@ features/
   animation/     (animation model, plan/measure/runtime, modding contract)
   canvas/        (rendering layers, actors, objects, viewport)
   extensions/    (tool adapter interfaces/registry/mock adapter, command policy + command registrations)
+  input-studio/  (DataInput headless hooks, schema editor, LLM draft/diff, approval queue payload, publish/rollback, validation pipeline)
   hooks/         (useSequence, usePersistence, useFileIO, useAudioPlayer, ...)
   layout/        (AppLayout, autoLayout, overview)
   mod-studio/    (GUI modding shell: policy/layout/modules/theme/publish/io)
@@ -434,6 +435,10 @@ Located in `features/extensions/`:
 - Persistence: `features/hooks/usePersistence.ts`
 - File I/O: `features/hooks/useFileIO.ts`
 - Data input panel: `features/layout/DataInputPanel.tsx`
+- Input studio headless hook: `features/input-studio/hooks/useInputStudioHeadless.ts`
+- Input studio schema editor: `features/input-studio/schema/StructuredSchemaEditor.tsx`
+- Input studio LLM draft workflow: `features/input-studio/llm/useInputStudioLlmDraft.ts`
+- Input studio batch validation pipeline: `features/input-studio/validation/batchTransformPipeline.ts`
 - Auto layout: `features/layout/autoLayout.ts`
 
 ---
