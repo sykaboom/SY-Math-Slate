@@ -24,7 +24,19 @@ for path in "${required_files[@]}"; do
   fi
 done
 
-required_command_ids=("insertBlock" "updateBlock" "deleteBlock")
+required_command_ids=(
+  "insertBlock"
+  "updateBlock"
+  "deleteBlock"
+  "insertBreak"
+  "importStepBlocks"
+  "setInsertionIndex"
+  "setViewMode"
+  "setAnimating"
+  "addPage"
+  "deletePage"
+  "setColumnCount"
+)
 for command_id in "${required_command_ids[@]}"; do
   if ! rg -q "id:\\s*\"$command_id\"" "v10/src/features/extensions/commands/registerCoreCommands.ts"; then
     echo "[check_v10_migration_baseline] FAIL: command '$command_id' not found in registerCoreCommands.ts" >&2
@@ -40,4 +52,4 @@ echo "[check_v10_migration_baseline] PASS"
 echo "[check_v10_migration_baseline] useUIStore refs: ${use_ui_refs}"
 echo "[check_v10_migration_baseline] useCanvasStore refs: ${use_canvas_refs}"
 echo "[check_v10_migration_baseline] dispatchCommand refs: ${dispatch_refs}"
-echo "[check_v10_migration_baseline] Note: counts are informational for task_119~132 migration waves."
+echo "[check_v10_migration_baseline] Note: counts are informational for task_119~138 migration waves."

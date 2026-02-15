@@ -37,7 +37,7 @@ export function PenControls() {
           value={penType}
           onValueChange={(value) =>
             value &&
-            dispatchPenCommand("setPenType", { type: value as PenType })
+            dispatchPenCommand("setPenType", { penType: value as PenType })
           }
           className="mt-3 grid grid-cols-3 gap-2"
         >

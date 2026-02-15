@@ -13,7 +13,7 @@ import {
 
 import { useCanvasStore } from "@features/store/useCanvasStore";
 import { useUIStore } from "@features/store/useUIStoreBridge";
-import { dispatchCommand, getAppCommandById } from "@core/engine/commandBus";
+import { dispatchCommand } from "@core/engine/commandBus";
 import { cn } from "@core/utils";
 import { Button } from "@ui/components/button";
 import type {
@@ -110,8 +110,6 @@ export function DataInputPanel() {
     pageColumnCounts,
     stepBlocks,
     insertionIndex,
-    setInsertionIndex,
-    importStepBlocks,
     applyAutoLayout,
     captureLayoutSnapshot,
     restoreLayoutSnapshot,
@@ -137,42 +135,22 @@ export function DataInputPanel() {
 
   const writeInsertionIndex = useCallback(
     (index: number) => {
-      const fallback = () => setInsertionIndex(index);
-      if (!getAppCommandById("setInsertionIndex")) {
-        fallback();
-        return;
-      }
       void dispatchCommand("setInsertionIndex", { index }, {
         meta: { source: "data-input-panel" },
       })
-        .then((result) => {
-          if (!result.ok && result.code !== "approval-required") {
-            fallback();
-          }
-        })
-        .catch(() => fallback());
+        .catch(() => undefined);
     },
-    [setInsertionIndex]
+    []
   );
 
   const writeImportStepBlocks = useCallback(
     (nextBlocks: StepBlockDraft[]) => {
-      const fallback = () => importStepBlocks(nextBlocks);
-      if (!getAppCommandById("importStepBlocks")) {
-        fallback();
-        return;
-      }
       void dispatchCommand("importStepBlocks", { blocks: nextBlocks }, {
         meta: { source: "data-input-panel" },
       })
-        .then((result) => {
-          if (!result.ok && result.code !== "approval-required") {
-            fallback();
-          }
-        })
-        .catch(() => fallback());
+        .catch(() => undefined);
     },
-    [importStepBlocks]
+    []
   );
 
   const flowItems = useMemo(() => {

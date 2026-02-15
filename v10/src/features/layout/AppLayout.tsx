@@ -5,10 +5,15 @@ import dynamic from "next/dynamic";
 
 import { CanvasStage } from "@features/canvas/CanvasStage";
 import { PasteHelperModal } from "@features/canvas/PasteHelperModal";
+import {
+  ROLE_POLICY_ACTIONS,
+  canAccessLayoutVisibilityForRole,
+} from "@core/config/rolePolicy";
 import { DataInputPanel } from "@features/layout/DataInputPanel";
 import { Prompter } from "@features/layout/Prompter";
 import { PlayerBar } from "@features/layout/PlayerBar";
 import { ExtensionSlot } from "@features/extensions/ui/ExtensionSlot";
+import { reportPolicyBooleanDiffBatch } from "@features/policy/policyShadow";
 import { Button } from "@ui/components/button";
 import { useLocalStore } from "@features/store/useLocalStore";
 import { useUIStore } from "@features/store/useUIStoreBridge";
@@ -25,6 +30,14 @@ const FloatingToolbar = dynamic(
 interface AppLayoutProps {
   children?: ReactNode;
 }
+
+type LayoutRoleVisibilityPolicy = {
+  showTopChrome: boolean;
+  showDataInputPanel: boolean;
+  showHostToolchips: boolean;
+  showStudentPlayerBar: boolean;
+  showPasteHelperModal: boolean;
+};
 
 export function AppLayout({ children }: AppLayoutProps) {
   const layoutRootRef = useRef<HTMLDivElement | null>(null);
@@ -44,11 +57,38 @@ export function AppLayout({ children }: AppLayoutProps) {
     enterFullscreenInkFallback,
     exitFullscreenInk,
   } = useUIStore();
-  const isStudentRole = role === "student";
+  const legacyIsStudentRole = role === "student";
   const isPresentation = viewMode === "presentation";
   const isNativeFullscreen = fullscreenInkMode === "native";
   const isAppFullscreen = fullscreenInkMode === "app";
   const isFullscreenInkActive = fullscreenInkMode !== "off";
+  const useLayoutSlotCutover =
+    process.env.NEXT_PUBLIC_LAYOUT_SLOT_CUTOVER === "1";
+  const roleVisibilityPolicy: LayoutRoleVisibilityPolicy = {
+    showTopChrome: canAccessLayoutVisibilityForRole(
+      role,
+      ROLE_POLICY_ACTIONS.UI_SHOW_TOP_CHROME
+    ),
+    showDataInputPanel: canAccessLayoutVisibilityForRole(
+      role,
+      ROLE_POLICY_ACTIONS.UI_SHOW_DATA_INPUT_PANEL
+    ),
+    showHostToolchips: canAccessLayoutVisibilityForRole(
+      role,
+      ROLE_POLICY_ACTIONS.UI_SHOW_EDITING_FOOTER
+    ),
+    showStudentPlayerBar: canAccessLayoutVisibilityForRole(
+      role,
+      ROLE_POLICY_ACTIONS.UI_SHOW_STUDENT_PLAYER_BAR
+    ),
+    showPasteHelperModal: canAccessLayoutVisibilityForRole(
+      role,
+      ROLE_POLICY_ACTIONS.UI_SHOW_PASTE_HELPER_MODAL
+    ),
+  };
+  const isPolicyStudentRole =
+    roleVisibilityPolicy.showStudentPlayerBar &&
+    !roleVisibilityPolicy.showHostToolchips;
   const layoutState = isNativeFullscreen
     ? "state_native_fullscreen"
     : isAppFullscreen
@@ -57,6 +97,46 @@ export function AppLayout({ children }: AppLayoutProps) {
         ? "state_input_mode"
         : "state_canvas_mode";
   const zoomLabel = isOverviewMode ? Math.round(overviewZoom * 100) : 100;
+  const legacyRoleVisibility = {
+    showTopChrome: !legacyIsStudentRole,
+    showDataInputPanel: !legacyIsStudentRole,
+    showHostToolchips: !legacyIsStudentRole,
+    showStudentPlayerBar: legacyIsStudentRole,
+    showPasteHelperModal: !legacyIsStudentRole,
+  };
+
+  const showTopChromeLegacy =
+    !isPresentation &&
+    !isFullscreenInkActive &&
+    legacyRoleVisibility.showTopChrome;
+  const showTopChromePolicy =
+    !isPresentation &&
+    !isFullscreenInkActive &&
+    roleVisibilityPolicy.showTopChrome;
+
+  const showDataInputPanelLegacy =
+    !isPresentation &&
+    !isFullscreenInkActive &&
+    legacyRoleVisibility.showDataInputPanel;
+  const showDataInputPanelPolicy =
+    !isPresentation &&
+    !isFullscreenInkActive &&
+    roleVisibilityPolicy.showDataInputPanel;
+
+  const showHostToolchipsLegacy =
+    !isPresentation && legacyRoleVisibility.showHostToolchips;
+  const showHostToolchipsPolicy =
+    !isPresentation && roleVisibilityPolicy.showHostToolchips;
+
+  const showStudentPlayerBarLegacy =
+    !isPresentation && legacyRoleVisibility.showStudentPlayerBar;
+  const showStudentPlayerBarPolicy =
+    !isPresentation && roleVisibilityPolicy.showStudentPlayerBar;
+
+  const showPasteHelperModalLegacy =
+    !isPresentation && legacyRoleVisibility.showPasteHelperModal;
+  const showPasteHelperModalPolicy =
+    !isPresentation && roleVisibilityPolicy.showPasteHelperModal;
 
   const handleHeaderZoom = (delta: number) => {
     if (!isOverviewMode) return;
@@ -111,6 +191,72 @@ export function AppLayout({ children }: AppLayoutProps) {
     exitFullscreenInk();
   }, [exitFullscreenInk, isDataInputOpen, isFullscreenInkActive]);
 
+  useEffect(() => {
+    reportPolicyBooleanDiffBatch([
+      {
+        decisionKey: "app-layout.region_chrome_top",
+        role,
+        legacyValue: showTopChromeLegacy,
+        policyValue: showTopChromePolicy,
+        metadata: {
+          isPresentation,
+          isFullscreenInkActive,
+        },
+      },
+      {
+        decisionKey: "app-layout.region_data_input_panel",
+        role,
+        legacyValue: showDataInputPanelLegacy,
+        policyValue: showDataInputPanelPolicy,
+        metadata: {
+          isPresentation,
+          isFullscreenInkActive,
+        },
+      },
+      {
+        decisionKey: "app-layout.region_toolchips",
+        role,
+        legacyValue: showHostToolchipsLegacy,
+        policyValue: showHostToolchipsPolicy,
+        metadata: {
+          isPresentation,
+        },
+      },
+      {
+        decisionKey: "app-layout.region_student_player_bar",
+        role,
+        legacyValue: showStudentPlayerBarLegacy,
+        policyValue: showStudentPlayerBarPolicy,
+        metadata: {
+          isPresentation,
+        },
+      },
+      {
+        decisionKey: "app-layout.region_paste_helper_modal",
+        role,
+        legacyValue: showPasteHelperModalLegacy,
+        policyValue: showPasteHelperModalPolicy,
+        metadata: {
+          isPresentation,
+        },
+      },
+    ]);
+  }, [
+    role,
+    isPresentation,
+    isFullscreenInkActive,
+    showTopChromeLegacy,
+    showTopChromePolicy,
+    showDataInputPanelLegacy,
+    showDataInputPanelPolicy,
+    showHostToolchipsLegacy,
+    showHostToolchipsPolicy,
+    showStudentPlayerBarLegacy,
+    showStudentPlayerBarPolicy,
+    showPasteHelperModalLegacy,
+    showPasteHelperModalPolicy,
+  ]);
+
   return (
     <div
       ref={layoutRootRef}
@@ -121,7 +267,7 @@ export function AppLayout({ children }: AppLayoutProps) {
           : "flex h-[100dvh] w-full flex-col bg-slate-app text-white"
       }
     >
-      {!isPresentation && !isFullscreenInkActive && !isStudentRole && (
+      {showTopChromePolicy && (
         <header
           data-layout-id="region_chrome_top"
           className="sticky top-0 z-40 border-b border-white/10 bg-black/40 backdrop-blur-md"
@@ -219,7 +365,19 @@ export function AppLayout({ children }: AppLayoutProps) {
           <div data-layout-id="region_canvas_primary" className="min-w-0 flex-1">
             <CanvasStage>{children}</CanvasStage>
           </div>
-          {!isPresentation && !isFullscreenInkActive && !isStudentRole && <DataInputPanel />}
+          {showDataInputPanelPolicy &&
+            (useLayoutSlotCutover ? (
+              <aside
+                data-layout-id="region_left_panel_slot"
+                className="w-full max-w-[420px] min-w-[300px]"
+              >
+                <div data-extension-slot-host="left-panel" className="h-full">
+                  <ExtensionSlot slot="left-panel" />
+                </div>
+              </aside>
+            ) : (
+              <DataInputPanel />
+            ))}
         </div>
       </main>
 
@@ -232,11 +390,11 @@ export function AppLayout({ children }: AppLayoutProps) {
               : "pointer-events-none fixed inset-x-0 bottom-0 z-40 flex items-end justify-center px-3 pb-3 sm:px-4 sm:pb-4 xl:pointer-events-auto xl:static xl:px-6 xl:pb-6"
           }
         >
-          {isStudentRole ? (
+          {showStudentPlayerBarPolicy ? (
             <div className="pointer-events-auto flex w-full justify-center">
               <PlayerBar readOnly />
             </div>
-          ) : (
+          ) : showHostToolchipsPolicy ? (
             <div
               data-layout-id="region_toolchips"
               className={
@@ -245,23 +403,31 @@ export function AppLayout({ children }: AppLayoutProps) {
                   : "pointer-events-auto flex w-full max-w-[min(1120px,96vw)] flex-col gap-2 xl:max-w-[min(1120px,94vw)]"
               }
             >
-              <div className={isFullscreenInkActive ? "hidden" : "hidden xl:block"}>
-                <Prompter />
-              </div>
-              <div data-extension-slot-host="toolbar-bottom" className="flex flex-col gap-2">
-                <ExtensionSlot slot="toolbar-bottom" />
-              </div>
-              <FloatingToolbar />
+              {useLayoutSlotCutover ? (
+                <div data-extension-slot-host="toolbar-bottom" className="flex flex-col gap-2">
+                  <ExtensionSlot slot="toolbar-bottom" />
+                </div>
+              ) : (
+                <>
+                  <div className={isFullscreenInkActive ? "hidden" : "hidden xl:block"}>
+                    <Prompter />
+                  </div>
+                  <div data-extension-slot-host="toolbar-bottom" className="flex flex-col gap-2">
+                    <ExtensionSlot slot="toolbar-bottom" />
+                  </div>
+                  <FloatingToolbar />
+                </>
+              )}
             </div>
-          )}
+          ) : null}
         </footer>
       )}
       {isPresentation && (
         <footer className="relative flex items-center justify-center px-3 pb-3 sm:px-4 sm:pb-4 xl:px-6 xl:pb-6">
-          <PlayerBar readOnly={isStudentRole} />
+          <PlayerBar readOnly={isPolicyStudentRole} />
         </footer>
       )}
-      {!isPresentation && !isStudentRole && <PasteHelperModal />}
+      {showPasteHelperModalPolicy && <PasteHelperModal />}
       {isFullscreenInkActive && !isPresentation && (
         <div className="pointer-events-none fixed inset-0 z-50">
           <div className="pointer-events-auto absolute left-3 top-3 sm:left-4 sm:top-4">

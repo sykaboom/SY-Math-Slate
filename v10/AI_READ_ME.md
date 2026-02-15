@@ -51,7 +51,7 @@ app/
 core/
   engine/        (headless command bus: command registry, preflight, idempotency)
   contracts/     (NormalizedContent/RenderPlan/TTSScript/ToolResult/ToolRegistry contract types, guards, mappers)
-  config/        (boardSpec, capabilities, typography defaults)
+  config/        (boardSpec, capabilities, typography defaults, rolePolicy + guards)
   export/        (export pipeline scaffold)
   extensions/    (manifest, registry, connectors, pluginLoader, mcpGateway, runtime scaffold)
   math/          (MathJax loader/render)
@@ -67,6 +67,7 @@ features/
   extensions/    (tool adapter interfaces/registry/mock adapter, command policy + command registrations)
   hooks/         (useSequence, usePersistence, useFileIO, useAudioPlayer, ...)
   layout/        (AppLayout, autoLayout, overview)
+  policy/        (policy shadow comparison telemetry helpers)
   store/         (zustand state)
   toolbar/       (toolbar + panels)
 ui/
@@ -209,7 +210,10 @@ ui/
    - payload validator 실행
    - role 판정 (`host | student`)
    - `student + requiresApproval`이면 실행 차단 후 `useSyncStore.pendingAIQueue`로 enqueue
-3) Core command set (`insertBlock`, `updateBlock`, `deleteBlock`)은 `features/extensions/commands/registerCoreCommands.ts`에서 등록된다.
+3) Role policy는 `core/config/rolePolicy.ts`에서 중앙화되며, unknown role/surface/action은 deny-by-default로 평가된다.
+4) Command/tool approval queue routing hooks는 `features/extensions/commandExecutionPolicy.ts` / `features/extensions/toolExecutionPolicy.ts`에서 role policy를 사용한다.
+5) Policy shadow mode(`NEXT_PUBLIC_POLICY_SHADOW=1`)가 켜지면 legacy vs policy 결정 차이를 `features/policy/policyShadow.ts`에서 diff 로깅한다.
+6) Core command set(`insertBlock`, `updateBlock`, `deleteBlock`, `setViewMode`, `setAnimating`, `addPage`, `deletePage`, `setColumnCount`, ...)은 `features/extensions/commands/registerCoreCommands.ts`에서 등록된다.
 4) Declarative plugin manifest는 `core/extensions/pluginLoader.ts`에서 strict guard로 검증된다.
    - `ui.type`: `button | panel`
    - known slot names only
@@ -398,6 +402,8 @@ Located in `features/extensions/`:
 - `commands/registerCoreCommands.ts`: core command registrations for doc mutation facade
 - `ui/ExtensionRuntimeBootstrap.tsx`: slot/adapters/policy/command/mcp runtime bootstrap
 - `ui/registerCoreDeclarativeManifest.ts`: declarative core toolbar shadow/cutover manifest registration
+- `ui/registerCoreSlots.ts`: core slot registrations (pending approvals + layout cutover slot components)
+- `ui/CoreSlotComponents.tsx`: slot-wrapped core UI components for phased layout cutover
 
 **Permission scope examples**
 - `canvas:read`, `canvas:write`, `net:http`, `llm:invoke`
@@ -424,9 +430,11 @@ Located in `features/extensions/`:
 
 ---
 
-## Migration Baseline (Task 119~132)
+## Migration Baseline (Task 119~138)
 - Baseline info check:
   - `scripts/check_v10_migration_baseline.sh`
+- Legacy freeze guard:
+  - `scripts/check_v10_legacy_freeze.sh`
 - Layer boundary check:
   - `scripts/check_layer_rules.sh`
 - Repository shell verification bundle:
@@ -437,6 +445,8 @@ Located in `features/extensions/`:
 
 Current migration command domains (source of truth):
 - `features/extensions/commands/registerCoreCommands.ts` -> `COMMAND_MIGRATION_MAP`
-- Optional shadow/cutover flags:
+- Optional policy/shadow/cutover flags:
+  - `NEXT_PUBLIC_POLICY_SHADOW=1`: enable policy shadow diff telemetry (legacy vs policy decisions).
   - `NEXT_PUBLIC_CORE_MANIFEST_SHADOW=1`: enable declarative core toolbar shadow manifest injection.
   - `NEXT_PUBLIC_CORE_TOOLBAR_CUTOVER=1`: enable declarative toolbar cutover path for playback/page/break controls.
+  - `NEXT_PUBLIC_LAYOUT_SLOT_CUTOVER=1`: enable phased layout slot cutover path (left panel + bottom region slot composition).

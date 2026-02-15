@@ -126,8 +126,9 @@ const buildRuns = (root: HTMLElement): AnimationRun[] => {
 
 export const compileAnimationPlan = (
   root: HTMLElement,
-  _sourceHtml: string
+  sourceHtml: string
 ): CompiledAnimationPlan => {
+  void sourceHtml;
   const hasMath = root.querySelectorAll("mjx-container").length > 0;
   const runs = buildRuns(root);
   const hasText = hasVisibleText(root);

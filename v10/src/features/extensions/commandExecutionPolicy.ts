@@ -3,6 +3,12 @@ import {
   resetCommandExecutionPolicyHooks,
   type PendingCommandApprovalEntry,
 } from "@core/engine/commandBus";
+import {
+  canDispatchCommandForRole,
+  resolveExecutionRole,
+  shouldQueueCommandApprovalForRole,
+} from "@core/config/rolePolicy";
+import { reportPolicyBooleanDiff } from "@features/policy/policyShadow";
 import { useLocalStore } from "@features/store/useLocalStore";
 import { useSyncStore } from "@features/store/useSyncStore";
 
@@ -35,9 +41,36 @@ const enqueuePendingCommand = (entry: PendingCommandApprovalEntry): void => {
   });
 };
 
+const resolveCommandExecutionRole = (): "host" | "student" => {
+  const role = useLocalStore.getState().role;
+  if (!canDispatchCommandForRole(role)) {
+    return "student";
+  }
+  return resolveExecutionRole(role);
+};
+
+const shouldQueuePendingCommand = (entry: PendingCommandApprovalEntry): boolean => {
+  const role = useLocalStore.getState().role;
+  const policyValue =
+    canDispatchCommandForRole(role) && shouldQueueCommandApprovalForRole(role);
+  const legacyValue = true;
+  reportPolicyBooleanDiff({
+    decisionKey: "command-policy.should-queue-pending-command",
+    role: String(role),
+    legacyValue,
+    policyValue,
+    metadata: {
+      commandId: entry.commandId,
+      hasIdempotencyKey: entry.idempotencyKey ? true : false,
+    },
+  });
+  return policyValue;
+};
+
 export const registerCommandExecutionPolicy = (): void => {
   configureCommandExecutionPolicyHooks({
-    getRole: () => useLocalStore.getState().role,
+    getRole: resolveCommandExecutionRole,
+    shouldQueue: (entry) => shouldQueuePendingCommand(entry),
     enqueuePendingCommand,
   });
 };

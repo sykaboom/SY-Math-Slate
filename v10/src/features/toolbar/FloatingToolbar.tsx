@@ -9,7 +9,7 @@ import { useImageInsert } from "@features/hooks/useImageInsert";
 import { usePersistence } from "@features/hooks/usePersistence";
 import { useSFX } from "@features/hooks/useSFX";
 import { ExtensionSlot } from "@features/extensions/ui/ExtensionSlot";
-import { dispatchCommand, getAppCommandById } from "@core/engine/commandBus";
+import { dispatchCommand } from "@core/engine/commandBus";
 import { cn } from "@core/utils";
 import { useCanvasStore } from "@features/store/useCanvasStore";
 import { useUIStore, type Tool } from "@features/store/useUIStoreBridge";
@@ -82,9 +82,6 @@ export function FloatingToolbar() {
     pages,
     currentPageId,
     currentStep,
-    nextStep,
-    prevStep,
-    insertBreak,
   } = useCanvasStore();
 
   const isPenOpen = openPanel === "pen";
@@ -124,6 +121,11 @@ export function FloatingToolbar() {
     "rounded-md border border-toolbar-border/10 bg-toolbar-menu-bg/20 px-2 py-1.5 text-left text-[11px] text-toolbar-text/70 hover:border-toolbar-border/30";
   const useDeclarativeCoreToolbar =
     process.env.NEXT_PUBLIC_CORE_TOOLBAR_CUTOVER === "1";
+  const dispatchToolbarCommand = (commandId: string, payload: unknown = {}) => {
+    void dispatchCommand(commandId, payload, {
+      meta: { source: "toolbar.floating-toolbar" },
+    }).catch(() => undefined);
+  };
 
   const handleTool = (tool: Tool) => () => setTool(tool);
 
@@ -238,22 +240,11 @@ export function FloatingToolbar() {
   };
 
   const handleInsertBreak = (type: "line" | "column" | "page") => {
-    const fallback = () => insertBreak(type, { panelOpen: isDataInputOpen });
-    if (!getAppCommandById("insertBreak")) {
-      fallback();
-      return;
-    }
     void dispatchCommand(
       "insertBreak",
-      { type, options: { panelOpen: isDataInputOpen } },
+      { type, panelOpen: isDataInputOpen },
       { meta: { source: "floating-toolbar", region: "break-actions" } }
-    )
-      .then((result) => {
-        if (!result.ok && result.code !== "approval-required") {
-          fallback();
-        }
-      })
-      .catch(() => fallback());
+    ).catch(() => undefined);
   };
 
   useEffect(() => {
@@ -649,7 +640,7 @@ export function FloatingToolbar() {
                     <ToolButton
                       icon={ChevronsLeft}
                       label="Previous Step"
-                      onClick={prevStep}
+                      onClick={() => dispatchToolbarCommand("prevStep")}
                       disabled={!canStepPrev}
                       className="h-8 w-8"
                     />
@@ -659,7 +650,7 @@ export function FloatingToolbar() {
                     <ToolButton
                       icon={ChevronsRight}
                       label="Next Step"
-                      onClick={nextStep}
+                      onClick={() => dispatchToolbarCommand("nextStep")}
                       disabled={!canStepNext}
                       className="h-8 w-8"
                     />

@@ -7,11 +7,13 @@ type ChalkActorProps = {
 };
 
 export function ChalkActor({ isMoving: _isMoving }: ChalkActorProps) {
+  const isMoving = _isMoving;
   const holder = chalkTheme.holder;
   const bodyTop = chalkTheme.tipOffset.y - holder.body.thickness / 2;
   const totalLength = holder.tip.length + holder.body.length;
   return (
     <div
+      data-moving={isMoving ? "true" : "false"}
       className="relative"
       style={{
         width: holder.frame.size,

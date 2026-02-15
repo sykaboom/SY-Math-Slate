@@ -34,7 +34,7 @@ export function LaserControls() {
           value={laserType}
           onValueChange={(value) =>
             value &&
-            dispatchLaserCommand("setLaserType", { type: value as LaserType })
+            dispatchLaserCommand("setLaserType", { laserType: value as LaserType })
           }
           className="mt-3 grid grid-cols-2 gap-2"
         >

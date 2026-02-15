@@ -38,6 +38,8 @@ v10/src/
 |   |-- config/
 |   |   |-- boardSpec.ts
 |   |   |-- capabilities.ts
+|   |   |-- rolePolicy.ts
+|   |   |-- rolePolicyGuards.ts
 |   |   \-- typography.ts
 |   |-- contracts/
 |   |   |-- fromPersistedDoc.ts
@@ -122,6 +124,7 @@ v10/src/
 |   |   |-- commands/
 |   |   |   \-- registerCoreCommands.ts
 |   |   |-- ui/
+|   |   |   |-- CoreSlotComponents.tsx
 |   |   |   |-- ExtensionRuntimeBootstrap.tsx
 |   |   |   |-- ExtensionSlot.tsx
 |   |   |   |-- registerCoreDeclarativeManifest.ts
@@ -151,6 +154,8 @@ v10/src/
 |   |   |-- OverviewStage.tsx
 |   |   |-- PlayerBar.tsx
 |   |   \-- Prompter.tsx
+|   |-- policy/
+|   |   \-- policyShadow.ts
 |   |-- store/
 |   |   |-- useCanvasStore.ts
 |   |   |-- useCapabilityStore.ts

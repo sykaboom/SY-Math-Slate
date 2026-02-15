@@ -41,6 +41,8 @@ export const COMMAND_MIGRATION_MAP: Record<
     "setLaserWidth",
   ],
   "playback-page": [
+    "setViewMode",
+    "setAnimating",
     "setPlaybackSpeed",
     "setAutoPlayDelay",
     "toggleAutoPlay",
@@ -54,6 +56,9 @@ export const COMMAND_MIGRATION_MAP: Record<
     "nextPage",
     "prevPage",
     "goToPage",
+    "addPage",
+    "deletePage",
+    "setColumnCount",
   ],
   "data-input": [
     "insertBreak",
@@ -80,6 +85,10 @@ type DeleteBlockPayload = {
 
 type SetToolPayload = {
   tool: Tool;
+};
+
+type SetViewModePayload = {
+  mode: "edit" | "presentation";
 };
 
 type SetPenTypePayload = {
@@ -126,6 +135,10 @@ type TogglePausePayload = {
   value?: boolean;
 };
 
+type SetAnimatingPayload = {
+  value: boolean;
+};
+
 type EmptyPayload = Record<string, never>;
 
 type GoToStepPayload = {
@@ -134,6 +147,16 @@ type GoToStepPayload = {
 
 type GoToPagePayload = {
   pageId: string;
+};
+
+type AddPagePayload = EmptyPayload;
+
+type DeletePagePayload = {
+  pageId?: string;
+};
+
+type SetColumnCountPayload = {
+  count: number;
 };
 
 type InsertBreakPayload = {
@@ -172,6 +195,10 @@ const STYLE_KEYS: Array<keyof TextSegmentStyle> = [
 ];
 const STYLE_KEY_SET = new Set<string>(STYLE_KEYS);
 const VALID_TOOLS = new Set<Tool>(["pen", "eraser", "laser", "hand", "text"]);
+const VALID_VIEW_MODES = new Set<SetViewModePayload["mode"]>([
+  "edit",
+  "presentation",
+]);
 const VALID_PEN_TYPES = new Set<PenType>(["ink", "pencil", "highlighter"]);
 const VALID_LASER_TYPES = new Set<LaserType>(["standard", "highlighter"]);
 const VALID_INSERT_BREAK_TYPES = new Set<InsertBreakPayload["type"]>([
@@ -190,6 +217,8 @@ const PLAYBACK_SPEED_MIN = 0.1;
 const PLAYBACK_SPEED_MAX = 2;
 const AUTO_PLAY_DELAY_MIN_MS = 300;
 const AUTO_PLAY_DELAY_MAX_MS = 3000;
+const COLUMN_COUNT_MIN = 1;
+const COLUMN_COUNT_MAX = 4;
 
 const failValidation = <TPayload>(
   code: string,
@@ -692,6 +721,29 @@ const validateSetToolPayload = (
   return okValidation({ tool });
 };
 
+const validateSetViewModePayload = (
+  payload: unknown
+): AppCommandPayloadValidationResult<SetViewModePayload> => {
+  const payloadValidation = validatePayloadObject(payload, {
+    allowedKeys: ["mode"],
+  });
+  if (!payloadValidation.ok) return payloadValidation;
+  if (!isNonEmptyString(payloadValidation.value.mode)) {
+    return failValidation(
+      "invalid-payload-view-mode",
+      "payload.mode must be a non-empty string."
+    );
+  }
+  const mode = payloadValidation.value.mode.trim() as SetViewModePayload["mode"];
+  if (!VALID_VIEW_MODES.has(mode)) {
+    return failValidation(
+      "invalid-payload-view-mode-value",
+      "payload.mode must be one of edit/presentation."
+    );
+  }
+  return okValidation({ mode });
+};
+
 const validateSetPenTypePayload = (
   payload: unknown
 ): AppCommandPayloadValidationResult<SetPenTypePayload> => {
@@ -924,6 +976,22 @@ const validateTogglePausePayload = (
   return okValidation({ value: payloadValidation.value.value });
 };
 
+const validateSetAnimatingPayload = (
+  payload: unknown
+): AppCommandPayloadValidationResult<SetAnimatingPayload> => {
+  const payloadValidation = validatePayloadObject(payload, {
+    allowedKeys: ["value"],
+  });
+  if (!payloadValidation.ok) return payloadValidation;
+  if (typeof payloadValidation.value.value !== "boolean") {
+    return failValidation(
+      "invalid-payload-set-animating-value",
+      "payload.value must be a boolean."
+    );
+  }
+  return okValidation({ value: payloadValidation.value.value });
+};
+
 const validateGoToStepPayload = (
   payload: unknown
 ): AppCommandPayloadValidationResult<GoToStepPayload> => {
@@ -954,6 +1022,49 @@ const validateGoToPagePayload = (
     );
   }
   return okValidation({ pageId: payloadValidation.value.pageId.trim() });
+};
+
+const validateDeletePagePayload = (
+  payload: unknown
+): AppCommandPayloadValidationResult<DeletePagePayload> => {
+  const payloadValidation = validatePayloadObject(payload, {
+    allowedKeys: ["pageId"],
+    allowUndefined: true,
+  });
+  if (!payloadValidation.ok) return payloadValidation;
+  if (payloadValidation.value.pageId === undefined) {
+    return okValidation({});
+  }
+  if (!isNonEmptyString(payloadValidation.value.pageId)) {
+    return failValidation(
+      "invalid-payload-delete-page-id",
+      "payload.pageId must be a non-empty string when provided."
+    );
+  }
+  return okValidation({ pageId: payloadValidation.value.pageId.trim() });
+};
+
+const validateSetColumnCountPayload = (
+  payload: unknown
+): AppCommandPayloadValidationResult<SetColumnCountPayload> => {
+  const payloadValidation = validatePayloadObject(payload, {
+    allowedKeys: ["count"],
+  });
+  if (!payloadValidation.ok) return payloadValidation;
+  if (
+    !isNumberInRange(
+      payloadValidation.value.count,
+      COLUMN_COUNT_MIN,
+      COLUMN_COUNT_MAX
+    ) ||
+    !Number.isInteger(payloadValidation.value.count)
+  ) {
+    return failValidation(
+      "invalid-payload-set-column-count",
+      `payload.count must be an integer between ${COLUMN_COUNT_MIN} and ${COLUMN_COUNT_MAX}.`
+    );
+  }
+  return okValidation({ count: payloadValidation.value.count });
 };
 
 const validateInsertBreakPayload = (
@@ -1117,6 +1228,14 @@ const executeSetTool = (payload: SetToolPayload) => {
   };
 };
 
+const executeSetViewMode = (payload: SetViewModePayload) => {
+  const ui = useUIStore.getState();
+  ui.setViewMode(payload.mode);
+  return {
+    viewMode: useUIStore.getState().viewMode,
+  };
+};
+
 const executeSetPenType = (payload: SetPenTypePayload) => {
   const ui = useUIStore.getState();
   ui.setPenType(payload.penType);
@@ -1220,6 +1339,14 @@ const executeTogglePause = (payload: TogglePausePayload) => {
   };
 };
 
+const executeSetAnimating = (payload: SetAnimatingPayload) => {
+  const ui = useUIStore.getState();
+  ui.setAnimating(payload.value);
+  return {
+    isAnimating: useUIStore.getState().isAnimating,
+  };
+};
+
 const executeTriggerPlay = () => {
   const ui = useUIStore.getState();
   ui.triggerPlay();
@@ -1305,6 +1432,39 @@ const executeGoToPage = (payload: GoToPagePayload) => {
   canvas.goToPage(payload.pageId);
   return {
     currentPageId: useCanvasStore.getState().currentPageId,
+  };
+};
+
+const executeAddPage = () => {
+  const canvas = useCanvasStore.getState();
+  canvas.addPage();
+  syncDocFromCanvas();
+  const next = useCanvasStore.getState();
+  return {
+    currentPageId: next.currentPageId,
+    totalPages: next.pageOrder.length,
+  };
+};
+
+const executeDeletePage = (payload: DeletePagePayload) => {
+  const canvas = useCanvasStore.getState();
+  canvas.deletePage(payload.pageId);
+  syncDocFromCanvas();
+  const next = useCanvasStore.getState();
+  return {
+    currentPageId: next.currentPageId,
+    totalPages: next.pageOrder.length,
+  };
+};
+
+const executeSetColumnCount = (payload: SetColumnCountPayload) => {
+  const canvas = useCanvasStore.getState();
+  canvas.setColumnCount(payload.count);
+  syncDocFromCanvas();
+  const next = useCanvasStore.getState();
+  return {
+    currentPageId: next.currentPageId,
+    columnCount: next.pageColumnCounts?.[next.currentPageId] ?? payload.count,
   };
 };
 
@@ -1450,6 +1610,27 @@ const setToolCommand: AppCommand<SetToolPayload, { tool: Tool }> = {
   },
   validatePayload: validateSetToolPayload,
   execute: executeSetTool,
+};
+
+const setViewModeCommand: AppCommand<
+  SetViewModePayload,
+  { viewMode: "edit" | "presentation" }
+> = {
+  id: "setViewMode",
+  description: "Set editor view mode (edit/presentation).",
+  mutationScope: "local",
+  requiresApproval: false,
+  auditTag: "command.set-view-mode",
+  schema: {
+    type: "object",
+    required: ["mode"],
+    properties: {
+      mode: { type: "string", enum: ["edit", "presentation"] },
+    },
+    additionalProperties: false,
+  },
+  validatePayload: validateSetViewModePayload,
+  execute: executeSetViewMode,
 };
 
 const setPenTypeCommand: AppCommand<
@@ -1680,6 +1861,27 @@ const togglePauseCommand: AppCommand<TogglePausePayload, { isPaused: boolean }> 
   execute: executeTogglePause,
 };
 
+const setAnimatingCommand: AppCommand<
+  SetAnimatingPayload,
+  { isAnimating: boolean }
+> = {
+  id: "setAnimating",
+  description: "Set animation in-progress state.",
+  mutationScope: "sync",
+  requiresApproval: false,
+  auditTag: "command.set-animating",
+  schema: {
+    type: "object",
+    required: ["value"],
+    properties: {
+      value: { type: "boolean" },
+    },
+    additionalProperties: false,
+  },
+  validatePayload: validateSetAnimatingPayload,
+  execute: executeSetAnimating,
+};
+
 const triggerPlayCommand: AppCommand<
   EmptyPayload,
   { playSignal: number; isAnimating: boolean }
@@ -1811,6 +2013,65 @@ const goToPageCommand: AppCommand<GoToPagePayload, { currentPageId: string }> = 
   execute: executeGoToPage,
 };
 
+const addPageCommand: AppCommand<
+  AddPagePayload,
+  { currentPageId: string; totalPages: number }
+> = {
+  id: "addPage",
+  description: "Create a new page and move cursor to it.",
+  mutationScope: "doc",
+  requiresApproval: true,
+  auditTag: "command.add-page",
+  schema: EMPTY_OBJECT_SCHEMA,
+  validatePayload: validateEmptyPayload,
+  execute: executeAddPage,
+};
+
+const deletePageCommand: AppCommand<
+  DeletePagePayload,
+  { currentPageId: string; totalPages: number }
+> = {
+  id: "deletePage",
+  description: "Delete a page (defaults to current page when pageId omitted).",
+  mutationScope: "doc",
+  requiresApproval: true,
+  auditTag: "command.delete-page",
+  schema: {
+    type: "object",
+    properties: {
+      pageId: { type: "string" },
+    },
+    additionalProperties: false,
+  },
+  validatePayload: validateDeletePagePayload,
+  execute: executeDeletePage,
+};
+
+const setColumnCountCommand: AppCommand<
+  SetColumnCountPayload,
+  { currentPageId: string; columnCount: number }
+> = {
+  id: "setColumnCount",
+  description: "Set current page column count.",
+  mutationScope: "doc",
+  requiresApproval: true,
+  auditTag: "command.set-column-count",
+  schema: {
+    type: "object",
+    required: ["count"],
+    properties: {
+      count: {
+        type: "number",
+        minimum: COLUMN_COUNT_MIN,
+        maximum: COLUMN_COUNT_MAX,
+      },
+    },
+    additionalProperties: false,
+  },
+  validatePayload: validateSetColumnCountPayload,
+  execute: executeSetColumnCount,
+};
+
 const insertBreakCommand: AppCommand<
   InsertBreakPayload,
   { type: InsertBreakPayload["type"]; totalBlocks: number; currentStep: number; currentPageId: string }
@@ -1923,6 +2184,7 @@ const CORE_COMMANDS: readonly AppCommand<unknown, unknown>[] = [
   updateBlockCommand as AppCommand<unknown, unknown>,
   deleteBlockCommand as AppCommand<unknown, unknown>,
   setToolCommand as AppCommand<unknown, unknown>,
+  setViewModeCommand as AppCommand<unknown, unknown>,
   setPenTypeCommand as AppCommand<unknown, unknown>,
   setPenColorCommand as AppCommand<unknown, unknown>,
   setPenWidthCommand as AppCommand<unknown, unknown>,
@@ -1934,6 +2196,7 @@ const CORE_COMMANDS: readonly AppCommand<unknown, unknown>[] = [
   setAutoPlayDelayCommand as AppCommand<unknown, unknown>,
   toggleAutoPlayCommand as AppCommand<unknown, unknown>,
   togglePauseCommand as AppCommand<unknown, unknown>,
+  setAnimatingCommand as AppCommand<unknown, unknown>,
   triggerPlayCommand as AppCommand<unknown, unknown>,
   triggerStopCommand as AppCommand<unknown, unknown>,
   triggerSkipCommand as AppCommand<unknown, unknown>,
@@ -1943,6 +2206,9 @@ const CORE_COMMANDS: readonly AppCommand<unknown, unknown>[] = [
   nextPageCommand as AppCommand<unknown, unknown>,
   prevPageCommand as AppCommand<unknown, unknown>,
   goToPageCommand as AppCommand<unknown, unknown>,
+  addPageCommand as AppCommand<unknown, unknown>,
+  deletePageCommand as AppCommand<unknown, unknown>,
+  setColumnCountCommand as AppCommand<unknown, unknown>,
   insertBreakCommand as AppCommand<unknown, unknown>,
   importStepBlocksCommand as AppCommand<unknown, unknown>,
   setInsertionIndexCommand as AppCommand<unknown, unknown>,
