@@ -48,6 +48,8 @@ app/
   globals.css
   layout.tsx
   page.tsx
+  api/community/route.ts
+  api/trust/role/route.ts
 core/
   engine/        (headless command bus: command registry, preflight, idempotency)
   contracts/     (NormalizedContent/RenderPlan/TTSScript/MultimodalAssetPayload/ToolResult/ToolRegistry contract types, guards, mappers)
@@ -64,15 +66,17 @@ core/
 features/
   animation/     (animation model, plan/measure/runtime, modding contract)
   canvas/        (rendering layers, actors, objects, viewport)
+  community/     (community domain store + client actions for post/comment/report)
   extensions/    (tool adapter interfaces/registry/provider ABI adapters/routing, local adapters, async jobs, command policy + command registrations)
   input-studio/  (DataInput headless hooks, schema editor, LLM draft/diff, approval queue payload, publish/rollback, validation pipeline)
   hooks/         (useSequence, usePersistence, useFileIO, useAudioPlayer, ...)
   layout/        (AppLayout, autoLayout, overview)
   mod-studio/    (GUI modding shell: policy/layout/modules/theme/publish/io)
+  moderation/    (host moderation console view-model + panel)
   observability/ (audit logger runtime + redaction)
   policy/        (policy shadow comparison telemetry helpers)
   store/         (zustand state)
-  sync/          (host/student asymmetric session sync hook)
+  sync/          (host/student asymmetric session sync hook + realtime backplane/conflict policy)
   toolbar/       (toolbar + panels)
 ui/
   components/    (pure UI building blocks)
@@ -96,6 +100,23 @@ ui/
 - Offline draft queue:
   - `features/input-studio/offlineDraftQueue.ts` adds JSON-safe bounded deterministic local queue (`max=50`, dedupe by deterministic id).
   - `useInputStudioLlmDraft` enqueues offline requests and returns explicit offline-queued error marker.
+
+## Recent W7 Additions (task_213~218)
+- Realtime backplane + role hardening:
+  - `features/sync/realtime/backplane.ts` adds transport-agnostic realtime runtime (`websocket` preferred, BroadcastChannel fallback).
+  - `features/sync/realtime/messageEnvelope.ts` defines strict sync envelope schema/validation.
+  - `features/sync/realtime/roleSyncGuard.ts` and `features/sync/realtime/conflictPolicy.ts` enforce host-authoritative + monotonic/tie-break ingestion rules.
+  - `features/sync/useAsymmetricSessionSync.ts` now consumes backplane/conflict guard and updates bounded remote presence state.
+- Presence + laser stream:
+  - `useSyncStore` now includes `lastHostEnvelopeCursor` and bounded `remotePresences`.
+  - `features/canvas/PresenceOverlay.tsx` renders remote laser presence in student view with non-blocking overlay.
+  - `features/hooks/useCanvas.ts` publishes quantized/throttled host laser sync points.
+- Community + moderation baseline:
+  - `core/contracts/community.ts` adds runtime validators for post/comment/report/moderation payloads.
+  - `app/api/community/route.ts` adds fail-closed community API with host-token gate for `moderate-report`.
+  - `features/community/*` adds client store/actions.
+  - `features/moderation/*` adds host-only moderation console and audit stream surface.
+  - `auditLogger` adds `moderation` channel and moderation decision audit events.
 
 ---
 
@@ -134,7 +155,7 @@ ui/
 
 ### 3-tier stores (authority layer)
 - `useDocStore`: persisted document authority (`pages`, `pageOrder`, `pageColumnCounts`, `stepBlocks`, `anchorMap`, `audioByStep`, `animationModInput`)
-- `useSyncStore`: shared/session-sync authority (`globalStep`, `laserPosition`, `sharedViewport`, `pendingAIQueue`)
+- `useSyncStore`: shared/session-sync authority (`globalStep`, `laserPosition`, `sharedViewport`, `pendingAIQueue`, `lastHostEnvelopeCursor`, `remotePresences`)
 - `useLocalStore`: local device/role authority (`role`, `trustedRoleClaim`, `isPanelOpen`, `localViewport`)
 - `useModStudioStore`: mod-studio draft authority (`policy/layout/modules/theme`, snapshots, publish result)
   - `theme` draft now uses `presetId + globalTokens + moduleScopedTokens` (preset-first with override merge).

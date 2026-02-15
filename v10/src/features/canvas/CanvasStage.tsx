@@ -12,6 +12,7 @@ import { PageGuides } from "@features/canvas/PageGuides";
 import { CanvasGuides } from "@features/canvas/CanvasGuides";
 import { ActorLayer } from "@features/canvas/actors/ActorLayer";
 import { AnchorIndicator } from "@features/canvas/AnchorIndicator";
+import { PresenceOverlay } from "@features/canvas/PresenceOverlay";
 import { useViewportInteraction } from "@features/canvas/viewport/useViewportInteraction";
 import { useCanvasStore } from "@features/store/useCanvasStore";
 import { useUIStore } from "@features/store/useUIStoreBridge";
@@ -158,6 +159,7 @@ function NormalCanvasStage({
           <ActorLayer actor={animationState.actor} actorRef={actorRef} />
         )}
         <CanvasLayer />
+        {showCursors && <PresenceOverlay />}
         {children && (
           <div className="relative z-30 w-full text-center text-white/70">
             {children}

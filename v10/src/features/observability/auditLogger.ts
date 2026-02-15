@@ -6,7 +6,13 @@ import {
 
 export type AuditEvent = {
   timestamp: number;
-  channel: "command" | "policy" | "approval" | "publish" | "extension";
+  channel:
+    | "command"
+    | "policy"
+    | "approval"
+    | "publish"
+    | "extension"
+    | "moderation";
   eventType: string;
   correlationId: string;
   payload: Record<string, unknown>;
@@ -165,6 +171,18 @@ export type AdapterSandboxDecisionAuditPayload = {
   meta?: Record<string, unknown> | null;
 };
 
+export type ModerationDecisionAuditPayload = {
+  reportId: string;
+  targetType: "post" | "comment";
+  targetId: string;
+  reason: string;
+  reporterId: string;
+  decision: "approve" | "reject";
+  status: "approved" | "rejected";
+  moderatorId: string;
+  moderationNote?: string | null;
+};
+
 const toSafeSupports = (supports: string[]): string[] =>
   supports
     .filter((item) => typeof item === "string")
@@ -243,6 +261,27 @@ export const emitAdapterSandboxDecisionAuditEvent = (
       handshakeSessionId: payload.handshakeSessionId ?? null,
       handshakeValid: payload.handshakeValid ?? null,
       meta: payload.meta ?? null,
+    })
+  );
+};
+
+export const emitModerationDecisionAuditEvent = (
+  payload: ModerationDecisionAuditPayload
+): void => {
+  emitAuditEvent(
+    "moderation",
+    "moderation-decision",
+    `moderation:${payload.reportId}:${payload.decision}:${Date.now()}`,
+    toJsonSafeAuditPayload({
+      reportId: payload.reportId,
+      targetType: payload.targetType,
+      targetId: payload.targetId,
+      reason: payload.reason,
+      reporterId: payload.reporterId,
+      decision: payload.decision,
+      status: payload.status,
+      moderatorId: payload.moderatorId,
+      moderationNote: payload.moderationNote ?? null,
     })
   );
 };

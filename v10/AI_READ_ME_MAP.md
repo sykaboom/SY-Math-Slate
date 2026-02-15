@@ -32,6 +32,8 @@ v10/
 v10/src/
 |-- app/
 |   |-- api/
+|   |   |-- community/
+|   |   |   \-- route.ts
 |   |   \-- trust/
 |   |       \-- role/
 |   |-- favicon.ico
@@ -49,6 +51,7 @@ v10/src/
 |   |   |-- typography.ts
 |   |   \-- viewportContract.ts
 |   |-- contracts/
+|   |   |-- community.ts
 |   |   |-- fromPersistedDoc.ts
 |   |   |-- index.ts
 |   |   |-- multimodalAsset.ts
@@ -129,7 +132,12 @@ v10/src/
 |   |   |-- PageGuides.tsx
 |   |   |-- PageViewport.tsx
 |   |   |-- PasteHelperModal.tsx
+|   |   |-- PresenceOverlay.tsx
 |   |   \-- StaticStrokeLayer.tsx
+|   |-- community/
+|   |   |-- store/
+|   |   |   \-- useCommunityStore.ts
+|   |   \-- useCommunityActions.ts
 |   |-- editor-core/
 |   |   |-- model/
 |   |   |   \-- editorSurface.ts
@@ -248,6 +256,9 @@ v10/src/
 |   |   |   |-- themeIsolation.ts
 |   |   |   \-- ThemeStudioSection.tsx
 |   |   \-- index.ts
+|   |-- moderation/
+|   |   |-- ModerationConsolePanel.tsx
+|   |   \-- useModerationConsole.ts
 |   |-- observability/
 |   |   \-- auditLogger.ts
 |   |-- policy/
@@ -267,6 +278,11 @@ v10/src/
 |   |   |-- useUIStoreBridge.ts
 |   |   \-- useViewportStore.ts
 |   |-- sync/
+|   |   |-- realtime/
+|   |   |   |-- backplane.ts
+|   |   |   |-- conflictPolicy.ts
+|   |   |   |-- messageEnvelope.ts
+|   |   |   \-- roleSyncGuard.ts
 |   |   \-- useAsymmetricSessionSync.ts
 |   \-- toolbar/
 |       |-- atoms/

@@ -2,6 +2,7 @@ import {
   registerUISlotComponent,
   type UISlotName,
 } from "@core/extensions/registry";
+import { ModerationConsolePanel } from "@features/moderation/ModerationConsolePanel";
 import { PendingApprovalPanel } from "@features/toolbar/PendingApprovalPanel";
 import {
   CoreDataInputPanelSlot,
@@ -20,6 +21,7 @@ export const registerCoreSlots = (): void => {
   if (hasRegisteredCoreSlots) return;
 
   registerUISlotComponent(TOOLBAR_BOTTOM_SLOT, PendingApprovalPanel);
+  registerUISlotComponent(TOOLBAR_BOTTOM_SLOT, ModerationConsolePanel);
   if (LAYOUT_SLOT_CUTOVER_ENABLED) {
     registerUISlotComponent(LEFT_PANEL_SLOT, CoreDataInputPanelSlot);
     registerUISlotComponent(TOOLBAR_BOTTOM_SLOT, CorePrompterSlot);

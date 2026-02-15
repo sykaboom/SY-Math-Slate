@@ -3,6 +3,8 @@ import type { PointerEvent as ReactPointerEvent } from "react";
 
 import { useUIStore, type LaserType, type PenType } from "@features/store/useUIStoreBridge";
 import { useCanvasStore } from "@features/store/useCanvasStore";
+import { useLocalStore } from "@features/store/useLocalStore";
+import { useSyncStore } from "@features/store/useSyncStore";
 import type { CanvasItem, Point, StrokeItem } from "@core/types/canvas";
 import { getBoardSize } from "@core/config/boardSpec";
 import { getRenderPerfProfile } from "@core/config/perfProfile";
@@ -41,6 +43,8 @@ const TOUCH_PALM_CONTACT_THRESHOLD_PX = 24;
 const TOUCH_ACTIVE_PEN_CONTACT_THRESHOLD_PX = 18;
 const TOUCH_DISTANCE_FACTOR = 1.25;
 const CANVAS_GESTURE_LOCK_OWNER = "canvas.draw";
+const LASER_SYNC_INTERVAL_MS = 33;
+const LASER_SYNC_PRECISION_FACTOR = 10;
 
 const laserDefaults: Record<
   LaserType,
@@ -183,6 +187,8 @@ export function useCanvas() {
   const laserTypeRef = useRef<LaserType>("standard");
   const laserColorRef = useRef<string>("#FF3B30");
   const laserWidthRef = useRef<number>(10);
+  const lastLaserSyncAtRef = useRef<number>(0);
+  const lastLaserSyncedPointRef = useRef<{ x: number; y: number } | null>(null);
   const lastPenInputAtRef = useRef<number>(0);
   const activePenPointerIdRef = useRef<number | null>(null);
   const suppressedTouchPointerIdsRef = useRef<Set<number>>(new Set());
@@ -201,9 +207,16 @@ export function useCanvas() {
     isViewportInteracting,
     releaseGestureLock,
   } = useUIStore();
+  const role = useLocalStore((state) => state.role);
+  const trustedRoleClaim = useLocalStore((state) => state.trustedRoleClaim);
+  const setSyncedLaserPosition = useSyncStore((state) => state.setLaserPosition);
   const { pages, currentPageId, addStroke, setCurrentStroke, deleteItem } =
     useCanvasStore();
   const { toBoardPoint } = useBoardTransform();
+  const boardSize = useMemo(
+    () => getBoardSize(overviewViewportRatio),
+    [overviewViewportRatio]
+  );
   const items = useMemo(
     () => pages[currentPageId] ?? [],
     [pages, currentPageId]
@@ -217,9 +230,62 @@ export function useCanvas() {
   const laserShadowMultiplier = perfProfile.laserShadowMultiplier;
   const maxCoalescedEvents = perfProfile.maxCoalescedEvents;
 
+  const canPublishSyncedLaser = trustedRoleClaim === "host";
+
   const getCanvasPoint = useCallback(
     (clientX: number, clientY: number) => toBoardPoint(clientX, clientY),
     [toBoardPoint]
+  );
+
+  const normalizeLaserSyncPoint = useCallback(
+    (point: { x: number; y: number }) => ({
+      x:
+        Math.round(
+          clamp(point.x, 0, boardSize.width) * LASER_SYNC_PRECISION_FACTOR
+        ) / LASER_SYNC_PRECISION_FACTOR,
+      y:
+        Math.round(
+          clamp(point.y, 0, boardSize.height) * LASER_SYNC_PRECISION_FACTOR
+        ) / LASER_SYNC_PRECISION_FACTOR,
+    }),
+    [boardSize.height, boardSize.width]
+  );
+
+  const syncLaserPosition = useCallback(
+    (point: { x: number; y: number } | null, options?: { force?: boolean }) => {
+      if (point === null) {
+        if (lastLaserSyncedPointRef.current === null) return;
+        lastLaserSyncedPointRef.current = null;
+        lastLaserSyncAtRef.current = 0;
+        setSyncedLaserPosition(null);
+        return;
+      }
+
+      if (!canPublishSyncedLaser) return;
+
+      const normalized = normalizeLaserSyncPoint(point);
+      const lastPoint = lastLaserSyncedPointRef.current;
+      if (
+        lastPoint &&
+        lastPoint.x === normalized.x &&
+        lastPoint.y === normalized.y
+      ) {
+        return;
+      }
+
+      const now = performance.now();
+      if (
+        !options?.force &&
+        now - lastLaserSyncAtRef.current < LASER_SYNC_INTERVAL_MS
+      ) {
+        return;
+      }
+
+      lastLaserSyncAtRef.current = now;
+      lastLaserSyncedPointRef.current = normalized;
+      setSyncedLaserPosition(normalized);
+    },
+    [canPublishSyncedLaser, normalizeLaserSyncPoint, setSyncedLaserPosition]
   );
 
   const getPointerPressure = useCallback((event: PointerEvent) => {
@@ -456,6 +522,7 @@ export function useCanvas() {
       isLaserRef.current = false;
       laserPointsRef.current = [];
       clearLaserCanvas();
+      syncLaserPosition(null, { force: true });
     }
     if (isDrawingRef.current || activeStrokeRef.current || isErasingRef.current) {
       isDrawingRef.current = false;
@@ -472,7 +539,13 @@ export function useCanvas() {
     activePenPointerIdRef.current = null;
     suppressedTouchPointerIdsRef.current.clear();
     releaseDrawGestureLock();
-  }, [clearLaserCanvas, releaseDrawGestureLock, renderAll, setCurrentStroke]);
+  }, [
+    clearLaserCanvas,
+    releaseDrawGestureLock,
+    renderAll,
+    setCurrentStroke,
+    syncLaserPosition,
+  ]);
 
   const scheduleLaserFrame = useCallback(() => {
     if (laserRafRef.current !== null) return;
@@ -562,6 +635,7 @@ export function useCanvas() {
         laserPointsRef.current = [
           { x: point.x, y: point.y, t: performance.now() },
         ];
+        syncLaserPosition(point, { force: true });
         scheduleLaserFrame();
         return;
       }
@@ -626,6 +700,7 @@ export function useCanvas() {
       scheduleLaserFrame,
       setCurrentStroke,
       shouldSuppressTouch,
+      syncLaserPosition,
       tryAcquireDrawGestureLock,
     ]
   );
@@ -638,13 +713,18 @@ export function useCanvas() {
       if (isViewportInteracting) return;
       if (activeTool === "laser" && isLaserRef.current) {
         const events = getCoalescedEvents(nativeEvent);
+        let latestPoint: { x: number; y: number } | null = null;
         for (const ev of events) {
           const point = getCanvasPoint(ev.clientX, ev.clientY);
+          latestPoint = point;
           laserPointsRef.current.push({
             x: point.x,
             y: point.y,
             t: performance.now(),
           });
+        }
+        if (latestPoint) {
+          syncLaserPosition(latestPoint);
         }
         scheduleLaserFrame();
         return;
@@ -757,6 +837,7 @@ export function useCanvas() {
       scheduleLaserFrame,
       smoothPoint,
       shouldSuppressTouch,
+      syncLaserPosition,
     ]
   );
 
@@ -773,6 +854,7 @@ export function useCanvas() {
       }
       if (isLaserRef.current) {
         isLaserRef.current = false;
+        syncLaserPosition(null, { force: true });
         releaseDrawGestureLock();
         return;
       }
@@ -820,6 +902,7 @@ export function useCanvas() {
       releaseDrawGestureLock,
       renderAll,
       shouldSuppressTouch,
+      syncLaserPosition,
       strokes,
     ]
   );
@@ -895,8 +978,15 @@ export function useCanvas() {
     if (activeTool !== "laser") {
       laserPointsRef.current = [];
       clearLaserCanvas();
+      syncLaserPosition(null, { force: true });
     }
-  }, [activeTool, clearLaserCanvas]);
+  }, [activeTool, clearLaserCanvas, syncLaserPosition]);
+
+  useEffect(() => {
+    if (!canPublishSyncedLaser || role !== "host") {
+      syncLaserPosition(null, { force: true });
+    }
+  }, [canPublishSyncedLaser, role, syncLaserPosition]);
 
   useEffect(() => {
     const suppressedTouchPointerIds = suppressedTouchPointerIdsRef.current;
@@ -904,11 +994,12 @@ export function useCanvas() {
       if (laserRafRef.current !== null) {
         cancelAnimationFrame(laserRafRef.current);
       }
+      syncLaserPosition(null, { force: true });
       releaseDrawGestureLock();
       suppressedTouchPointerIds.clear();
       activePenPointerIdRef.current = null;
     };
-  }, [releaseDrawGestureLock]);
+  }, [releaseDrawGestureLock, syncLaserPosition]);
 
   const bind = useMemo(
     () => ({
