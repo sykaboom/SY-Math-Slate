@@ -1,0 +1,192 @@
+# Task 241: Panel Policy State Persistence and Role Overrides
+
+Status: PENDING
+Owner: Codex (spec / review / implementation)
+Target: v10/
+Date: 2026-02-16
+
+---
+
+## Goal (Base Required)
+- What to change:
+  - Implement policy-aware panel state evaluation with persisted placement behavior.
+  - Support declarative controls for `rememberPosition`, `defaultPosition`, and `roleOverride` without hardcoded layout branches.
+- What must NOT change:
+  - Do not alter existing role-token trust model.
+  - Do not add direct panel rendering logic in policy modules.
+  - No new dependencies.
+
+---
+
+## Scope (Base Required)
+
+Touched files/directories:
+- `codex_tasks/task_241_panel_policy_state_persistence_and_role_overrides.md`
+- `v10/src/core/config/panel-policy.ts` (new or update)
+- `v10/src/features/layout/windowing/panelPolicy.runtime.ts` (new)
+- `v10/src/features/store/useChromeStore.ts` (policy state persistence fields)
+- `v10/src/features/policy/useResolvedPanelPolicy.ts` (new if needed)
+
+Out of scope:
+- AppLayout cutover
+- Panel adapter migration
+- Launcher IA changes
+
+---
+
+## Dependencies / Constraints (Base Required)
+
+- New dependencies allowed: NO
+- Boundary rules:
+  - Policy lives in config/runtime boundary, not component trees.
+  - Store state remains JSON-safe.
+  - Keep security decisions server-trust compatible.
+- Compatibility:
+  - Consumes runtime foundation from `task_240`.
+
+---
+
+## DAG / Wave Metadata (Base Required)
+
+- Wave ID:
+  - W-C1
+- Depends on tasks:
+  - [`task_240`]
+- Enables tasks:
+  - [`task_243`]
+- Parallel group:
+  - G-policy-runtime
+- Max parallel slots:
+  - 6 (default)
+- Verification stage for this task:
+  - `mid`
+
+---
+
+## Optional Block A — Layout / SVG Gate
+
+- [ ] Applies: NO
+
+---
+
+## Optional Block B — Delegated Execution
+
+- [ ] Applies: NO
+
+If NO:
+- Execution mode: MANUAL
+
+---
+
+## Optional Block C — Hotfix Exception
+
+- [ ] Applies: NO
+
+---
+
+## Optional Block D — Speculative Defense Check
+
+- [ ] Applies: NO
+
+---
+
+## Optional Block E — Documentation Update Check
+
+- [x] Applies: YES
+- If YES:
+  - [ ] Structure changes (file/folder add/move/delete):
+    - Run `node scripts/gen_ai_read_me_map.mjs`
+    - Verify `v10/AI_READ_ME_MAP.md` update if needed
+  - [ ] Semantic/rule changes:
+    - Verify `v10/AI_READ_ME.md` update if needed
+
+---
+
+## Acceptance Criteria (Base Required)
+
+- [ ] AC-1: Panel policy resolves mode/visibility using declarative data (`roleOverride`, `displayMode`, `movable`).
+- [ ] AC-2: `rememberPosition=true` restores last valid position; `rememberPosition=false` always uses defaults.
+- [ ] AC-3: Invalid or missing policy values fall back to safe defaults (deny-by-default for edit-only panels in student role).
+- [ ] AC-4: No direct `if(role===...)` branches are newly introduced in layout components for these rules.
+- [ ] AC-5: `VERIFY_STAGE=mid bash scripts/run_repo_verifications.sh` passes.
+
+---
+
+## Manual Verification Steps (Base Required)
+
+1) Step:
+   - Command / click path: inspect policy resolver and defaults.
+   - Expected result: declarative role/mode handling with safe fallback.
+   - Covers: AC-1, AC-3
+
+2) Step:
+   - Command / click path: inspect persistence read/write path.
+   - Expected result: `rememberPosition` semantics are deterministic.
+   - Covers: AC-2
+
+3) Step:
+   - Command / click path: `rg -n \"if\\s*\\(.*role\" v10/src/features/layout`
+   - Expected result: no new hardcoded role branching introduced for panel visibility policy.
+   - Covers: AC-4
+
+4) Step:
+   - Command / click path: `VERIFY_STAGE=mid bash scripts/run_repo_verifications.sh`
+   - Expected result: PASS.
+   - Covers: AC-5
+
+---
+
+## Risks / Roll-back Notes (Base Required)
+
+- Risks:
+  - Policy fallback mistakes can hide required host controls.
+  - Persistence schema mismatch can reset panel positions unexpectedly.
+- Roll-back:
+  - Revert policy runtime/store updates and restore prior policy evaluation path.
+
+---
+
+## Approval Gate (Base Required)
+
+- [x] Spec self-reviewed by Codex
+- [ ] Explicit user approval received (or delegated chain approval reference)
+
+> Implementation MUST NOT begin until both boxes are checked.
+
+---
+
+## Implementation Log (Codex fills)
+
+Status: PENDING
+
+Changed files:
+- (to be filled)
+
+Commands run (only if user asked or required by spec):
+- (to be filled)
+
+## Gate Results (Codex fills)
+
+- Lint:
+  - N/A
+- Build:
+  - N/A
+- Script checks:
+  - N/A
+
+## Failure Classification (Codex fills when any gate fails)
+
+- Pre-existing failures:
+  - N/A
+- Newly introduced failures:
+  - N/A
+- Blocking:
+  - NO
+- Mitigation:
+  - N/A
+
+Manual verification notes:
+- (to be filled)
+
+Notes:
+- (to be filled)
