@@ -44,6 +44,7 @@ export function ModerationConsolePanel() {
     pendingRightsClaims,
     resolvedRightsClaims,
     trafficSignals,
+    safetyEvents,
     sloSummary,
     auditEvents,
     refresh,
@@ -218,6 +219,36 @@ export function ModerationConsolePanel() {
           </div>
         ) : (
           <p className="mt-1 text-[11px] text-toolbar-muted/70">No SLO snapshot.</p>
+        )}
+      </div>
+
+      <div className="border-t border-toolbar-border/10 pt-2">
+        <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-toolbar-muted/60">
+          UGC Safety Events
+        </p>
+        {safetyEvents.length === 0 ? (
+          <p className="mt-1 text-[11px] text-toolbar-muted/70">No safety events.</p>
+        ) : (
+          <ul className="mt-1 grid max-h-40 gap-1 overflow-y-auto pr-1">
+            {safetyEvents.slice(0, 20).map((event) => (
+              <li
+                key={event.id}
+                className="rounded-lg border border-toolbar-border/10 bg-toolbar-chip/5 px-2 py-1"
+              >
+                <p className="truncate text-[11px] text-toolbar-text">
+                  {event.action} · {event.verdict}
+                  {event.category ? ` · ${event.category}` : ""}
+                </p>
+                <p className="truncate text-[10px] text-toolbar-muted/70">
+                  actor {event.actorId}
+                  {event.matchedTerm ? ` · term ${event.matchedTerm}` : ""}
+                </p>
+                <p className="text-[10px] text-toolbar-muted/60">
+                  {formatTime(event.observedAt)}
+                </p>
+              </li>
+            ))}
+          </ul>
         )}
       </div>
 

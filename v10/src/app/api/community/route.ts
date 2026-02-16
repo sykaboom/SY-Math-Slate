@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { evaluateAdPolicyText } from "@features/community/policy/adPolicy";
+import { evaluateUgcSafetyText } from "@features/community/safety/ugcSafetyFilter";
 import {
   validateCommunityApiRequest,
   validateCommunitySnapshot,
@@ -18,6 +19,10 @@ import {
   type CommunityReportStatus,
   type CommunityRightsClaim,
   type CommunityRightsClaimStatus,
+  type CommunitySafetyAction,
+  type CommunitySafetyCategory,
+  type CommunitySafetyEvent,
+  type CommunitySafetyVerdict,
   type CommunitySnapshot,
   type CommunityTakedownRecord,
   type CommunityTrafficAction,
@@ -47,6 +52,7 @@ const MODERATION_ROLE_HEADER = "x-sy-request-role";
 const MODERATION_TOKEN_HEADER = "x-sy-role-token";
 
 const MAX_TRAFFIC_SIGNALS = 120;
+const MAX_SAFETY_EVENTS = 240;
 
 let postSequence = 0;
 let commentSequence = 0;
@@ -54,6 +60,7 @@ let reportSequence = 0;
 let rightsClaimSequence = 0;
 let takedownSequence = 0;
 let trafficSignalSequence = 0;
+let safetyEventSequence = 0;
 
 const state: CommunitySnapshot = {
   posts: [],
@@ -62,6 +69,7 @@ const state: CommunitySnapshot = {
   rightsClaims: [],
   takedownRecords: [],
   trafficSignals: [],
+  safetyEvents: [],
   serverTime: 0,
 };
 
@@ -133,6 +141,17 @@ const cloneTrafficSignal = (signal: CommunityTrafficSignal): CommunityTrafficSig
   sampleCount: signal.sampleCount,
 });
 
+const cloneSafetyEvent = (event: CommunitySafetyEvent): CommunitySafetyEvent => ({
+  id: event.id,
+  action: event.action,
+  actorId: event.actorId,
+  verdict: event.verdict,
+  category: event.category,
+  matchedTerm: event.matchedTerm,
+  targetId: event.targetId,
+  observedAt: event.observedAt,
+});
+
 const reportStatusRank: Record<CommunityReportStatus, number> = {
   pending: 0,
   approved: 1,
@@ -175,6 +194,12 @@ const createSnapshot = (): CommunitySnapshot => ({
     }),
   trafficSignals: [...state.trafficSignals]
     .map(cloneTrafficSignal)
+    .sort((a, b) => {
+      if (a.observedAt !== b.observedAt) return b.observedAt - a.observedAt;
+      return b.id.localeCompare(a.id);
+    }),
+  safetyEvents: [...state.safetyEvents]
+    .map(cloneSafetyEvent)
     .sort((a, b) => {
       if (a.observedAt !== b.observedAt) return b.observedAt - a.observedAt;
       return b.id.localeCompare(a.id);
@@ -294,6 +319,49 @@ const pushTrafficSignal = (signal: CommunityTrafficSignal): void => {
   }
 };
 
+const pushSafetyEvent = (event: CommunitySafetyEvent): void => {
+  state.safetyEvents.push(event);
+  while (state.safetyEvents.length > MAX_SAFETY_EVENTS) {
+    state.safetyEvents.shift();
+  }
+};
+
+const toReportReasonFromSafetyCategory = (
+  category: CommunitySafetyCategory | null
+): CommunityReport["reason"] => {
+  if (category === "spam") return "spam";
+  if (category === "abuse" || category === "violence" || category === "sexual") {
+    return "abuse";
+  }
+  return "other";
+};
+
+const toSafetyActionFromTrafficAction = (
+  action: CommunityTrafficAction
+): CommunitySafetyAction => (action === "create-comment" ? "create-comment" : "create-post");
+
+const appendSafetyEvent = (input: {
+  action: CommunitySafetyAction;
+  actorId: string;
+  verdict: CommunitySafetyVerdict;
+  category: CommunitySafetyCategory | null;
+  matchedTerm: string | null;
+  targetId: string | null;
+  observedAt: number;
+}) => {
+  safetyEventSequence += 1;
+  pushSafetyEvent({
+    id: createId("safety", safetyEventSequence),
+    action: input.action,
+    actorId: input.actorId,
+    verdict: input.verdict,
+    category: input.category,
+    matchedTerm: input.matchedTerm,
+    targetId: input.targetId,
+    observedAt: input.observedAt,
+  });
+};
+
 const assessAndApplyTrafficPolicy = (input: {
   request: Request;
   action: CommunityTrafficAction;
@@ -359,6 +427,27 @@ const handleCreatePost = (payload: unknown, request: Request) => {
   }
 
   const timestamp = now();
+  const safetyAction = toSafetyActionFromTrafficAction("create-post");
+  const safetyDecision = evaluateUgcSafetyText(payloadValidation.value.body);
+  if (safetyDecision.verdict === "block") {
+    appendSafetyEvent({
+      action: safetyAction,
+      actorId: payloadValidation.value.authorId,
+      verdict: "block",
+      category: safetyDecision.category,
+      matchedTerm: safetyDecision.matchedTerm,
+      targetId: null,
+      observedAt: timestamp,
+    });
+    setServerTime(timestamp);
+    return toErrorResponse(
+      422,
+      safetyDecision.code,
+      safetyDecision.message,
+      "body"
+    );
+  }
+
   const blockedTraffic = assessAndApplyTrafficPolicy({
     request,
     action: "create-post",
@@ -377,6 +466,36 @@ const handleCreatePost = (payload: unknown, request: Request) => {
   };
 
   state.posts.push(created);
+
+  if (safetyDecision.verdict === "review") {
+    appendSafetyEvent({
+      action: safetyAction,
+      actorId: payloadValidation.value.authorId,
+      verdict: "review",
+      category: safetyDecision.category,
+      matchedTerm: safetyDecision.matchedTerm,
+      targetId: created.id,
+      observedAt: timestamp,
+    });
+
+    reportSequence += 1;
+    state.reports.push({
+      id: createId("report", reportSequence),
+      targetType: "post",
+      targetId: created.id,
+      reason: toReportReasonFromSafetyCategory(safetyDecision.category),
+      detail: `[AUTO-SAFETY] ${safetyDecision.message}${
+        safetyDecision.matchedTerm ? ` term=${safetyDecision.matchedTerm}` : ""
+      }`,
+      reporterId: "system:ugc-safety",
+      status: "pending",
+      createdAt: timestamp,
+      moderatedAt: null,
+      moderatorId: null,
+      moderationNote: null,
+    });
+  }
+
   setServerTime(timestamp);
   return resolveSnapshotResponse();
 };
@@ -415,6 +534,27 @@ const handleCreateComment = (payload: unknown, request: Request) => {
   }
 
   const timestamp = now();
+  const safetyAction = toSafetyActionFromTrafficAction("create-comment");
+  const safetyDecision = evaluateUgcSafetyText(payloadValidation.value.body);
+  if (safetyDecision.verdict === "block") {
+    appendSafetyEvent({
+      action: safetyAction,
+      actorId: payloadValidation.value.authorId,
+      verdict: "block",
+      category: safetyDecision.category,
+      matchedTerm: safetyDecision.matchedTerm,
+      targetId: null,
+      observedAt: timestamp,
+    });
+    setServerTime(timestamp);
+    return toErrorResponse(
+      422,
+      safetyDecision.code,
+      safetyDecision.message,
+      "body"
+    );
+  }
+
   const blockedTraffic = assessAndApplyTrafficPolicy({
     request,
     action: "create-comment",
@@ -433,6 +573,36 @@ const handleCreateComment = (payload: unknown, request: Request) => {
   };
 
   state.comments.push(created);
+
+  if (safetyDecision.verdict === "review") {
+    appendSafetyEvent({
+      action: safetyAction,
+      actorId: payloadValidation.value.authorId,
+      verdict: "review",
+      category: safetyDecision.category,
+      matchedTerm: safetyDecision.matchedTerm,
+      targetId: created.id,
+      observedAt: timestamp,
+    });
+
+    reportSequence += 1;
+    state.reports.push({
+      id: createId("report", reportSequence),
+      targetType: "comment",
+      targetId: created.id,
+      reason: toReportReasonFromSafetyCategory(safetyDecision.category),
+      detail: `[AUTO-SAFETY] ${safetyDecision.message}${
+        safetyDecision.matchedTerm ? ` term=${safetyDecision.matchedTerm}` : ""
+      }`,
+      reporterId: "system:ugc-safety",
+      status: "pending",
+      createdAt: timestamp,
+      moderatedAt: null,
+      moderatorId: null,
+      moderationNote: null,
+    });
+  }
+
   setServerTime(timestamp);
   return resolveSnapshotResponse();
 };

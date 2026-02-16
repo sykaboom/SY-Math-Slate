@@ -119,7 +119,12 @@ ui/
   - `features/moderation/*` adds host-only moderation console and audit stream surface.
   - `auditLogger` adds `moderation` channel and moderation decision audit events.
 
-## Recent W8 Additions (task_220~223)
+## Recent W8 Additions (task_219~223)
+- UGC safety filter pipeline:
+  - `features/community/safety/ugcSafetyFilter.ts` adds deterministic `allow|review|block` keyword policy.
+  - Community `create-post` / `create-comment` now evaluates UGC safety before commit.
+  - Blocked content is rejected fail-closed; review content auto-enqueues pending report and safety event.
+  - Community snapshot now includes bounded `safetyEvents`.
 - Rights claim/takedown workflow:
   - `core/contracts/community.ts` now includes rights-claim, takedown-record, and traffic-signal contract guards.
   - `app/api/community/route.ts` supports `create-rights-claim` and host-only `review-rights-claim`.
@@ -133,6 +138,19 @@ ui/
 - Trust/safety SLO runtime:
   - Community API supports host-only `trust-safety-slo` action returning deterministic ops summary metrics.
   - Oncall playbook is documented in `codex_tasks/workflow/trust_safety_slo_oncall_runbook.md`.
+
+## Recent W9 Additions (task_224~227)
+- Chaos/recovery drills:
+  - `codex_tasks/workflow/chaos_recovery_drills.md` defines deterministic failure/recovery drills.
+  - `scripts/check_v10_chaos_recovery_drills.sh` + `v10/tests/chaos_recovery_drills.mjs` enforce drill artifact coverage.
+- Legacy path purge (realtime env aliases):
+  - `features/sync/realtime/backplane.ts` now resolves canonical endpoint key only: `NEXT_PUBLIC_SYNC_REALTIME_URL`.
+  - `scripts/check_v10_realtime_env_purge.sh` guards against deprecated alias reintroduction.
+- Beta release gate v2:
+  - `scripts/run_beta_quality_gate.sh` now includes W9 drill/purge checks before lint/build/smoke/perf.
+- Release candidate signoff:
+  - `codex_tasks/workflow/release_candidate_signoff_checklist.md` added.
+  - `scripts/check_v10_rc_signoff.sh` validates checklist section/coverage invariants.
 
 ---
 

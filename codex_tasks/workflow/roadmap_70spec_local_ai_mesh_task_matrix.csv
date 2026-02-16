@@ -57,15 +57,15 @@ task_id,slug,title,wave,objective_axis,depends_on_wave,parallel_group,verify_sta
 216,collaborative_conflict_resolution_policy,Collaborative Conflict Resolution Policy,W7,collaboration,W5+W6,G7-collab,mid,PENDING
 217,community_core_post_comment_report,Community Core Post/Comment/Report,W7,platform,W5+W6,G7-platform,mid,PENDING
 218,moderation_console_audit_trail,Moderation Console and Audit Trail,W7,platform,W5+W6,G7-platform,end,PENDING
-219,ugc_safety_filter_pipeline,UGC Safety Filter Pipeline,W8,safety,W7,G8-safety,mid,PENDING
+219,ugc_safety_filter_pipeline,UGC Safety Filter Pipeline,W8,safety,W7,G8-safety,mid,COMPLETED
 220,rights_claim_takedown_workflow,Rights Claim and Takedown Workflow,W8,safety,W7,G8-safety,mid,COMPLETED
 221,ad_policy_enforcement_gates,Ad Policy Enforcement Gates,W8,ads,W7,G8-ads,mid,COMPLETED
 222,invalid_traffic_detection_telemetry,Invalid Traffic Detection Telemetry,W8,ads,W7,G8-ads,mid,COMPLETED
 223,trust_safety_slo_oncall_runbooks,Trust/Safety SLO + Oncall Runbooks,W8,operations,W7,G8-ops,end,COMPLETED
-224,chaos_recovery_drills,Chaos and Recovery Drills,W9,release,W8,G9-release,mid,PENDING
-225,legacy_path_final_purge,Legacy Path Final Purge,W9,release,W8,G9-release,mid,PENDING
-226,beta_release_gate_v2,Beta Release Gate V2,W9,release,W8,G9-release,mid,PENDING
-227,release_candidate_signoff_checklist,Release Candidate Signoff Checklist,W9,release,W8,G9-release,end,PENDING
+224,chaos_recovery_drills,Chaos and Recovery Drills,W9,release,W8,G9-release,mid,COMPLETED
+225,legacy_path_final_purge,Legacy Path Final Purge,W9,release,W8,G9-release,mid,COMPLETED
+226,beta_release_gate_v2,Beta Release Gate V2,W9,release,W8,G9-release,mid,COMPLETED
+227,release_candidate_signoff_checklist,Release Candidate Signoff Checklist,W9,release,W8,G9-release,end,COMPLETED
 228,modding_sdk_cli_scaffold,Modding SDK + CLI Scaffold,W10,growth,W8+W9,G10-growth,mid,PENDING
 229,experimentation_ab_flag_layer,Experimentation A/B Flag Layer,W10,growth,W8+W9,G10-growth,mid,PENDING
 230,extension_marketplace_readiness,Extension Marketplace Readiness,W10,growth,W8+W9,G10-growth,end,PENDING

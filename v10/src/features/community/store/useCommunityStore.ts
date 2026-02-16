@@ -8,6 +8,7 @@ import type {
   CommunityReport,
   CommunityReportStatus,
   CommunityRightsClaim,
+  CommunitySafetyEvent,
   CommunityTakedownRecord,
   CommunityTrafficSignal,
   CommunitySnapshot,
@@ -27,6 +28,7 @@ type CommunityStoreState = {
   rightsClaims: CommunityRightsClaim[];
   takedownRecords: CommunityTakedownRecord[];
   trafficSignals: CommunityTrafficSignal[];
+  safetyEvents: CommunitySafetyEvent[];
   serverTime: number;
   lastSyncAt: number | null;
   isLoading: boolean;
@@ -116,6 +118,17 @@ const cloneTrafficSignal = (signal: CommunityTrafficSignal): CommunityTrafficSig
   sampleCount: signal.sampleCount,
 });
 
+const cloneSafetyEvent = (event: CommunitySafetyEvent): CommunitySafetyEvent => ({
+  id: event.id,
+  action: event.action,
+  actorId: event.actorId,
+  verdict: event.verdict,
+  category: event.category,
+  matchedTerm: event.matchedTerm,
+  targetId: event.targetId,
+  observedAt: event.observedAt,
+});
+
 const cloneSnapshot = (snapshot: CommunitySnapshot): CommunitySnapshot => ({
   posts: snapshot.posts.map(clonePost),
   comments: snapshot.comments.map(cloneComment),
@@ -123,6 +136,7 @@ const cloneSnapshot = (snapshot: CommunitySnapshot): CommunitySnapshot => ({
   rightsClaims: snapshot.rightsClaims.map(cloneRightsClaim),
   takedownRecords: snapshot.takedownRecords.map(cloneTakedownRecord),
   trafficSignals: snapshot.trafficSignals.map(cloneTrafficSignal),
+  safetyEvents: snapshot.safetyEvents.map(cloneSafetyEvent),
   serverTime: snapshot.serverTime,
 });
 
@@ -181,6 +195,12 @@ const sortTrafficSignals = (signals: CommunityTrafficSignal[]): CommunityTraffic
     return b.id.localeCompare(a.id);
   });
 
+const sortSafetyEvents = (events: CommunitySafetyEvent[]): CommunitySafetyEvent[] =>
+  [...events].sort((a, b) => {
+    if (a.observedAt !== b.observedAt) return b.observedAt - a.observedAt;
+    return b.id.localeCompare(a.id);
+  });
+
 const upsertById = <T extends { id: string }>(
   entries: T[],
   entry: T,
@@ -205,6 +225,7 @@ const INITIAL_STATE = {
   rightsClaims: [] as CommunityRightsClaim[],
   takedownRecords: [] as CommunityTakedownRecord[],
   trafficSignals: [] as CommunityTrafficSignal[],
+  safetyEvents: [] as CommunitySafetyEvent[],
   serverTime: 0,
   lastSyncAt: null as number | null,
   isLoading: false,
@@ -244,6 +265,7 @@ export const useCommunityStore = create<CommunityStoreState>((set) => ({
       rightsClaims: sortRightsClaims(safeSnapshot.rightsClaims),
       takedownRecords: sortTakedownRecords(safeSnapshot.takedownRecords),
       trafficSignals: sortTrafficSignals(safeSnapshot.trafficSignals),
+      safetyEvents: sortSafetyEvents(safeSnapshot.safetyEvents),
       serverTime: safeSnapshot.serverTime,
       lastSyncAt: now(),
       isLoading: false,

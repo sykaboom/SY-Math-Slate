@@ -7,8 +7,6 @@ export const DEFAULT_SESSION_SYNC_CHANNEL_NAME = "sy-math-slate:session-sync.v1"
 
 const REALTIME_ENDPOINT_ENV_KEYS = [
   "NEXT_PUBLIC_SYNC_REALTIME_URL",
-  "NEXT_PUBLIC_REALTIME_SYNC_URL",
-  "NEXT_PUBLIC_SYNC_BACKPLANE_URL",
 ] as const;
 
 export type RealtimeBackplaneTransport =

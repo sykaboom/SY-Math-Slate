@@ -15,6 +15,14 @@ export type CommunityTrafficAction =
   | "create-comment"
   | "create-report"
   | "create-rights-claim";
+export type CommunitySafetyAction = "create-post" | "create-comment";
+export type CommunitySafetyVerdict = "allow" | "review" | "block";
+export type CommunitySafetyCategory =
+  | "abuse"
+  | "sexual"
+  | "self-harm"
+  | "violence"
+  | "spam";
 
 export type CommunityPost = {
   id: string;
@@ -82,6 +90,17 @@ export type CommunityTrafficSignal = {
   sampleCount: number;
 };
 
+export type CommunitySafetyEvent = {
+  id: string;
+  action: CommunitySafetyAction;
+  actorId: string;
+  verdict: CommunitySafetyVerdict;
+  category: CommunitySafetyCategory | null;
+  matchedTerm: string | null;
+  targetId: string | null;
+  observedAt: number;
+};
+
 export type CommunitySnapshot = {
   posts: CommunityPost[];
   comments: CommunityComment[];
@@ -89,6 +108,7 @@ export type CommunitySnapshot = {
   rightsClaims: CommunityRightsClaim[];
   takedownRecords: CommunityTakedownRecord[];
   trafficSignals: CommunityTrafficSignal[];
+  safetyEvents: CommunitySafetyEvent[];
   serverTime: number;
 };
 
@@ -218,6 +238,22 @@ const VALID_TRAFFIC_ACTIONS = new Set<CommunityTrafficAction>([
   "create-comment",
   "create-report",
   "create-rights-claim",
+]);
+const VALID_SAFETY_ACTIONS = new Set<CommunitySafetyAction>([
+  "create-post",
+  "create-comment",
+]);
+const VALID_SAFETY_VERDICTS = new Set<CommunitySafetyVerdict>([
+  "allow",
+  "review",
+  "block",
+]);
+const VALID_SAFETY_CATEGORIES = new Set<CommunitySafetyCategory>([
+  "abuse",
+  "sexual",
+  "self-harm",
+  "violence",
+  "spam",
 ]);
 const VALID_API_ACTIONS = new Set<CommunityApiAction>([
   "list",
@@ -1237,6 +1273,102 @@ export const validateCommunityTrafficSignal = (
   });
 };
 
+export const validateCommunitySafetyEvent = (
+  value: unknown,
+  path = "root"
+): CommunityValidationResult<CommunitySafetyEvent> => {
+  if (!isRecord(value)) {
+    return fail("invalid-safety-event", "safety event must be an object.", path);
+  }
+
+  const idValidation = validateBoundedString(value.id, `${path}.id`, {
+    code: "invalid-safety-event-id",
+    message: "safetyEvent.id must be a non-empty string.",
+    maxLength: MAX_ID_LENGTH,
+  });
+  if (!idValidation.ok) return idValidation;
+
+  if (
+    typeof value.action !== "string" ||
+    !VALID_SAFETY_ACTIONS.has(value.action as CommunitySafetyAction)
+  ) {
+    return fail(
+      "invalid-safety-event-action",
+      "safetyEvent.action must be create-post/create-comment.",
+      `${path}.action`
+    );
+  }
+
+  const actorValidation = validateBoundedString(value.actorId, `${path}.actorId`, {
+    code: "invalid-safety-event-actor-id",
+    message: "safetyEvent.actorId must be a non-empty string.",
+    maxLength: MAX_AUTHOR_ID_LENGTH,
+  });
+  if (!actorValidation.ok) return actorValidation;
+
+  if (
+    typeof value.verdict !== "string" ||
+    !VALID_SAFETY_VERDICTS.has(value.verdict as CommunitySafetyVerdict)
+  ) {
+    return fail(
+      "invalid-safety-event-verdict",
+      "safetyEvent.verdict must be allow/review/block.",
+      `${path}.verdict`
+    );
+  }
+
+  if (value.category !== null && value.category !== undefined) {
+    if (
+      typeof value.category !== "string" ||
+      !VALID_SAFETY_CATEGORIES.has(value.category as CommunitySafetyCategory)
+    ) {
+      return fail(
+        "invalid-safety-event-category",
+        "safetyEvent.category must be null or known category.",
+        `${path}.category`
+      );
+    }
+  }
+
+  const matchedTermValidation = validateNullableOptionalText(
+    value.matchedTerm ?? null,
+    `${path}.matchedTerm`,
+    "invalid-safety-event-matched-term",
+    "safetyEvent.matchedTerm must be string or null."
+  );
+  if (!matchedTermValidation.ok) return matchedTermValidation;
+
+  const targetIdValidation = validateNullableIdString(
+    value.targetId,
+    `${path}.targetId`,
+    "invalid-safety-event-target-id",
+    "safetyEvent.targetId must be string or null."
+  );
+  if (!targetIdValidation.ok) return targetIdValidation;
+
+  const observedAtValidation = validateTimestamp(
+    value.observedAt,
+    `${path}.observedAt`,
+    "invalid-safety-event-observed-at",
+    "safetyEvent.observedAt must be non-negative number."
+  );
+  if (!observedAtValidation.ok) return observedAtValidation;
+
+  return ok({
+    id: idValidation.value,
+    action: value.action as CommunitySafetyAction,
+    actorId: actorValidation.value,
+    verdict: value.verdict as CommunitySafetyVerdict,
+    category:
+      value.category === null || value.category === undefined
+        ? null
+        : (value.category as CommunitySafetyCategory),
+    matchedTerm: matchedTermValidation.value,
+    targetId: targetIdValidation.value,
+    observedAt: observedAtValidation.value,
+  });
+};
+
 const validateArray = <T>(
   value: unknown,
   path: string,
@@ -1312,6 +1444,14 @@ export const validateCommunitySnapshot = (
   );
   if (!trafficSignalsValidation.ok) return trafficSignalsValidation;
 
+  const safetyEventsValidation = validateArray(
+    value.safetyEvents,
+    "safetyEvents",
+    "invalid-community-snapshot-safety-events",
+    validateCommunitySafetyEvent
+  );
+  if (!safetyEventsValidation.ok) return safetyEventsValidation;
+
   const serverTimeValidation = validateTimestamp(
     value.serverTime,
     "serverTime",
@@ -1327,6 +1467,7 @@ export const validateCommunitySnapshot = (
     rightsClaims: rightsClaimsValidation.value,
     takedownRecords: takedownRecordsValidation.value,
     trafficSignals: trafficSignalsValidation.value,
+    safetyEvents: safetyEventsValidation.value,
     serverTime: serverTimeValidation.value,
   });
 };

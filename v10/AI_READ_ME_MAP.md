@@ -137,6 +137,8 @@ v10/src/
 |   |-- community/
 |   |   |-- policy/
 |   |   |   \-- adPolicy.ts
+|   |   |-- safety/
+|   |   |   \-- ugcSafetyFilter.ts
 |   |   |-- store/
 |   |   |   \-- useCommunityStore.ts
 |   |   |-- traffic/

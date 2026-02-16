@@ -5,6 +5,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import type {
   CommunityReport,
   CommunityRightsClaim,
+  CommunitySafetyEvent,
   CommunityTrafficSignal,
   CommunityTrustSafetySloSummary,
 } from "@core/contracts/community";
@@ -37,6 +38,7 @@ export type UseModerationConsoleResult = {
   pendingRightsClaims: RightsClaimRow[];
   resolvedRightsClaims: RightsClaimRow[];
   trafficSignals: CommunityTrafficSignal[];
+  safetyEvents: CommunitySafetyEvent[];
   sloSummary: CommunityTrustSafetySloSummary | null;
   auditEvents: AuditEvent[];
   refresh: () => Promise<void>;
@@ -77,6 +79,7 @@ export const useModerationConsole = (): UseModerationConsoleResult => {
   const reports = useCommunityStore((state) => state.reports);
   const rightsClaims = useCommunityStore((state) => state.rightsClaims);
   const trafficSignals = useCommunityStore((state) => state.trafficSignals);
+  const safetyEvents = useCommunityStore((state) => state.safetyEvents);
   const isLoading = useCommunityStore((state) => state.isLoading);
   const lastError = useCommunityStore((state) => state.lastError);
   const {
@@ -253,6 +256,7 @@ export const useModerationConsole = (): UseModerationConsoleResult => {
     pendingRightsClaims,
     resolvedRightsClaims,
     trafficSignals,
+    safetyEvents,
     sloSummary,
     auditEvents,
     refresh,
