@@ -31,7 +31,8 @@ This file is the v10 implementation/architecture reference map.
 - No `window` globals.
 - No `eval` / `new Function`.
 - No `src/lib` (deprecated).
-- No Prisma client or generated code inside `src/`.
+- No tracked Prisma client or generated code inside `src/`.
+  - Local generated artifacts may exist under `src/generated/prisma` (git-ignored); do not import from them.
 - HTML must be sanitized when using `innerHTML`.
 
 **Aliases**
@@ -69,6 +70,7 @@ features/
   animation/     (animation model, plan/measure/runtime, modding contract)
   canvas/        (rendering layers, actors, objects, viewport)
   community/     (community domain store + client actions for post/comment/report)
+  editor-core/   (editor surface model/selection/outline primitives)
   experiments/   (deterministic A/B assignment layer)
   extensions/    (tool adapter interfaces/registry/provider ABI adapters/routing, local adapters, async jobs, command policy + command registrations)
   extensions/marketplace/ (marketplace catalog resolver + client fetch hook)
@@ -79,6 +81,7 @@ features/
   moderation/    (host moderation console view-model + panel)
   observability/ (audit logger runtime + redaction)
   policy/        (policy shadow comparison telemetry helpers)
+  shortcuts/     (editor/tooling keyboard shortcut bindings)
   store/         (zustand state)
   sync/          (host/student asymmetric session sync hook + realtime backplane/conflict policy)
   toolbar/       (toolbar + panels)
