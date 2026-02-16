@@ -1,11 +1,11 @@
 # Feature Alignment Matrix (Draft)
 
 ## 이것은 무엇인가?
-레거시(root), v10, math‑pdf‑builder의 기능/UX를 한눈에 비교하는 표입니다.  
+레거시(single-file), v10, math‑pdf‑builder의 기능/UX를 한눈에 비교하는 표입니다.  
 목표는 “지금 있는 것 / 없는 것 / 부분적으로 있는 것”을 명확히 해 통합 파이프라인을 설계할 때 **우선순위와 갭**을 빠르게 파악하는 것입니다.
 
 ## 범위
-- Legacy: 이 리포지토리 root Vite 앱
+- Legacy: `legacy_archive/phase1_2026-02-15/수학_판서도구_v9.9.html` 단일 참조 파일
 - v10: `v10/` Next.js 앱
 - math‑pdf‑builder: 로컬 저장소 `/home/sykab/workspace/math-pdf-builder-public-codex`
 
@@ -17,7 +17,7 @@
 ---
 
 ## 1) 입력 & 편집
-| 기능 | 레거시 (root) | v10 | math‑pdf‑builder | 갭/메모 |
+| 기능 | 레거시 (single-file) | v10 | math‑pdf‑builder | 갭/메모 |
 |---|---|---|---|---|
 | 단계별 텍스트 진행(스텝) | ✅ | ✅ | ❌ | v10은 스텝 기반 플레이백 + 글자 단위 애니메이션(AnimatedTextBlock) |
 | 리치 텍스트 스타일(강조/스텝 표시) | ✅ | 🟡 | 🟡 | v10 Data Input에서 하이라이트/수식 래핑 지원(범용 리치 편집은 제한적) |
@@ -26,7 +26,7 @@
 | 붙여넣기 보조(이미지/텍스트) | ✅ | 🟡 | ❌ | v10은 이미지 붙여넣기 지원, 텍스트 보조 UX는 불명 |
 
 ## 2) 레이아웃 & 페이지네이션
-| 기능 | 레거시 (root) | v10 | math‑pdf‑builder | 갭/메모 |
+| 기능 | 레거시 (single-file) | v10 | math‑pdf‑builder | 갭/메모 |
 |---|---|---|---|---|
 | 자동 페이지 넘김(오버플로우) | ✅ | ✅ | 🟡 | pdf‑builder의 자동 페이지 처리 문서화 부족 |
 | 컬럼 수 제어 | ✅ | ✅ | ✅ | v10은 `pageColumnCounts`로 관리 |
@@ -35,7 +35,7 @@
 | 오버뷰/페이지 맵 | ❌ | ✅ | ❌ | v10 Overview 모드 |
 
 ## 3) 렌더링 & 수식
-| 기능 | 레거시 (root) | v10 | math‑pdf‑builder | 갭/메모 |
+| 기능 | 레거시 (single-file) | v10 | math‑pdf‑builder | 갭/메모 |
 |---|---|---|---|---|
 | MathJax 렌더링 | ✅ | ✅ | ✅ | pdf‑builder는 서비스 레이어에 MathJax |
 | `$...$`, `$$...$$` 지원 + 규칙 | 🟡 | ✅ | ✅ | v10은 displaystyle/frac 보정 규칙 명시 |
@@ -43,7 +43,7 @@
 | HTML sanitize 파이프라인 | ✅ | ✅ | 🟡 | v10은 DOMPurify로 sanitize 수행 |
 
 ## 4) 미디어
-| 기능 | 레거시 (root) | v10 | math‑pdf‑builder | 갭/메모 |
+| 기능 | 레거시 (single-file) | v10 | math‑pdf‑builder | 갭/메모 |
 |---|---|---|---|---|
 | 이미지 삽입/붙여넣기 | ✅ | ✅ | ✅ | |
 | 이미지 리사이즈/변형 | ✅ | 🟡 | 🟡 | v10/ pdf‑builder에서 상세 UX 불명 |
@@ -51,7 +51,7 @@
 | 레이저 포인터 | ✅ | ✅ | ❌ | v10에 레이저 도구 구현 |
 
 ## 5) 플레이백 & 프레젠테이션
-| 기능 | 레거시 (root) | v10 | math‑pdf‑builder | 갭/메모 |
+| 기능 | 레거시 (single-file) | v10 | math‑pdf‑builder | 갭/메모 |
 |---|---|---|---|---|
 | 스텝 기반 플레이백 | ✅ | ✅ | ❌ | |
 | 자동 재생/딜레이 | 🟡 | ✅ | ❌ | 레거시는 타이핑 속도는 있으나 자동 진행은 불명 |
@@ -59,7 +59,7 @@
 | 프레젠테이션/오버뷰 | ❌ | ✅ | ❌ | |
 
 ## 6) 저장 & 파일 I/O
-| 기능 | 레거시 (root) | v10 | math‑pdf‑builder | 갭/메모 |
+| 기능 | 레거시 (single-file) | v10 | math‑pdf‑builder | 갭/메모 |
 |---|---|---|---|---|
 | Doc‑only 저장(세션 분리) | ❌ | ✅ | 🟡 | pdf‑builder는 패키지 저장(세션 분리 여부 불명) |
 | 자동 저장 | ❌ | ✅ | ❌ | |
@@ -68,14 +68,14 @@
 | 버전/마이그레이션 | ❌ | ✅ | ❌ | v10은 `migrateToV2` |
 
 ## 7) 출력 & 인쇄
-| 기능 | 레거시 (root) | v10 | math‑pdf‑builder | 갭/메모 |
+| 기능 | 레거시 (single-file) | v10 | math‑pdf‑builder | 갭/메모 |
 |---|---|---|---|---|
 | 인쇄 | ❌ | ❌ | ✅ | |
 | 출력 전 점검(프리플라이트) | ❌ | ❌ | ✅ | |
 | PDF 내보내기 | ❌ | ❌ | 🟡 | 문서 기준: 인쇄는 있으나 PDF 파이프라인은 불명 |
 
 ## 8) UX 도구
-| 기능 | 레거시 (root) | v10 | math‑pdf‑builder | 갭/메모 |
+| 기능 | 레거시 (single-file) | v10 | math‑pdf‑builder | 갭/메모 |
 |---|---|---|---|---|
 | 펜/지우개 드로잉 | ✅ | ✅ | ❌ | v10은 Canvas/Stroke 모델 보유 |
 | 줌/팬 | ✅ | 🟡 | ❌ | v10은 overview/viewport 관련 상태 존재 |
@@ -83,7 +83,7 @@
 | 라쏘 선택/대량 삭제 | ✅ | ❌ | ❌ | v10은 단일 선택 중심 (라쏘/대량 삭제 미확인) |
 
 ## 9) 데이터 모델 & 통합
-| 기능 | 레거시 (root) | v10 | math‑pdf‑builder | 갭/메모 |
+| 기능 | 레거시 (single-file) | v10 | math‑pdf‑builder | 갭/메모 |
 |---|---|---|---|---|
 | 구조화 스키마(JSON‑safe) | ❌ | ✅ | ✅ | v10 `PersistedSlateDoc`, pdf‑builder `.msk` |
 | 글로벌 스텝 모델 | 🟡 | ✅ | ❌ | 레거시는 line 기반 스텝(전역 규칙 불명) |
@@ -121,7 +121,6 @@
 ## Sources
 - `v10/AI_READ_ME.md`
 - `PROJECT_CONTEXT.md`
-- `src/main.js`
 - `/home/sykab/workspace/math-pdf-builder-public-codex/README.md`
 - `v10/src/features/layout/DataInputPanel.tsx`
 - `v10/src/features/canvas/animation/AnimatedTextBlock.tsx`

@@ -1,30 +1,27 @@
-# Non-v10 Cleanup Matrix (Task 144/145/157)
+# Non-v10 Cleanup Matrix (Task 144/145/157/235)
 
-Date: 2026-02-15  
+Date: 2026-02-16  
 Repo root safety: `/home/sykab/SY-Math-Slate/**` only
 
 ## Decision Tags
 - `KEEP`: protected, no cleanup action.
-- `ARCHIVE-P1`: move to `legacy_archive/` in Task 145.
-- `DELETE-FINAL`: eligible only in Task 157 after Task 156 stabilization gates.
+- `REMOVED`: deleted by completed cleanup tasks.
 
 ## Matrix
 
 | Path | Tag | Gate | Dependency evidence | Rollback |
 |---|---|---|---|---|
-| `backup/single-file-v9.9.html` | ARCHIVE-P1 | after-143 | `rg` search found 0 references in docs/scripts/runtime. | restore from `legacy_archive/phase1_2026-02-15/backup/` |
-| `수학_판서도구_v9.9.html` | ARCHIVE-P1 | after-143 | `rg` search found 0 references. | restore from `legacy_archive/phase1_2026-02-15/` |
-| `해설생성프롬프트.txt` | ARCHIVE-P1 | after-143 | `rg` search found 0 references. | restore from `legacy_archive/phase1_2026-02-15/` |
-| `src/**` | KEEP (candidate: DELETE-FINAL) | after-156+stabilization | root GH Pages pipeline still builds legacy root app via `npm run build:gh`; source required until cutover. | keep intact until final cutover commit |
-| `index.html` | KEEP (candidate: DELETE-FINAL) | after-156+stabilization | `.github/workflows/gh-pages.yml` root Vite build path requires entry. | keep intact until GH Pages path replacement |
-| `vite.config.js` | KEEP (candidate: DELETE-FINAL) | after-156+stabilization | root build scripts and hook checks reference file. | keep intact until legacy deploy retirement |
-| `package.json` (root) | KEEP (candidate: DELETE-FINAL) | after-156+stabilization | GH Pages workflow installs/builds root package. | keep intact until deploy migration complete |
-| `package-lock.json` (root) | KEEP (candidate: DELETE-FINAL) | after-156+stabilization | lockfile required for deterministic root CI install. | keep intact until root package removal |
-| `.githooks/**`, `.github/**`, `scripts/**`, `codex_tasks/**` | KEEP | always | governance/verification critical. | N/A |
+| `legacy_archive/phase1_2026-02-15/수학_판서도구_v9.9.html` | KEEP | always | user-approved single legacy reference artifact | restore from git history if modified |
+| `legacy_archive/phase1_2026-02-15/backup/single-file-v9.9.html` | REMOVED | task_235 | superseded duplicate legacy snapshot | restore from git history |
+| `legacy_archive/phase1_2026-02-15/해설생성프롬프트.txt` | REMOVED | task_235 | no active runtime dependency | restore from git history |
+| `src/**` | REMOVED | task_235 | root legacy Vite runtime retired | restore from git history |
+| `index.html` | REMOVED | task_235 | root Vite entry retired | restore from git history |
+| `vite.config.js` | REMOVED | task_235 | root Vite build config retired | restore from git history |
+| `package.json` (root) | REMOVED | task_235 | root Vite script path retired | restore from git history |
+| `package-lock.json` (root) | REMOVED | task_235 | root package path retired | restore from git history |
+| `.github/workflows/gh-pages.yml` | REMOVED | task_235 | GitHub Pages deployment path retired (Vercel-first) | restore from git history |
+| `.githooks/**`, `.github/**`, `scripts/**`, `codex_tasks/**` | KEEP | always | governance/verification critical | N/A |
 
-## Phase Plan
-- Phase 1 (Task 145, post-143): execute only `ARCHIVE-P1`.
-- Final purge (Task 157, post-156+stabilization): process `DELETE-FINAL` only after:
-  - beta quality gates are green,
-  - deploy path migration away from root Vite is completed,
-  - rollback plan is documented with path-level restore steps.
+## Status
+- Root legacy Vite/Pages path has been retired.
+- Operational runtime/deployment target is `v10/` with Vercel.
