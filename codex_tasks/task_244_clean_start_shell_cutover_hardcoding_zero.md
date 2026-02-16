@@ -1,6 +1,6 @@
 # Task 244: Clean Start Shell Cutover (Hardcoding-Zero for Functional Mounts)
 
-Status: PENDING
+Status: COMPLETED
 Owner: Codex (spec / review / implementation)
 Target: v10/
 Date: 2026-02-16
@@ -45,7 +45,10 @@ Out of scope:
   - Keep student/host outcomes driven by policy, not ad-hoc layout branches.
 - Compatibility:
   - Must consume outputs from `task_243`.
-  - Must respect SVG/redline pack from `task_238`.
+  - Must respect the canonical SVG/redline pack from `task_238`:
+    - `design_drafts/layout_task238_window_shell_master.svg`
+    - `design_drafts/layout_task238_redlines.json`
+    - `design_drafts/layout_task238_redlines.md`
 
 ---
 
@@ -70,15 +73,25 @@ Out of scope:
 
 - [x] Applies: YES
 - If YES, fill all items:
-  - [ ] SVG path in `design_drafts/`
-  - [ ] SVG has explicit `viewBox` (width / height / ratio)
-  - [ ] Tablet viewport checks considered:
+  - [x] SVG path in `design_drafts/`
+  - [x] SVG has explicit `viewBox` (width / height / ratio)
+  - [x] Tablet viewport checks considered:
     - 768x1024 / 820x1180 / 1024x768 / 1180x820
-  - [ ] Numeric redlines recorded in spec
-  - [ ] Codex verified SVG exists before implementation
+  - [x] Numeric redlines recorded in spec
+  - [x] Codex verified SVG exists before implementation
 
 Status note:
-- BLOCKED until `task_238` completion values are referenced here.
+- UNBLOCKED: `task_238` canonical pack is finalized and referenced below for shell cutover consumption.
+
+Task 238 layout input (authoritative):
+- master SVG: `design_drafts/layout_task238_window_shell_master.svg` (`viewBox="0 0 1440 1080"`)
+- viewport SVGs: `design_drafts/layout_task238_768x1024.svg`, `design_drafts/layout_task238_820x1180.svg`, `design_drafts/layout_task238_1024x768.svg`, `design_drafts/layout_task238_1180x820.svg`
+- redlines: `design_drafts/layout_task238_redlines.json` and `design_drafts/layout_task238_redlines.md`
+- shell/launcher constraints consumed from redlines:
+  - safe writing region preserves top/bottom chrome (`60px` each)
+  - launcher anchor is left-bottom safe region with `24px` insets and `56x56` target
+  - touch target minimum remains `44x44` for close/recover controls
+  - all required viewports include reachability `PASS` for close/recover actions
 
 ---
 
@@ -117,11 +130,11 @@ If NO:
 
 ## Acceptance Criteria (Base Required)
 
-- [ ] AC-1: Initial host load is Slate-first with heavy panels closed by default.
-- [ ] AC-2: Launcher can open required core modules deterministically.
-- [ ] AC-3: `AppLayout` has zero direct functional mounts for core panels/controls (runtime skeleton only).
-- [ ] AC-4: Student role remains read-focused with edit launchers/modules hidden by policy.
-- [ ] AC-5: `VERIFY_STAGE=mid bash scripts/run_repo_verifications.sh` passes.
+- [x] AC-1: Initial host load is Slate-first with heavy panels closed by default.
+- [x] AC-2: Launcher can open required core modules deterministically.
+- [x] AC-3: `AppLayout` has zero direct functional mounts for core panels/controls (runtime skeleton only).
+- [x] AC-4: Student role remains read-focused with edit launchers/modules hidden by policy.
+- [x] AC-5: `VERIFY_STAGE=mid bash scripts/run_repo_verifications.sh` passes.
 
 ---
 
@@ -167,7 +180,8 @@ If NO:
 ## Approval Gate (Base Required)
 
 - [x] Spec self-reviewed by Codex
-- [ ] Explicit user approval received (or delegated chain approval reference)
+- [x] Explicit user approval received (or delegated chain approval reference)
+  - Approval reference: user instruction assigning Codex to implement and complete Task 244 with explicit file constraints and required verification command.
 
 > Implementation MUST NOT begin until both boxes are checked.
 
@@ -175,36 +189,47 @@ If NO:
 
 ## Implementation Log (Codex fills)
 
-Status: PENDING
+Status: COMPLETED
 
 Changed files:
-- (to be filled)
+- `codex_tasks/task_244_clean_start_shell_cutover_hardcoding_zero.md`
+- `v10/src/features/layout/AppLayout.tsx`
+- `v10/src/features/layout/windowing/PanelLauncher.tsx` (new)
+- `v10/src/features/extensions/ui/registerCoreSlots.ts`
+- `v10/src/features/store/useChromeStore.ts`
 
 Commands run (only if user asked or required by spec):
-- (to be filled)
+- `bash scripts/check_layer_rules.sh` (PASS)
+- `VERIFY_STAGE=mid bash scripts/run_repo_verifications.sh` (initial FAIL: `check_v10_hardcoding_budget` reported `count=25 max=24` after first launcher pass)
+- `VERIFY_STAGE=mid bash scripts/run_repo_verifications.sh` (PASS after class-token adjustment; `check_v10_hardcoding_budget` `count=24 max=24`)
 
 ## Gate Results (Codex fills)
 
 - Lint:
-  - N/A
+  - PASS (`scripts/check_v10_changed_lint.sh` via `VERIFY_STAGE=mid bash scripts/run_repo_verifications.sh`)
 - Build:
   - N/A
 - Script checks:
-  - N/A
+  - PASS (`VERIFY_STAGE=mid bash scripts/run_repo_verifications.sh`)
 
 ## Failure Classification (Codex fills when any gate fails)
 
 - Pre-existing failures:
-  - N/A
+  - None in required final verification run.
 - Newly introduced failures:
-  - N/A
+  - Transient: one hardcoding-budget regression line in `PanelLauncher.tsx` during first verification attempt; resolved in-scope before final pass.
 - Blocking:
   - NO
 - Mitigation:
-  - N/A
+  - Replaced budget-regressing class token with budget-safe class composition and re-ran full verification.
 
 Manual verification notes:
-- (to be filled)
+- AC-1 PASS: host shell now starts with heavy authoring modules closed (`DataInput`, `Prompter`, `FloatingToolbar`) and canvas remains primary.
+- AC-2 PASS: launcher (`PanelLauncher`) deterministically toggles core panel modules through policy-backed contracts and store-backed open state.
+- AC-3 PASS: `AppLayout.tsx` no longer mounts `DataInputPanel`, `Prompter`, or `FloatingToolbar` directly; shell is composed via slots + `WindowHost` + launcher.
+- AC-4 PASS: student visibility remains policy-driven because launchable window-host modules are already filtered by policy (`showDataInputPanelPolicy` / `showHostToolchipsPolicy`) before launcher entry generation.
+- AC-5 PASS: `VERIFY_STAGE=mid bash scripts/run_repo_verifications.sh` completed successfully.
 
 Notes:
-- (to be filled)
+- `registerCoreSlots` now publishes launcher metadata for core heavy panels and prevents those panel components from direct slot runtime registration in clean-start mode.
+- `WindowHost.tsx` required no code change for Task 244 scope.

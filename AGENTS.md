@@ -90,6 +90,24 @@ Non-negotiable invariants:
 - Progress reporting is blocker-first.
 - Escalate to user on breaking change, new dependency, security/cost impact, data migration, or required Gemini SVG request.
 
+### Orchestration Mode Trigger (Natural Language)
+- User may switch orchestration mode with natural language.
+- Trigger phrases (Korean/English variants allowed):
+  - Max mode ON examples:
+    - `"맥스오케스트레이션모드로 해"`
+    - `"맥스모드 켜"`
+    - `"max orchestration mode on"`
+  - Max mode OFF examples:
+    - `"기본모드로 돌아가"`
+    - `"맥스모드 꺼"`
+    - `"max orchestration mode off"`
+- In Max mode, Codex MUST follow scheduler-first execution from playbook:
+  - keep slots filled up to limit when runnable work exists
+  - close/reuse completed sub-agents immediately
+  - run heartbeat-safe reassignment policy (soft ping first)
+  - report slot efficiency metrics in closeout
+- Detailed scheduler rules live in `codex_tasks/_PLAYBOOK_subagent_oneclick.md`.
+
 ---
 
 ## Layout / SVG Gate

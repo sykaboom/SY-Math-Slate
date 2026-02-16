@@ -14,6 +14,7 @@ if [[ "$verify_stage" != "mid" && "$verify_stage" != "end" ]]; then
   exit 1
 fi
 
+export VERIFY_STAGE="$verify_stage"
 echo "[verify-sh] Stage: ${verify_stage}"
 
 mapfile -t candidates < <(

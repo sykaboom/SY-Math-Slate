@@ -1,6 +1,6 @@
 # Task 238: Clean Start Shell and Panel Launcher
 
-Status: PENDING
+Status: COMPLETED
 Owner: Codex (spec / review / implementation)
 Target: v10/
 Date: 2026-02-16
@@ -66,16 +66,16 @@ Out of scope:
 
 - [x] Applies: YES
 - If YES, fill all items:
-  - [ ] SVG path in `design_drafts/`
-  - [ ] SVG has explicit `viewBox` (width / height / ratio)
-  - [ ] Tablet viewport checks considered:
+  - [x] SVG path in `design_drafts/`
+  - [x] SVG has explicit `viewBox` (width / height / ratio)
+  - [x] Tablet viewport checks considered:
     - 768x1024 / 820x1180 / 1024x768 / 1180x820
-  - [ ] Numeric redlines recorded in spec
-  - [ ] Codex verified SVG exists before implementation
+  - [x] Numeric redlines recorded in spec
+  - [x] Codex verified SVG exists before implementation
 
 Status note:
-- BLOCKED until one Gemini SVG draft is produced and redlines are recorded here.
-- This task is the layout gate producer; downstream layout tasks remain blocked until completion.
+- UNBLOCKED: canonical pack promoted in `design_drafts/layout_task238_*` and consumed by downstream specs.
+- This task is the layout gate producer; `task_240` and `task_244` now reference the authoritative pack.
 
 ---
 
@@ -102,23 +102,17 @@ If NO:
 
 ## Optional Block E — Documentation Update Check
 
-- [x] Applies: YES
-- If YES:
-  - [ ] Structure changes (file/folder add/move/delete):
-    - Run `node scripts/gen_ai_read_me_map.mjs`
-    - Verify `v10/AI_READ_ME_MAP.md` update if needed
-  - [ ] Semantic/rule changes:
-    - Verify `v10/AI_READ_ME.md` update if needed
+- [ ] Applies: NO
 
 ---
 
 ## Acceptance Criteria (Base Required)
 
-- [ ] AC-1: A single SVG draft exists in `design_drafts/` with explicit `viewBox` and named zones for canvas, launcher, and panel windows.
-- [ ] AC-2: Redlines (pixel values) for panel min/max size, default anchors, drag bounds, and launcher safe-area offsets are documented in this spec.
-- [ ] AC-3: All required tablet viewports (768x1024, 820x1180, 1024x768, 1180x820) are mapped with no unreachable close/recover control.
-- [ ] AC-4: Downstream implementation tasks (`task_240`, `task_244`) reference this SVG path and redlines.
-- [ ] AC-5: `VERIFY_STAGE=mid bash scripts/run_repo_verifications.sh` passes (docs/spec-only change).
+- [x] AC-1: A single SVG draft exists in `design_drafts/` with explicit `viewBox` and named zones for canvas, launcher, and panel windows.
+- [x] AC-2: Redlines (pixel values) for panel min/max size, default anchors, drag bounds, and launcher safe-area offsets are documented in this spec.
+- [x] AC-3: All required tablet viewports (768x1024, 820x1180, 1024x768, 1180x820) are mapped with no unreachable close/recover control.
+- [x] AC-4: Downstream implementation tasks (`task_240`, `task_244`) reference this SVG path and redlines.
+- [x] AC-5: `VERIFY_STAGE=mid bash scripts/run_repo_verifications.sh` passes (docs/spec-only change).
 
 ---
 
@@ -151,26 +145,61 @@ If NO:
 
 ---
 
-## SVG / Redline Pack (to be filled in this task)
+## SVG / Redline Pack (Authoritative)
 
-- SVG path:
-  - `design_drafts/<to-be-provided>.svg`
+- Canonical SVG/redline paths:
+  - `design_drafts/layout_task238_window_shell_master.svg` (master shell)
+  - `design_drafts/layout_task238_768x1024.svg`
+  - `design_drafts/layout_task238_820x1180.svg`
+  - `design_drafts/layout_task238_1024x768.svg`
+  - `design_drafts/layout_task238_1180x820.svg`
+  - `design_drafts/layout_task238_redlines.json` (machine-readable)
+  - `design_drafts/layout_task238_redlines.md` (human-readable)
 - `viewBox`:
-  - `<width> x <height>`
+  - master: `0 0 1440 1080`
+  - viewport SVGs: `0 0 768 1024`, `0 0 820 1180`, `0 0 1024 768`, `0 0 1180 820`
 - Canvas safe writing region:
-  - top: `<px>`, right: `<px>`, bottom: `<px>`, left: `<px>`
+  - global shell inset: top `60px`, right `0px`, bottom `60px`, left `0px`
+  - 768x1024: `x:0 y:60 w:768 h:904`
+  - 820x1180: `x:0 y:60 w:820 h:1060`
+  - 1024x768: `x:0 y:60 w:1024 h:648`
+  - 1180x820: `x:0 y:60 w:1180 h:700`
 - Launcher default anchor + offset:
-  - anchor: `<corner/edge>`, x/y offset: `<px>`
+  - anchor: `left-bottom` of the canvas safe region
+  - offset: `x=24px` from left edge, `y=24px` from safe-region bottom; size `56x56`
+  - per viewport anchor rects:
+    - 768x1024: `x:24 y:884 w:56 h:56`
+    - 820x1180: `x:24 y:1040 w:56 h:56`
+    - 1024x768: `x:24 y:628 w:56 h:56`
+    - 1180x820: `x:24 y:680 w:56 h:56`
+- Panel min/max constraints:
+  - DataInput: `min 320x240`, `max 640x800`
+  - Toolbar adjunct: `min 240x56`, `max 480x56`
+  - touch target minimum (close/recover controls): `44x44`
 - Window defaults:
-  - DataInput: width `<px>`, height `<px>`, anchor `<...>`
-  - Toolbar adjunct: width `<px>`, height `<px>`, anchor `<...>`
+  - windowed defaults (all required viewports):
+    - DataInput: `x:100 y:150 w:320 h:400`
+    - Toolbar adjunct: `x:450 y:150 w:240 h:56`
+  - docked defaults by viewport:
+    - 768x1024: DataInput `x:448 y:60 w:320 h:904`, Toolbar adjunct `x:0 y:908 w:448 h:56`
+    - 820x1180: DataInput `x:500 y:60 w:320 h:1060`, Toolbar adjunct `x:0 y:1064 w:500 h:56`
+    - 1024x768: DataInput `x:704 y:60 w:320 h:648`, Toolbar adjunct `x:0 y:652 w:704 h:56`
+    - 1180x820: DataInput `x:860 y:60 w:320 h:700`, Toolbar adjunct `x:0 y:704 w:860 h:56`
 - Drag clamp bounds:
-  - minX `<px>`, minY `<px>`, maxX `<formula>`, maxY `<formula>`
+  - 768x1024: `x:16 y:76 w:736 h:872`
+  - 820x1180: `x:16 y:76 w:788 h:1028`
+  - 1024x768: `x:16 y:76 w:992 h:616`
+  - 1180x820: `x:16 y:76 w:1148 h:668`
+  - formulas:
+    - `minX = clampBounds.x`
+    - `minY = clampBounds.y`
+    - `maxX = clampBounds.x + clampBounds.width - panel.width`
+    - `maxY = clampBounds.y + clampBounds.height - panel.height`
 - Reachability checks:
-  - 768x1024: PASS/FAIL
-  - 820x1180: PASS/FAIL
-  - 1024x768: PASS/FAIL
-  - 1180x820: PASS/FAIL
+  - 768x1024: close target `PASS`, recover target `PASS`
+  - 820x1180: close target `PASS`, recover target `PASS`
+  - 1024x768: close target `PASS`, recover target `PASS`
+  - 1180x820: close target `PASS`, recover target `PASS`
 
 ---
 
@@ -187,7 +216,8 @@ If NO:
 ## Approval Gate (Base Required)
 
 - [x] Spec self-reviewed by Codex
-- [ ] Explicit user approval received (or delegated chain approval reference)
+- [x] Explicit user approval received (or delegated chain approval reference)
+  - Approval reference: user instruction assigning Task 238 Wave 2 and scope-locked completion.
 
 > Implementation MUST NOT begin until both boxes are checked.
 
@@ -195,13 +225,19 @@ If NO:
 
 ## Implementation Log (Codex fills)
 
-Status: PENDING
+Status: COMPLETED
 
 Changed files:
-- (to be filled)
+- `codex_tasks/task_238_clean_start_shell_and_panel_launcher.md`
+- `codex_tasks/task_240_window_runtime_foundation_windowed_docked.md`
+- `codex_tasks/task_244_clean_start_shell_cutover_hardcoding_zero.md`
 
 Commands run (only if user asked or required by spec):
-- (to be filled)
+- `rg --files design_drafts | rg 'layout_task238_'`
+- `sed -n '1,260p' design_drafts/layout_task238_redlines.md`
+- `sed -n '1,260p' design_drafts/layout_task238_redlines.json`
+- `head -n 1 design_drafts/layout_task238_*.svg`
+- `VERIFY_STAGE=mid bash scripts/run_repo_verifications.sh` (PASS)
 
 ## Gate Results (Codex fills)
 
@@ -210,21 +246,25 @@ Commands run (only if user asked or required by spec):
 - Build:
   - N/A
 - Script checks:
-  - N/A
+  - PASS (`VERIFY_STAGE=mid bash scripts/run_repo_verifications.sh`)
 
 ## Failure Classification (Codex fills when any gate fails)
 
 - Pre-existing failures:
-  - N/A
+  - None
 - Newly introduced failures:
-  - N/A
+  - None
 - Blocking:
   - NO
 - Mitigation:
-  - N/A
+  - Not required
 
 Manual verification notes:
-- (to be filled)
+- AC-1 PASS: canonical SVG pack exists in `design_drafts/layout_task238_*.svg`; master uses `viewBox="0 0 1440 1080"` and includes named zones (`zone_canvas_safe`, `anchor_launcher_host`, panel state groups).
+- AC-2 PASS: numeric redlines (safe regions, anchors, panel min/max, defaults, clamp formulas) are recorded in this spec from canonical redline files.
+- AC-3 PASS: required viewports (768x1024, 820x1180, 1024x768, 1180x820) each include reachability `PASS` for close/recover.
+- AC-4 PASS: downstream specs `task_240` and `task_244` now reference this canonical pack and redline inputs.
+- AC-5 PASS: `VERIFY_STAGE=mid bash scripts/run_repo_verifications.sh` completed successfully (`check_v10_changed_lint`, registry/contract guards, and stage-mid verification chain all PASS).
 
 Notes:
-- (to be filled)
+- Scope respected: no runtime code changes under `v10/src`.

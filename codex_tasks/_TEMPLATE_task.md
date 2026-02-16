@@ -84,6 +84,26 @@ Out of scope:
     - (one file = one implementer)
   - Parallel slot plan:
     - (max 6 active slots)
+  - Scheduler plan (required in delegated mode):
+    - Requested orchestration mode:
+      - (e.g., max orchestration mode on/off; include user phrase if provided)
+    - Initial slot split:
+      - (e.g., 4 executors + 2 reviewers)
+    - Ready-queue refill trigger:
+      - (when and how runnable tasks are recomputed)
+    - Agent close/reuse policy:
+      - (when completed agents are closed and slots recycled)
+    - Heartbeat policy:
+      - Soft ping threshold:
+      - Reassignment threshold:
+      - Long-running exceptions:
+    - Reassignment safety rule:
+      - (conditions required before terminate/reassign)
+  - Delegated closeout metrics:
+    - Peak active slots:
+    - Average active slots:
+    - Slot refill count:
+    - Reassignment count:
 
 If NO:
 - Execution mode: MANUAL

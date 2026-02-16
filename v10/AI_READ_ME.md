@@ -514,8 +514,8 @@ Located in `features/extensions/`:
 - `commands/registerCoreCommands.ts`: core command registrations for doc mutation facade
 - `ui/ExtensionRuntimeBootstrap.tsx`: slot/adapters/policy/command/mcp runtime bootstrap
 - `ui/registerCoreDeclarativeManifest.ts`: declarative core toolbar shadow/cutover manifest registration
-- `ui/registerCoreSlots.ts`: core slot registrations (pending approvals + layout cutover slot components)
-- `ui/CoreSlotComponents.tsx`: slot-wrapped core UI components for phased layout cutover
+- `ui/registerCoreSlots.ts`: core panel policy + launcher contract registry for slot/runtime wiring
+- `ui/CoreSlotComponents.tsx`: slot-wrapped core UI components retained for cutover compatibility
 
 **Permission scope examples**
 - `canvas:read`, `canvas:write`, `net:http`, `llm:invoke`
@@ -535,17 +535,33 @@ Located in `features/extensions/`:
 ## Common Entry Points
 - Next app shell: `app/layout.tsx`
 - Layout root: `features/layout/AppLayout.tsx`
+- Window-host module adapters: `features/layout/windowing/panelAdapters.tsx`
 - Mod Studio shell: `features/mod-studio/core/ModStudioShell.tsx`
 - Realtime sync hook: `features/sync/useAsymmetricSessionSync.ts`
 - Playback engine: `features/hooks/useSequence.ts`
 - Persistence: `features/hooks/usePersistence.ts`
 - File I/O: `features/hooks/useFileIO.ts`
 - Data input panel: `features/layout/DataInputPanel.tsx`
+- Core panel policy source: `core/config/panel-policy.ts`
 - Input studio headless hook: `features/input-studio/hooks/useInputStudioHeadless.ts`
 - Input studio schema editor: `features/input-studio/schema/StructuredSchemaEditor.tsx`
 - Input studio LLM draft workflow: `features/input-studio/llm/useInputStudioLlmDraft.ts`
 - Input studio batch validation pipeline: `features/input-studio/validation/batchTransformPipeline.ts`
 - Auto layout: `features/layout/autoLayout.ts`
+
+---
+
+## Layout Shell Runtime Boundaries (Task 244~245)
+- Shell runtime boundary:
+  - `features/layout/AppLayout.tsx`, `features/layout/windowing/WindowHost.tsx`, and `features/layout/windowing/PanelLauncher.tsx` orchestrate shell state and window runtime only.
+  - These shell paths must not directly import or mount `DataInputPanel`, `Prompter`, or `FloatingToolbar`.
+- Module mount boundary:
+  - `features/layout/windowing/panelAdapters.tsx` is the functional mount owner for `DataInputPanel`, `Prompter`, and `FloatingToolbar` in window-host mode.
+- Policy/runtime contract boundary:
+  - `core/config/panel-policy.ts` defines panel behavior defaults and role overrides.
+  - `features/extensions/ui/registerCoreSlots.ts` publishes panel slot/launcher contracts consumed by shell runtime without hardcoded panel mounts.
+- Freeze guard:
+  - `scripts/check_v10_layout_hardcoding_freeze.sh` enforces the hardcoded-mount freeze in shell paths (rg-based, `VERIFY_STAGE=mid` gate).
 
 ---
 
@@ -573,6 +589,9 @@ Located in `features/extensions/`:
 - Command write-path baseline gate:
   - `scripts/check_v10_command_write_path.sh`
   - budget source: `codex_tasks/workflow/command_path_budget.env`
+- Layout hardcoding freeze guard:
+  - `scripts/check_v10_layout_hardcoding_freeze.sh`
+  - fails on direct `DataInputPanel`/`Prompter`/`FloatingToolbar` imports or JSX mounts inside shell paths.
 - Public feature-flag governance gate:
   - `scripts/check_v10_feature_flag_registry.sh`
   - registry source: `codex_tasks/workflow/feature_flag_registry.env`

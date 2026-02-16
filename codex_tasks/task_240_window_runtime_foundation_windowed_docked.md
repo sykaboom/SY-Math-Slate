@@ -1,6 +1,6 @@
 # Task 240: Window Runtime Foundation (Windowed/Docked)
 
-Status: PENDING
+Status: COMPLETED
 Owner: Codex (spec / review / implementation)
 Target: v10/
 Date: 2026-02-16
@@ -44,7 +44,10 @@ Out of scope:
   - No `window` global assignments.
 - Compatibility:
   - Must consume panel behavior contract from `task_237`.
-  - Must conform to SVG/redline constraints from `task_238`.
+  - Must conform to the canonical SVG/redline pack from `task_238`:
+    - `design_drafts/layout_task238_window_shell_master.svg`
+    - `design_drafts/layout_task238_redlines.json`
+    - `design_drafts/layout_task238_redlines.md`
 
 ---
 
@@ -69,15 +72,25 @@ Out of scope:
 
 - [x] Applies: YES
 - If YES, fill all items:
-  - [ ] SVG path in `design_drafts/`
-  - [ ] SVG has explicit `viewBox` (width / height / ratio)
-  - [ ] Tablet viewport checks considered:
+  - [x] SVG path in `design_drafts/`
+  - [x] SVG has explicit `viewBox` (width / height / ratio)
+  - [x] Tablet viewport checks considered:
     - 768x1024 / 820x1180 / 1024x768 / 1180x820
-  - [ ] Numeric redlines recorded in spec
-  - [ ] Codex verified SVG exists before implementation
+  - [x] Numeric redlines recorded in spec
+  - [x] Codex verified SVG exists before implementation
 
 Status note:
-- BLOCKED until `task_238` is completed and references are copied into this spec before coding.
+- UNBLOCKED: `task_238` canonical pack is finalized and referenced below for implementation consumption.
+
+Task 238 layout input (authoritative):
+- master SVG: `design_drafts/layout_task238_window_shell_master.svg` (`viewBox="0 0 1440 1080"`)
+- viewport SVGs: `design_drafts/layout_task238_768x1024.svg`, `design_drafts/layout_task238_820x1180.svg`, `design_drafts/layout_task238_1024x768.svg`, `design_drafts/layout_task238_1180x820.svg`
+- redlines: `design_drafts/layout_task238_redlines.json` and `design_drafts/layout_task238_redlines.md`
+- runtime constraints consumed from redlines:
+  - DataInput min/max: `320x240` / `640x800`
+  - ToolbarAux min/max: `240x56` / `480x56`
+  - drag clamp formulas: `minX/minY/maxX/maxY` from `clampBounds`
+  - launcher safe anchor: left-bottom safe region with `24px` x/y inset and `56x56` target
 
 ---
 
@@ -116,11 +129,11 @@ If NO:
 
 ## Acceptance Criteria (Base Required)
 
-- [ ] AC-1: Runtime supports `displayMode: 'windowed' | 'docked'` with deterministic render path.
-- [ ] AC-2: `movable=false` disables drag; `movable=true` allows drag within clamped bounds.
-- [ ] AC-3: Reset action restores `defaultPosition` from contract and clamps to viewport.
-- [ ] AC-4: Window runtime state is serializable/JSON-safe and free from DOM references.
-- [ ] AC-5: `VERIFY_STAGE=mid bash scripts/run_repo_verifications.sh` passes.
+- [x] AC-1: Runtime supports `displayMode: 'windowed' | 'docked'` with deterministic render path.
+- [x] AC-2: `movable=false` disables drag; `movable=true` allows drag within clamped bounds.
+- [x] AC-3: Reset action restores `defaultPosition` from contract and clamps to viewport.
+- [x] AC-4: Window runtime state is serializable/JSON-safe and free from DOM references.
+- [x] AC-5: `VERIFY_STAGE=mid bash scripts/run_repo_verifications.sh` passes.
 
 ---
 
@@ -156,7 +169,8 @@ If NO:
 ## Approval Gate (Base Required)
 
 - [x] Spec self-reviewed by Codex
-- [ ] Explicit user approval received (or delegated chain approval reference)
+- [x] Explicit user approval received (or delegated chain approval reference)
+  - Approval reference: user instruction assigning Task 240 (Wave 3) with scope-locked implementation.
 
 > Implementation MUST NOT begin until both boxes are checked.
 
@@ -164,36 +178,46 @@ If NO:
 
 ## Implementation Log (Codex fills)
 
-Status: PENDING
+Status: COMPLETED
 
 Changed files:
-- (to be filled)
+- `codex_tasks/task_240_window_runtime_foundation_windowed_docked.md`
+- `v10/src/features/layout/windowing/windowRuntime.types.ts`
+- `v10/src/features/layout/windowing/windowRuntime.ts`
+- `v10/src/features/layout/windowing/useWindowRuntime.ts`
+- `v10/src/features/layout/windowing/WindowHost.tsx`
+- `v10/src/features/store/useChromeStore.ts`
 
 Commands run (only if user asked or required by spec):
-- (to be filled)
+- `VERIFY_STAGE=mid bash scripts/run_repo_verifications.sh`
 
 ## Gate Results (Codex fills)
 
 - Lint:
-  - N/A
+  - PASS (`scripts/check_v10_changed_lint.sh` via `VERIFY_STAGE=mid bash scripts/run_repo_verifications.sh`)
 - Build:
   - N/A
 - Script checks:
-  - N/A
+  - PASS (`VERIFY_STAGE=mid bash scripts/run_repo_verifications.sh`)
 
 ## Failure Classification (Codex fills when any gate fails)
 
 - Pre-existing failures:
-  - N/A
+  - None in required gates.
 - Newly introduced failures:
-  - N/A
+  - None (intermediate local lint iteration issues were resolved before final gate run).
 - Blocking:
   - NO
 - Mitigation:
-  - N/A
+  - Not required.
 
 Manual verification notes:
-- (to be filled)
+- AC-1 PASS: `windowRuntime.types.ts`, `windowRuntime.ts`, and `useWindowRuntime.ts` provide deterministic `windowed|docked` runtime state and render ordering primitives.
+- AC-2 PASS: `moveWindowRuntimePanelTo/moveWindowRuntimePanelBy` enforce `displayMode === "windowed" && movable === true` before moving, with clamp formulas from Task 238 redlines.
+- AC-3 PASS: `resetWindowRuntimePanel` restores `defaultPosition` from Task 237 behavior contract and clamps to runtime bounds.
+- AC-4 PASS: runtime/store data surfaces are JSON-safe (`Record<string, { position, zIndex }>` in `useChromeStore` and plain-object runtime state; no DOM refs).
+- AC-5 PASS: `VERIFY_STAGE=mid bash scripts/run_repo_verifications.sh` completed successfully.
 
 Notes:
-- (to be filled)
+- Scope respected: no AppLayout cutover and no DataInput/FloatingToolbar internal migration in this task.
+- No new dependencies introduced.

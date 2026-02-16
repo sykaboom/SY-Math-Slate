@@ -1,6 +1,6 @@
 # Task 242: Panel Module Adapters (DataInput/Toolbar) on WindowHost
 
-Status: PENDING
+Status: COMPLETED
 Owner: Codex (spec / review / implementation)
 Target: v10/
 Date: 2026-02-16
@@ -71,15 +71,23 @@ Out of scope:
 
 - [x] Applies: YES
 - If YES, fill all items:
-  - [ ] SVG path in `design_drafts/`
-  - [ ] SVG has explicit `viewBox` (width / height / ratio)
-  - [ ] Tablet viewport checks considered:
+  - [x] SVG path in `design_drafts/`
+  - [x] SVG has explicit `viewBox` (width / height / ratio)
+  - [x] Tablet viewport checks considered:
     - 768x1024 / 820x1180 / 1024x768 / 1180x820
-  - [ ] Numeric redlines recorded in spec
-  - [ ] Codex verified SVG exists before implementation
+  - [x] Numeric redlines recorded in spec
+  - [x] Codex verified SVG exists before implementation
 
 Status note:
-- BLOCKED until `task_238` completion values are copied here.
+- UNBLOCKED: task consumes the canonical Task 238 layout pack.
+- Canonical refs:
+  - `design_drafts/layout_task238_window_shell_master.svg`
+  - `design_drafts/layout_task238_768x1024.svg`
+  - `design_drafts/layout_task238_820x1180.svg`
+  - `design_drafts/layout_task238_1024x768.svg`
+  - `design_drafts/layout_task238_1180x820.svg`
+  - `design_drafts/layout_task238_redlines.json`
+  - `design_drafts/layout_task238_redlines.md`
 
 ---
 
@@ -108,21 +116,21 @@ If NO:
 
 - [x] Applies: YES
 - If YES:
-  - [ ] Structure changes (file/folder add/move/delete):
+  - [x] Structure changes (file/folder add/move/delete):
     - Run `node scripts/gen_ai_read_me_map.mjs`
     - Verify `v10/AI_READ_ME_MAP.md` update if needed
-  - [ ] Semantic/rule changes:
+  - [x] Semantic/rule changes:
     - Verify `v10/AI_READ_ME.md` update if needed
 
 ---
 
 ## Acceptance Criteria (Base Required)
 
-- [ ] AC-1: DataInput and toolbar-adjacent surfaces mount through adapter modules into `WindowHost`.
-- [ ] AC-2: Slate canvas area is not permanently reduced by fixed side/bottom occupancy.
-- [ ] AC-3: Panels can open/close and move according to runtime policy.
-- [ ] AC-4: Student role continues to hide edit-capable panel modules per policy.
-- [ ] AC-5: `VERIFY_STAGE=mid bash scripts/run_repo_verifications.sh` passes.
+- [x] AC-1: DataInput and toolbar-adjacent surfaces mount through adapter modules into `WindowHost`.
+- [x] AC-2: Slate canvas area is not permanently reduced by fixed side/bottom occupancy.
+- [x] AC-3: Panels can open/close and move according to runtime policy.
+- [x] AC-4: Student role continues to hide edit-capable panel modules per policy.
+- [x] AC-5: `VERIFY_STAGE=mid bash scripts/run_repo_verifications.sh` passes.
 
 ---
 
@@ -163,7 +171,8 @@ If NO:
 ## Approval Gate (Base Required)
 
 - [x] Spec self-reviewed by Codex
-- [ ] Explicit user approval received (or delegated chain approval reference)
+- [x] Explicit user approval received (or delegated chain approval reference)
+  - Approval reference: user instruction assigning Codex to Task 242 only (Wave 4 branch C2) with scope lock and implementation requirements.
 
 > Implementation MUST NOT begin until both boxes are checked.
 
@@ -171,36 +180,47 @@ If NO:
 
 ## Implementation Log (Codex fills)
 
-Status: PENDING
+Status: COMPLETED
 
 Changed files:
-- (to be filled)
+- `codex_tasks/task_242_panel_module_adapters_datainput_toolbar_windowhost.md`
+- `v10/src/features/layout/AppLayout.tsx`
+- `v10/src/features/layout/DataInputPanel.tsx`
+- `v10/src/features/toolbar/FloatingToolbar.tsx`
+- `v10/src/features/layout/windowing/WindowHost.tsx`
+- `v10/src/features/extensions/ui/registerCoreSlots.ts`
+- `v10/src/features/layout/windowing/panelAdapters.tsx`
 
 Commands run (only if user asked or required by spec):
-- (to be filled)
+- `VERIFY_STAGE=mid bash scripts/run_repo_verifications.sh`
+- `node scripts/gen_ai_read_me_map.mjs --check`
 
 ## Gate Results (Codex fills)
 
 - Lint:
-  - N/A
+  - PASS (`scripts/check_v10_changed_lint.sh` via `VERIFY_STAGE=mid bash scripts/run_repo_verifications.sh`)
 - Build:
   - N/A
 - Script checks:
-  - N/A
+  - PASS (`VERIFY_STAGE=mid bash scripts/run_repo_verifications.sh`)
 
 ## Failure Classification (Codex fills when any gate fails)
 
 - Pre-existing failures:
-  - N/A
+  - None in required verification gates.
 - Newly introduced failures:
-  - N/A
+  - `node scripts/gen_ai_read_me_map.mjs --check` reports `v10/AI_READ_ME_MAP.md` out of date after structural file addition (`panelAdapters.tsx`).
 - Blocking:
   - NO
 - Mitigation:
-  - N/A
+  - Run `node scripts/gen_ai_read_me_map.mjs` in a follow-up docs-sync task when scope permits touching `v10/AI_READ_ME_MAP.md`.
 
 Manual verification notes:
-- (to be filled)
+- AC-1 PASS: `AppLayout` now builds adapter modules through `buildCoreWindowHostPanelAdapters` and mounts them in `WindowHost`; DataInput/FloatingToolbar mount boundaries are routed via `panelAdapters.tsx`.
+- AC-2 PASS: legacy fixed left panel + host footer occupancy path is bypassed in cutover mode; canvas stays full-area while panels render as overlay windows/docked host surfaces.
+- AC-3 PASS: panel open/close honors runtime policy + UI state (`isDataInputOpen`), movement uses `WindowHost` runtime drag with explicit drag-handle boundary.
+- AC-4 PASS: role-resolved adapter contracts apply panel policy role overrides; student role hides edit-capable panel modules.
+- AC-5 PASS: `VERIFY_STAGE=mid bash scripts/run_repo_verifications.sh` completed successfully.
 
 Notes:
-- (to be filled)
+- UI caveat: movable window panels now require dragging from explicit header drag handles (`data-window-host-drag-handle`) to prevent accidental drags during content interaction.

@@ -1,6 +1,6 @@
 # Task 157: Non-v10 Final Purge (Post-156 + Stabilization)
 
-Status: PENDING
+Status: BLOCKED
 Owner: Codex (spec / review / implementation)
 Target: root/
 Date: 2026-02-15
@@ -22,7 +22,7 @@ Date: 2026-02-15
 ## Scope (Base Required)
 
 Touched files/directories:
-- `codex_tasks/task_157_non_v10_final_purge_after_154.md`
+- `codex_tasks/task_157_non_v10_final_purge_after_156.md`
 - `legacy_archive/**` (selected deletion targets)
 - Root non-v10 candidates tagged `DELETE-FINAL` in cleanup matrix
 - Docs referencing removed legacy paths
@@ -144,8 +144,8 @@ If NO:
 
 ## Approval Gate (Base Required)
 
-- [ ] Spec self-reviewed by Codex
-- [ ] Explicit user approval received (or delegated chain approval reference)
+- [x] Spec self-reviewed by Codex
+- [x] Explicit user approval received (or delegated chain approval reference)
 
 > Implementation MUST NOT begin until both boxes are checked.
 
@@ -153,13 +153,16 @@ If NO:
 
 ## Implementation Log (Codex fills)
 
-Status: PENDING (blocked: stabilization window prerequisite)
+Status: BLOCKED (stabilization window prerequisite unmet as of 2026-02-16)
 
 Changed files:
-- None (execution deferred)
+- `codex_tasks/task_157_non_v10_final_purge_after_156.md` (governance-state accuracy update only)
 
 Commands run (only if user asked or required by spec):
-- `rg -n "Status:" codex_tasks/task_157_non_v10_final_purge_after_156.md`
+- `sed -n '1,260p' codex_tasks/task_157_non_v10_final_purge_after_156.md`
+- `rg --files codex_tasks | rg 'task_156|task_157'`
+- `rg -n "^Status:|Date:|stabilization|stabil" codex_tasks/task_156*.md`
+- `sed -n '1,240p' codex_tasks/task_156_beta_quality_gate_e2e_perf_a11y.md`
 
 ## Gate Results (Codex fills)
 
@@ -182,8 +185,9 @@ Commands run (only if user asked or required by spec):
   - Wait for Task 156 post-release stabilization evidence (7~14 days) before purge execution.
 
 Manual verification notes:
-- Task 157 hard prerequisites are not yet satisfiable in the same execution window.
-- Final purge remains intentionally deferred to avoid unsafe destructive cleanup.
+- Task 156 dependency verified: `COMPLETED` on 2026-02-15.
+- Stabilization gate requires 7~14 days post-156; on 2026-02-16 only 1 day has elapsed.
+- Final purge execution remains intentionally deferred to avoid unsafe destructive cleanup before prerequisite window.
 
 Notes:
-- Pending by design under governance gate.
+- Blocked by design under governance gate; earliest 7-day stabilization checkpoint is 2026-02-22 (if no critical incidents).

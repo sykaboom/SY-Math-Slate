@@ -1,37 +1,40 @@
 "use client";
 
-import { useEffect, useRef, type ReactNode } from "react";
-import dynamic from "next/dynamic";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 
+import { CORE_PANEL_POLICY_IDS } from "@core/config/panel-policy";
 import { CanvasStage } from "@features/canvas/CanvasStage";
 import { PasteHelperModal } from "@features/canvas/PasteHelperModal";
 import { dispatchCommand } from "@core/engine/commandBus";
 import {
   ROLE_POLICY_ACTIONS,
   canAccessLayoutVisibilityForRole,
+  resolveExecutionRole,
   resolveLegacyLayoutVisibilityForRole,
 } from "@core/config/rolePolicy";
-import { DataInputPanel } from "@features/layout/DataInputPanel";
-import { Prompter } from "@features/layout/Prompter";
+import { ExtensionSlot } from "@features/extensions/ui/ExtensionSlot";
+import {
+  listCorePanelLauncherContract,
+} from "@features/extensions/ui/registerCoreSlots";
 import { PlayerBar } from "@features/layout/PlayerBar";
 import { useTabletShellProfile } from "@features/layout/useTabletShellProfile";
-import { ExtensionSlot } from "@features/extensions/ui/ExtensionSlot";
+import {
+  PanelLauncher,
+  type PanelLauncherEntry,
+} from "@features/layout/windowing/PanelLauncher";
+import { buildCoreWindowHostPanelAdapters } from "@features/layout/windowing/panelAdapters";
+import { WindowHost } from "@features/layout/windowing/WindowHost";
 import { ModStudioShell } from "@features/mod-studio";
 import { reportPolicyBooleanDiffBatch } from "@features/policy/policyShadow";
+import { useResolvedPanelPolicy } from "@features/policy/useResolvedPanelPolicy";
 import { useAuthoringShortcuts } from "@features/shortcuts/useAuthoringShortcuts";
 import { useAsymmetricSessionSync } from "@features/sync/useAsymmetricSessionSync";
 import { Button } from "@ui/components/button";
+import { useChromeStore } from "@features/store/useChromeStore";
 import { useLocalStore } from "@features/store/useLocalStore";
 import { useUIStore } from "@features/store/useUIStoreBridge";
 import { Maximize2, Minimize2, Minus, MonitorPlay, Plus, ZoomIn } from "lucide-react";
-
-const FloatingToolbar = dynamic(
-  () =>
-    import("@features/toolbar/FloatingToolbar").then(
-      (mod) => mod.FloatingToolbar
-    ),
-  { ssr: false }
-);
+import type { WindowRuntimeRect } from "@features/layout/windowing/windowRuntime.types";
 
 interface AppLayoutProps {
   children?: ReactNode;
@@ -45,9 +48,22 @@ type LayoutRoleVisibilityPolicy = {
   showPasteHelperModal: boolean;
 };
 
+const WINDOW_HOST_CLAMP_INSET_PX = 16;
+
+const createDefaultWindowHostClampBounds = (): WindowRuntimeRect => ({
+  x: WINDOW_HOST_CLAMP_INSET_PX,
+  y: WINDOW_HOST_CLAMP_INSET_PX,
+  width: 960,
+  height: 640,
+});
+
 export function AppLayout({ children }: AppLayoutProps) {
   useAsymmetricSessionSync();
+  useResolvedPanelPolicy();
   const layoutRootRef = useRef<HTMLDivElement | null>(null);
+  const windowHostViewportRef = useRef<HTMLDivElement | null>(null);
+  const [windowHostClampBounds, setWindowHostClampBounds] =
+    useState<WindowRuntimeRect>(createDefaultWindowHostClampBounds);
   const tabletShellProfile = useTabletShellProfile();
   const role = useLocalStore((state) => state.role);
   const {
@@ -64,6 +80,12 @@ export function AppLayout({ children }: AppLayoutProps) {
     enterFullscreenInkFallback,
     exitFullscreenInk,
   } = useUIStore();
+  const windowRuntimePanelOpenState = useChromeStore(
+    (state) => state.windowRuntimePanelOpenState
+  );
+  const setWindowRuntimePanelOpenState = useChromeStore(
+    (state) => state.setWindowRuntimePanelOpenState
+  );
   const isPresentation = viewMode === "presentation";
   const isNativeFullscreen = fullscreenInkMode === "native";
   const isAppFullscreen = fullscreenInkMode === "app";
@@ -105,8 +127,6 @@ export function AppLayout({ children }: AppLayoutProps) {
   const zoomLabel = isOverviewMode ? Math.round(overviewZoom * 100) : 100;
   const useCompactHorizontalInsets =
     tabletShellProfile.shouldUseCompactHorizontalInsets;
-  const shouldOverlayLeftPanel =
-    useLayoutSlotCutover && tabletShellProfile.shouldOverlayLeftPanel;
   const bottomChromeStyle = tabletShellProfile.shouldPadBottomChromeWithSafeArea
     ? {
         paddingBottom: "calc(env(safe-area-inset-bottom) + 8px)",
@@ -166,6 +186,106 @@ export function AppLayout({ children }: AppLayoutProps) {
     !isPresentation && legacyRoleVisibility.showPasteHelperModal;
   const showPasteHelperModalPolicy =
     !isPresentation && roleVisibilityPolicy.showPasteHelperModal;
+  const corePanelLauncherContractById = useMemo(() => {
+    const map = new Map<
+      string,
+      ReturnType<typeof listCorePanelLauncherContract>[number]
+    >();
+    for (const contract of listCorePanelLauncherContract()) {
+      map.set(contract.panelId, contract);
+    }
+    return map;
+  }, []);
+  const runtimeRole = resolveExecutionRole(role);
+  const windowHostPanelModules = useMemo(
+    () =>
+      buildCoreWindowHostPanelAdapters({
+        role: runtimeRole,
+        layoutSlotCutoverEnabled: useLayoutSlotCutover,
+        showDataInputPanel: showDataInputPanelPolicy,
+        showHostToolchips: showHostToolchipsPolicy,
+        isDataInputOpen,
+        closeDataInput,
+        viewportSize: {
+          width: windowHostClampBounds.width,
+          height: windowHostClampBounds.height,
+        },
+      }),
+    [
+      closeDataInput,
+      isDataInputOpen,
+      runtimeRole,
+      showDataInputPanelPolicy,
+      showHostToolchipsPolicy,
+      useLayoutSlotCutover,
+      windowHostClampBounds.height,
+      windowHostClampBounds.width,
+    ]
+  );
+  const windowHostPanels = useMemo(
+    () =>
+      windowHostPanelModules.map((panel) => {
+        if (panel.panelId === CORE_PANEL_POLICY_IDS.DATA_INPUT) {
+          return {
+            ...panel,
+            isOpen: isDataInputOpen,
+          };
+        }
+        return {
+          ...panel,
+          isOpen: windowRuntimePanelOpenState[panel.panelId] === true,
+        };
+      }),
+    [isDataInputOpen, windowHostPanelModules, windowRuntimePanelOpenState]
+  );
+  const useWindowHostPanels =
+    useLayoutSlotCutover && windowHostPanels.length > 0;
+  const shouldOverlayLeftPanel = !useWindowHostPanels && showDataInputPanelPolicy;
+  const mainContentClass = "relative flex h-full w-full min-h-0 flex-1";
+  const shouldRenderHostFooter = showHostToolchipsPolicy;
+  const shouldRenderBottomChrome =
+    !isPresentation &&
+    (showStudentPlayerBarPolicy || shouldRenderHostFooter);
+  const panelLauncherEntries = useMemo<PanelLauncherEntry[]>(
+    () =>
+      useWindowHostPanels
+        ? windowHostPanels.flatMap((panel) => {
+            const launcherContract = corePanelLauncherContractById.get(panel.panelId);
+            if (!launcherContract) return [];
+            return [
+              {
+                panelId: panel.panelId,
+                launcherId: launcherContract.launcherId,
+                title: launcherContract.title,
+                description: launcherContract.description,
+                icon: launcherContract.icon,
+                isOpen: panel.isOpen === true,
+              },
+            ];
+          })
+        : [],
+    [corePanelLauncherContractById, useWindowHostPanels, windowHostPanels]
+  );
+  const shouldRenderPanelLauncher =
+    !isPresentation &&
+    !isFullscreenInkActive &&
+    panelLauncherEntries.length > 0;
+  const windowHostDockedContainerClass =
+    tabletShellProfile.shouldPadBottomChromeWithSafeArea
+      ? "pointer-events-none absolute inset-x-0 bottom-2 z-20 flex flex-col items-center gap-2 px-3 pb-[calc(env(safe-area-inset-bottom)+8px)] sm:px-4 xl:px-6"
+      : "pointer-events-none absolute inset-x-0 bottom-3 z-20 flex flex-col items-center gap-2 px-3 sm:px-4 xl:px-6";
+
+  const handleToggleLauncherPanel = (panelId: string, nextOpen: boolean) => {
+    if (panelId === CORE_PANEL_POLICY_IDS.DATA_INPUT) {
+      if (nextOpen) {
+        openDataInput();
+      } else {
+        closeDataInput();
+      }
+      return;
+    }
+    setWindowRuntimePanelOpenState(panelId, nextOpen);
+  };
 
   const handleHeaderZoom = (delta: number) => {
     if (!isOverviewMode) return;
@@ -225,6 +345,55 @@ export function AppLayout({ children }: AppLayoutProps) {
     if (!isDataInputOpen || !isFullscreenInkActive) return;
     exitFullscreenInk();
   }, [exitFullscreenInk, isDataInputOpen, isFullscreenInkActive]);
+
+  useEffect(() => {
+    if (!useWindowHostPanels) return;
+
+    const viewportNode = windowHostViewportRef.current;
+    if (!viewportNode) return;
+
+    const updateClampBounds = () => {
+      const rect = viewportNode.getBoundingClientRect();
+      const nextWidth = Math.max(
+        320,
+        Math.round(rect.width) - WINDOW_HOST_CLAMP_INSET_PX * 2
+      );
+      const nextHeight = Math.max(
+        240,
+        Math.round(rect.height) - WINDOW_HOST_CLAMP_INSET_PX * 2
+      );
+      setWindowHostClampBounds((previous) => {
+        if (
+          previous.x === WINDOW_HOST_CLAMP_INSET_PX &&
+          previous.y === WINDOW_HOST_CLAMP_INSET_PX &&
+          previous.width === nextWidth &&
+          previous.height === nextHeight
+        ) {
+          return previous;
+        }
+        return {
+          x: WINDOW_HOST_CLAMP_INSET_PX,
+          y: WINDOW_HOST_CLAMP_INSET_PX,
+          width: nextWidth,
+          height: nextHeight,
+        };
+      });
+    };
+
+    updateClampBounds();
+
+    if (typeof ResizeObserver === "function") {
+      const observer = new ResizeObserver(() => {
+        updateClampBounds();
+      });
+      observer.observe(viewportNode);
+      return () => observer.disconnect();
+    }
+
+    if (typeof window === "undefined") return;
+    window.addEventListener("resize", updateClampBounds);
+    return () => window.removeEventListener("resize", updateClampBounds);
+  }, [useWindowHostPanels]);
 
   useEffect(() => {
     reportPolicyBooleanDiffBatch([
@@ -319,16 +488,6 @@ export function AppLayout({ children }: AppLayoutProps) {
             </div>
             <div className="ml-auto flex items-center gap-1.5 sm:gap-2.5">
               <Button
-                variant={isDataInputOpen ? "default" : "outline"}
-                className="h-11 min-w-11 border-white/15 bg-white/5 px-3 text-white/80 hover:bg-white/10 hover:text-white"
-                onClick={openDataInput}
-                aria-label="입력 편집실 열기"
-                title="입력 편집실 열기"
-                data-layout-id="action_open_drafting_room"
-              >
-                입력
-              </Button>
-              <Button
                 variant="outline"
                 size="icon"
                 className="h-11 w-11 border-white/15 bg-white/5 text-white/80 hover:bg-white/10 hover:text-white"
@@ -393,38 +552,39 @@ export function AppLayout({ children }: AppLayoutProps) {
       <main
         className={mainShellClass}
       >
-        <div className="flex h-full w-full min-h-0 flex-1 gap-3 xl:gap-4">
+        <div className={mainContentClass}>
           <div data-layout-id="region_canvas_primary" className="min-w-0 flex-1">
             <CanvasStage>{children}</CanvasStage>
           </div>
-          {showDataInputPanelPolicy &&
-            (useLayoutSlotCutover ? (
-              <aside
-                data-layout-id="region_left_panel_slot"
-                className={
-                  shouldOverlayLeftPanel
-                    ? "pointer-events-none absolute inset-y-0 right-0 z-30 flex w-full max-w-full justify-end"
-                    : "w-full max-w-[420px] min-w-[300px]"
-                }
-              >
-                <div
-                  data-extension-slot-host="left-panel"
-                  className={
-                    shouldOverlayLeftPanel
-                      ? "pointer-events-auto h-full w-full max-w-[min(420px,100vw)]"
-                      : "h-full"
-                  }
-                >
-                  <ExtensionSlot slot="left-panel" />
-                </div>
-              </aside>
-            ) : (
-              <DataInputPanel />
-            ))}
+          {shouldOverlayLeftPanel ? (
+            <aside
+              data-layout-id="region_left_panel_overlay"
+              className="pointer-events-none absolute inset-y-0 left-0 z-20 w-full max-w-[min(420px,92vw)]"
+            >
+              <div className="pointer-events-auto h-full w-full">
+                <ExtensionSlot slot="left-panel" />
+              </div>
+            </aside>
+          ) : null}
+          {useWindowHostPanels ? (
+            <div
+              ref={windowHostViewportRef}
+              data-layout-id="region_window_host"
+              className="pointer-events-none absolute inset-0 z-30"
+            >
+              <WindowHost
+                panels={windowHostPanels}
+                clampBounds={windowHostClampBounds}
+                className="pointer-events-none h-full w-full"
+                dockedContainerClassName={windowHostDockedContainerClass}
+                windowLayerClassName="absolute inset-0 z-30"
+              />
+            </div>
+          ) : null}
         </div>
       </main>
 
-      {!isPresentation && (
+      {shouldRenderBottomChrome && (
         <footer
           data-layout-id="region_chrome_bottom"
           style={bottomChromeStyle}
@@ -438,7 +598,7 @@ export function AppLayout({ children }: AppLayoutProps) {
             <div className="pointer-events-auto flex w-full justify-center">
               <PlayerBar readOnly />
             </div>
-          ) : showHostToolchipsPolicy ? (
+          ) : shouldRenderHostFooter ? (
             <div
               data-layout-id="region_toolchips"
               className={
@@ -447,21 +607,9 @@ export function AppLayout({ children }: AppLayoutProps) {
                   : "pointer-events-auto flex w-full max-w-[min(1120px,96vw)] flex-col gap-2 xl:max-w-[min(1120px,94vw)]"
               }
             >
-              {useLayoutSlotCutover ? (
-                <div data-extension-slot-host="toolbar-bottom" className="flex flex-col gap-2">
-                  <ExtensionSlot slot="toolbar-bottom" />
-                </div>
-              ) : (
-                <>
-                  <div className={isFullscreenInkActive ? "hidden" : "hidden xl:block"}>
-                    <Prompter />
-                  </div>
-                  <div data-extension-slot-host="toolbar-bottom" className="flex flex-col gap-2">
-                    <ExtensionSlot slot="toolbar-bottom" />
-                  </div>
-                  <FloatingToolbar />
-                </>
-              )}
+              <div data-extension-slot-host="toolbar-bottom" className="flex flex-col gap-2">
+                <ExtensionSlot slot="toolbar-bottom" />
+              </div>
             </div>
           ) : null}
         </footer>
@@ -473,6 +621,20 @@ export function AppLayout({ children }: AppLayoutProps) {
         >
           <PlayerBar readOnly={isPolicyStudentRole} />
         </footer>
+      )}
+      {shouldRenderPanelLauncher && (
+        <div className="pointer-events-none fixed inset-0 z-40">
+          <div
+            className="pointer-events-auto absolute left-6"
+            style={{ bottom: "calc(env(safe-area-inset-bottom) + 24px)" }}
+            data-layout-id="anchor_panel_launcher"
+          >
+            <PanelLauncher
+              entries={panelLauncherEntries}
+              onTogglePanelOpen={handleToggleLauncherPanel}
+            />
+          </div>
+        </div>
       )}
       {showPasteHelperModalPolicy && <PasteHelperModal />}
       {isFullscreenInkActive && !isPresentation && (

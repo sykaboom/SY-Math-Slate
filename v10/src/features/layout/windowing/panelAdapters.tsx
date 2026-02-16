@@ -1,0 +1,256 @@
+"use client";
+
+import type { ReactNode } from "react";
+
+import { CORE_PANEL_POLICY_IDS, type CorePanelPolicyId } from "@core/config/panel-policy";
+import { resolveExecutionRole } from "@core/config/rolePolicy";
+import {
+  getCoreSlotPanelContract,
+  type CoreSlotPanelContract,
+} from "@features/extensions/ui/registerCoreSlots";
+import { DataInputPanel } from "@features/layout/DataInputPanel";
+import { Prompter } from "@features/layout/Prompter";
+import { FloatingToolbar } from "@features/toolbar/FloatingToolbar";
+import type {
+  PanelBehaviorContract,
+  PanelRoleOverride,
+  PanelRuntimeRole,
+} from "./panelBehavior.types";
+import type {
+  WindowHostPanelModule,
+  WindowHostPanelRenderContext,
+} from "./WindowHost";
+
+const PANEL_HOST_ACTION_BUTTON_CLASS =
+  "inline-flex h-7 items-center rounded-md border border-white/15 bg-black/35 px-2 text-[10px] font-semibold uppercase tracking-[0.12em] text-white/70 transition hover:border-white/30 hover:text-white";
+
+const clamp = (value: number, min: number, max: number): number => {
+  if (value <= min) return min;
+  if (value >= max) return max;
+  return value;
+};
+
+const normalizeViewportSize = (value: {
+  width: number;
+  height: number;
+}): {
+  width: number;
+  height: number;
+} => ({
+  width: Math.max(320, Math.trunc(Number.isFinite(value.width) ? value.width : 320)),
+  height: Math.max(240, Math.trunc(Number.isFinite(value.height) ? value.height : 240)),
+});
+
+const resolvePanelBehaviorForRole = (
+  behavior: PanelBehaviorContract,
+  role: PanelRuntimeRole
+): { behavior: PanelBehaviorContract; visible: boolean } => {
+  const roleOverride: PanelRoleOverride | undefined = behavior.roleOverride?.[role];
+
+  const nextBehavior: PanelBehaviorContract = {
+    ...behavior,
+    displayMode: roleOverride?.displayMode ?? behavior.displayMode,
+    movable: roleOverride?.movable ?? behavior.movable,
+    defaultPosition: {
+      x: behavior.defaultPosition.x,
+      y: behavior.defaultPosition.y,
+    },
+    rememberPosition: behavior.rememberPosition,
+    defaultOpen: roleOverride?.defaultOpen ?? behavior.defaultOpen,
+  };
+
+  if (behavior.roleOverride !== undefined) {
+    nextBehavior.roleOverride = behavior.roleOverride;
+  }
+
+  return {
+    behavior: nextBehavior,
+    visible: roleOverride?.visible ?? true,
+  };
+};
+
+type ResolvedCorePanelContract = CoreSlotPanelContract & {
+  behavior: PanelBehaviorContract;
+  visible: boolean;
+};
+
+const resolveCorePanelContract = (
+  panelId: CorePanelPolicyId,
+  role: PanelRuntimeRole,
+  layoutSlotCutoverEnabled: boolean
+): ResolvedCorePanelContract | null => {
+  const contract = getCoreSlotPanelContract(panelId);
+  if (!contract) return null;
+
+  if (
+    contract.activation === "layout-slot-cutover" &&
+    !layoutSlotCutoverEnabled
+  ) {
+    return null;
+  }
+
+  const resolved = resolvePanelBehaviorForRole(contract.behavior, role);
+  return {
+    ...contract,
+    behavior: resolved.behavior,
+    visible: resolved.visible,
+  };
+};
+
+const resolveDataInputSize = (viewportSize: { width: number; height: number }) => ({
+  width: clamp(Math.round(viewportSize.width * 0.38), 320, 640),
+  height: clamp(Math.round(viewportSize.height * 0.74), 320, 800),
+});
+
+const resolveToolbarSize = (viewportSize: { width: number; height: number }) => ({
+  width: clamp(Math.round(viewportSize.width - 32), 320, 1120),
+  height: clamp(Math.round(viewportSize.height * 0.2), 112, 180),
+});
+
+const resolvePrompterSize = (viewportSize: { width: number; height: number }) => ({
+  width: clamp(Math.round(viewportSize.width * 0.62), 320, 920),
+  height: 92,
+});
+
+type WindowPanelShellProps = {
+  title: string;
+  context: WindowHostPanelRenderContext;
+  onRequestClose?: () => void;
+  children: ReactNode;
+};
+
+const WindowPanelShell = ({
+  title,
+  context,
+  onRequestClose,
+  children,
+}: WindowPanelShellProps) => {
+  return (
+    <section className="flex h-full w-full min-h-0 flex-col overflow-hidden rounded-2xl border border-white/15 bg-black/45 shadow-[0_18px_48px_rgba(0,0,0,0.5)]">
+      <header className="flex items-center gap-2 border-b border-white/10 bg-black/35 px-3 py-2">
+        <div
+          data-window-host-drag-handle="true"
+          className="min-w-0 flex-1 cursor-move select-none touch-none text-[10px] font-semibold uppercase tracking-[0.16em] text-white/65"
+        >
+          {title}
+        </div>
+        <button
+          type="button"
+          className={PANEL_HOST_ACTION_BUTTON_CLASS}
+          onClick={context.reset}
+        >
+          Reset
+        </button>
+        {onRequestClose ? (
+          <button
+            type="button"
+            className={PANEL_HOST_ACTION_BUTTON_CLASS}
+            onClick={onRequestClose}
+          >
+            Close
+          </button>
+        ) : null}
+      </header>
+      <div className="min-h-0 flex-1">{children}</div>
+    </section>
+  );
+};
+
+export type CoreWindowHostPanelAdapterOptions = {
+  role: unknown;
+  layoutSlotCutoverEnabled: boolean;
+  showDataInputPanel: boolean;
+  showHostToolchips: boolean;
+  isDataInputOpen: boolean;
+  closeDataInput: () => void;
+  viewportSize: {
+    width: number;
+    height: number;
+  };
+};
+
+export const buildCoreWindowHostPanelAdapters = (
+  options: CoreWindowHostPanelAdapterOptions
+): WindowHostPanelModule[] => {
+  const runtimeRole = resolveExecutionRole(options.role);
+  const viewportSize = normalizeViewportSize(options.viewportSize);
+  const modules: WindowHostPanelModule[] = [];
+
+  const dataInputContract = resolveCorePanelContract(
+    CORE_PANEL_POLICY_IDS.DATA_INPUT,
+    runtimeRole,
+    options.layoutSlotCutoverEnabled
+  );
+  if (dataInputContract && dataInputContract.visible && options.showDataInputPanel) {
+    modules.push({
+      panelId: dataInputContract.panelId,
+      slot: dataInputContract.slot,
+      behavior: dataInputContract.behavior,
+      size: resolveDataInputSize(viewportSize),
+      isOpen: options.isDataInputOpen,
+      className: "pointer-events-auto",
+      render: (context) => (
+        <WindowPanelShell
+          title="Input Studio"
+          context={context}
+          onRequestClose={options.closeDataInput}
+        >
+          <DataInputPanel mountMode="window-host" className="bg-transparent" />
+        </WindowPanelShell>
+      ),
+    });
+  }
+
+  const floatingToolbarContract = resolveCorePanelContract(
+    CORE_PANEL_POLICY_IDS.FLOATING_TOOLBAR,
+    runtimeRole,
+    options.layoutSlotCutoverEnabled
+  );
+  if (
+    floatingToolbarContract &&
+    floatingToolbarContract.visible &&
+    options.showHostToolchips
+  ) {
+    modules.push({
+      panelId: floatingToolbarContract.panelId,
+      slot: floatingToolbarContract.slot,
+      behavior: floatingToolbarContract.behavior,
+      size: resolveToolbarSize(viewportSize),
+      isOpen: floatingToolbarContract.behavior.defaultOpen,
+      className: "pointer-events-auto",
+      render: (context) => (
+        <WindowPanelShell title="Floating Toolbar" context={context}>
+          <div
+            data-layout-id="region_toolchips"
+            className="h-full w-full overflow-hidden px-3 pb-3 pt-2"
+          >
+            <FloatingToolbar mountMode="window-host" />
+          </div>
+        </WindowPanelShell>
+      ),
+    });
+  }
+
+  const prompterContract = resolveCorePanelContract(
+    CORE_PANEL_POLICY_IDS.PROMPTER,
+    runtimeRole,
+    options.layoutSlotCutoverEnabled
+  );
+  if (prompterContract && prompterContract.visible && options.showHostToolchips) {
+    modules.push({
+      panelId: prompterContract.panelId,
+      slot: prompterContract.slot,
+      behavior: prompterContract.behavior,
+      size: resolvePrompterSize(viewportSize),
+      isOpen: prompterContract.behavior.defaultOpen,
+      className: "pointer-events-auto w-full max-w-[min(960px,96vw)]",
+      render: () => (
+        <div data-layout-id="region_prompter" className="w-full">
+          <Prompter />
+        </div>
+      ),
+    });
+  }
+
+  return modules;
+};

@@ -1,6 +1,6 @@
 # Task 241: Panel Policy State Persistence and Role Overrides
 
-Status: PENDING
+Status: COMPLETED
 Owner: Codex (spec / review / implementation)
 Target: v10/
 Date: 2026-02-16
@@ -104,11 +104,11 @@ If NO:
 
 ## Acceptance Criteria (Base Required)
 
-- [ ] AC-1: Panel policy resolves mode/visibility using declarative data (`roleOverride`, `displayMode`, `movable`).
-- [ ] AC-2: `rememberPosition=true` restores last valid position; `rememberPosition=false` always uses defaults.
-- [ ] AC-3: Invalid or missing policy values fall back to safe defaults (deny-by-default for edit-only panels in student role).
-- [ ] AC-4: No direct `if(role===...)` branches are newly introduced in layout components for these rules.
-- [ ] AC-5: `VERIFY_STAGE=mid bash scripts/run_repo_verifications.sh` passes.
+- [x] AC-1: Panel policy resolves mode/visibility using declarative data (`roleOverride`, `displayMode`, `movable`).
+- [x] AC-2: `rememberPosition=true` restores last valid position; `rememberPosition=false` always uses defaults.
+- [x] AC-3: Invalid or missing policy values fall back to safe defaults (deny-by-default for edit-only panels in student role).
+- [x] AC-4: No direct `if(role===...)` branches are newly introduced in layout components for these rules.
+- [x] AC-5: `VERIFY_STAGE=mid bash scripts/run_repo_verifications.sh` passes.
 
 ---
 
@@ -149,7 +149,8 @@ If NO:
 ## Approval Gate (Base Required)
 
 - [x] Spec self-reviewed by Codex
-- [ ] Explicit user approval received (or delegated chain approval reference)
+- [x] Explicit user approval received (or delegated chain approval reference)
+  - Approval reference: user assignment message for Task 241 (Wave 4 branch C1) with scope lock and required verification command.
 
 > Implementation MUST NOT begin until both boxes are checked.
 
@@ -157,36 +158,47 @@ If NO:
 
 ## Implementation Log (Codex fills)
 
-Status: PENDING
+Status: COMPLETED
 
 Changed files:
-- (to be filled)
+- `codex_tasks/task_241_panel_policy_state_persistence_and_role_overrides.md`
+- `v10/src/core/config/panel-policy.ts`
+- `v10/src/features/layout/windowing/panelPolicy.runtime.ts`
+- `v10/src/features/store/useChromeStore.ts`
+- `v10/src/features/policy/useResolvedPanelPolicy.ts`
 
 Commands run (only if user asked or required by spec):
-- (to be filled)
+- `scripts/check_layer_rules.sh`
+- `rg -n "if\\s*\\(.*role" v10/src/features/layout -S`
+- `VERIFY_STAGE=mid bash scripts/run_repo_verifications.sh`
 
 ## Gate Results (Codex fills)
 
 - Lint:
-  - N/A
+  - PASS (`scripts/check_v10_changed_lint.sh` via `VERIFY_STAGE=mid bash scripts/run_repo_verifications.sh`)
 - Build:
   - N/A
 - Script checks:
-  - N/A
+  - PASS (`VERIFY_STAGE=mid bash scripts/run_repo_verifications.sh`)
 
 ## Failure Classification (Codex fills when any gate fails)
 
 - Pre-existing failures:
-  - N/A
+  - None in required gates.
 - Newly introduced failures:
-  - N/A
+  - None (intermediate local lint issue in new runtime helper naming was fixed before final gate run).
 - Blocking:
   - NO
 - Mitigation:
-  - N/A
+  - Not required.
 
 Manual verification notes:
-- (to be filled)
+- AC-1 PASS: `v10/src/features/layout/windowing/panelPolicy.runtime.ts` resolves panel behavior declaratively from `displayMode`, `movable`, and `roleOverride`, with no component-layer branching.
+- AC-2 PASS: `rememberPosition` is enforced both in resolver output (`initialPosition` from persisted layout only when `rememberPosition=true`) and store persistence filters (`v10/src/features/store/useChromeStore.ts` removes persisted layouts when `rememberPosition=false`).
+- AC-3 PASS: runtime resolver applies safe defaults for invalid/missing policy values and explicitly denies student visibility by default on edit-only panels.
+- AC-4 PASS: `rg -n "if\\s*\\(.*role" v10/src/features/layout -S` confirmed no new layout-component role branch for panel visibility policy.
+- AC-5 PASS: `VERIFY_STAGE=mid bash scripts/run_repo_verifications.sh` completed successfully.
 
 Notes:
-- (to be filled)
+- Scope lock respected: no AppLayout cutover, no panel adapter migration, no launcher IA changes.
+- No new dependencies added.

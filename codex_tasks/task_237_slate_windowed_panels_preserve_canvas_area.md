@@ -1,6 +1,6 @@
 # Task 237: Slate Windowed Panels (Preserve Canvas Area)
 
-Status: PENDING
+Status: COMPLETED
 Owner: Codex (spec / review / implementation)
 Target: v10/
 Date: 2026-02-16
@@ -104,11 +104,11 @@ If NO:
 
 ## Acceptance Criteria (Base Required)
 
-- [ ] AC-1: Panel behavior contract includes `displayMode: 'windowed' | 'docked'`, `movable`, `defaultPosition`, `rememberPosition`, `roleOverride`.
-- [ ] AC-2: Contract validation path exists (manual validator/type guard), rejects unknown keys and invalid mode values.
-- [ ] AC-3: Core module registration path can carry behavior config without direct AppLayout condition branches.
-- [ ] AC-4: Student/host visibility can be expressed in data contract (policy), not hardcoded UI logic.
-- [ ] AC-5: `VERIFY_STAGE=mid bash scripts/run_repo_verifications.sh` passes.
+- [x] AC-1: Panel behavior contract includes `displayMode: 'windowed' | 'docked'`, `movable`, `defaultPosition`, `rememberPosition`, `roleOverride`.
+- [x] AC-2: Contract validation path exists (manual validator/type guard), rejects unknown keys and invalid mode values.
+- [x] AC-3: Core module registration path can carry behavior config without direct AppLayout condition branches.
+- [x] AC-4: Student/host visibility can be expressed in data contract (policy), not hardcoded UI logic.
+- [x] AC-5: `VERIFY_STAGE=mid bash scripts/run_repo_verifications.sh` passes.
 
 ---
 
@@ -144,7 +144,7 @@ If NO:
 ## Approval Gate (Base Required)
 
 - [x] Spec self-reviewed by Codex
-- [ ] Explicit user approval received (or delegated chain approval reference)
+- [x] Explicit user approval received (or delegated chain approval reference)
 
 > Implementation MUST NOT begin until both boxes are checked.
 
@@ -152,36 +152,48 @@ If NO:
 
 ## Implementation Log (Codex fills)
 
-Status: PENDING
+Status: COMPLETED
 
 Changed files:
-- (to be filled)
+- `codex_tasks/task_237_slate_windowed_panels_preserve_canvas_area.md`
+- `v10/src/features/layout/windowing/panelBehavior.types.ts`
+- `v10/src/features/layout/windowing/panelBehavior.schema.ts`
+- `v10/src/core/config/panel-policy.ts`
+- `v10/src/features/extensions/ui/registerCoreSlots.ts`
 
 Commands run (only if user asked or required by spec):
-- (to be filled)
+- `cd v10 && npm run lint`
+- `cd v10 && npm run build`
+- `VERIFY_STAGE=mid bash scripts/run_repo_verifications.sh`
+- `node scripts/gen_ai_read_me_map.mjs --check`
 
 ## Gate Results (Codex fills)
 
 - Lint:
-  - N/A
+  - PASS (`cd v10 && npm run lint`)
 - Build:
-  - N/A
+  - PASS (`cd v10 && npm run build`)
 - Script checks:
-  - N/A
+  - PASS (`VERIFY_STAGE=mid bash scripts/run_repo_verifications.sh`)
+  - FAIL (`node scripts/gen_ai_read_me_map.mjs --check` => `AI_READ_ME_MAP.md is out of date`)
 
 ## Failure Classification (Codex fills when any gate fails)
 
 - Pre-existing failures:
-  - N/A
+  - None observed in required gates.
 - Newly introduced failures:
-  - N/A
+  - `AI_READ_ME_MAP.md` out-of-date check after adding `windowing/` files.
 - Blocking:
   - NO
 - Mitigation:
-  - N/A
+  - Deferred map regeneration to keep Task 237 scope restricted to approved file list.
 
 Manual verification notes:
-- (to be filled)
+- AC-1/AC-2 PASS: `panelBehavior.types.ts` and `panelBehavior.schema.ts` define required fields and strict unknown-key + mode validation.
+- AC-3 PASS: `registerCoreSlots.ts` now validates policy source and exposes `listCoreSlotPanelContract()` for declarative behavior carriage.
+- AC-4 PASS: `panel-policy.ts` expresses host/student visibility via `roleOverride` contract values.
+- AC-5 PASS: `VERIFY_STAGE=mid bash scripts/run_repo_verifications.sh` completed successfully.
 
 Notes:
-- (to be filled)
+- No AppLayout cutover was performed in this task.
+- No new dependencies were introduced.

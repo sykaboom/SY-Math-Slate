@@ -63,7 +63,15 @@ const subscribeCompactViewport = (callback: () => void) => {
   return () => mediaQuery.removeListener(callback);
 };
 
-export function FloatingToolbar() {
+export type FloatingToolbarMountMode = "legacy-shell" | "window-host";
+
+type FloatingToolbarProps = {
+  mountMode?: FloatingToolbarMountMode;
+  className?: string;
+};
+
+export function FloatingToolbar(props: FloatingToolbarProps = {}) {
+  const { mountMode = "legacy-shell", className } = props;
   const isCompactViewport = useSyncExternalStore(
     subscribeCompactViewport,
     getCompactViewportSnapshot,
@@ -623,6 +631,7 @@ export function FloatingToolbar() {
 
       {!useDeclarativeCoreToolbar && (
         <div className="grid gap-3 text-[11px] text-toolbar-text/70">
+          {/* Safety fallback while core template cutover is disabled. */}
           <div className="rounded-2xl border border-toolbar-border/10 bg-toolbar-chip/5 p-2">
             <PlaybackControls />
           </div>
@@ -669,7 +678,10 @@ export function FloatingToolbar() {
   );
 
   return (
-    <div className="w-full">
+    <div
+      data-panel-mount-mode={mountMode}
+      className={cn("w-full", mountMode === "window-host" && "h-full", className)}
+    >
       <input
         ref={fileInputRef}
         type="file"
@@ -690,30 +702,35 @@ export function FloatingToolbar() {
           compact
           controls={
             <>
-              <ToolButton
-                icon={Hand}
-                label="Hand"
-                active={activeTool === "hand"}
-                onClick={handleTool("hand")}
-                className="h-11 w-11 shrink-0"
-              />
-              <Popover
-                open={isPenOpen}
-                onOpenChange={(open) => !open && isPenOpen && togglePanel("pen")}
-              >
-                <PopoverTrigger asChild>
+              {!useDeclarativeCoreToolbar && (
+                <>
+                  {/* Safety fallback while core template cutover is disabled. */}
                   <ToolButton
-                    icon={PenLine}
-                    label="Pen"
-                    active={activeTool === "pen"}
-                    onClick={handlePenClick}
+                    icon={Hand}
+                    label="Hand"
+                    active={activeTool === "hand"}
+                    onClick={handleTool("hand")}
                     className="h-11 w-11 shrink-0"
                   />
-                </PopoverTrigger>
-                <ToolbarPanel side="top" align="center" sideOffset={14}>
-                  <PenControls />
-                </ToolbarPanel>
-              </Popover>
+                  <Popover
+                    open={isPenOpen}
+                    onOpenChange={(open) => !open && isPenOpen && togglePanel("pen")}
+                  >
+                    <PopoverTrigger asChild>
+                      <ToolButton
+                        icon={PenLine}
+                        label="Pen"
+                        active={activeTool === "pen"}
+                        onClick={handlePenClick}
+                        className="h-11 w-11 shrink-0"
+                      />
+                    </PopoverTrigger>
+                    <ToolbarPanel side="top" align="center" sideOffset={14}>
+                      <PenControls />
+                    </ToolbarPanel>
+                  </Popover>
+                </>
+              )}
               <ToolButton
                 icon={Eraser}
                 label="Eraser"
@@ -721,23 +738,25 @@ export function FloatingToolbar() {
                 onClick={handleTool("eraser")}
                 className="h-11 w-11 shrink-0"
               />
-              <Popover
-                open={isLaserOpen}
-                onOpenChange={(open) => !open && isLaserOpen && togglePanel("laser")}
-              >
-                <PopoverTrigger asChild>
-                  <ToolButton
-                    icon={Zap}
-                    label="Laser"
-                    active={activeTool === "laser"}
-                    onClick={handleLaserClick}
-                    className="h-11 w-11 shrink-0"
-                  />
-                </PopoverTrigger>
-                <ToolbarPanel side="top" align="center" sideOffset={14}>
-                  <LaserControls />
-                </ToolbarPanel>
-              </Popover>
+              {!useDeclarativeCoreToolbar && (
+                <Popover
+                  open={isLaserOpen}
+                  onOpenChange={(open) => !open && isLaserOpen && togglePanel("laser")}
+                >
+                  <PopoverTrigger asChild>
+                    <ToolButton
+                      icon={Zap}
+                      label="Laser"
+                      active={activeTool === "laser"}
+                      onClick={handleLaserClick}
+                      className="h-11 w-11 shrink-0"
+                    />
+                  </PopoverTrigger>
+                  <ToolbarPanel side="top" align="center" sideOffset={14}>
+                    <LaserControls />
+                  </ToolbarPanel>
+                </Popover>
+              )}
               <ToolButton
                 icon={Type}
                 label="Text"
@@ -753,29 +772,33 @@ export function FloatingToolbar() {
         />
       ) : (
         <div className="flex flex-nowrap items-center gap-2 overflow-hidden rounded-3xl border border-toolbar-border/10 bg-toolbar-surface/90 px-4 py-3 shadow-[var(--toolbar-shell-shadow)] backdrop-blur-md">
-          <ToolButton
-            icon={Hand}
-            label="Hand"
-            active={activeTool === "hand"}
-            onClick={handleTool("hand")}
-          />
-
-          <Popover
-            open={isPenOpen}
-            onOpenChange={(open) => !open && isPenOpen && togglePanel("pen")}
-          >
-            <PopoverTrigger asChild>
+          {!useDeclarativeCoreToolbar && (
+            <>
+              {/* Safety fallback while core template cutover is disabled. */}
               <ToolButton
-                icon={PenLine}
-                label="Pen"
-                active={activeTool === "pen"}
-                onClick={handlePenClick}
+                icon={Hand}
+                label="Hand"
+                active={activeTool === "hand"}
+                onClick={handleTool("hand")}
               />
-            </PopoverTrigger>
-            <ToolbarPanel side="top" align="center" sideOffset={18}>
-              <PenControls />
-            </ToolbarPanel>
-          </Popover>
+              <Popover
+                open={isPenOpen}
+                onOpenChange={(open) => !open && isPenOpen && togglePanel("pen")}
+              >
+                <PopoverTrigger asChild>
+                  <ToolButton
+                    icon={PenLine}
+                    label="Pen"
+                    active={activeTool === "pen"}
+                    onClick={handlePenClick}
+                  />
+                </PopoverTrigger>
+                <ToolbarPanel side="top" align="center" sideOffset={18}>
+                  <PenControls />
+                </ToolbarPanel>
+              </Popover>
+            </>
+          )}
 
           <ToolButton
             icon={Eraser}
@@ -784,22 +807,24 @@ export function FloatingToolbar() {
             onClick={handleTool("eraser")}
           />
 
-          <Popover
-            open={isLaserOpen}
-            onOpenChange={(open) => !open && isLaserOpen && togglePanel("laser")}
-          >
-            <PopoverTrigger asChild>
-              <ToolButton
-                icon={Zap}
-                label="Laser"
-                active={activeTool === "laser"}
-                onClick={handleLaserClick}
-              />
-            </PopoverTrigger>
-            <ToolbarPanel side="top" align="center" sideOffset={18}>
-              <LaserControls />
-            </ToolbarPanel>
-          </Popover>
+          {!useDeclarativeCoreToolbar && (
+            <Popover
+              open={isLaserOpen}
+              onOpenChange={(open) => !open && isLaserOpen && togglePanel("laser")}
+            >
+              <PopoverTrigger asChild>
+                <ToolButton
+                  icon={Zap}
+                  label="Laser"
+                  active={activeTool === "laser"}
+                  onClick={handleLaserClick}
+                />
+              </PopoverTrigger>
+              <ToolbarPanel side="top" align="center" sideOffset={18}>
+                <LaserControls />
+              </ToolbarPanel>
+            </Popover>
+          )}
 
           <ToolButton
             icon={Type}

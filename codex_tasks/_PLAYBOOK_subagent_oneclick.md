@@ -2,7 +2,7 @@
 
 Status: ACTIVE
 Owner: Codex
-Last Updated: 2026-02-09
+Last Updated: 2026-02-17
 
 ---
 
@@ -28,6 +28,16 @@ Optional input:
 
 Example delegation signal:
 - "승인. task_090~093 위임 실행."
+
+Orchestration mode signal (natural language):
+- Max mode ON:
+  - "맥스오케스트레이션모드로 해"
+  - "맥스모드 켜"
+  - "max orchestration mode on"
+- Max mode OFF:
+  - "기본모드로 돌아가"
+  - "맥스모드 꺼"
+  - "max orchestration mode off"
 
 ---
 
@@ -90,6 +100,40 @@ Slot accounting rules:
 - Active slot count must stay `<= 6`.
 - New agent launches only when dependency + file-lock constraints are satisfied.
 - If verification requires rework, spawn a mini-wave instead of reopening infinite loops.
+- Codex must use scheduler-first operation:
+  - do not wait for all active agents to finish when any ready node exists
+  - collect completions opportunistically and immediately backfill freed slots
+  - close completed agents immediately and recycle slots
+
+Recommended dynamic slot profile:
+- Start of implementation waves: `4 executors + 2 reviewers`
+- High-conflict waves (shared files): `3 executors + 3 reviewers`
+- Closeout waves: `2 executors + 4 reviewers`
+- If no review work is ready, temporarily use extra executor slots, then rebalance.
+
+Ready-queue operation:
+1) compute runnable tasks from approved DAG (all dependencies satisfied)
+2) reserve file ownership locks
+3) spawn only runnable tasks that do not conflict on files
+4) on each completion event, recompute runnable set and refill slots immediately
+5) never keep idle slots while runnable, non-conflicting tasks exist
+
+---
+
+## 5.1) Verification Cadence (Bottleneck Control)
+
+To avoid lint/build bottlenecks while preserving safety:
+- `mid` verification:
+  - run frequently during implementation waves (changed-lint + script checks)
+  - preferred cadence: after each mini-wave or significant merge
+- `end` verification:
+  - run at wave boundaries, release-candidate checkpoints, and before final push
+  - avoid running full `end` gate after every small patch unless risk is high
+
+Max mode execution defaults:
+- use `mid` as continuous guardrail
+- batch patches and run `end` once per logical wave closeout
+- if `end` fails, open scoped fix mini-wave and rerun `end` immediately
 
 ---
 
@@ -129,7 +173,37 @@ If sub-agent runtime is disabled or unavailable:
 
 ---
 
-## 9) Output Contract (Codex -> User)
+## 9) Agent Heartbeat and Reassignment Safety
+
+Definition of "output":
+- any meaningful progress signal, including:
+  - intermediate status update
+  - command progress log
+  - measurable diff growth
+  - final completion report
+- "no output" is a state-unknown signal, not immediate failure.
+
+Safety-first heartbeat policy:
+1) `~90s` no output:
+   - send soft status ping only (no termination)
+2) `4~6m` no output and no file/diff progress:
+   - send second status ping
+3) hard termination/reassignment allowed only when all are true:
+   - two consecutive unanswered status pings
+   - task is not a known long-running operation
+   - no lock-critical operation is in progress
+
+Long-running exception classes (do not terminate early):
+- lint/build/test suites
+- dependency install/update
+- large file generation or migration
+
+Reassignment rule:
+- if termination criteria are met, release file lock, spawn replacement agent with same scope, and append incident note to task closeout.
+
+---
+
+## 10) Output Contract (Codex -> User)
 
 Final report must include:
 - completed task IDs and status
@@ -137,3 +211,11 @@ Final report must include:
 - gate results (lint/build/scripts)
 - failure classification (`pre-existing` vs `new`, `blocking` vs `non-blocking`)
 - risks and follow-up recommendations (if any)
+
+Execution report must also include:
+- peak/average active slot usage
+- number of slot refills after completion events
+- number of reassignment events (if any)
+- verification cadence summary:
+  - how many `mid` and `end` runs occurred
+  - where `end` was intentionally deferred for batching

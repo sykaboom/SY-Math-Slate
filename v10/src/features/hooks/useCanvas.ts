@@ -8,7 +8,6 @@ import { useSyncStore } from "@features/store/useSyncStore";
 import type { CanvasItem, Point, StrokeItem } from "@core/types/canvas";
 import { getBoardSize } from "@core/config/boardSpec";
 import { getRenderPerfProfile } from "@core/config/perfProfile";
-import { useBoardTransform } from "@features/hooks/useBoardTransform";
 
 type LaserPoint = { x: number; y: number; t: number };
 
@@ -212,7 +211,6 @@ export function useCanvas() {
   const setSyncedLaserPosition = useSyncStore((state) => state.setLaserPosition);
   const { pages, currentPageId, addStroke, setCurrentStroke, deleteItem } =
     useCanvasStore();
-  const { toBoardPoint } = useBoardTransform();
   const boardSize = useMemo(
     () => getBoardSize(overviewViewportRatio),
     [overviewViewportRatio]
@@ -233,8 +231,36 @@ export function useCanvas() {
   const canPublishSyncedLaser = trustedRoleClaim === "host";
 
   const getCanvasPoint = useCallback(
-    (clientX: number, clientY: number) => toBoardPoint(clientX, clientY),
-    [toBoardPoint]
+    (clientX: number, clientY: number) => {
+      const canvas = canvasRef.current;
+      const fallbackX = clamp(clientX, 0, boardSize.width);
+      const fallbackY = clamp(clientY, 0, boardSize.height);
+      if (!canvas) {
+        return { x: fallbackX, y: fallbackY };
+      }
+
+      const boardRoot =
+        canvas.closest<HTMLElement>("[data-board-root]") ??
+        document.querySelector<HTMLElement>("[data-board-root]");
+      const rect = boardRoot?.getBoundingClientRect() ?? canvas.getBoundingClientRect();
+      if (rect.width <= 0 || rect.height <= 0) {
+        return { x: fallbackX, y: fallbackY };
+      }
+
+      return {
+        x: clamp(
+          ((clientX - rect.left) / rect.width) * boardSize.width,
+          0,
+          boardSize.width
+        ),
+        y: clamp(
+          ((clientY - rect.top) / rect.height) * boardSize.height,
+          0,
+          boardSize.height
+        ),
+      };
+    },
+    [boardSize.height, boardSize.width]
   );
 
   const normalizeLaserSyncPoint = useCallback(

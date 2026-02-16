@@ -47,6 +47,7 @@ v10/src/
 |   |   |-- boardSpec.ts
 |   |   |-- capabilities.ts
 |   |   |-- experiments.ts
+|   |   |-- panel-policy.ts
 |   |   |-- perfProfile.ts
 |   |   |-- rolePolicy.ts
 |   |   |-- rolePolicyGuards.ts
@@ -193,6 +194,7 @@ v10/src/
 |   |   |   \-- types.ts
 |   |   |-- ui/
 |   |   |   |-- CoreSlotComponents.tsx
+|   |   |   |-- coreTemplates.ts
 |   |   |   |-- ExtensionRuntimeBootstrap.tsx
 |   |   |   |-- ExtensionSlot.tsx
 |   |   |   |-- registerCoreDeclarativeManifest.ts
@@ -248,6 +250,17 @@ v10/src/
 |   |   |   |-- mediaIO.ts
 |   |   |   |-- segmentCommands.ts
 |   |   |   \-- types.ts
+|   |   |-- windowing/
+|   |   |   |-- panelAdapters.tsx
+|   |   |   |-- panelBehavior.schema.ts
+|   |   |   |-- panelBehavior.types.ts
+|   |   |   |-- panelLauncher.registry.ts
+|   |   |   |-- PanelLauncher.tsx
+|   |   |   |-- panelPolicy.runtime.ts
+|   |   |   |-- useWindowRuntime.ts
+|   |   |   |-- WindowHost.tsx
+|   |   |   |-- windowRuntime.ts
+|   |   |   \-- windowRuntime.types.ts
 |   |   |-- AppLayout.tsx
 |   |   |-- autoLayout.ts
 |   |   |-- DataInputPanel.tsx
@@ -283,7 +296,8 @@ v10/src/
 |   |-- observability/
 |   |   \-- auditLogger.ts
 |   |-- policy/
-|   |   \-- policyShadow.ts
+|   |   |-- policyShadow.ts
+|   |   \-- useResolvedPanelPolicy.ts
 |   |-- shortcuts/
 |   |   \-- useAuthoringShortcuts.ts
 |   |-- store/
