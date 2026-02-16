@@ -38,9 +38,6 @@ For Codex workflow portability across machines:
 ./scripts/bootstrap_codex_env.sh --apply
 ```
 
-Detailed runtime checklist and machine-specific overrides are maintained in:
-- `TOOLS.md`
-
 ## Notes
 - For tablet testing on the same network:
   `npm run dev -- --host 0.0.0.0` then open `http://<PC_IP>:5173/`.

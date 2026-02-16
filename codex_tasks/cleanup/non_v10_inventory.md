@@ -30,7 +30,6 @@ Repo root: `/home/sykab/SY-Math-Slate`
 | `codex_tasks/` | dir | task specs/log SSOT | KEEP |
 | `scripts/` | dir | verification and workflow automation | KEEP |
 | `codex_skills/` | dir | local skill packs | KEEP |
-| `oc_tools/` | dir | operator helper launchers | KEEP |
 | `README.md` | file | root app/docs entry | KEEP |
 | `PROJECT_ROADMAP.md` | file | roadmap | KEEP |
 | `FEATURE_ALIGNMENT_MATRIX.md` | file | planning matrix | KEEP |
@@ -53,4 +52,3 @@ Repo root: `/home/sykab/SY-Math-Slate`
   - Prefer `ARCHIVE` over `DELETE`.
 - `after-156+stabilization`:
   - Final destructive decisions only after beta gates and rollback evidence.
-

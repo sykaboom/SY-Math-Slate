@@ -20,7 +20,6 @@ Repo root safety: `/home/sykab/SY-Math-Slate/**` only
 | `vite.config.js` | KEEP (candidate: DELETE-FINAL) | after-156+stabilization | root build scripts and hook checks reference file. | keep intact until legacy deploy retirement |
 | `package.json` (root) | KEEP (candidate: DELETE-FINAL) | after-156+stabilization | GH Pages workflow installs/builds root package. | keep intact until deploy migration complete |
 | `package-lock.json` (root) | KEEP (candidate: DELETE-FINAL) | after-156+stabilization | lockfile required for deterministic root CI install. | keep intact until root package removal |
-| `oc_tools/**` | KEEP | always | workflow utility docs reference these tools. | N/A |
 | `.githooks/**`, `.github/**`, `scripts/**`, `codex_tasks/**` | KEEP | always | governance/verification critical. | N/A |
 
 ## Phase Plan
@@ -29,4 +28,3 @@ Repo root safety: `/home/sykab/SY-Math-Slate/**` only
   - beta quality gates are green,
   - deploy path migration away from root Vite is completed,
   - rollback plan is documented with path-level restore steps.
-
