@@ -119,6 +119,21 @@ ui/
   - `features/moderation/*` adds host-only moderation console and audit stream surface.
   - `auditLogger` adds `moderation` channel and moderation decision audit events.
 
+## Recent W8 Additions (task_220~223)
+- Rights claim/takedown workflow:
+  - `core/contracts/community.ts` now includes rights-claim, takedown-record, and traffic-signal contract guards.
+  - `app/api/community/route.ts` supports `create-rights-claim` and host-only `review-rights-claim`.
+  - Approved rights claim writes deterministic takedown records and replaces target content body with takedown marker.
+- Ad policy enforcement gates:
+  - `features/community/policy/adPolicy.ts` provides deterministic ad-policy text evaluation.
+  - Community `create-post` / `create-comment` paths enforce ad-policy blocks before mutation.
+- Invalid traffic telemetry:
+  - `features/community/traffic/invalidTraffic.ts` provides bounded burst detection heuristics.
+  - Community mutation actions emit bounded elevated/blocked traffic signals in snapshot state.
+- Trust/safety SLO runtime:
+  - Community API supports host-only `trust-safety-slo` action returning deterministic ops summary metrics.
+  - Oncall playbook is documented in `codex_tasks/workflow/trust_safety_slo_oncall_runbook.md`.
+
 ---
 
 ## Canvas Layering (Notes)

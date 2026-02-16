@@ -7,6 +7,9 @@ import type {
   CommunityPost,
   CommunityReport,
   CommunityReportStatus,
+  CommunityRightsClaim,
+  CommunityTakedownRecord,
+  CommunityTrafficSignal,
   CommunitySnapshot,
 } from "@core/contracts/community";
 
@@ -21,6 +24,9 @@ type CommunityStoreState = {
   posts: CommunityPost[];
   comments: CommunityComment[];
   reports: CommunityReport[];
+  rightsClaims: CommunityRightsClaim[];
+  takedownRecords: CommunityTakedownRecord[];
+  trafficSignals: CommunityTrafficSignal[];
   serverTime: number;
   lastSyncAt: number | null;
   isLoading: boolean;
@@ -72,10 +78,51 @@ const cloneReport = (report: CommunityReport): CommunityReport => ({
   moderationNote: report.moderationNote,
 });
 
+const cloneRightsClaim = (claim: CommunityRightsClaim): CommunityRightsClaim => ({
+  id: claim.id,
+  targetType: claim.targetType,
+  targetId: claim.targetId,
+  claimType: claim.claimType,
+  detail: claim.detail,
+  evidenceUrl: claim.evidenceUrl,
+  claimantId: claim.claimantId,
+  status: claim.status,
+  createdAt: claim.createdAt,
+  reviewedAt: claim.reviewedAt,
+  reviewerId: claim.reviewerId,
+  reviewNote: claim.reviewNote,
+});
+
+const cloneTakedownRecord = (
+  record: CommunityTakedownRecord
+): CommunityTakedownRecord => ({
+  id: record.id,
+  claimId: record.claimId,
+  targetType: record.targetType,
+  targetId: record.targetId,
+  reason: "rights-claim-approved",
+  createdAt: record.createdAt,
+  reviewerId: record.reviewerId,
+});
+
+const cloneTrafficSignal = (signal: CommunityTrafficSignal): CommunityTrafficSignal => ({
+  id: signal.id,
+  action: signal.action,
+  actorId: signal.actorId,
+  fingerprint: signal.fingerprint,
+  riskLevel: signal.riskLevel,
+  reason: signal.reason,
+  observedAt: signal.observedAt,
+  sampleCount: signal.sampleCount,
+});
+
 const cloneSnapshot = (snapshot: CommunitySnapshot): CommunitySnapshot => ({
   posts: snapshot.posts.map(clonePost),
   comments: snapshot.comments.map(cloneComment),
   reports: snapshot.reports.map(cloneReport),
+  rightsClaims: snapshot.rightsClaims.map(cloneRightsClaim),
+  takedownRecords: snapshot.takedownRecords.map(cloneTakedownRecord),
+  trafficSignals: snapshot.trafficSignals.map(cloneTrafficSignal),
   serverTime: snapshot.serverTime,
 });
 
@@ -106,6 +153,34 @@ const sortReports = (reports: CommunityReport[]): CommunityReport[] =>
     return a.id.localeCompare(b.id);
   });
 
+const rightsClaimStatusRank: Record<CommunityRightsClaim["status"], number> = {
+  pending: 0,
+  approved: 1,
+  rejected: 2,
+};
+
+const sortRightsClaims = (claims: CommunityRightsClaim[]): CommunityRightsClaim[] =>
+  [...claims].sort((a, b) => {
+    const statusDiff = rightsClaimStatusRank[a.status] - rightsClaimStatusRank[b.status];
+    if (statusDiff !== 0) return statusDiff;
+    if (a.createdAt !== b.createdAt) return a.createdAt - b.createdAt;
+    return a.id.localeCompare(b.id);
+  });
+
+const sortTakedownRecords = (
+  records: CommunityTakedownRecord[]
+): CommunityTakedownRecord[] =>
+  [...records].sort((a, b) => {
+    if (a.createdAt !== b.createdAt) return a.createdAt - b.createdAt;
+    return a.id.localeCompare(b.id);
+  });
+
+const sortTrafficSignals = (signals: CommunityTrafficSignal[]): CommunityTrafficSignal[] =>
+  [...signals].sort((a, b) => {
+    if (a.observedAt !== b.observedAt) return b.observedAt - a.observedAt;
+    return b.id.localeCompare(a.id);
+  });
+
 const upsertById = <T extends { id: string }>(
   entries: T[],
   entry: T,
@@ -127,6 +202,9 @@ const INITIAL_STATE = {
   posts: [] as CommunityPost[],
   comments: [] as CommunityComment[],
   reports: [] as CommunityReport[],
+  rightsClaims: [] as CommunityRightsClaim[],
+  takedownRecords: [] as CommunityTakedownRecord[],
+  trafficSignals: [] as CommunityTrafficSignal[],
   serverTime: 0,
   lastSyncAt: null as number | null,
   isLoading: false,
@@ -163,6 +241,9 @@ export const useCommunityStore = create<CommunityStoreState>((set) => ({
       posts: sortPosts(safeSnapshot.posts),
       comments: sortComments(safeSnapshot.comments),
       reports: sortReports(safeSnapshot.reports),
+      rightsClaims: sortRightsClaims(safeSnapshot.rightsClaims),
+      takedownRecords: sortTakedownRecords(safeSnapshot.takedownRecords),
+      trafficSignals: sortTrafficSignals(safeSnapshot.trafficSignals),
       serverTime: safeSnapshot.serverTime,
       lastSyncAt: now(),
       isLoading: false,

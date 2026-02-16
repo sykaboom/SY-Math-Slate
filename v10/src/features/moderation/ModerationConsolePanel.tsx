@@ -41,10 +41,16 @@ export function ModerationConsolePanel() {
     lastError,
     pendingRows,
     resolvedRows,
+    pendingRightsClaims,
+    resolvedRightsClaims,
+    trafficSignals,
+    sloSummary,
     auditEvents,
     refresh,
     approveReport,
     rejectReport,
+    approveRightsClaim,
+    rejectRightsClaim,
   } = useModerationConsole();
 
   useEffect(() => {
@@ -66,6 +72,9 @@ export function ModerationConsolePanel() {
           </p>
           <p className="text-xs text-toolbar-muted/70">
             {pendingRows.length} pending / {resolvedRows.length} resolved
+          </p>
+          <p className="text-xs text-toolbar-muted/70">
+            rights {pendingRightsClaims.length} pending / {resolvedRightsClaims.length} resolved
           </p>
         </div>
         <Button
@@ -142,6 +151,103 @@ export function ModerationConsolePanel() {
           ))}
         </ul>
       )}
+
+      <div className="border-t border-toolbar-border/10 pt-2">
+        <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-toolbar-muted/60">
+          Rights Claims
+        </p>
+        {pendingRightsClaims.length === 0 ? (
+          <p className="mt-1 text-[11px] text-toolbar-muted/70">
+            No pending rights claims.
+          </p>
+        ) : (
+          <ul className="mt-1 grid max-h-48 gap-2 overflow-y-auto pr-1">
+            {pendingRightsClaims.map((row) => (
+              <li
+                key={row.claim.id}
+                className="rounded-xl border border-toolbar-border/10 bg-toolbar-chip/5 p-2"
+              >
+                <p className="truncate text-xs font-medium text-toolbar-text">
+                  {row.claim.id}
+                </p>
+                <p className="truncate text-[11px] text-toolbar-muted/70">
+                  {row.targetSummary}
+                </p>
+                <p className="text-[10px] text-toolbar-muted/60">
+                  type: {row.claim.claimType}
+                </p>
+                <div className="mt-2 flex items-center gap-1.5">
+                  <Button
+                    type="button"
+                    size="sm"
+                    className="h-7 bg-toolbar-chip/20 px-2 text-[11px] text-toolbar-text hover:bg-toolbar-chip/30"
+                    onClick={() => {
+                      void approveRightsClaim(row.claim.id);
+                    }}
+                  >
+                    Approve
+                  </Button>
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    className="h-7 border-toolbar-border/20 bg-transparent px-2 text-[11px] text-toolbar-text/80 hover:bg-toolbar-chip/15 hover:text-toolbar-text"
+                    onClick={() => {
+                      void rejectRightsClaim(row.claim.id);
+                    }}
+                  >
+                    Reject
+                  </Button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+
+      <div className="border-t border-toolbar-border/10 pt-2">
+        <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-toolbar-muted/60">
+          Trust/Safety SLO (24h)
+        </p>
+        {sloSummary ? (
+          <div className="mt-1 rounded-lg border border-toolbar-border/10 bg-toolbar-chip/5 px-2 py-1 text-[10px] text-toolbar-muted/70">
+            <p>pending reports: {sloSummary.pendingReports}</p>
+            <p>pending rights claims: {sloSummary.pendingRightsClaims}</p>
+            <p>elevated traffic: {sloSummary.elevatedTrafficSignals24h}</p>
+            <p>blocked traffic: {sloSummary.blockedTrafficSignals24h}</p>
+          </div>
+        ) : (
+          <p className="mt-1 text-[11px] text-toolbar-muted/70">No SLO snapshot.</p>
+        )}
+      </div>
+
+      <div className="border-t border-toolbar-border/10 pt-2">
+        <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-toolbar-muted/60">
+          Invalid Traffic Signals
+        </p>
+        {trafficSignals.length === 0 ? (
+          <p className="mt-1 text-[11px] text-toolbar-muted/70">No traffic signals.</p>
+        ) : (
+          <ul className="mt-1 grid max-h-40 gap-1 overflow-y-auto pr-1">
+            {trafficSignals.slice(0, 20).map((signal) => (
+              <li
+                key={signal.id}
+                className="rounded-lg border border-toolbar-border/10 bg-toolbar-chip/5 px-2 py-1"
+              >
+                <p className="truncate text-[11px] text-toolbar-text">
+                  {signal.action} · {signal.riskLevel}
+                </p>
+                <p className="truncate text-[10px] text-toolbar-muted/70">
+                  {signal.reason} · count {signal.sampleCount}
+                </p>
+                <p className="text-[10px] text-toolbar-muted/60">
+                  {formatTime(signal.observedAt)}
+                </p>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
 
       <div className="border-t border-toolbar-border/10 pt-2">
         <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-toolbar-muted/60">

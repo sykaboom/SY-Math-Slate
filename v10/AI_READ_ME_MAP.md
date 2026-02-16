@@ -135,8 +135,12 @@ v10/src/
 |   |   |-- PresenceOverlay.tsx
 |   |   \-- StaticStrokeLayer.tsx
 |   |-- community/
+|   |   |-- policy/
+|   |   |   \-- adPolicy.ts
 |   |   |-- store/
 |   |   |   \-- useCommunityStore.ts
+|   |   |-- traffic/
+|   |   |   \-- invalidTraffic.ts
 |   |   \-- useCommunityActions.ts
 |   |-- editor-core/
 |   |   |-- model/

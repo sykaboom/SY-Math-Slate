@@ -58,10 +58,10 @@ task_id,slug,title,wave,objective_axis,depends_on_wave,parallel_group,verify_sta
 217,community_core_post_comment_report,Community Core Post/Comment/Report,W7,platform,W5+W6,G7-platform,mid,PENDING
 218,moderation_console_audit_trail,Moderation Console and Audit Trail,W7,platform,W5+W6,G7-platform,end,PENDING
 219,ugc_safety_filter_pipeline,UGC Safety Filter Pipeline,W8,safety,W7,G8-safety,mid,PENDING
-220,rights_claim_takedown_workflow,Rights Claim and Takedown Workflow,W8,safety,W7,G8-safety,mid,PENDING
-221,ad_policy_enforcement_gates,Ad Policy Enforcement Gates,W8,ads,W7,G8-ads,mid,PENDING
-222,invalid_traffic_detection_telemetry,Invalid Traffic Detection Telemetry,W8,ads,W7,G8-ads,mid,PENDING
-223,trust_safety_slo_oncall_runbooks,Trust/Safety SLO + Oncall Runbooks,W8,operations,W7,G8-ops,end,PENDING
+220,rights_claim_takedown_workflow,Rights Claim and Takedown Workflow,W8,safety,W7,G8-safety,mid,COMPLETED
+221,ad_policy_enforcement_gates,Ad Policy Enforcement Gates,W8,ads,W7,G8-ads,mid,COMPLETED
+222,invalid_traffic_detection_telemetry,Invalid Traffic Detection Telemetry,W8,ads,W7,G8-ads,mid,COMPLETED
+223,trust_safety_slo_oncall_runbooks,Trust/Safety SLO + Oncall Runbooks,W8,operations,W7,G8-ops,end,COMPLETED
 224,chaos_recovery_drills,Chaos and Recovery Drills,W9,release,W8,G9-release,mid,PENDING
 225,legacy_path_final_purge,Legacy Path Final Purge,W9,release,W8,G9-release,mid,PENDING
 226,beta_release_gate_v2,Beta Release Gate V2,W9,release,W8,G9-release,mid,PENDING

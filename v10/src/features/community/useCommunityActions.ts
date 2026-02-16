@@ -2,17 +2,24 @@
 
 import { useCallback } from "react";
 
+import { evaluateAdPolicyText } from "@features/community/policy/adPolicy";
 import {
+  validateCommunityTrustSafetySloSummary,
   validateCommunitySnapshot,
   validateCreateCommunityCommentInput,
   validateCreateCommunityPostInput,
   validateCreateCommunityReportInput,
+  validateCreateCommunityRightsClaimInput,
   validateModerateCommunityReportInput,
+  validateReviewCommunityRightsClaimInput,
   type CommunitySnapshot,
+  type CommunityTrustSafetySloSummary,
   type CreateCommunityCommentInput,
   type CreateCommunityPostInput,
   type CreateCommunityReportInput,
+  type CreateCommunityRightsClaimInput,
   type ModerateCommunityReportInput,
+  type ReviewCommunityRightsClaimInput,
 } from "@core/contracts/community";
 
 import { useCommunityStore } from "./store/useCommunityStore";
@@ -45,6 +52,11 @@ type CommunityApiSuccessBody = {
   snapshot: CommunitySnapshot;
 };
 
+type CommunityApiTrustSafetySloBody = {
+  ok: true;
+  summary: CommunityTrustSafetySloSummary;
+};
+
 type UseCommunityActionsResult = {
   refresh: () => Promise<CommunityActionResult<CommunitySnapshot>>;
   createPost: (
@@ -59,6 +71,13 @@ type UseCommunityActionsResult = {
   moderateReport: (
     input: ModerateCommunityReportInput
   ) => Promise<CommunityActionResult<CommunitySnapshot>>;
+  createRightsClaim: (
+    input: CreateCommunityRightsClaimInput
+  ) => Promise<CommunityActionResult<CommunitySnapshot>>;
+  reviewRightsClaim: (
+    input: ReviewCommunityRightsClaimInput
+  ) => Promise<CommunityActionResult<CommunitySnapshot>>;
+  fetchTrustSafetySlo: () => Promise<CommunityActionResult<CommunityTrustSafetySloSummary>>;
 };
 
 const jsonHeaders = {
@@ -127,6 +146,31 @@ const parseApiSuccess = (value: unknown): CommunityActionResult<CommunityApiSucc
   });
 };
 
+const parseApiTrustSafetySloSuccess = (
+  value: unknown
+): CommunityActionResult<CommunityApiTrustSafetySloBody> => {
+  if (!isRecord(value) || value.ok !== true) {
+    return fail(
+      "community-invalid-slo-response",
+      "community slo response must contain ok=true with summary."
+    );
+  }
+
+  const summaryValidation = validateCommunityTrustSafetySloSummary(value.summary);
+  if (!summaryValidation.ok) {
+    return fail(
+      "community-invalid-slo-summary",
+      `${summaryValidation.code}: ${summaryValidation.message}`,
+      summaryValidation.path
+    );
+  }
+
+  return ok({
+    ok: true,
+    summary: summaryValidation.value,
+  });
+};
+
 const parseUnknownError = (
   responseStatus: number,
   payload: unknown
@@ -192,6 +236,55 @@ const requestCommunitySnapshot = async (
   }
 };
 
+const requestTrustSafetySlo = async (
+  headers: Record<string, string>
+): Promise<CommunityActionResult<CommunityTrustSafetySloSummary>> => {
+  try {
+    const response = await fetch("/api/community", {
+      method: "POST",
+      headers: {
+        ...jsonHeaders,
+        ...headers,
+      },
+      body: JSON.stringify({
+        action: "trust-safety-slo",
+      }),
+    });
+
+    const responseBody: unknown = await response
+      .json()
+      .catch(() => ({
+        ok: false,
+        code: "community-invalid-json-response",
+        message: "community response body must be valid JSON.",
+      }));
+
+    if (!response.ok) {
+      return parseUnknownError(response.status, responseBody);
+    }
+
+    const parsed = parseApiTrustSafetySloSuccess(responseBody);
+    if (!parsed.ok) return parsed;
+    return ok(parsed.value.summary);
+  } catch {
+    return fail(
+      "community-network-error",
+      "community request failed due to network/runtime error."
+    );
+  }
+};
+
+const readHostToken = (): CommunityActionResult<string> => {
+  const hostToken = (process.env.NEXT_PUBLIC_ROLE_TRUST_TOKEN ?? "").trim();
+  if (hostToken === "") {
+    return fail(
+      "community-host-token-missing",
+      "moderation host token is not configured in client runtime."
+    );
+  }
+  return ok(hostToken);
+};
+
 export const useCommunityActions = (): UseCommunityActionsResult => {
   const setLoading = useCommunityStore((state) => state.setLoading);
   const setError = useCommunityStore((state) => state.setError);
@@ -233,6 +326,13 @@ export const useCommunityActions = (): UseCommunityActionsResult => {
         return result;
       }
 
+      const adPolicy = evaluateAdPolicyText(validation.value.body);
+      if (!adPolicy.allow) {
+        const result = fail(adPolicy.code, adPolicy.message, "body");
+        setError(result);
+        return result;
+      }
+
       setLoading(true);
       const result = await requestCommunitySnapshot({
         method: "POST",
@@ -251,6 +351,13 @@ export const useCommunityActions = (): UseCommunityActionsResult => {
       const validation = validateCreateCommunityCommentInput(input);
       if (!validation.ok) {
         const result = fail(validation.code, validation.message, validation.path);
+        setError(result);
+        return result;
+      }
+
+      const adPolicy = evaluateAdPolicyText(validation.value.body);
+      if (!adPolicy.allow) {
+        const result = fail(adPolicy.code, adPolicy.message, "body");
         setError(result);
         return result;
       }
@@ -299,14 +406,10 @@ export const useCommunityActions = (): UseCommunityActionsResult => {
         return result;
       }
 
-      const hostToken = (process.env.NEXT_PUBLIC_ROLE_TRUST_TOKEN ?? "").trim();
-      if (hostToken === "") {
-        const result = fail(
-          "community-host-token-missing",
-          "moderation host token is not configured in client runtime."
-        );
-        setError(result);
-        return result;
+      const hostTokenResult = readHostToken();
+      if (!hostTokenResult.ok) {
+        setError(hostTokenResult);
+        return hostTokenResult;
       }
 
       setLoading(true);
@@ -316,12 +419,90 @@ export const useCommunityActions = (): UseCommunityActionsResult => {
         payload: validation.value,
         headers: {
           [MODERATION_ROLE_HEADER]: "host",
-          [MODERATION_TOKEN_HEADER]: hostToken,
+          [MODERATION_TOKEN_HEADER]: hostTokenResult.value,
         },
       });
       return commitSnapshot(result);
     },
     [commitSnapshot, setError, setLoading]
+  );
+
+  const createRightsClaim = useCallback(
+    async (
+      input: CreateCommunityRightsClaimInput
+    ): Promise<CommunityActionResult<CommunitySnapshot>> => {
+      const validation = validateCreateCommunityRightsClaimInput(input);
+      if (!validation.ok) {
+        const result = fail(validation.code, validation.message, validation.path);
+        setError(result);
+        return result;
+      }
+
+      setLoading(true);
+      const result = await requestCommunitySnapshot({
+        method: "POST",
+        action: "create-rights-claim",
+        payload: validation.value,
+      });
+      return commitSnapshot(result);
+    },
+    [commitSnapshot, setError, setLoading]
+  );
+
+  const reviewRightsClaim = useCallback(
+    async (
+      input: ReviewCommunityRightsClaimInput
+    ): Promise<CommunityActionResult<CommunitySnapshot>> => {
+      const validation = validateReviewCommunityRightsClaimInput(input);
+      if (!validation.ok) {
+        const result = fail(validation.code, validation.message, validation.path);
+        setError(result);
+        return result;
+      }
+
+      const hostTokenResult = readHostToken();
+      if (!hostTokenResult.ok) {
+        setError(hostTokenResult);
+        return hostTokenResult;
+      }
+
+      setLoading(true);
+      const result = await requestCommunitySnapshot({
+        method: "POST",
+        action: "review-rights-claim",
+        payload: validation.value,
+        headers: {
+          [MODERATION_ROLE_HEADER]: "host",
+          [MODERATION_TOKEN_HEADER]: hostTokenResult.value,
+        },
+      });
+      return commitSnapshot(result);
+    },
+    [commitSnapshot, setError, setLoading]
+  );
+
+  const fetchTrustSafetySlo = useCallback(
+    async (): Promise<CommunityActionResult<CommunityTrustSafetySloSummary>> => {
+      const hostTokenResult = readHostToken();
+      if (!hostTokenResult.ok) {
+        setError(hostTokenResult);
+        return hostTokenResult;
+      }
+
+      setLoading(true);
+      const result = await requestTrustSafetySlo({
+        [MODERATION_ROLE_HEADER]: "host",
+        [MODERATION_TOKEN_HEADER]: hostTokenResult.value,
+      });
+      if (!result.ok) {
+        setError(result);
+        return result;
+      }
+      clearError();
+      setLoading(false);
+      return result;
+    },
+    [clearError, setError, setLoading]
   );
 
   return {
@@ -330,5 +511,8 @@ export const useCommunityActions = (): UseCommunityActionsResult => {
     createComment,
     createReport,
     moderateReport,
+    createRightsClaim,
+    reviewRightsClaim,
+    fetchTrustSafetySlo,
   };
 };

@@ -2,6 +2,19 @@ export type CommunityReportTargetType = "post" | "comment";
 export type CommunityReportReason = "spam" | "abuse" | "copyright" | "other";
 export type CommunityReportStatus = "pending" | "approved" | "rejected";
 export type CommunityModerationDecision = "approve" | "reject";
+export type CommunityRightsClaimType =
+  | "copyright"
+  | "trademark"
+  | "impersonation"
+  | "other";
+export type CommunityRightsClaimStatus = "pending" | "approved" | "rejected";
+export type CommunityRightsClaimDecision = "approve" | "reject";
+export type CommunityTrafficRiskLevel = "elevated" | "blocked";
+export type CommunityTrafficAction =
+  | "create-post"
+  | "create-comment"
+  | "create-report"
+  | "create-rights-claim";
 
 export type CommunityPost = {
   id: string;
@@ -33,10 +46,49 @@ export type CommunityReport = {
   moderationNote: string | null;
 };
 
+export type CommunityRightsClaim = {
+  id: string;
+  targetType: CommunityReportTargetType;
+  targetId: string;
+  claimType: CommunityRightsClaimType;
+  detail?: string;
+  evidenceUrl?: string;
+  claimantId: string;
+  status: CommunityRightsClaimStatus;
+  createdAt: number;
+  reviewedAt: number | null;
+  reviewerId: string | null;
+  reviewNote: string | null;
+};
+
+export type CommunityTakedownRecord = {
+  id: string;
+  claimId: string;
+  targetType: CommunityReportTargetType;
+  targetId: string;
+  reason: "rights-claim-approved";
+  createdAt: number;
+  reviewerId: string;
+};
+
+export type CommunityTrafficSignal = {
+  id: string;
+  action: CommunityTrafficAction;
+  actorId: string | null;
+  fingerprint: string;
+  riskLevel: CommunityTrafficRiskLevel;
+  reason: string;
+  observedAt: number;
+  sampleCount: number;
+};
+
 export type CommunitySnapshot = {
   posts: CommunityPost[];
   comments: CommunityComment[];
   reports: CommunityReport[];
+  rightsClaims: CommunityRightsClaim[];
+  takedownRecords: CommunityTakedownRecord[];
+  trafficSignals: CommunityTrafficSignal[];
   serverTime: number;
 };
 
@@ -66,12 +118,41 @@ export type ModerateCommunityReportInput = {
   note?: string;
 };
 
+export type CreateCommunityRightsClaimInput = {
+  targetType: CommunityReportTargetType;
+  targetId: string;
+  claimType: CommunityRightsClaimType;
+  detail?: string;
+  evidenceUrl?: string;
+  claimantId: string;
+};
+
+export type ReviewCommunityRightsClaimInput = {
+  claimId: string;
+  decision: CommunityRightsClaimDecision;
+  reviewerId: string;
+  note?: string;
+};
+
+export type CommunityTrustSafetySloSummary = {
+  generatedAt: number;
+  pendingReports: number;
+  pendingRightsClaims: number;
+  avgReportResolutionMs: number | null;
+  avgRightsClaimResolutionMs: number | null;
+  elevatedTrafficSignals24h: number;
+  blockedTrafficSignals24h: number;
+};
+
 export type CommunityApiAction =
   | "list"
   | "create-post"
   | "create-comment"
   | "create-report"
-  | "moderate-report";
+  | "moderate-report"
+  | "create-rights-claim"
+  | "review-rights-claim"
+  | "trust-safety-slo";
 
 export type CommunityApiRequest = {
   action: CommunityApiAction;
@@ -104,7 +185,18 @@ const VALID_REPORT_REASONS = new Set<CommunityReportReason>([
   "copyright",
   "other",
 ]);
+const VALID_RIGHTS_CLAIM_TYPES = new Set<CommunityRightsClaimType>([
+  "copyright",
+  "trademark",
+  "impersonation",
+  "other",
+]);
 const VALID_REPORT_STATUSES = new Set<CommunityReportStatus>([
+  "pending",
+  "approved",
+  "rejected",
+]);
+const VALID_RIGHTS_CLAIM_STATUSES = new Set<CommunityRightsClaimStatus>([
   "pending",
   "approved",
   "rejected",
@@ -113,12 +205,29 @@ const VALID_MODERATION_DECISIONS = new Set<CommunityModerationDecision>([
   "approve",
   "reject",
 ]);
+const VALID_RIGHTS_CLAIM_DECISIONS = new Set<CommunityRightsClaimDecision>([
+  "approve",
+  "reject",
+]);
+const VALID_TRAFFIC_RISK_LEVELS = new Set<CommunityTrafficRiskLevel>([
+  "elevated",
+  "blocked",
+]);
+const VALID_TRAFFIC_ACTIONS = new Set<CommunityTrafficAction>([
+  "create-post",
+  "create-comment",
+  "create-report",
+  "create-rights-claim",
+]);
 const VALID_API_ACTIONS = new Set<CommunityApiAction>([
   "list",
   "create-post",
   "create-comment",
   "create-report",
   "moderate-report",
+  "create-rights-claim",
+  "review-rights-claim",
+  "trust-safety-slo",
 ]);
 
 const MAX_ID_LENGTH = 120;
@@ -126,6 +235,7 @@ const MAX_AUTHOR_ID_LENGTH = 120;
 const MAX_BODY_LENGTH = 4000;
 const MAX_DETAIL_LENGTH = 800;
 const MAX_NOTE_LENGTH = 800;
+const MAX_URL_LENGTH = 512;
 
 const fail = (
   code: string,
@@ -186,6 +296,34 @@ const validateOptionalBoundedString = (
   if (!validated.ok) return validated;
   const trimmed = validated.value.trim();
   return ok(trimmed === "" ? undefined : trimmed);
+};
+
+const validateOptionalUrlString = (
+  value: unknown,
+  path: string
+): CommunityValidationResult<string | undefined> => {
+  const validated = validateOptionalBoundedString(value, path, {
+    code: "invalid-url",
+    message: "value must be a string when provided.",
+    maxLength: MAX_URL_LENGTH,
+  });
+  if (!validated.ok) return validated;
+  if (validated.value === undefined) return ok(undefined);
+
+  try {
+    const parsed = new URL(validated.value);
+    if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
+      return fail(
+        "invalid-url-protocol",
+        `${path} must use http:// or https:// protocol.`,
+        path
+      );
+    }
+  } catch {
+    return fail("invalid-url-format", `${path} must be a valid URL.`, path);
+  }
+
+  return ok(validated.value);
 };
 
 const validateTimestamp = (
@@ -419,6 +557,127 @@ export const validateModerateCommunityReportInput = (
     reportId: reportIdValidation.value,
     decision: value.decision as CommunityModerationDecision,
     moderatorId: moderatorValidation.value,
+    note: noteValidation.value,
+  });
+};
+
+export const validateCreateCommunityRightsClaimInput = (
+  value: unknown
+): CommunityValidationResult<CreateCommunityRightsClaimInput> => {
+  if (!isRecord(value)) {
+    return fail(
+      "invalid-create-rights-claim-root",
+      "create-rights-claim payload must be an object.",
+      "root"
+    );
+  }
+
+  if (
+    typeof value.targetType !== "string" ||
+    !VALID_REPORT_TARGET_TYPES.has(value.targetType as CommunityReportTargetType)
+  ) {
+    return fail(
+      "invalid-create-rights-claim-target-type",
+      "targetType must be one of post/comment.",
+      "targetType"
+    );
+  }
+
+  const targetIdValidation = validateBoundedString(value.targetId, "targetId", {
+    code: "invalid-create-rights-claim-target-id",
+    message: "targetId must be a non-empty string.",
+    maxLength: MAX_ID_LENGTH,
+  });
+  if (!targetIdValidation.ok) return targetIdValidation;
+
+  if (
+    typeof value.claimType !== "string" ||
+    !VALID_RIGHTS_CLAIM_TYPES.has(value.claimType as CommunityRightsClaimType)
+  ) {
+    return fail(
+      "invalid-create-rights-claim-type",
+      "claimType must be one of copyright/trademark/impersonation/other.",
+      "claimType"
+    );
+  }
+
+  const detailValidation = validateOptionalBoundedString(value.detail, "detail", {
+    code: "invalid-create-rights-claim-detail",
+    message: "detail must be a string when provided.",
+    maxLength: MAX_DETAIL_LENGTH,
+  });
+  if (!detailValidation.ok) return detailValidation;
+
+  const evidenceValidation = validateOptionalUrlString(
+    value.evidenceUrl,
+    "evidenceUrl"
+  );
+  if (!evidenceValidation.ok) return evidenceValidation;
+
+  const claimantValidation = validateBoundedString(value.claimantId, "claimantId", {
+    code: "invalid-create-rights-claim-claimant-id",
+    message: "claimantId must be a non-empty string.",
+    maxLength: MAX_AUTHOR_ID_LENGTH,
+  });
+  if (!claimantValidation.ok) return claimantValidation;
+
+  return ok({
+    targetType: value.targetType as CommunityReportTargetType,
+    targetId: targetIdValidation.value,
+    claimType: value.claimType as CommunityRightsClaimType,
+    detail: detailValidation.value,
+    evidenceUrl: evidenceValidation.value,
+    claimantId: claimantValidation.value,
+  });
+};
+
+export const validateReviewCommunityRightsClaimInput = (
+  value: unknown
+): CommunityValidationResult<ReviewCommunityRightsClaimInput> => {
+  if (!isRecord(value)) {
+    return fail(
+      "invalid-review-rights-claim-root",
+      "review-rights-claim payload must be an object.",
+      "root"
+    );
+  }
+
+  const claimIdValidation = validateBoundedString(value.claimId, "claimId", {
+    code: "invalid-review-rights-claim-id",
+    message: "claimId must be a non-empty string.",
+    maxLength: MAX_ID_LENGTH,
+  });
+  if (!claimIdValidation.ok) return claimIdValidation;
+
+  if (
+    typeof value.decision !== "string" ||
+    !VALID_RIGHTS_CLAIM_DECISIONS.has(value.decision as CommunityRightsClaimDecision)
+  ) {
+    return fail(
+      "invalid-review-rights-claim-decision",
+      "decision must be one of approve/reject.",
+      "decision"
+    );
+  }
+
+  const reviewerValidation = validateBoundedString(value.reviewerId, "reviewerId", {
+    code: "invalid-review-rights-claim-reviewer-id",
+    message: "reviewerId must be a non-empty string.",
+    maxLength: MAX_AUTHOR_ID_LENGTH,
+  });
+  if (!reviewerValidation.ok) return reviewerValidation;
+
+  const noteValidation = validateOptionalBoundedString(value.note, "note", {
+    code: "invalid-review-rights-claim-note",
+    message: "note must be a string when provided.",
+    maxLength: MAX_NOTE_LENGTH,
+  });
+  if (!noteValidation.ok) return noteValidation;
+
+  return ok({
+    claimId: claimIdValidation.value,
+    decision: value.decision as CommunityRightsClaimDecision,
+    reviewerId: reviewerValidation.value,
     note: noteValidation.value,
   });
 };
@@ -668,6 +927,316 @@ export const validateCommunityReport = (
   });
 };
 
+export const validateCommunityRightsClaim = (
+  value: unknown,
+  path = "root"
+): CommunityValidationResult<CommunityRightsClaim> => {
+  if (!isRecord(value)) {
+    return fail("invalid-rights-claim", "rights claim must be an object.", path);
+  }
+
+  const idValidation = validateBoundedString(value.id, `${path}.id`, {
+    code: "invalid-rights-claim-id",
+    message: "rightsClaim.id must be a non-empty string.",
+    maxLength: MAX_ID_LENGTH,
+  });
+  if (!idValidation.ok) return idValidation;
+
+  if (
+    typeof value.targetType !== "string" ||
+    !VALID_REPORT_TARGET_TYPES.has(value.targetType as CommunityReportTargetType)
+  ) {
+    return fail(
+      "invalid-rights-claim-target-type",
+      "rightsClaim.targetType must be one of post/comment.",
+      `${path}.targetType`
+    );
+  }
+
+  const targetIdValidation = validateBoundedString(value.targetId, `${path}.targetId`, {
+    code: "invalid-rights-claim-target-id",
+    message: "rightsClaim.targetId must be a non-empty string.",
+    maxLength: MAX_ID_LENGTH,
+  });
+  if (!targetIdValidation.ok) return targetIdValidation;
+
+  if (
+    typeof value.claimType !== "string" ||
+    !VALID_RIGHTS_CLAIM_TYPES.has(value.claimType as CommunityRightsClaimType)
+  ) {
+    return fail(
+      "invalid-rights-claim-type",
+      "rightsClaim.claimType must be one of copyright/trademark/impersonation/other.",
+      `${path}.claimType`
+    );
+  }
+
+  const detailValidation = validateOptionalBoundedString(value.detail, `${path}.detail`, {
+    code: "invalid-rights-claim-detail",
+    message: "rightsClaim.detail must be a string when provided.",
+    maxLength: MAX_DETAIL_LENGTH,
+  });
+  if (!detailValidation.ok) return detailValidation;
+
+  const evidenceValidation = validateOptionalUrlString(
+    value.evidenceUrl,
+    `${path}.evidenceUrl`
+  );
+  if (!evidenceValidation.ok) return evidenceValidation;
+
+  const claimantValidation = validateBoundedString(value.claimantId, `${path}.claimantId`, {
+    code: "invalid-rights-claim-claimant-id",
+    message: "rightsClaim.claimantId must be a non-empty string.",
+    maxLength: MAX_AUTHOR_ID_LENGTH,
+  });
+  if (!claimantValidation.ok) return claimantValidation;
+
+  if (
+    typeof value.status !== "string" ||
+    !VALID_RIGHTS_CLAIM_STATUSES.has(value.status as CommunityRightsClaimStatus)
+  ) {
+    return fail(
+      "invalid-rights-claim-status",
+      "rightsClaim.status must be one of pending/approved/rejected.",
+      `${path}.status`
+    );
+  }
+
+  const createdAtValidation = validateTimestamp(
+    value.createdAt,
+    `${path}.createdAt`,
+    "invalid-rights-claim-created-at",
+    "rightsClaim.createdAt must be a non-negative number."
+  );
+  if (!createdAtValidation.ok) return createdAtValidation;
+
+  const reviewedAtValidation = validateNullableTimestamp(
+    value.reviewedAt,
+    `${path}.reviewedAt`
+  );
+  if (!reviewedAtValidation.ok) return reviewedAtValidation;
+
+  const reviewerValidation = validateNullableIdString(
+    value.reviewerId,
+    `${path}.reviewerId`,
+    "invalid-rights-claim-reviewer-id",
+    "rightsClaim.reviewerId must be a non-empty string or null."
+  );
+  if (!reviewerValidation.ok) return reviewerValidation;
+
+  const reviewNoteValidation = validateNullableOptionalText(
+    value.reviewNote,
+    `${path}.reviewNote`,
+    "invalid-rights-claim-review-note",
+    "rightsClaim.reviewNote must be a string or null."
+  );
+  if (!reviewNoteValidation.ok) return reviewNoteValidation;
+
+  if (
+    value.status === "pending" &&
+    (reviewedAtValidation.value !== null ||
+      reviewerValidation.value !== null ||
+      reviewNoteValidation.value !== null)
+  ) {
+    return fail(
+      "invalid-rights-claim-pending-review-fields",
+      "pending rights claim must not contain review fields.",
+      path
+    );
+  }
+
+  if (
+    value.status !== "pending" &&
+    (reviewedAtValidation.value === null || reviewerValidation.value === null)
+  ) {
+    return fail(
+      "invalid-rights-claim-resolved-review-fields",
+      "resolved rights claim must contain reviewedAt and reviewerId.",
+      path
+    );
+  }
+
+  return ok({
+    id: idValidation.value,
+    targetType: value.targetType as CommunityReportTargetType,
+    targetId: targetIdValidation.value,
+    claimType: value.claimType as CommunityRightsClaimType,
+    detail: detailValidation.value,
+    evidenceUrl: evidenceValidation.value,
+    claimantId: claimantValidation.value,
+    status: value.status as CommunityRightsClaimStatus,
+    createdAt: createdAtValidation.value,
+    reviewedAt: reviewedAtValidation.value,
+    reviewerId: reviewerValidation.value,
+    reviewNote: reviewNoteValidation.value,
+  });
+};
+
+export const validateCommunityTakedownRecord = (
+  value: unknown,
+  path = "root"
+): CommunityValidationResult<CommunityTakedownRecord> => {
+  if (!isRecord(value)) {
+    return fail("invalid-takedown-record", "takedown record must be an object.", path);
+  }
+
+  const idValidation = validateBoundedString(value.id, `${path}.id`, {
+    code: "invalid-takedown-record-id",
+    message: "takedownRecord.id must be a non-empty string.",
+    maxLength: MAX_ID_LENGTH,
+  });
+  if (!idValidation.ok) return idValidation;
+
+  const claimIdValidation = validateBoundedString(value.claimId, `${path}.claimId`, {
+    code: "invalid-takedown-record-claim-id",
+    message: "takedownRecord.claimId must be a non-empty string.",
+    maxLength: MAX_ID_LENGTH,
+  });
+  if (!claimIdValidation.ok) return claimIdValidation;
+
+  if (
+    typeof value.targetType !== "string" ||
+    !VALID_REPORT_TARGET_TYPES.has(value.targetType as CommunityReportTargetType)
+  ) {
+    return fail(
+      "invalid-takedown-record-target-type",
+      "takedownRecord.targetType must be one of post/comment.",
+      `${path}.targetType`
+    );
+  }
+
+  const targetIdValidation = validateBoundedString(value.targetId, `${path}.targetId`, {
+    code: "invalid-takedown-record-target-id",
+    message: "takedownRecord.targetId must be a non-empty string.",
+    maxLength: MAX_ID_LENGTH,
+  });
+  if (!targetIdValidation.ok) return targetIdValidation;
+
+  if (value.reason !== "rights-claim-approved") {
+    return fail(
+      "invalid-takedown-record-reason",
+      "takedownRecord.reason must be rights-claim-approved.",
+      `${path}.reason`
+    );
+  }
+
+  const createdAtValidation = validateTimestamp(
+    value.createdAt,
+    `${path}.createdAt`,
+    "invalid-takedown-record-created-at",
+    "takedownRecord.createdAt must be a non-negative number."
+  );
+  if (!createdAtValidation.ok) return createdAtValidation;
+
+  const reviewerValidation = validateBoundedString(value.reviewerId, `${path}.reviewerId`, {
+    code: "invalid-takedown-record-reviewer-id",
+    message: "takedownRecord.reviewerId must be a non-empty string.",
+    maxLength: MAX_AUTHOR_ID_LENGTH,
+  });
+  if (!reviewerValidation.ok) return reviewerValidation;
+
+  return ok({
+    id: idValidation.value,
+    claimId: claimIdValidation.value,
+    targetType: value.targetType as CommunityReportTargetType,
+    targetId: targetIdValidation.value,
+    reason: "rights-claim-approved",
+    createdAt: createdAtValidation.value,
+    reviewerId: reviewerValidation.value,
+  });
+};
+
+export const validateCommunityTrafficSignal = (
+  value: unknown,
+  path = "root"
+): CommunityValidationResult<CommunityTrafficSignal> => {
+  if (!isRecord(value)) {
+    return fail("invalid-traffic-signal", "traffic signal must be an object.", path);
+  }
+
+  const idValidation = validateBoundedString(value.id, `${path}.id`, {
+    code: "invalid-traffic-signal-id",
+    message: "trafficSignal.id must be a non-empty string.",
+    maxLength: MAX_ID_LENGTH,
+  });
+  if (!idValidation.ok) return idValidation;
+
+  if (
+    typeof value.action !== "string" ||
+    !VALID_TRAFFIC_ACTIONS.has(value.action as CommunityTrafficAction)
+  ) {
+    return fail(
+      "invalid-traffic-signal-action",
+      "trafficSignal.action is invalid.",
+      `${path}.action`
+    );
+  }
+
+  const actorValidation = validateNullableIdString(
+    value.actorId,
+    `${path}.actorId`,
+    "invalid-traffic-signal-actor-id",
+    "trafficSignal.actorId must be a non-empty string or null."
+  );
+  if (!actorValidation.ok) return actorValidation;
+
+  const fingerprintValidation = validateBoundedString(
+    value.fingerprint,
+    `${path}.fingerprint`,
+    {
+      code: "invalid-traffic-signal-fingerprint",
+      message: "trafficSignal.fingerprint must be a non-empty string.",
+      maxLength: MAX_ID_LENGTH,
+    }
+  );
+  if (!fingerprintValidation.ok) return fingerprintValidation;
+
+  if (
+    typeof value.riskLevel !== "string" ||
+    !VALID_TRAFFIC_RISK_LEVELS.has(value.riskLevel as CommunityTrafficRiskLevel)
+  ) {
+    return fail(
+      "invalid-traffic-signal-risk-level",
+      "trafficSignal.riskLevel must be elevated/blocked.",
+      `${path}.riskLevel`
+    );
+  }
+
+  const reasonValidation = validateBoundedString(value.reason, `${path}.reason`, {
+    code: "invalid-traffic-signal-reason",
+    message: "trafficSignal.reason must be a non-empty string.",
+    maxLength: MAX_DETAIL_LENGTH,
+  });
+  if (!reasonValidation.ok) return reasonValidation;
+
+  const observedAtValidation = validateTimestamp(
+    value.observedAt,
+    `${path}.observedAt`,
+    "invalid-traffic-signal-observed-at",
+    "trafficSignal.observedAt must be a non-negative number."
+  );
+  if (!observedAtValidation.ok) return observedAtValidation;
+
+  const sampleCountValidation = validateTimestamp(
+    value.sampleCount,
+    `${path}.sampleCount`,
+    "invalid-traffic-signal-sample-count",
+    "trafficSignal.sampleCount must be a non-negative number."
+  );
+  if (!sampleCountValidation.ok) return sampleCountValidation;
+
+  return ok({
+    id: idValidation.value,
+    action: value.action as CommunityTrafficAction,
+    actorId: actorValidation.value,
+    fingerprint: fingerprintValidation.value,
+    riskLevel: value.riskLevel as CommunityTrafficRiskLevel,
+    reason: reasonValidation.value,
+    observedAt: observedAtValidation.value,
+    sampleCount: sampleCountValidation.value,
+  });
+};
+
 const validateArray = <T>(
   value: unknown,
   path: string,
@@ -719,6 +1288,30 @@ export const validateCommunitySnapshot = (
   );
   if (!reportsValidation.ok) return reportsValidation;
 
+  const rightsClaimsValidation = validateArray(
+    value.rightsClaims,
+    "rightsClaims",
+    "invalid-community-snapshot-rights-claims",
+    validateCommunityRightsClaim
+  );
+  if (!rightsClaimsValidation.ok) return rightsClaimsValidation;
+
+  const takedownRecordsValidation = validateArray(
+    value.takedownRecords,
+    "takedownRecords",
+    "invalid-community-snapshot-takedown-records",
+    validateCommunityTakedownRecord
+  );
+  if (!takedownRecordsValidation.ok) return takedownRecordsValidation;
+
+  const trafficSignalsValidation = validateArray(
+    value.trafficSignals,
+    "trafficSignals",
+    "invalid-community-snapshot-traffic-signals",
+    validateCommunityTrafficSignal
+  );
+  if (!trafficSignalsValidation.ok) return trafficSignalsValidation;
+
   const serverTimeValidation = validateTimestamp(
     value.serverTime,
     "serverTime",
@@ -731,6 +1324,9 @@ export const validateCommunitySnapshot = (
     posts: postsValidation.value,
     comments: commentsValidation.value,
     reports: reportsValidation.value,
+    rightsClaims: rightsClaimsValidation.value,
+    takedownRecords: takedownRecordsValidation.value,
+    trafficSignals: trafficSignalsValidation.value,
     serverTime: serverTimeValidation.value,
   });
 };
@@ -748,14 +1344,14 @@ export const validateCommunityApiRequest = (
   ) {
     return fail(
       "invalid-community-request-action",
-      "action must be one of list/create-post/create-comment/create-report/moderate-report.",
+      "action must be one of list/create-post/create-comment/create-report/moderate-report/create-rights-claim/review-rights-claim/trust-safety-slo.",
       "action"
     );
   }
 
-  if (value.action === "list") {
+  if (value.action === "list" || value.action === "trust-safety-slo") {
     return ok({
-      action: "list",
+      action: value.action,
       payload: undefined,
     });
   }
@@ -771,6 +1367,95 @@ export const validateCommunityApiRequest = (
   return ok({
     action: value.action as CommunityApiAction,
     payload: value.payload,
+  });
+};
+
+export const validateCommunityTrustSafetySloSummary = (
+  value: unknown
+): CommunityValidationResult<CommunityTrustSafetySloSummary> => {
+  if (!isRecord(value)) {
+    return fail("invalid-trust-safety-slo-root", "summary must be an object.", "root");
+  }
+
+  const generatedAtValidation = validateTimestamp(
+    value.generatedAt,
+    "generatedAt",
+    "invalid-trust-safety-slo-generated-at",
+    "generatedAt must be a non-negative number."
+  );
+  if (!generatedAtValidation.ok) return generatedAtValidation;
+
+  const pendingReportsValidation = validateTimestamp(
+    value.pendingReports,
+    "pendingReports",
+    "invalid-trust-safety-slo-pending-reports",
+    "pendingReports must be a non-negative number."
+  );
+  if (!pendingReportsValidation.ok) return pendingReportsValidation;
+
+  const pendingClaimsValidation = validateTimestamp(
+    value.pendingRightsClaims,
+    "pendingRightsClaims",
+    "invalid-trust-safety-slo-pending-rights-claims",
+    "pendingRightsClaims must be a non-negative number."
+  );
+  if (!pendingClaimsValidation.ok) return pendingClaimsValidation;
+
+  const elevatedValidation = validateTimestamp(
+    value.elevatedTrafficSignals24h,
+    "elevatedTrafficSignals24h",
+    "invalid-trust-safety-slo-elevated-signals",
+    "elevatedTrafficSignals24h must be a non-negative number."
+  );
+  if (!elevatedValidation.ok) return elevatedValidation;
+
+  const blockedValidation = validateTimestamp(
+    value.blockedTrafficSignals24h,
+    "blockedTrafficSignals24h",
+    "invalid-trust-safety-slo-blocked-signals",
+    "blockedTrafficSignals24h must be a non-negative number."
+  );
+  if (!blockedValidation.ok) return blockedValidation;
+
+  const validateNullableFinite = (
+    candidate: unknown,
+    path: string
+  ): CommunityValidationResult<number | null> => {
+    if (candidate === null) return ok(null);
+    if (
+      typeof candidate !== "number" ||
+      !Number.isFinite(candidate) ||
+      candidate < 0
+    ) {
+      return fail(
+        `invalid-trust-safety-slo-${path}`,
+        `${path} must be a non-negative number or null.`,
+        path
+      );
+    }
+    return ok(Math.floor(candidate));
+  };
+
+  const reportResolutionValidation = validateNullableFinite(
+    value.avgReportResolutionMs,
+    "avgReportResolutionMs"
+  );
+  if (!reportResolutionValidation.ok) return reportResolutionValidation;
+
+  const rightsResolutionValidation = validateNullableFinite(
+    value.avgRightsClaimResolutionMs,
+    "avgRightsClaimResolutionMs"
+  );
+  if (!rightsResolutionValidation.ok) return rightsResolutionValidation;
+
+  return ok({
+    generatedAt: generatedAtValidation.value,
+    pendingReports: pendingReportsValidation.value,
+    pendingRightsClaims: pendingClaimsValidation.value,
+    avgReportResolutionMs: reportResolutionValidation.value,
+    avgRightsClaimResolutionMs: rightsResolutionValidation.value,
+    elevatedTrafficSignals24h: elevatedValidation.value,
+    blockedTrafficSignals24h: blockedValidation.value,
   });
 };
 

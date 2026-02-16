@@ -1,18 +1,30 @@
 import { NextResponse } from "next/server";
 
+import { evaluateAdPolicyText } from "@features/community/policy/adPolicy";
 import {
   validateCommunityApiRequest,
   validateCommunitySnapshot,
+  validateCommunityTrustSafetySloSummary,
   validateCreateCommunityCommentInput,
   validateCreateCommunityPostInput,
   validateCreateCommunityReportInput,
+  validateCreateCommunityRightsClaimInput,
   validateModerateCommunityReportInput,
+  validateReviewCommunityRightsClaimInput,
+  type CommunityApiAction,
   type CommunityComment,
   type CommunityPost,
   type CommunityReport,
   type CommunityReportStatus,
+  type CommunityRightsClaim,
+  type CommunityRightsClaimStatus,
   type CommunitySnapshot,
+  type CommunityTakedownRecord,
+  type CommunityTrafficAction,
+  type CommunityTrafficSignal,
+  type CommunityTrustSafetySloSummary,
 } from "@core/contracts/community";
+import { assessInvalidTraffic } from "@features/community/traffic/invalidTraffic";
 
 type CommunityApiErrorResponse = {
   ok: false;
@@ -21,22 +33,35 @@ type CommunityApiErrorResponse = {
   path?: string;
 };
 
-type CommunityApiSuccessResponse = {
+type CommunityApiSnapshotSuccessResponse = {
   ok: true;
   snapshot: CommunitySnapshot;
+};
+
+type CommunityApiSloSuccessResponse = {
+  ok: true;
+  summary: CommunityTrustSafetySloSummary;
 };
 
 const MODERATION_ROLE_HEADER = "x-sy-request-role";
 const MODERATION_TOKEN_HEADER = "x-sy-role-token";
 
+const MAX_TRAFFIC_SIGNALS = 120;
+
 let postSequence = 0;
 let commentSequence = 0;
 let reportSequence = 0;
+let rightsClaimSequence = 0;
+let takedownSequence = 0;
+let trafficSignalSequence = 0;
 
 const state: CommunitySnapshot = {
   posts: [],
   comments: [],
   reports: [],
+  rightsClaims: [],
+  takedownRecords: [],
+  trafficSignals: [],
   serverTime: 0,
 };
 
@@ -70,7 +95,51 @@ const cloneReport = (report: CommunityReport): CommunityReport => ({
   moderationNote: report.moderationNote,
 });
 
+const cloneRightsClaim = (claim: CommunityRightsClaim): CommunityRightsClaim => ({
+  id: claim.id,
+  targetType: claim.targetType,
+  targetId: claim.targetId,
+  claimType: claim.claimType,
+  detail: claim.detail,
+  evidenceUrl: claim.evidenceUrl,
+  claimantId: claim.claimantId,
+  status: claim.status,
+  createdAt: claim.createdAt,
+  reviewedAt: claim.reviewedAt,
+  reviewerId: claim.reviewerId,
+  reviewNote: claim.reviewNote,
+});
+
+const cloneTakedownRecord = (
+  record: CommunityTakedownRecord
+): CommunityTakedownRecord => ({
+  id: record.id,
+  claimId: record.claimId,
+  targetType: record.targetType,
+  targetId: record.targetId,
+  reason: "rights-claim-approved",
+  createdAt: record.createdAt,
+  reviewerId: record.reviewerId,
+});
+
+const cloneTrafficSignal = (signal: CommunityTrafficSignal): CommunityTrafficSignal => ({
+  id: signal.id,
+  action: signal.action,
+  actorId: signal.actorId,
+  fingerprint: signal.fingerprint,
+  riskLevel: signal.riskLevel,
+  reason: signal.reason,
+  observedAt: signal.observedAt,
+  sampleCount: signal.sampleCount,
+});
+
 const reportStatusRank: Record<CommunityReportStatus, number> = {
+  pending: 0,
+  approved: 1,
+  rejected: 2,
+};
+
+const rightsClaimStatusRank: Record<CommunityRightsClaimStatus, number> = {
   pending: 0,
   approved: 1,
   rejected: 2,
@@ -92,6 +161,24 @@ const createSnapshot = (): CommunitySnapshot => ({
     if (a.createdAt !== b.createdAt) return a.createdAt - b.createdAt;
     return a.id.localeCompare(b.id);
   }),
+  rightsClaims: [...state.rightsClaims].map(cloneRightsClaim).sort((a, b) => {
+    const statusDiff = rightsClaimStatusRank[a.status] - rightsClaimStatusRank[b.status];
+    if (statusDiff !== 0) return statusDiff;
+    if (a.createdAt !== b.createdAt) return a.createdAt - b.createdAt;
+    return a.id.localeCompare(b.id);
+  }),
+  takedownRecords: [...state.takedownRecords]
+    .map(cloneTakedownRecord)
+    .sort((a, b) => {
+      if (a.createdAt !== b.createdAt) return a.createdAt - b.createdAt;
+      return a.id.localeCompare(b.id);
+    }),
+  trafficSignals: [...state.trafficSignals]
+    .map(cloneTrafficSignal)
+    .sort((a, b) => {
+      if (a.observedAt !== b.observedAt) return b.observedAt - a.observedAt;
+      return b.id.localeCompare(a.id);
+    }),
   serverTime: state.serverTime,
 });
 
@@ -99,7 +186,8 @@ const toErrorResponse = (
   status: number,
   code: string,
   message: string,
-  path?: string
+  path?: string,
+  headers?: Record<string, string>
 ) => {
   const body: CommunityApiErrorResponse = {
     ok: false,
@@ -107,10 +195,13 @@ const toErrorResponse = (
     message,
     ...(path ? { path } : {}),
   };
-  return NextResponse.json(body, { status });
+  return NextResponse.json(body, {
+    status,
+    ...(headers ? { headers } : {}),
+  });
 };
 
-const createId = (prefix: "post" | "comment" | "report", sequence: number): string =>
+const createId = (prefix: string, sequence: number): string =>
   `${prefix}-${String(sequence).padStart(6, "0")}`;
 
 const setServerTime = (timestamp: number): void => {
@@ -129,7 +220,7 @@ const resolveSnapshotResponse = () => {
     );
   }
 
-  const body: CommunityApiSuccessResponse = {
+  const body: CommunityApiSnapshotSuccessResponse = {
     ok: true,
     snapshot: snapshotValidation.value,
   };
@@ -180,7 +271,73 @@ const hasValidModerationAccess = (
   return { ok: true };
 };
 
-const handleCreatePost = (payload: unknown) => {
+const hashFingerprint = (source: string): string => {
+  let hash = 2166136261;
+  for (let i = 0; i < source.length; i += 1) {
+    hash ^= source.charCodeAt(i);
+    hash = Math.imul(hash, 16777619);
+  }
+  return `fp_${(hash >>> 0).toString(36)}`;
+};
+
+const toTrafficFingerprint = (request: Request): string => {
+  const forwardedFor = request.headers.get("x-forwarded-for") ?? "";
+  const userAgent = request.headers.get("user-agent") ?? "";
+  const firstIp = forwardedFor.split(",")[0]?.trim() ?? "";
+  return hashFingerprint(`${firstIp}|${userAgent}`);
+};
+
+const pushTrafficSignal = (signal: CommunityTrafficSignal): void => {
+  state.trafficSignals.push(signal);
+  while (state.trafficSignals.length > MAX_TRAFFIC_SIGNALS) {
+    state.trafficSignals.shift();
+  }
+};
+
+const assessAndApplyTrafficPolicy = (input: {
+  request: Request;
+  action: CommunityTrafficAction;
+  actorId: string | null;
+  timestamp: number;
+}): NextResponse<CommunityApiErrorResponse> | null => {
+  const fingerprint = toTrafficFingerprint(input.request);
+  const assessment = assessInvalidTraffic({
+    action: input.action,
+    fingerprint,
+    actorId: input.actorId,
+    now: input.timestamp,
+  });
+
+  if (assessment.level !== "normal") {
+    trafficSignalSequence += 1;
+    pushTrafficSignal({
+      id: createId("traffic", trafficSignalSequence),
+      action: input.action,
+      actorId: input.actorId,
+      fingerprint,
+      riskLevel: assessment.level,
+      reason: assessment.reason,
+      observedAt: input.timestamp,
+      sampleCount: assessment.sampleCount,
+    });
+    setServerTime(input.timestamp);
+  }
+
+  if (assessment.level !== "blocked") return null;
+
+  return toErrorResponse(
+    429,
+    "community-invalid-traffic-blocked",
+    "mutation request blocked by invalid traffic policy.",
+    "traffic",
+    {
+      "x-sy-traffic-level": assessment.level,
+      "x-sy-traffic-count": String(assessment.sampleCount),
+    }
+  );
+};
+
+const handleCreatePost = (payload: unknown, request: Request) => {
   const payloadValidation = validateCreateCommunityPostInput(payload);
   if (!payloadValidation.ok) {
     return toErrorResponse(
@@ -191,8 +348,26 @@ const handleCreatePost = (payload: unknown) => {
     );
   }
 
-  postSequence += 1;
+  const adPolicyDecision = evaluateAdPolicyText(payloadValidation.value.body);
+  if (!adPolicyDecision.allow) {
+    return toErrorResponse(
+      422,
+      adPolicyDecision.code,
+      adPolicyDecision.message,
+      "body"
+    );
+  }
+
   const timestamp = now();
+  const blockedTraffic = assessAndApplyTrafficPolicy({
+    request,
+    action: "create-post",
+    actorId: payloadValidation.value.authorId,
+    timestamp,
+  });
+  if (blockedTraffic) return blockedTraffic;
+
+  postSequence += 1;
   const created: CommunityPost = {
     id: createId("post", postSequence),
     authorId: payloadValidation.value.authorId,
@@ -206,7 +381,7 @@ const handleCreatePost = (payload: unknown) => {
   return resolveSnapshotResponse();
 };
 
-const handleCreateComment = (payload: unknown) => {
+const handleCreateComment = (payload: unknown, request: Request) => {
   const payloadValidation = validateCreateCommunityCommentInput(payload);
   if (!payloadValidation.ok) {
     return toErrorResponse(
@@ -214,6 +389,16 @@ const handleCreateComment = (payload: unknown) => {
       payloadValidation.code,
       payloadValidation.message,
       payloadValidation.path
+    );
+  }
+
+  const adPolicyDecision = evaluateAdPolicyText(payloadValidation.value.body);
+  if (!adPolicyDecision.allow) {
+    return toErrorResponse(
+      422,
+      adPolicyDecision.code,
+      adPolicyDecision.message,
+      "body"
     );
   }
 
@@ -229,8 +414,16 @@ const handleCreateComment = (payload: unknown) => {
     );
   }
 
-  commentSequence += 1;
   const timestamp = now();
+  const blockedTraffic = assessAndApplyTrafficPolicy({
+    request,
+    action: "create-comment",
+    actorId: payloadValidation.value.authorId,
+    timestamp,
+  });
+  if (blockedTraffic) return blockedTraffic;
+
+  commentSequence += 1;
   const created: CommunityComment = {
     id: createId("comment", commentSequence),
     postId: payloadValidation.value.postId,
@@ -244,7 +437,7 @@ const handleCreateComment = (payload: unknown) => {
   return resolveSnapshotResponse();
 };
 
-const handleCreateReport = (payload: unknown) => {
+const handleCreateReport = (payload: unknown, request: Request) => {
   const payloadValidation = validateCreateCommunityReportInput(payload);
   if (!payloadValidation.ok) {
     return toErrorResponse(
@@ -271,8 +464,16 @@ const handleCreateReport = (payload: unknown) => {
     );
   }
 
-  reportSequence += 1;
   const timestamp = now();
+  const blockedTraffic = assessAndApplyTrafficPolicy({
+    request,
+    action: "create-report",
+    actorId: payloadValidation.value.reporterId,
+    timestamp,
+  });
+  if (blockedTraffic) return blockedTraffic;
+
+  reportSequence += 1;
   const created: CommunityReport = {
     id: createId("report", reportSequence),
     targetType: payloadValidation.value.targetType,
@@ -341,9 +542,213 @@ const handleModerateReport = (payload: unknown) => {
   return resolveSnapshotResponse();
 };
 
+const handleCreateRightsClaim = (payload: unknown, request: Request) => {
+  const payloadValidation = validateCreateCommunityRightsClaimInput(payload);
+  if (!payloadValidation.ok) {
+    return toErrorResponse(
+      400,
+      payloadValidation.code,
+      payloadValidation.message,
+      payloadValidation.path
+    );
+  }
+
+  const targetExists =
+    payloadValidation.value.targetType === "post"
+      ? state.posts.some((post) => post.id === payloadValidation.value.targetId)
+      : state.comments.some(
+          (comment) => comment.id === payloadValidation.value.targetId
+        );
+
+  if (!targetExists) {
+    return toErrorResponse(
+      404,
+      "community-rights-claim-target-not-found",
+      "rights claim target does not exist.",
+      "targetId"
+    );
+  }
+
+  const timestamp = now();
+  const blockedTraffic = assessAndApplyTrafficPolicy({
+    request,
+    action: "create-rights-claim",
+    actorId: payloadValidation.value.claimantId,
+    timestamp,
+  });
+  if (blockedTraffic) return blockedTraffic;
+
+  rightsClaimSequence += 1;
+  state.rightsClaims.push({
+    id: createId("rights", rightsClaimSequence),
+    targetType: payloadValidation.value.targetType,
+    targetId: payloadValidation.value.targetId,
+    claimType: payloadValidation.value.claimType,
+    detail: payloadValidation.value.detail,
+    evidenceUrl: payloadValidation.value.evidenceUrl,
+    claimantId: payloadValidation.value.claimantId,
+    status: "pending",
+    createdAt: timestamp,
+    reviewedAt: null,
+    reviewerId: null,
+    reviewNote: null,
+  });
+  setServerTime(timestamp);
+  return resolveSnapshotResponse();
+};
+
+const handleReviewRightsClaim = (payload: unknown) => {
+  const payloadValidation = validateReviewCommunityRightsClaimInput(payload);
+  if (!payloadValidation.ok) {
+    return toErrorResponse(
+      400,
+      payloadValidation.code,
+      payloadValidation.message,
+      payloadValidation.path
+    );
+  }
+
+  const claimIndex = state.rightsClaims.findIndex(
+    (claim) => claim.id === payloadValidation.value.claimId
+  );
+  if (claimIndex < 0) {
+    return toErrorResponse(
+      404,
+      "community-rights-claim-not-found",
+      "rights claim does not exist.",
+      "claimId"
+    );
+  }
+
+  const current = state.rightsClaims[claimIndex];
+  if (current.status !== "pending") {
+    return toErrorResponse(
+      409,
+      "community-rights-claim-already-resolved",
+      "rights claim is already resolved.",
+      "claimId"
+    );
+  }
+
+  const timestamp = now();
+  const nextStatus: CommunityRightsClaimStatus =
+    payloadValidation.value.decision === "approve" ? "approved" : "rejected";
+
+  state.rightsClaims[claimIndex] = {
+    ...current,
+    status: nextStatus,
+    reviewedAt: timestamp,
+    reviewerId: payloadValidation.value.reviewerId,
+    reviewNote: payloadValidation.value.note ?? null,
+  };
+
+  if (nextStatus === "approved") {
+    takedownSequence += 1;
+    state.takedownRecords.push({
+      id: createId("takedown", takedownSequence),
+      claimId: current.id,
+      targetType: current.targetType,
+      targetId: current.targetId,
+      reason: "rights-claim-approved",
+      createdAt: timestamp,
+      reviewerId: payloadValidation.value.reviewerId,
+    });
+
+    if (current.targetType === "post") {
+      const targetIndex = state.posts.findIndex((post) => post.id === current.targetId);
+      if (targetIndex >= 0) {
+        state.posts[targetIndex] = {
+          ...state.posts[targetIndex],
+          body: "[TAKEDOWNED: RIGHTS CLAIM APPROVED]",
+          updatedAt: timestamp,
+        };
+      }
+    } else {
+      const targetIndex = state.comments.findIndex(
+        (comment) => comment.id === current.targetId
+      );
+      if (targetIndex >= 0) {
+        state.comments[targetIndex] = {
+          ...state.comments[targetIndex],
+          body: "[TAKEDOWNED: RIGHTS CLAIM APPROVED]",
+        };
+      }
+    }
+  }
+
+  setServerTime(timestamp);
+  return resolveSnapshotResponse();
+};
+
+const averageResolutionMs = (
+  values: Array<{ createdAt: number; resolvedAt: number | null }>
+): number | null => {
+  const resolved = values
+    .filter((entry) => entry.resolvedAt !== null && entry.resolvedAt >= entry.createdAt)
+    .map((entry) => (entry.resolvedAt as number) - entry.createdAt);
+  if (resolved.length === 0) return null;
+  const total = resolved.reduce((sum, duration) => sum + duration, 0);
+  return Math.floor(total / resolved.length);
+};
+
+const buildTrustSafetySloSummary = (): CommunityTrustSafetySloSummary => {
+  const generatedAt = now();
+  const last24h = generatedAt - 24 * 60 * 60 * 1000;
+
+  return {
+    generatedAt,
+    pendingReports: state.reports.filter((entry) => entry.status === "pending").length,
+    pendingRightsClaims: state.rightsClaims.filter(
+      (entry) => entry.status === "pending"
+    ).length,
+    avgReportResolutionMs: averageResolutionMs(
+      state.reports.map((entry) => ({
+        createdAt: entry.createdAt,
+        resolvedAt: entry.moderatedAt,
+      }))
+    ),
+    avgRightsClaimResolutionMs: averageResolutionMs(
+      state.rightsClaims.map((entry) => ({
+        createdAt: entry.createdAt,
+        resolvedAt: entry.reviewedAt,
+      }))
+    ),
+    elevatedTrafficSignals24h: state.trafficSignals.filter(
+      (signal) => signal.observedAt >= last24h && signal.riskLevel === "elevated"
+    ).length,
+    blockedTrafficSignals24h: state.trafficSignals.filter(
+      (signal) => signal.observedAt >= last24h && signal.riskLevel === "blocked"
+    ).length,
+  };
+};
+
+const handleTrustSafetySlo = () => {
+  const summary = buildTrustSafetySloSummary();
+  const validation = validateCommunityTrustSafetySloSummary(summary);
+  if (!validation.ok) {
+    return toErrorResponse(
+      500,
+      "community-trust-safety-slo-invalid",
+      `${validation.code}: ${validation.message}`,
+      validation.path
+    );
+  }
+
+  const body: CommunityApiSloSuccessResponse = {
+    ok: true,
+    summary: validation.value,
+  };
+  return NextResponse.json(body);
+};
+
 export async function GET() {
   return resolveSnapshotResponse();
 }
+
+const requiresHostAccess = (action: CommunityApiAction): boolean =>
+  action === "moderate-report" ||
+  action === "review-rights-claim" ||
+  action === "trust-safety-slo";
 
 export async function POST(request: Request) {
   let requestBody: unknown;
@@ -367,7 +772,7 @@ export async function POST(request: Request) {
     );
   }
 
-  if (requestValidation.value.action === "moderate-report") {
+  if (requiresHostAccess(requestValidation.value.action)) {
     const access = hasValidModerationAccess(request);
     if (!access.ok) {
       return access.response;
@@ -378,13 +783,19 @@ export async function POST(request: Request) {
     case "list":
       return resolveSnapshotResponse();
     case "create-post":
-      return handleCreatePost(requestValidation.value.payload);
+      return handleCreatePost(requestValidation.value.payload, request);
     case "create-comment":
-      return handleCreateComment(requestValidation.value.payload);
+      return handleCreateComment(requestValidation.value.payload, request);
     case "create-report":
-      return handleCreateReport(requestValidation.value.payload);
+      return handleCreateReport(requestValidation.value.payload, request);
     case "moderate-report":
       return handleModerateReport(requestValidation.value.payload);
+    case "create-rights-claim":
+      return handleCreateRightsClaim(requestValidation.value.payload, request);
+    case "review-rights-claim":
+      return handleReviewRightsClaim(requestValidation.value.payload);
+    case "trust-safety-slo":
+      return handleTrustSafetySlo();
     default:
       return toErrorResponse(
         400,

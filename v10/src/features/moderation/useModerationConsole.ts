@@ -2,7 +2,12 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 
-import type { CommunityReport } from "@core/contracts/community";
+import type {
+  CommunityReport,
+  CommunityRightsClaim,
+  CommunityTrafficSignal,
+  CommunityTrustSafetySloSummary,
+} from "@core/contracts/community";
 import { useCommunityActions } from "@features/community/useCommunityActions";
 import { useCommunityStore, type CommunityStoreError } from "@features/community/store/useCommunityStore";
 import {
@@ -18,16 +23,27 @@ export type ModerationReportRow = {
   targetSummary: string;
 };
 
+export type RightsClaimRow = {
+  claim: CommunityRightsClaim;
+  targetSummary: string;
+};
+
 export type UseModerationConsoleResult = {
   isHost: boolean;
   isLoading: boolean;
   lastError: CommunityStoreError | null;
   pendingRows: ModerationReportRow[];
   resolvedRows: ModerationReportRow[];
+  pendingRightsClaims: RightsClaimRow[];
+  resolvedRightsClaims: RightsClaimRow[];
+  trafficSignals: CommunityTrafficSignal[];
+  sloSummary: CommunityTrustSafetySloSummary | null;
   auditEvents: AuditEvent[];
   refresh: () => Promise<void>;
   approveReport: (reportId: string) => Promise<void>;
   rejectReport: (reportId: string) => Promise<void>;
+  approveRightsClaim: (claimId: string) => Promise<void>;
+  rejectRightsClaim: (claimId: string) => Promise<void>;
 };
 
 const MAX_AUDIT_ITEMS = 30;
@@ -59,11 +75,21 @@ export const useModerationConsole = (): UseModerationConsoleResult => {
   const posts = useCommunityStore((state) => state.posts);
   const comments = useCommunityStore((state) => state.comments);
   const reports = useCommunityStore((state) => state.reports);
+  const rightsClaims = useCommunityStore((state) => state.rightsClaims);
+  const trafficSignals = useCommunityStore((state) => state.trafficSignals);
   const isLoading = useCommunityStore((state) => state.isLoading);
   const lastError = useCommunityStore((state) => state.lastError);
-  const { moderateReport, refresh: refreshCommunity } = useCommunityActions();
+  const {
+    moderateReport,
+    reviewRightsClaim,
+    fetchTrustSafetySlo,
+    refresh: refreshCommunity,
+  } = useCommunityActions();
 
   const [auditEvents, setAuditEvents] = useState<AuditEvent[]>(toInitialAuditFeed);
+  const [sloSummary, setSloSummary] = useState<CommunityTrustSafetySloSummary | null>(
+    null
+  );
 
   const isHost =
     trustedRoleClaim === "host" ||
@@ -108,10 +134,41 @@ export const useModerationConsole = (): UseModerationConsoleResult => {
     [reportRows]
   );
 
+  const rightsClaimRows = useMemo<RightsClaimRow[]>(() => {
+    return rightsClaims.map((claim) => {
+      if (claim.targetType === "post") {
+        const post = posts.find((entry) => entry.id === claim.targetId);
+        const targetSummary = post
+          ? `post:${post.id} ${post.authorId} - ${toShortText(post.body)}`
+          : `post:${claim.targetId} (missing)`;
+        return { claim, targetSummary };
+      }
+      const comment = comments.find((entry) => entry.id === claim.targetId);
+      const targetSummary = comment
+        ? `comment:${comment.id} ${comment.authorId} - ${toShortText(comment.body)}`
+        : `comment:${claim.targetId} (missing)`;
+      return { claim, targetSummary };
+    });
+  }, [comments, posts, rightsClaims]);
+
+  const pendingRightsClaims = useMemo(
+    () => rightsClaimRows.filter((entry) => entry.claim.status === "pending"),
+    [rightsClaimRows]
+  );
+
+  const resolvedRightsClaims = useMemo(
+    () => rightsClaimRows.filter((entry) => entry.claim.status !== "pending"),
+    [rightsClaimRows]
+  );
+
   const refresh = useCallback(async () => {
     if (!isHost) return;
     await refreshCommunity();
-  }, [isHost, refreshCommunity]);
+    const slo = await fetchTrustSafetySlo();
+    if (slo.ok) {
+      setSloSummary(slo.value);
+    }
+  }, [fetchTrustSafetySlo, isHost, refreshCommunity]);
 
   const moderate = useCallback(
     async (reportId: string, decision: "approve" | "reject") => {
@@ -156,15 +213,52 @@ export const useModerationConsole = (): UseModerationConsoleResult => {
     [moderate]
   );
 
+  const moderateRightsClaim = useCallback(
+    async (claimId: string, decision: "approve" | "reject") => {
+      if (!isHost) return;
+      const row = rightsClaimRows.find((entry) => entry.claim.id === claimId);
+      if (!row || row.claim.status !== "pending") return;
+
+      const reviewerId = pickModeratorId(trustedRoleClaim, role);
+      const result = await reviewRightsClaim({
+        claimId,
+        decision,
+        reviewerId,
+      });
+      if (!result.ok) return;
+    },
+    [isHost, reviewRightsClaim, rightsClaimRows, role, trustedRoleClaim]
+  );
+
+  const approveRightsClaim = useCallback(
+    async (claimId: string) => {
+      await moderateRightsClaim(claimId, "approve");
+    },
+    [moderateRightsClaim]
+  );
+
+  const rejectRightsClaim = useCallback(
+    async (claimId: string) => {
+      await moderateRightsClaim(claimId, "reject");
+    },
+    [moderateRightsClaim]
+  );
+
   return {
     isHost,
     isLoading,
     lastError,
     pendingRows,
     resolvedRows,
+    pendingRightsClaims,
+    resolvedRightsClaims,
+    trafficSignals,
+    sloSummary,
     auditEvents,
     refresh,
     approveReport,
     rejectReport,
+    approveRightsClaim,
+    rejectRightsClaim,
   };
 };
