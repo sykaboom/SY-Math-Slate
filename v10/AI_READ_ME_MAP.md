@@ -34,6 +34,8 @@ v10/src/
 |   |-- api/
 |   |   |-- community/
 |   |   |   \-- route.ts
+|   |   |-- extensions/
+|   |   |   \-- marketplace/
 |   |   \-- trust/
 |   |       \-- role/
 |   |-- favicon.ico
@@ -44,6 +46,7 @@ v10/src/
 |   |-- config/
 |   |   |-- boardSpec.ts
 |   |   |-- capabilities.ts
+|   |   |-- experiments.ts
 |   |   |-- perfProfile.ts
 |   |   |-- rolePolicy.ts
 |   |   |-- rolePolicyGuards.ts
@@ -52,6 +55,7 @@ v10/src/
 |   |   \-- viewportContract.ts
 |   |-- contracts/
 |   |   |-- community.ts
+|   |   |-- extensionMarketplace.ts
 |   |   |-- fromPersistedDoc.ts
 |   |   |-- index.ts
 |   |   |-- multimodalAsset.ts
@@ -65,11 +69,15 @@ v10/src/
 |   |-- export/
 |   |   \-- exportPipeline.ts
 |   |-- extensions/
+|   |   |-- sdk/
+|   |   |   |-- index.ts
+|   |   |   \-- moddingSdk.ts
 |   |   |-- aiOutputAssetPipeline.ts
 |   |   |-- connectors.ts
 |   |   |-- localAiSandboxPolicy.ts
 |   |   |-- localRuntimeHandshake.ts
 |   |   |-- manifest.ts
+|   |   |-- marketplaceCatalog.ts
 |   |   |-- mcpGateway.ts
 |   |   |-- pluginLoader.ts
 |   |   |-- registry.ts
@@ -151,6 +159,9 @@ v10/src/
 |   |   |   \-- documentOutline.ts
 |   |   \-- selection/
 |   |       \-- caretEngine.ts
+|   |-- experiments/
+|   |   |-- abFlags.ts
+|   |   \-- index.ts
 |   |-- extensions/
 |   |   |-- adapters/
 |   |   |   |-- audioProviderAdapter.ts
@@ -171,6 +182,10 @@ v10/src/
 |   |   |   |-- asyncJobOrchestrator.ts
 |   |   |   |-- index.ts
 |   |   |   \-- types.ts
+|   |   |-- marketplace/
+|   |   |   |-- index.ts
+|   |   |   |-- resolveMarketplaceCatalog.ts
+|   |   |   \-- useMarketplaceCatalog.ts
 |   |   |-- routing/
 |   |   |   |-- capabilityRouter.ts
 |   |   |   |-- index.ts

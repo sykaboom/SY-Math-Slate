@@ -49,6 +49,7 @@ app/
   layout.tsx
   page.tsx
   api/community/route.ts
+  api/extensions/marketplace/route.ts
   api/trust/role/route.ts
 core/
   engine/        (headless command bus: command registry, preflight, idempotency)
@@ -56,6 +57,7 @@ core/
   config/        (boardSpec, capabilities, typography defaults, rolePolicy + guards, theme token schema)
   export/        (export pipeline scaffold)
   extensions/    (manifest, registry, connectors, pluginLoader, mcpGateway, runtime scaffold, local runtime handshake/sandbox, AI asset pipeline)
+  extensions/sdk/ (modding SDK facade for slot/command discovery + manifest scaffold helper)
   math/          (MathJax loader/render)
   migrations/    (migrateToV2 + modStudioMigration)
   persistence/   (buildPersistedDoc and doc-only shaping helpers)
@@ -67,7 +69,9 @@ features/
   animation/     (animation model, plan/measure/runtime, modding contract)
   canvas/        (rendering layers, actors, objects, viewport)
   community/     (community domain store + client actions for post/comment/report)
+  experiments/   (deterministic A/B assignment layer)
   extensions/    (tool adapter interfaces/registry/provider ABI adapters/routing, local adapters, async jobs, command policy + command registrations)
+  extensions/marketplace/ (marketplace catalog resolver + client fetch hook)
   input-studio/  (DataInput headless hooks, schema editor, LLM draft/diff, approval queue payload, publish/rollback, validation pipeline)
   hooks/         (useSequence, usePersistence, useFileIO, useAudioPlayer, ...)
   layout/        (AppLayout, autoLayout, overview)
@@ -151,6 +155,21 @@ ui/
 - Release candidate signoff:
   - `codex_tasks/workflow/release_candidate_signoff_checklist.md` added.
   - `scripts/check_v10_rc_signoff.sh` validates checklist section/coverage invariants.
+
+## Recent W10 Additions (task_228~230)
+- Modding SDK + CLI scaffold:
+  - `core/extensions/sdk/moddingSdk.ts` exposes slot/command discovery, manifest validation/registration, and command dispatch facade.
+  - `scripts/modding_sdk_cli.mjs` provides `list-slots`, `init`, `validate` flow for manifest-first mod authors.
+  - `scripts/check_v10_modding_sdk_scaffold.sh` guards scaffold integrity.
+- Experimentation A/B flag layer:
+  - `core/config/experiments.ts` defines deterministic experiment registry with rollout constraints.
+  - `features/experiments/abFlags.ts` adds stable bucketing via `NEXT_PUBLIC_EXPERIMENT_SALT`.
+  - `scripts/check_v10_experiment_registry.sh` + `v10/tests/experiment_registry_guard.mjs` enforce registry/flag alignment.
+- Extension marketplace readiness:
+  - `core/contracts/extensionMarketplace.ts` adds fail-closed marketplace catalog validators.
+  - `core/extensions/marketplaceCatalog.ts` + `/api/extensions/marketplace` expose validated deterministic catalog payload.
+  - `features/extensions/marketplace/useMarketplaceCatalog.ts` provides typed client fetch path.
+  - `scripts/check_v10_marketplace_readiness.sh` + `v10/tests/marketplace_readiness.mjs` enforce readiness invariants.
 
 ---
 

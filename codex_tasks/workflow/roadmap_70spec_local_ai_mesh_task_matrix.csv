@@ -66,6 +66,6 @@ task_id,slug,title,wave,objective_axis,depends_on_wave,parallel_group,verify_sta
 225,legacy_path_final_purge,Legacy Path Final Purge,W9,release,W8,G9-release,mid,COMPLETED
 226,beta_release_gate_v2,Beta Release Gate V2,W9,release,W8,G9-release,mid,COMPLETED
 227,release_candidate_signoff_checklist,Release Candidate Signoff Checklist,W9,release,W8,G9-release,end,COMPLETED
-228,modding_sdk_cli_scaffold,Modding SDK + CLI Scaffold,W10,growth,W8+W9,G10-growth,mid,PENDING
-229,experimentation_ab_flag_layer,Experimentation A/B Flag Layer,W10,growth,W8+W9,G10-growth,mid,PENDING
-230,extension_marketplace_readiness,Extension Marketplace Readiness,W10,growth,W8+W9,G10-growth,end,PENDING
+228,modding_sdk_cli_scaffold,Modding SDK + CLI Scaffold,W10,growth,W8+W9,G10-growth,mid,COMPLETED
+229,experimentation_ab_flag_layer,Experimentation A/B Flag Layer,W10,growth,W8+W9,G10-growth,mid,COMPLETED
+230,extension_marketplace_readiness,Extension Marketplace Readiness,W10,growth,W8+W9,G10-growth,end,COMPLETED
