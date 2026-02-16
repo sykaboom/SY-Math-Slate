@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 768 1024" id="shell_root">
+  <defs>
+    <style>
+      .chrome { fill: #f1f5f9; stroke: #cbd5e1; stroke-width: 2; }
+      .safe { fill: #ffffff; stroke: #e2e8f0; stroke-width: 2; }
+      .clamp { fill: none; stroke: #ef4444; stroke-width: 2; stroke-dasharray: 4 4; }
+      .panel { fill: #ffffff; stroke: #94a3b8; stroke-width: 2; rx: 8; }
+      .docked { fill: #f8fafc; stroke: #94a3b8; stroke-width: 2; }
+      .handle { fill: #e2e8f0; rx: 4; }
+      .close { fill: #fca5a5; stroke: #ef4444; stroke-width: 2; rx: 4; }
+      .anchor { fill: #cbd5e1; stroke: #94a3b8; stroke-width: 2; rx: 8; }
+      .text { font-family: monospace; font-size: 14px; fill: #475569; }
+    </style>
+  </defs>
+
+  <rect id="zone_top_chrome" class="chrome" x="0" y="0" width="768" height="60" />
+  <rect id="zone_bottom_chrome" class="chrome" x="0" y="964" width="768" height="60" />
+  <rect id="zone_canvas_safe" class="safe" x="0" y="60" width="768" height="904" />
+  <rect id="clamp_bounds" class="clamp" x="16" y="76" width="736" height="872" />
+
+  <g id="state_host_clean">
+    <rect id="anchor_launcher_host" class="anchor" x="24" y="884" width="56" height="56" />
+  </g>
+
+  <g id="state_student_kiosk" display="none">
+    <rect id="anchor_launcher_student" class="anchor" x="24" y="884" width="56" height="56" />
+  </g>
+
+  <g id="state_host_datainput_windowed">
+    <g id="panel_datainput_window" transform="translate(100, 150)">
+      <rect class="panel" x="0" y="0" width="320" height="400" />
+      <rect id="drag_handle_datainput" class="handle" x="8" y="12" width="264" height="32" />
+      <rect id="close_target_datainput" class="close" x="268" y="6" width="44" height="44" />
+    </g>
+  </g>
+
+  <g id="state_host_toolbar_windowed">
+    <g id="panel_toolbar_window" transform="translate(450, 150)">
+      <rect class="panel" x="0" y="0" width="240" height="56" />
+      <rect id="drag_handle_toolbar" class="handle" x="8" y="16" width="184" height="24" />
+      <rect id="close_target_toolbar" class="close" x="188" y="6" width="44" height="44" />
+    </g>
+  </g>
+
+  <g id="state_host_docked_mix" opacity="0.6">
+    <g id="panel_datainput_docked" transform="translate(448, 60)">
+      <rect class="docked" x="0" y="0" width="320" height="904" />
+    </g>
+    <g id="panel_toolbar_docked" transform="translate(0, 908)">
+      <rect class="docked" x="0" y="0" width="448" height="56" />
+    </g>
+  </g>
+</svg>
