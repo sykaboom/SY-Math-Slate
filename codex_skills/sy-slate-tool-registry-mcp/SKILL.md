@@ -1,6 +1,6 @@
 ---
 name: sy-slate-tool-registry-mcp
-description: Define and integrate tools (LLM/TTS/renderer/validator) via Tool Registry and adapter boundaries with deterministic ToolResult outputs and DAG-safe execution.
+description: Define and integrate tools (LLM/TTS/renderer/validator) via Tool Registry and MCP adapters with consistent ToolResult outputs.
 ---
 
 # Tool Registry + MCP Adapters
@@ -15,27 +15,15 @@ description: Define and integrate tools (LLM/TTS/renderer/validator) via Tool Re
 2. Register tool entry with required fields:
    - `toolId`, `category`, `inputSchema`, `outputSchema`
    - `capabilities`, `execution`, `policy`
-3. Run DAG order for contract chain:
-   - Tool registry contract first
-   - Adapter boundary integration second
-   - Parallelize only non-overlapping files.
-4. Implement adapter in `features/` (never in `core/`).
-5. Normalize outputs to `ToolResult` and then to `NormalizedContent` / `TTSScript` / `RenderPlan` as needed.
-6. Enforce policy: auth, rate limits, cost tier, timeouts.
-7. Emit diagnostics (latency, cost, warnings) in ToolResult.
-8. In delegated mode, escalate only when required:
-   - breaking change
-   - new dependency
-   - migration requirement
-   - security/cost policy impact
-   - Gemini SVG draft request needed for layout-related tasks
+3. Implement adapter in `features/` (never in `core/`).
+4. Normalize outputs to `ToolResult` and then to `NormalizedContent` / `TTSScript` / `RenderPlan` as needed.
+5. Enforce policy: auth, rate limits, cost tier, timeouts.
+6. Emit diagnostics (latency, cost, warnings) in ToolResult.
 
 ## Guardrails
 - No secrets in client code.
 - No direct network calls from `core/`.
 - Tool-specific types must stay inside adapters.
-- Keep blocker-only interim reporting and one final packet.
-- If layout artifacts are needed, allow a single Gemini SVG draft via user bridge.
 
 ## References
 - `codex_tasks/task_071_mcp_ready_content_pipeline_spec.md`
