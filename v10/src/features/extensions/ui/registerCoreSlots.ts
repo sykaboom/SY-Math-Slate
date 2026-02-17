@@ -79,14 +79,26 @@ const CORE_SLOT_BINDINGS: readonly CoreSlotBinding[] = [
   {
     panelId: CORE_PANEL_POLICY_IDS.PENDING_APPROVAL,
     component: PendingApprovalPanel,
-    activation: "always",
-    registerInSlotRuntime: true,
+    activation: "layout-slot-cutover",
+    registerInSlotRuntime: !LAYOUT_SLOT_CUTOVER_ENABLED,
+    launcher: {
+      launcherId: "core-launcher-panel-pending-approval",
+      title: "Pending Approval",
+      description: "Opens teacher approval queue.",
+      icon: "Keyboard",
+    },
   },
   {
     panelId: CORE_PANEL_POLICY_IDS.MODERATION_CONSOLE,
     component: ModerationConsolePanel,
-    activation: "always",
-    registerInSlotRuntime: true,
+    activation: "layout-slot-cutover",
+    registerInSlotRuntime: !LAYOUT_SLOT_CUTOVER_ENABLED,
+    launcher: {
+      launcherId: "core-launcher-panel-moderation-console",
+      title: "Moderation Console",
+      description: "Opens trust and safety controls.",
+      icon: "Captions",
+    },
   },
   {
     panelId: CORE_PANEL_POLICY_IDS.DATA_INPUT,

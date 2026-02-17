@@ -197,6 +197,11 @@ export function AppLayout({ children }: AppLayoutProps) {
     return map;
   }, []);
   const runtimeRole = resolveExecutionRole(role);
+  const isPendingApprovalOpen =
+    windowRuntimePanelOpenState[CORE_PANEL_POLICY_IDS.PENDING_APPROVAL] === true;
+  const isModerationConsoleOpen =
+    windowRuntimePanelOpenState[CORE_PANEL_POLICY_IDS.MODERATION_CONSOLE] ===
+    true;
   const windowHostPanelModules = useMemo(
     () =>
       buildCoreWindowHostPanelAdapters({
@@ -206,6 +211,18 @@ export function AppLayout({ children }: AppLayoutProps) {
         showHostToolchips: showHostToolchipsPolicy,
         isDataInputOpen,
         closeDataInput,
+        isPendingApprovalOpen,
+        closePendingApproval: () =>
+          setWindowRuntimePanelOpenState(
+            CORE_PANEL_POLICY_IDS.PENDING_APPROVAL,
+            false
+          ),
+        isModerationConsoleOpen,
+        closeModerationConsole: () =>
+          setWindowRuntimePanelOpenState(
+            CORE_PANEL_POLICY_IDS.MODERATION_CONSOLE,
+            false
+          ),
         viewportSize: {
           width: windowHostClampBounds.width,
           height: windowHostClampBounds.height,
@@ -214,7 +231,10 @@ export function AppLayout({ children }: AppLayoutProps) {
     [
       closeDataInput,
       isDataInputOpen,
+      isModerationConsoleOpen,
+      isPendingApprovalOpen,
       runtimeRole,
+      setWindowRuntimePanelOpenState,
       showDataInputPanelPolicy,
       showHostToolchipsPolicy,
       useLayoutSlotCutover,

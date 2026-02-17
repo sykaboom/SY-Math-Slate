@@ -219,3 +219,28 @@ Execution report must also include:
 - verification cadence summary:
   - how many `mid` and `end` runs occurred
   - where `end` was intentionally deferred for batching
+
+---
+
+## 11) Batch Analysis Workflow (Claude Code Role)
+
+When multiple `PENDING` specs accumulate, Claude Code may be used as
+batch-dispatch analyst before Codex execution starts.
+
+Claude Code responsibilities:
+1) Read all `PENDING` task specs
+2) Extract each task's Execution Mode Assessment
+3) Build file conflict matrix (`W` / `R`)
+4) Build dependency DAG (declared dependencies + file-lock constraints)
+5) Produce batch plan via `codex_tasks/_TEMPLATE_batch_dispatch_plan.md`
+6) Recommend MANUAL vs DELEGATED split and wave order
+7) Present plan for user approval
+
+Trigger phrases:
+- "배치 분석해줘"
+- "펜딩 태스크 정리해"
+- "batch dispatch plan"
+- "pending task optimization"
+
+After user approval, Codex executes tasks in the approved wave/slot order.
+Claude Code does not implement code; Codex is the sole executor.

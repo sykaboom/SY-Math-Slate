@@ -10,7 +10,9 @@ import {
 } from "@features/extensions/ui/registerCoreSlots";
 import { DataInputPanel } from "@features/layout/DataInputPanel";
 import { Prompter } from "@features/layout/Prompter";
+import { ModerationConsolePanel } from "@features/moderation/ModerationConsolePanel";
 import { FloatingToolbar } from "@features/toolbar/FloatingToolbar";
+import { PendingApprovalPanel } from "@features/toolbar/PendingApprovalPanel";
 import type {
   PanelBehaviorContract,
   PanelRoleOverride,
@@ -112,6 +114,16 @@ const resolvePrompterSize = (viewportSize: { width: number; height: number }) =>
   height: 92,
 });
 
+const resolvePendingApprovalSize = (viewportSize: { width: number; height: number }) => ({
+  width: clamp(Math.round(viewportSize.width * 0.36), 320, 420),
+  height: clamp(Math.round(viewportSize.height * 0.42), 220, 480),
+});
+
+const resolveModerationConsoleSize = (viewportSize: { width: number; height: number }) => ({
+  width: clamp(Math.round(viewportSize.width * 0.42), 320, 520),
+  height: clamp(Math.round(viewportSize.height * 0.78), 320, 820),
+});
+
 type WindowPanelShellProps = {
   title: string;
   context: WindowHostPanelRenderContext;
@@ -163,6 +175,10 @@ export type CoreWindowHostPanelAdapterOptions = {
   showHostToolchips: boolean;
   isDataInputOpen: boolean;
   closeDataInput: () => void;
+  isPendingApprovalOpen: boolean;
+  closePendingApproval: () => void;
+  isModerationConsoleOpen: boolean;
+  closeModerationConsole: () => void;
   viewportSize: {
     width: number;
     height: number;
@@ -196,6 +212,68 @@ export const buildCoreWindowHostPanelAdapters = (
           onRequestClose={options.closeDataInput}
         >
           <DataInputPanel mountMode="window-host" className="bg-transparent" />
+        </WindowPanelShell>
+      ),
+    });
+  }
+
+  const pendingApprovalContract = resolveCorePanelContract(
+    CORE_PANEL_POLICY_IDS.PENDING_APPROVAL,
+    runtimeRole,
+    options.layoutSlotCutoverEnabled
+  );
+  if (
+    pendingApprovalContract &&
+    pendingApprovalContract.visible &&
+    options.showHostToolchips
+  ) {
+    modules.push({
+      panelId: pendingApprovalContract.panelId,
+      slot: pendingApprovalContract.slot,
+      behavior: pendingApprovalContract.behavior,
+      size: resolvePendingApprovalSize(viewportSize),
+      isOpen: options.isPendingApprovalOpen,
+      className: "pointer-events-auto w-full max-w-[min(460px,96vw)]",
+      render: (context) => (
+        <WindowPanelShell
+          title="Pending Approval"
+          context={context}
+          onRequestClose={options.closePendingApproval}
+        >
+          <div className="h-full w-full overflow-y-auto p-2">
+            <PendingApprovalPanel />
+          </div>
+        </WindowPanelShell>
+      ),
+    });
+  }
+
+  const moderationConsoleContract = resolveCorePanelContract(
+    CORE_PANEL_POLICY_IDS.MODERATION_CONSOLE,
+    runtimeRole,
+    options.layoutSlotCutoverEnabled
+  );
+  if (
+    moderationConsoleContract &&
+    moderationConsoleContract.visible &&
+    options.showHostToolchips
+  ) {
+    modules.push({
+      panelId: moderationConsoleContract.panelId,
+      slot: moderationConsoleContract.slot,
+      behavior: moderationConsoleContract.behavior,
+      size: resolveModerationConsoleSize(viewportSize),
+      isOpen: options.isModerationConsoleOpen,
+      className: "pointer-events-auto w-full max-w-[min(560px,96vw)]",
+      render: (context) => (
+        <WindowPanelShell
+          title="Moderation Console"
+          context={context}
+          onRequestClose={options.closeModerationConsole}
+        >
+          <div className="h-full w-full overflow-y-auto p-2">
+            <ModerationConsolePanel />
+          </div>
         </WindowPanelShell>
       ),
     });

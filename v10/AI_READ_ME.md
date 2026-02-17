@@ -554,9 +554,9 @@ Located in `features/extensions/`:
 ## Layout Shell Runtime Boundaries (Task 244~245)
 - Shell runtime boundary:
   - `features/layout/AppLayout.tsx`, `features/layout/windowing/WindowHost.tsx`, and `features/layout/windowing/PanelLauncher.tsx` orchestrate shell state and window runtime only.
-  - These shell paths must not directly import or mount `DataInputPanel`, `Prompter`, or `FloatingToolbar`.
+  - These shell paths must not directly import or mount `DataInputPanel`, `Prompter`, `FloatingToolbar`, `PendingApprovalPanel`, or `ModerationConsolePanel`.
 - Module mount boundary:
-  - `features/layout/windowing/panelAdapters.tsx` is the functional mount owner for `DataInputPanel`, `Prompter`, and `FloatingToolbar` in window-host mode.
+  - `features/layout/windowing/panelAdapters.tsx` is the functional mount owner for `DataInputPanel`, `Prompter`, `FloatingToolbar`, `PendingApprovalPanel`, and `ModerationConsolePanel` in window-host mode.
 - Policy/runtime contract boundary:
   - `core/config/panel-policy.ts` defines panel behavior defaults and role overrides.
   - `features/extensions/ui/registerCoreSlots.ts` publishes panel slot/launcher contracts consumed by shell runtime without hardcoded panel mounts.

@@ -53,6 +53,28 @@ Out of scope:
 
 ---
 
+## Execution Mode Assessment (Base Required for new specs)
+
+- Touched file count:
+  - (number)
+- Files shared with other PENDING tasks:
+  - (path list or `none`)
+- Cross-module dependency:
+  - YES / NO
+- Parallelizable sub-units:
+  - (number, 0 if none)
+- Estimated single-agent duration:
+  - (rough estimate, e.g. `~20min`)
+- Recommended mode:
+  - MANUAL | DELEGATED
+- Batch-eligible:
+  - YES / NO
+  - If YES, mention ordering/file-lock constraints.
+- Rationale:
+  - (1-2 sentences for why this mode is recommended)
+
+---
+
 ## Optional Block A — Layout / SVG Gate
 
 - [ ] Applies: YES / NO
@@ -85,6 +107,10 @@ Out of scope:
   - Parallel slot plan:
     - (max 6 active slots)
   - Scheduler plan (required in delegated mode):
+    - Slot allocation mode:
+      - FIXED | DYNAMIC
+    - Slot priority rule (DYNAMIC only):
+      - (e.g., critical-path-first / shortest-job-first / file-conflict-avoidance)
     - Requested orchestration mode:
       - (e.g., max orchestration mode on/off; include user phrase if provided)
     - Initial slot split:

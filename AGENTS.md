@@ -154,6 +154,7 @@ After hotfix:
 - Gemini/layout protocol: `GEMINI_CODEX_PROTOCOL.md`
 - Delegated orchestration playbook: `codex_tasks/_PLAYBOOK_subagent_oneclick.md`
 - Task template: `codex_tasks/_TEMPLATE_task.md`
+- Batch dispatch plan template: `codex_tasks/_TEMPLATE_batch_dispatch_plan.md`
 - v10 architecture map: `v10/AI_READ_ME.md`, `v10/AI_READ_ME_MAP.md`
 
 ---
