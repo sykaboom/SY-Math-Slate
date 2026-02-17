@@ -1,10 +1,11 @@
-# GEMINI_CODEX_PROTOCOL.md (v6 — Gemini SVG/Spatial Protocol)
+# GEMINI_CODEX_PROTOCOL.md (v7 — Gemini SVG/Spatial Protocol)
 
 ## 0) Purpose
 This document defines **Gemini's scope only** inside SY-Math-Slate.
 
 - Codex owns specs, approvals, implementation, and closeout.
 - Gemini is used only for spatial/layout reasoning via SVG artifacts.
+- Gemini invocation is optional (default OFF); trigger policy is governed by `AGENTS.md` and playbook.
 - Codex workflow/delegation/hotfix details are governed by:
   - `AGENTS.md`
   - `codex_tasks/_PLAYBOOK_subagent_oneclick.md`
@@ -50,8 +51,10 @@ Terminal access or user preference must not change role identity.
 
 ---
 
-## 4) SVG Handoff Contract (Gemini -> Codex)
-Mandatory flow:
+## 4) SVG Handoff Contract (Gemini -> Codex, when invoked)
+Gemini is invoked only when Codex/user decides it is needed under governance triggers.
+
+If invoked, mandatory flow:
 1) Gemini provides one SVG draft under `design_drafts/`.
 2) Codex records numeric redlines in task spec.
 3) Structure freezes, then Codex implements.

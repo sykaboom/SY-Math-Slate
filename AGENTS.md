@@ -88,7 +88,7 @@ Non-negotiable invariants:
 - File ownership lock: one file has one implementer at a time.
 - One-pass review/verification loop (no infinite rework loop).
 - Progress reporting is blocker-first.
-- Escalate to user on breaking change, new dependency, security/cost impact, data migration, or required Gemini SVG request.
+- Escalate to user on breaking change, new dependency, security/cost impact, data migration, or optional Gemini assist request.
 
 ### Orchestration Mode Trigger (Natural Language)
 - User may switch orchestration mode with natural language.
@@ -110,15 +110,26 @@ Non-negotiable invariants:
 
 ---
 
-## Layout / SVG Gate
-Layout, panel, overlay, or writing-surface geometry changes must follow:
-- `GEMINI_CODEX_PROTOCOL.md`
-- `codex_tasks/_TEMPLATE_task.md` optional Layout block
-
-Mandatory constraints:
-- SVG artifact must exist under `design_drafts/` before implementation.
-- Tablet viewports must be considered:
+## Layout / SVG Gate (Gemini Optional)
+Layout, panel, overlay, or writing-surface geometry changes must always:
+- record numeric redlines in spec (`codex_tasks/_TEMPLATE_task.md` Optional Block A when applicable)
+- consider tablet viewports:
   - `768x1024`, `820x1180`, `1024x768`, `1180x820`
+
+Gemini invocation policy:
+- Default: OFF (Codex-only execution).
+- Invoke Gemini only when at least one trigger matches:
+  - high-complexity spatial problem (3D-like geometry, non-linear clamps, multi-viewport coordinate coupling)
+  - repeated layout blocker after 2 Codex attempts on same issue
+  - explicit user request
+- Invocation limits:
+  - max 1 Gemini round per wave
+  - max 1 revision pass from Gemini
+- Do NOT invoke Gemini for simple theme/color/spacing/typography tweaks.
+
+When Gemini is invoked:
+- follow `GEMINI_CODEX_PROTOCOL.md`
+- SVG artifact must exist under `design_drafts/` before implementation
 
 ---
 

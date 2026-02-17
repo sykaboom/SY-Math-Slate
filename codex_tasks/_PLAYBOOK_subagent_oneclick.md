@@ -144,23 +144,39 @@ Codex must pause and request confirmation if any condition appears:
 - new dependency
 - security or cost policy impact
 - data migration requirement
-- layout task requiring Gemini SVG draft request
+- optional Gemini assist request (when trigger conditions match)
 
 No escalation means Codex continues inside the approved delegation window.
 
 ---
 
-## 7) Gemini Bridge Rule (layout tasks only)
+## 7) Gemini Bridge Rule (optional, layout/spatial only)
 
-Gemini is SVG-only.
+Gemini is SVG-only and is optional by default.
 
-Flow:
+Invocation timing (recommended):
+1) Pre-spec freeze:
+   - only for high-complexity geometry (3D-like structure, non-linear clamps, multi-viewport coupling).
+2) Mid-wave blocker:
+   - only after 2 Codex attempts fail on same layout defect.
+3) Pre-release stabilization:
+   - one final geometry sanity pass when layout risk remains high.
+
+Do not invoke for:
+- simple color/spacing/typography
+- routine panel placement or low-risk CSS tuning
+- early feature churn before layout constraints are frozen
+
+Flow when invoked:
 1) Codex prepares SVG request packet.
 2) User relays packet to Gemini.
 3) Gemini returns one SVG draft.
-4) Codex implements from the draft with internal redlines.
+4) Codex validates redlines and implements.
 
-No iterative Gemini regeneration loop is required by default.
+Limits:
+- max 1 Gemini round per wave
+- max 1 Gemini revision pass
+- if unresolved after limits, continue Codex-only with explicit risk note
 
 ---
 
