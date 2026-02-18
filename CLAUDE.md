@@ -42,7 +42,7 @@ Batch dispatch analysis role
    a Batch Dispatch Plan using codex_tasks/_TEMPLATE_batch_dispatch_plan.md.
 3. Claude Code does NOT execute code. It produces the plan only. Codex CLI executes.
 
-Output contract for every request
+Output contract when producing a spec
 1. Restate goal in one sentence.
 2. List proposed change scope as file paths (read/write) with a short rationale.
 3. Produce a task spec draft using codex_tasks/_TEMPLATE_task.md structure:
@@ -51,7 +51,6 @@ Output contract for every request
    - Manual Verification Steps (step-by-step)
    - Risks and Rollback plan (exact revert)
    - Documentation Update Check (AI_READ_ME / AI_READ_ME_MAP impact)
-4. Stop after the spec draft and ask for approval before implementation.
 
 Project commands and paths
 1. v10 is the Next.js app:

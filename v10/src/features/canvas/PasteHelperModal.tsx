@@ -30,12 +30,12 @@ export function PasteHelperModal() {
 
   return createPortal(
     <div
-      className="fixed inset-0 flex items-center justify-center bg-black/70 backdrop-blur-sm"
+      className="fixed inset-0 flex items-center justify-center bg-theme-surface/70 backdrop-blur-sm"
       style={{ zIndex: "var(--z-modal)" }}
     >
       <div className="w-[360px] max-w-[90vw] rounded-2xl border border-[var(--theme-border)] bg-[var(--theme-surface-overlay)] p-6 text-center text-[var(--theme-text)] shadow-xl">
         <p className="text-sm font-semibold text-[var(--theme-warning)]">태블릿 붙여넣기 도우미</p>
-        <p className="mt-2 text-xs text-white/60">
+        <p className="mt-2 text-xs text-theme-text/60">
           아래 박스를 길게 눌러 ‘붙여넣기’를 선택하세요.
         </p>
         <div
@@ -48,7 +48,7 @@ export function PasteHelperModal() {
           여기를 길게 터치하여<br />&apos;붙여넣기&apos;를 선택하세요.
         </div>
         <button
-          className="mt-4 rounded-full border border-white/10 px-6 py-2 text-xs text-white/70 hover:bg-white/10"
+          className="mt-4 rounded-full border border-theme-border/10 px-6 py-2 text-xs text-theme-text/70 hover:bg-theme-surface-soft"
           onClick={closePasteHelper}
         >
           닫기

@@ -33,7 +33,7 @@ export function OverviewStage() {
   return (
     <div
       ref={containerRef}
-      className="relative flex flex-1 overflow-auto bg-black"
+      className="relative flex flex-1 overflow-auto bg-theme-surface"
       data-overview-stage
     >
       <div

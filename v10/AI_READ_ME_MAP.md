@@ -94,6 +94,9 @@ v10/src/
 |   |   \-- buildPersistedDoc.ts
 |   |-- sanitize/
 |   |   \-- richTextSanitizer.ts
+|   |-- theme/
+|   |   |-- applyTheme.ts
+|   |   \-- preferences.schema.ts
 |   |-- themes/
 |   |   |-- chalkTheme.ts
 |   |   \-- presets.ts
@@ -320,6 +323,7 @@ v10/src/
 |   |   |-- useModStudioStore.ts
 |   |   |-- usePlaybackStore.ts
 |   |   |-- useSyncStore.ts
+|   |   |-- useThemeStore.ts
 |   |   |-- useToolStore.ts
 |   |   |-- useUIStoreBridge.ts
 |   |   \-- useViewportStore.ts
@@ -330,6 +334,9 @@ v10/src/
 |   |   |   |-- messageEnvelope.ts
 |   |   |   \-- roleSyncGuard.ts
 |   |   \-- useAsymmetricSessionSync.ts
+|   |-- theme/
+|   |   |-- ThemePickerPanel.tsx
+|   |   \-- ThemeProvider.tsx
 |   \-- toolbar/
 |       |-- atoms/
 |       |   |-- ToolbarPanel.tsx

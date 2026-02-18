@@ -68,16 +68,16 @@ export function PolicyStudioSection() {
   };
 
   return (
-    <div className="grid gap-3 text-xs text-white/85">
+    <div className="grid gap-3 text-xs text-theme-text/85">
       <div className="flex items-center justify-between gap-2">
-        <div className="text-[11px] uppercase tracking-[0.18em] text-white/60">
+        <div className="text-[11px] uppercase tracking-[0.18em] text-theme-text/60">
           Policy Draft
         </div>
         <div className="flex items-center gap-2">
           <button
             type="button"
             onClick={handleResetToRuntime}
-            className="rounded border border-white/20 px-2 py-1 text-[11px] text-white/80 hover:bg-white/10"
+            className="rounded border border-theme-border/20 px-2 py-1 text-[11px] text-theme-text/80 hover:bg-theme-surface-soft"
           >
             Reset
           </button>
@@ -101,13 +101,13 @@ export function PolicyStudioSection() {
         {listKnownRolePolicySurfaces().map((surface) => (
           <section
             key={surface}
-            className="rounded border border-white/10 bg-white/5 p-2"
+            className="rounded border border-theme-border/10 bg-theme-surface-soft p-2"
           >
-            <div className="mb-2 text-[11px] font-semibold text-white/80">{surface}</div>
+            <div className="mb-2 text-[11px] font-semibold text-theme-text/80">{surface}</div>
             <div className="grid gap-2">
               {listKnownRolePolicyActions(surface).map((action) => (
                 <div key={`${surface}:${action}`} className="grid gap-1">
-                  <div className="text-[11px] text-white/65">{action}</div>
+                  <div className="text-[11px] text-theme-text/65">{action}</div>
                   <div className="grid grid-cols-2 gap-2">
                     {roles.map((role) => {
                       const current = evaluateRolePolicyDecisionWithDocument(
@@ -119,9 +119,9 @@ export function PolicyStudioSection() {
                       return (
                         <label
                           key={`${role}:${surface}:${action}`}
-                          className="flex items-center justify-between rounded border border-white/10 px-2 py-1"
+                          className="flex items-center justify-between rounded border border-theme-border/10 px-2 py-1"
                         >
-                          <span className="text-[11px] text-white/70">{role}</span>
+                          <span className="text-[11px] text-theme-text/70">{role}</span>
                           <select
                             value={current}
                             onChange={(event) =>
@@ -132,7 +132,7 @@ export function PolicyStudioSection() {
                                 event.target.value as RolePolicyDecision
                               )
                             }
-                            className="rounded border border-white/20 bg-black/40 px-1.5 py-0.5 text-[11px] text-white"
+                            className="rounded border border-theme-border/20 bg-theme-surface/40 px-1.5 py-0.5 text-[11px] text-theme-text"
                           >
                             <option value="allow">allow</option>
                             <option value="deny">deny</option>

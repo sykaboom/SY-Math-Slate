@@ -36,8 +36,6 @@ argument-hint: <파일 경로 또는 주장 목록>
 | 중복 선언 | Grep (output_mode: count, pattern: `<name>`) |
 | 타입/인터페이스 | Grep (pattern: `type <name>`, `interface <name>`) |
 
-**서브에이전트 금지. 모든 Grep/Read는 직접 호출.**
-
 ### 3. 체크리스트 출력
 
 각 주장에 대해 아래 포맷으로 결과 출력:

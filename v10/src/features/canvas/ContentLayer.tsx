@@ -229,7 +229,7 @@ export function ContentLayer({
               return (
                 <div
                   key={item.id}
-                  className="mb-8 break-inside-avoid rounded-xl border border-white/20 bg-white/5 p-4 text-white/60"
+                  className="mb-8 break-inside-avoid rounded-xl border border-theme-border/20 bg-theme-surface-soft p-4 text-theme-text/60"
                   style={{ width: `${item.w}px`, height: `${item.h}px` }}
                 >
                   <div className="flex h-full w-full flex-col items-center justify-center gap-2">
@@ -325,7 +325,7 @@ export function ContentLayer({
             return (
               <div
                 key={item.id}
-                className="absolute rounded-xl border border-white/20 bg-white/5 p-4 text-white/60"
+                className="absolute rounded-xl border border-theme-border/20 bg-theme-surface-soft p-4 text-theme-text/60"
                 style={{
                   transform: `translate(${item.x}px, ${item.y}px)`,
                   width: `${item.w}px`,

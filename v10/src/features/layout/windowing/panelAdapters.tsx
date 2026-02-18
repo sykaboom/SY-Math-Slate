@@ -11,6 +11,7 @@ import {
 import { DataInputPanel } from "@features/layout/DataInputPanel";
 import { Prompter } from "@features/layout/Prompter";
 import { ModerationConsolePanel } from "@features/moderation/ModerationConsolePanel";
+import { ThemePickerPanel } from "@features/theme/ThemePickerPanel";
 import { FloatingToolbar } from "@features/toolbar/FloatingToolbar";
 import { PendingApprovalPanel } from "@features/toolbar/PendingApprovalPanel";
 import type {
@@ -24,7 +25,7 @@ import type {
 } from "./WindowHost";
 
 const PANEL_HOST_ACTION_BUTTON_CLASS =
-  "inline-flex h-7 items-center rounded-md border border-white/15 bg-black/35 px-2 text-[10px] font-semibold uppercase tracking-[0.12em] text-white/70 transition hover:border-white/30 hover:text-white";
+  "inline-flex h-7 items-center rounded-md border border-theme-border/15 bg-theme-surface/35 px-2 text-[10px] font-semibold uppercase tracking-[0.12em] text-theme-text/70 transition hover:border-theme-border/30 hover:text-theme-text";
 
 const clamp = (value: number, min: number, max: number): number => {
   if (value <= min) return min;
@@ -138,11 +139,11 @@ const WindowPanelShell = ({
   children,
 }: WindowPanelShellProps) => {
   return (
-    <section className="flex h-full w-full min-h-0 flex-col overflow-hidden rounded-2xl border border-white/15 bg-black/45 shadow-[0_18px_48px_rgba(0,0,0,0.5)]">
-      <header className="flex items-center gap-2 border-b border-white/10 bg-black/35 px-3 py-2">
+    <section className="flex h-full w-full min-h-0 flex-col overflow-hidden rounded-2xl border border-theme-border/15 bg-theme-surface/45 shadow-[0_18px_48px_rgba(0,0,0,0.5)]">
+      <header className="flex items-center gap-2 border-b border-theme-border/10 bg-theme-surface/35 px-3 py-2">
         <div
           data-window-host-drag-handle="true"
-          className="min-w-0 flex-1 cursor-move select-none touch-none text-[10px] font-semibold uppercase tracking-[0.16em] text-white/65"
+          className="min-w-0 flex-1 cursor-move select-none touch-none text-[10px] font-semibold uppercase tracking-[0.16em] text-theme-text/65"
         >
           {title}
         </div>
@@ -172,6 +173,7 @@ export type CoreWindowHostPanelAdapterOptions = {
   role: unknown;
   layoutSlotCutoverEnabled: boolean;
   showDataInputPanel: boolean;
+  showThemePicker: boolean;
   showHostToolchips: boolean;
   isDataInputOpen: boolean;
   closeDataInput: () => void;
@@ -179,6 +181,7 @@ export type CoreWindowHostPanelAdapterOptions = {
   closePendingApproval: () => void;
   isModerationConsoleOpen: boolean;
   closeModerationConsole: () => void;
+  closeThemePicker: () => void;
   viewportSize: {
     width: number;
     height: number;
@@ -274,6 +277,30 @@ export const buildCoreWindowHostPanelAdapters = (
           <div className="h-full w-full overflow-y-auto p-2">
             <ModerationConsolePanel />
           </div>
+        </WindowPanelShell>
+      ),
+    });
+  }
+
+  const themePickerContract = resolveCorePanelContract(
+    CORE_PANEL_POLICY_IDS.THEME_PICKER,
+    runtimeRole,
+    options.layoutSlotCutoverEnabled
+  );
+  if (themePickerContract && themePickerContract.visible && options.showThemePicker) {
+    modules.push({
+      panelId: themePickerContract.panelId,
+      slot: themePickerContract.slot,
+      behavior: themePickerContract.behavior,
+      size: { width: 280, height: 210 },
+      className: "pointer-events-auto",
+      render: (context) => (
+        <WindowPanelShell
+          title="Theme"
+          context={context}
+          onRequestClose={options.closeThemePicker}
+        >
+          <ThemePickerPanel />
         </WindowPanelShell>
       ),
     });

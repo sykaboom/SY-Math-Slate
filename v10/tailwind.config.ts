@@ -28,6 +28,12 @@ const config: Config = {
           "rgba(var(--toolbar-active-text-rgb), <alpha-value>)",
         "toolbar-menu-bg": "rgba(var(--toolbar-menu-bg-rgb), <alpha-value>)",
         "toolbar-danger": "rgba(var(--toolbar-danger-rgb), <alpha-value>)",
+        "theme-text": "rgba(var(--theme-text-rgb), <alpha-value>)",
+        "theme-text-muted": "rgba(var(--theme-text-rgb), 0.62)",
+        "theme-surface": "rgba(var(--theme-surface-rgb), <alpha-value>)",
+        "theme-surface-soft": "var(--theme-surface-soft)",
+        "theme-border": "rgba(var(--theme-border-rgb), <alpha-value>)",
+        "theme-accent": "rgba(var(--theme-accent-rgb), <alpha-value>)",
       },
       fontFamily: {
         sans: ["var(--font-sans)", "Noto Sans KR", "sans-serif"],

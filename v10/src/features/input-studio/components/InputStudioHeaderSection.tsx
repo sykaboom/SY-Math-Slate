@@ -31,15 +31,15 @@ export function InputStudioHeaderSection({
       className={cn("mb-4 flex items-center justify-between", className)}
     >
       <div>
-        <p className="text-sm font-semibold text-white">{title}</p>
-        <p className="text-xs text-white/50">{subtitle}</p>
-        <div className="mt-2 inline-flex items-center rounded-full border border-white/15 bg-black/40 p-1">
+        <p className="text-sm font-semibold text-theme-text">{title}</p>
+        <p className="text-xs text-theme-text/50">{subtitle}</p>
+        <div className="mt-2 inline-flex items-center rounded-full border border-theme-border/15 bg-theme-surface/40 p-1">
           <button
             type="button"
             className={cn(
               "h-11 min-w-[84px] rounded-full px-4 text-xs font-semibold transition-colors",
               isAdvancedMode
-                ? "text-white/60 hover:bg-white/10 hover:text-white"
+                ? "text-theme-text/60 hover:bg-theme-surface-soft hover:text-theme-text"
                 : "bg-[var(--theme-accent)] text-[var(--theme-accent-text)]"
             )}
             onClick={() => onModeChange("compact")}
@@ -53,7 +53,7 @@ export function InputStudioHeaderSection({
               "h-11 min-w-[84px] rounded-full px-4 text-xs font-semibold transition-colors",
               isAdvancedMode
                 ? "bg-[var(--theme-accent)] text-[var(--theme-accent-text)]"
-                : "text-white/60 hover:bg-white/10 hover:text-white"
+                : "text-theme-text/60 hover:bg-theme-surface-soft hover:text-theme-text"
             )}
             onClick={() => onModeChange("advanced")}
             data-layout-id="action_mode_advanced"
@@ -66,7 +66,7 @@ export function InputStudioHeaderSection({
         data-layout-id="action_return_to_canvas"
         variant="ghost"
         size="icon"
-        className="h-11 w-11 text-white/70 hover:text-white"
+        className="h-11 w-11 text-theme-text/70 hover:text-theme-text"
         onClick={onClose}
         aria-label={closeLabel}
       >

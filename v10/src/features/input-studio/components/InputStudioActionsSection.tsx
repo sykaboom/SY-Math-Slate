@@ -76,14 +76,14 @@ export function InputStudioActionsSection({
         <div className="grid grid-cols-2 gap-2">
           <Button
             variant="ghost"
-            className="h-11 border border-white/20 bg-white/[0.03] text-white/70 hover:bg-white/10"
+            className="h-11 border border-theme-border/20 bg-theme-surface-soft text-theme-text/70 hover:bg-theme-surface-soft"
             onClick={onClose}
           >
             {closeLabel}
           </Button>
           <Button
             variant="ghost"
-            className="h-11 border border-white/20 bg-white/[0.03] text-white/70 hover:bg-white/10"
+            className="h-11 border border-theme-border/20 bg-theme-surface-soft text-theme-text/70 hover:bg-theme-surface-soft"
             onClick={onRestoreLayoutSnapshot}
             disabled={!canRestoreLayoutSnapshot || !onRestoreLayoutSnapshot}
           >

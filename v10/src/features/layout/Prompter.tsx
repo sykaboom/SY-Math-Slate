@@ -52,16 +52,16 @@ export function Prompter() {
 
   return (
     <div className="flex w-full justify-center">
-      <div className="w-full max-w-[min(720px,92vw)] rounded-full border border-white/10 bg-black/60 px-6 py-3 text-white/80 backdrop-blur-md">
+      <div className="w-full max-w-[min(720px,92vw)] rounded-full border border-theme-border/10 bg-theme-surface/60 px-6 py-3 text-theme-text/80 backdrop-blur-md">
         <div
           key={currentStepKey}
           className="flex flex-col items-center gap-1 text-center animate-in fade-in-0 slide-in-from-bottom-2 duration-300"
         >
-          <div className="w-full truncate text-sm font-semibold text-white/90">
+          <div className="w-full truncate text-sm font-semibold text-theme-text/90">
             {hasSteps ? currentText : "미리보기 없음"}
           </div>
           <div
-            className={`w-full truncate text-xs text-white/50 ${
+            className={`w-full truncate text-xs text-theme-text/50 ${
               nextText ? "" : "opacity-0"
             }`}
           >

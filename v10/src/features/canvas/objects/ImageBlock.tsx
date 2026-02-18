@@ -298,7 +298,7 @@ export function ImageBlock({
       {isSelected && (
         <div className="absolute -top-12 left-1/2 z-30 flex -translate-x-1/2 items-center gap-2 rounded-full border border-[var(--theme-border)] bg-[var(--theme-surface-overlay)] px-3 py-1 text-xs text-[var(--theme-text-muted)] shadow-lg backdrop-blur">
           <button
-            className="flex h-7 w-7 items-center justify-center rounded-full hover:bg-white/10"
+            className="flex h-7 w-7 items-center justify-center rounded-full hover:bg-theme-surface-soft"
             onClick={(event) => {
               event.stopPropagation();
               updateItem(item.id, { isInverted: !item.isInverted });
@@ -308,7 +308,7 @@ export function ImageBlock({
             <SunMoon className="h-4 w-4" />
           </button>
           <button
-            className="flex h-7 w-7 items-center justify-center rounded-full hover:bg-white/10"
+            className="flex h-7 w-7 items-center justify-center rounded-full hover:bg-theme-surface-soft"
             onClick={(event) => {
               event.stopPropagation();
               bringToFront(item.id);
@@ -318,7 +318,7 @@ export function ImageBlock({
             <ArrowUp className="h-4 w-4" />
           </button>
           <button
-            className="flex h-7 w-7 items-center justify-center rounded-full hover:bg-white/10"
+            className="flex h-7 w-7 items-center justify-center rounded-full hover:bg-theme-surface-soft"
             onClick={(event) => {
               event.stopPropagation();
               sendToBack(item.id);
@@ -327,7 +327,7 @@ export function ImageBlock({
           >
             <ArrowDown className="h-4 w-4" />
           </button>
-          <div className="h-4 w-px bg-white/20" />
+          <div className="h-4 w-px bg-theme-surface/20" />
           <button
             className="flex h-7 w-7 items-center justify-center rounded-full text-[var(--theme-danger)] hover:bg-[var(--theme-danger-soft)]"
             onClick={(event) => {

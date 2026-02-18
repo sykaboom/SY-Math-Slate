@@ -161,7 +161,7 @@ function NormalCanvasStage({
         <CanvasLayer />
         {showCursors && <PresenceOverlay />}
         {children && (
-          <div className="relative z-30 w-full text-center text-white/70">
+          <div className="relative z-30 w-full text-center text-theme-text/70">
             {children}
           </div>
         )}

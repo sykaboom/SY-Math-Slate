@@ -93,12 +93,12 @@ export function PlayerBar({ readOnly = false }: PlayerBarProps) {
         <button
           type="button"
           className={cn(
-            "flex h-11 w-11 items-center justify-center rounded-full border border-white/10 text-white",
+            "flex h-11 w-11 items-center justify-center rounded-full border border-theme-border/10 text-theme-text",
             readOnly
-              ? "cursor-not-allowed bg-white/10 opacity-50"
+              ? "cursor-not-allowed bg-theme-surface-soft opacity-50"
               : isAnimating && !isPaused
-                ? "bg-white/15"
-                : "bg-white/10 hover:bg-white/20"
+                ? "bg-theme-surface-soft"
+                : "bg-theme-surface-soft hover:bg-theme-surface/20"
           )}
           onClick={handlePlayPause}
           disabled={readOnly}
@@ -113,8 +113,8 @@ export function PlayerBar({ readOnly = false }: PlayerBarProps) {
         <button
           type="button"
           className={cn(
-            "flex h-9 w-9 items-center justify-center rounded-full border border-white/10 text-white/80",
-            readOnly ? "cursor-not-allowed opacity-50" : "hover:bg-white/10"
+            "flex h-9 w-9 items-center justify-center rounded-full border border-theme-border/10 text-theme-text/80",
+            readOnly ? "cursor-not-allowed opacity-50" : "hover:bg-theme-surface-soft"
           )}
           onClick={handleStop}
           disabled={readOnly}
@@ -124,20 +124,20 @@ export function PlayerBar({ readOnly = false }: PlayerBarProps) {
         </button>
 
         <div className="flex flex-1 items-center gap-3">
-          <div className="relative h-1 flex-1 overflow-hidden rounded-full bg-white/10">
+          <div className="relative h-1 flex-1 overflow-hidden rounded-full bg-theme-surface-soft">
             <div
-              className="absolute inset-y-0 left-0 bg-white/70"
+              className="absolute inset-y-0 left-0 bg-theme-surface/70"
               style={{ width: `${Math.min(100, Math.max(0, progress * 100))}%` }}
             />
           </div>
-          <span className="min-w-[60px] text-xs text-white/70">
+          <span className="min-w-[60px] text-xs text-theme-text/70">
             {currentDisplay}/{totalSteps}
           </span>
         </div>
 
         {canTiming &&
           (readOnly ? (
-            <span className="rounded-full border border-white/10 bg-white/5 px-2 py-1 text-[11px] text-white/50">
+            <span className="rounded-full border border-theme-border/10 bg-theme-surface-soft px-2 py-1 text-[11px] text-theme-text/50">
               {speedLabel}x
             </span>
           ) : (
@@ -146,8 +146,8 @@ export function PlayerBar({ readOnly = false }: PlayerBarProps) {
                 <button
                   type="button"
                   className={cn(
-                    "rounded-full border border-white/10 bg-white/5 px-2 py-1 text-[11px] text-white/70",
-                    "hover:text-white focus:outline-none focus:ring-2 focus:ring-white/30"
+                    "rounded-full border border-theme-border/10 bg-theme-surface-soft px-2 py-1 text-[11px] text-theme-text/70",
+                    "hover:text-theme-text focus:outline-none focus:ring-2 focus:ring-white/30"
                   )}
                   title="Speed"
                 >
@@ -167,7 +167,7 @@ export function PlayerBar({ readOnly = false }: PlayerBarProps) {
                       })
                     }
                   />
-                  <span className="w-10 text-right text-xs text-white/80">
+                  <span className="w-10 text-right text-xs text-theme-text/80">
                     {speedLabel}x
                   </span>
                 </div>
@@ -177,7 +177,7 @@ export function PlayerBar({ readOnly = false }: PlayerBarProps) {
 
         {canTiming &&
           (readOnly ? (
-            <span className="rounded-full border border-white/10 bg-white/5 px-2 py-1 text-[11px] text-white/50">
+            <span className="rounded-full border border-theme-border/10 bg-theme-surface-soft px-2 py-1 text-[11px] text-theme-text/50">
               {delayLabel}s
             </span>
           ) : (
@@ -186,8 +186,8 @@ export function PlayerBar({ readOnly = false }: PlayerBarProps) {
                 <button
                   type="button"
                   className={cn(
-                    "rounded-full border border-white/10 bg-white/5 px-2 py-1 text-[11px] text-white/70",
-                    "hover:text-white focus:outline-none focus:ring-2 focus:ring-white/30"
+                    "rounded-full border border-theme-border/10 bg-theme-surface-soft px-2 py-1 text-[11px] text-theme-text/70",
+                    "hover:text-theme-text focus:outline-none focus:ring-2 focus:ring-white/30"
                   )}
                   title="Delay"
                 >
@@ -207,7 +207,7 @@ export function PlayerBar({ readOnly = false }: PlayerBarProps) {
                       })
                     }
                   />
-                  <span className="w-10 text-right text-xs text-white/80">
+                  <span className="w-10 text-right text-xs text-theme-text/80">
                     {delayLabel}s
                   </span>
                 </div>
@@ -218,8 +218,8 @@ export function PlayerBar({ readOnly = false }: PlayerBarProps) {
         <button
           type="button"
           className={cn(
-            "flex h-9 w-9 items-center justify-center rounded-full border border-white/10 text-white/70",
-            readOnly ? "cursor-not-allowed opacity-50" : "hover:bg-white/10"
+            "flex h-9 w-9 items-center justify-center rounded-full border border-theme-border/10 text-theme-text/70",
+            readOnly ? "cursor-not-allowed opacity-50" : "hover:bg-theme-surface-soft"
           )}
           onClick={handleExitPresentation}
           disabled={readOnly}

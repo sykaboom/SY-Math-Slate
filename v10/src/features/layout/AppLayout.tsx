@@ -177,6 +177,9 @@ export function AppLayout({ children }: AppLayoutProps) {
     !isPresentation && legacyRoleVisibility.showHostToolchips;
   const showHostToolchipsPolicy =
     !isPresentation && roleVisibilityPolicy.showHostToolchips;
+  // showThemePicker gates by session context only; role visibility remains
+  // controlled by CORE_PANEL_POLICY_SOURCE.behavior.roleOverride.
+  const showThemePicker = !isPresentation;
   useAuthoringShortcuts({
     enabled: showHostToolchipsPolicy,
   });
@@ -212,6 +215,7 @@ export function AppLayout({ children }: AppLayoutProps) {
         role: runtimeRole,
         layoutSlotCutoverEnabled: useLayoutSlotCutover,
         showDataInputPanel: showDataInputPanelPolicy,
+        showThemePicker,
         showHostToolchips: showHostToolchipsPolicy,
         isDataInputOpen,
         closeDataInput,
@@ -227,6 +231,8 @@ export function AppLayout({ children }: AppLayoutProps) {
             CORE_PANEL_POLICY_IDS.MODERATION_CONSOLE,
             false
           ),
+        closeThemePicker: () =>
+          setWindowRuntimePanelOpenState(CORE_PANEL_POLICY_IDS.THEME_PICKER, false),
         viewportSize: {
           width: windowHostClampBounds.width,
           height: windowHostClampBounds.height,
@@ -241,6 +247,7 @@ export function AppLayout({ children }: AppLayoutProps) {
       setWindowRuntimePanelOpenState,
       showDataInputPanelPolicy,
       showHostToolchipsPolicy,
+      showThemePicker,
       useLayoutSlotCutover,
       windowHostClampBounds.height,
       windowHostClampBounds.width,
@@ -491,30 +498,30 @@ export function AppLayout({ children }: AppLayoutProps) {
       data-layout-state={layoutState}
       className={
         isAppFullscreen
-          ? "flex h-[100svh] w-full flex-col bg-slate-app text-white"
-          : "flex h-[100dvh] w-full flex-col bg-slate-app text-white"
+          ? "flex h-[100svh] w-full flex-col bg-slate-app text-theme-text"
+          : "flex h-[100dvh] w-full flex-col bg-slate-app text-theme-text"
       }
     >
       {showTopChromePolicy && (
         <header
           data-layout-id="region_chrome_top"
-          className="sticky top-0 z-40 border-b border-white/10 bg-black/40 backdrop-blur-md"
+          className="sticky top-0 z-40 border-b border-theme-border/10 bg-theme-surface/40 backdrop-blur-md"
         >
           <div className="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-x-2 gap-y-1.5 px-2.5 py-1.5 sm:px-3 sm:py-2 lg:px-4 lg:py-2.5 xl:px-6 xl:py-3">
             <div className="flex min-w-0 items-center gap-2.5">
-              <span className="text-xs font-semibold uppercase tracking-[0.3em] text-white/50">
+              <span className="text-xs font-semibold uppercase tracking-[0.3em] text-theme-text/50">
                 SY
               </span>
               <div className="min-w-0">
                 <p className="text-base font-semibold sm:text-lg">Math Slate</p>
-                <p className="hidden text-xs text-white/50 lg:block">Dark Canvas Workspace</p>
+                <p className="hidden text-xs text-theme-text/50 lg:block">Dark Canvas Workspace</p>
               </div>
             </div>
             <div className="ml-auto flex items-center gap-1.5 sm:gap-2.5">
               <Button
                 variant="outline"
                 size="icon"
-                className="h-11 w-11 border-white/15 bg-white/5 text-white/80 hover:bg-white/10 hover:text-white"
+                className="h-11 w-11 border-theme-border/15 bg-theme-surface-soft text-theme-text/80 hover:bg-theme-surface-soft hover:text-theme-text"
                 onClick={handleEnterFullscreenInk}
                 aria-label="전체화면 필기 시작"
                 title="전체화면 필기 시작"
@@ -522,21 +529,21 @@ export function AppLayout({ children }: AppLayoutProps) {
               >
                 <Maximize2 className="h-4 w-4" />
               </Button>
-              <div className="flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-2 py-1 sm:gap-2 sm:px-3">
+              <div className="flex items-center gap-1.5 rounded-full border border-theme-border/10 bg-theme-surface-soft px-2 py-1 sm:gap-2 sm:px-3">
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-8 w-8 text-white/70 hover:text-white disabled:text-white/30"
+                  className="h-8 w-8 text-theme-text/70 hover:text-theme-text disabled:text-theme-text/30"
                   onClick={() => handleHeaderZoom(-0.1)}
                   disabled={!isOverviewMode || overviewZoom <= 0.2}
                 >
                   <Minus className="h-4 w-4" />
                 </Button>
-                <span className="text-xs text-white/60">{zoomLabel}%</span>
+                <span className="text-xs text-theme-text/60">{zoomLabel}%</span>
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-8 w-8 text-white/70 hover:text-white disabled:text-white/30"
+                  className="h-8 w-8 text-theme-text/70 hover:text-theme-text disabled:text-theme-text/30"
                   onClick={() => handleHeaderZoom(0.1)}
                   disabled={!isOverviewMode || overviewZoom >= 1}
                 >
@@ -546,7 +553,7 @@ export function AppLayout({ children }: AppLayoutProps) {
               <Button
                 variant="outline"
                 size="icon"
-                className="border-white/15 bg-white/5 text-white/70 hover:bg-white/10 hover:text-white disabled:text-white/30"
+                className="border-theme-border/15 bg-theme-surface-soft text-theme-text/70 hover:bg-theme-surface-soft hover:text-theme-text disabled:text-theme-text/30"
                 onClick={handleEnterPresentation}
                 disabled={isOverviewMode}
                 aria-label="발표 모드"
@@ -556,7 +563,7 @@ export function AppLayout({ children }: AppLayoutProps) {
               </Button>
               <Button
                 variant="outline"
-                className="border-white/15 bg-white/5 text-white/70 hover:bg-white/10 hover:text-white"
+                className="border-theme-border/15 bg-theme-surface-soft text-theme-text/70 hover:bg-theme-surface-soft hover:text-theme-text"
                 onClick={toggleOverviewMode}
                 aria-label="개요 보기"
                 title="개요 보기"
@@ -699,7 +706,7 @@ export function AppLayout({ children }: AppLayoutProps) {
             <Button
               variant="outline"
               size="icon"
-              className="h-12 w-12 border-white/20 bg-black/60 text-white hover:bg-black/75"
+              className="h-12 w-12 border-theme-border/20 bg-theme-surface/60 text-theme-text hover:bg-theme-surface/75"
               onClick={handleExitFullscreenInk}
               aria-label="전체화면 필기 종료"
               title="전체화면 필기 종료"

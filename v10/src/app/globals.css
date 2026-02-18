@@ -93,12 +93,16 @@
     --theme-surface: rgba(var(--toolbar-surface-rgb), 0.92);
     --theme-surface-soft: rgba(var(--toolbar-chip-rgb), 0.08);
     --theme-surface-overlay: rgba(2, 6, 23, 0.94);
+    --theme-surface-rgb: var(--toolbar-surface-rgb);
     --theme-text: rgba(var(--toolbar-text-rgb), 0.95);
+    --theme-text-rgb: var(--toolbar-text-rgb);
     --theme-text-muted: rgba(var(--toolbar-muted-rgb), 0.8);
     --theme-text-subtle: rgba(var(--toolbar-muted-rgb), 0.62);
     --theme-border: rgba(var(--toolbar-border-rgb), 0.16);
+    --theme-border-rgb: var(--toolbar-border-rgb);
     --theme-border-strong: rgba(var(--toolbar-border-rgb), 0.32);
     --theme-accent: rgba(var(--toolbar-active-bg-rgb), 1);
+    --theme-accent-rgb: var(--toolbar-active-bg-rgb);
     --theme-accent-soft: rgba(var(--toolbar-active-bg-rgb), 0.18);
     --theme-accent-strong: rgba(var(--toolbar-active-bg-rgb), 0.34);
     --theme-accent-text: rgba(var(--toolbar-active-text-rgb), 0.98);

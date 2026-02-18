@@ -78,8 +78,8 @@ export function PublishStudioSection() {
   };
 
   return (
-    <div className="grid gap-3 text-xs text-white/85">
-      <div className="text-[11px] uppercase tracking-[0.18em] text-white/60">
+    <div className="grid gap-3 text-xs text-theme-text/85">
+      <div className="text-[11px] uppercase tracking-[0.18em] text-theme-text/60">
         Publish & Rollback
       </div>
 
@@ -87,7 +87,7 @@ export function PublishStudioSection() {
         <button
           type="button"
           onClick={handlePreflight}
-          className="rounded border border-white/20 px-2 py-1 text-[11px] text-white/80 hover:bg-white/10"
+          className="rounded border border-theme-border/20 px-2 py-1 text-[11px] text-theme-text/80 hover:bg-theme-surface-soft"
         >
           Preflight
         </button>
@@ -112,12 +112,12 @@ export function PublishStudioSection() {
         </div>
       ) : null}
 
-      <section className="grid gap-2 rounded border border-white/10 bg-white/5 p-2">
-        <div className="text-[11px] font-semibold text-white/80">Snapshots</div>
+      <section className="grid gap-2 rounded border border-theme-border/10 bg-theme-surface-soft p-2">
+        <div className="text-[11px] font-semibold text-theme-text/80">Snapshots</div>
         <select
           value={selectedSnapshotId}
           onChange={(event) => setSelectedSnapshotId(event.target.value)}
-          className="rounded border border-white/20 bg-black/40 px-2 py-1 text-xs text-white"
+          className="rounded border border-theme-border/20 bg-theme-surface/40 px-2 py-1 text-xs text-theme-text"
         >
           <option value="">Select snapshot</option>
           {snapshots.map((snapshot) => (
@@ -129,7 +129,7 @@ export function PublishStudioSection() {
         <button
           type="button"
           onClick={handleRollback}
-          className="w-fit rounded border border-white/20 px-2 py-1 text-[11px] text-white/80 hover:bg-white/10"
+          className="w-fit rounded border border-theme-border/20 px-2 py-1 text-[11px] text-theme-text/80 hover:bg-theme-surface-soft"
         >
           Rollback Selected
         </button>

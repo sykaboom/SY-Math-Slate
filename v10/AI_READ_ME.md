@@ -45,6 +45,7 @@ Core subsystems:
 - `core/contracts`: runtime guards/contracts.
 - `core/extensions`: plugin loader, registry, MCP gateway.
 - `core/themes`: theme presets.
+- `core/theme`: runtime theme apply/preference schema.
 - `core/config`: tokens, capability/config defaults.
 
 Feature subsystems:
@@ -53,6 +54,7 @@ Feature subsystems:
 - `features/canvas`: board/cursor/render layers.
 - `features/input-studio`: structured input + LLM draft flows.
 - `features/store`: zustand stores and compatibility bridges.
+- `features/theme`: end-user theme UI (`ThemePickerPanel`, provider wiring).
 
 ## 5) Store Authorities (SSOT)
 Authority-layer stores:
@@ -64,10 +66,19 @@ Compatibility / legacy:
 - `useUIStoreBridge`: transitional bridge
 - `useCanvasStore`: still active for legacy canvas mutation paths
 
+Theme state authority:
+- `useThemeStore`: active preset + token overrides + preferences + localStorage (`sy-theme-v1`)
+
 ## 6) Theme and Style Invariants
 Token naming:
 - `swatch-*` is canonical
 - `neon-*` remains compatibility alias only
+
+Theme runtime SSOT:
+- `src/core/theme/applyTheme.ts`: CSS variable application (`--theme-*`, `--mod-*`, `--theme-*-rgb`)
+- `src/features/mod-studio/theme/themeIsolation.ts`: draft-preview path using separate applier instance
+- `src/features/theme/ThemeProvider.tsx`: mount-time active theme apply
+- `src/features/theme/ThemePickerPanel.tsx`: end-user preset entry (chalk/parchment/notebook)
 
 Ownership:
 - `src/app/globals.css`: global tokens/resets/minimal app-wide rules only
@@ -126,4 +137,3 @@ Historical/non-SSOT artifacts must be treated as reference only:
 - archived batch plans
 - superseded tasks
 - draft matrices
-

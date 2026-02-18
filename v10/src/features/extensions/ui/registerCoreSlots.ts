@@ -9,6 +9,7 @@ import {
   type CorePanelPolicyId,
 } from "@core/config/panel-policy";
 import { ModerationConsolePanel } from "@features/moderation/ModerationConsolePanel";
+import { ThemePickerPanel } from "@features/theme/ThemePickerPanel";
 import { PendingApprovalPanel } from "@features/toolbar/PendingApprovalPanel";
 import {
   validatePanelPolicyDocument,
@@ -122,6 +123,18 @@ const CORE_SLOT_BINDINGS: readonly CoreSlotBinding[] = [
       title: "Prompter",
       description: "Opens the script and prompting panel.",
       icon: "Captions",
+    },
+  },
+  {
+    panelId: CORE_PANEL_POLICY_IDS.THEME_PICKER,
+    component: ThemePickerPanel,
+    activation: "layout-slot-cutover",
+    registerInSlotRuntime: !LAYOUT_SLOT_CUTOVER_ENABLED,
+    launcher: {
+      launcherId: "core-launcher-panel-theme-picker",
+      title: "Theme",
+      description: "Opens the theme preset picker.",
+      icon: "Palette",
     },
   },
   {

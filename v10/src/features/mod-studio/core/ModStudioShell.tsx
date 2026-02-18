@@ -19,8 +19,8 @@ export function ModStudioShell() {
         onClick={toggle}
         className={
           isOpen
-            ? "rounded border border-white/30 bg-white/20 px-3 py-1.5 text-xs text-white"
-            : "rounded border border-white/20 bg-white/5 px-3 py-1.5 text-xs text-white/75 hover:bg-white/10 hover:text-white"
+            ? "rounded border border-theme-border/30 bg-theme-surface/20 px-3 py-1.5 text-xs text-theme-text"
+            : "rounded border border-theme-border/20 bg-theme-surface-soft px-3 py-1.5 text-xs text-theme-text/75 hover:bg-theme-surface-soft hover:text-theme-text"
         }
         aria-expanded={isOpen}
         aria-controls="mod-studio-panel"

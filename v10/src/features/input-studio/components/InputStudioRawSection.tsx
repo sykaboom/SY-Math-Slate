@@ -39,9 +39,9 @@ export function InputStudioRawSection({
 
   return (
     <section className={cn("flex flex-col gap-2", className)}>
-      <label className="text-xs font-semibold text-white/60">{label}</label>
+      <label className="text-xs font-semibold text-theme-text/60">{label}</label>
       <div className="relative">
-        <div className="pointer-events-none absolute bottom-3 left-3 top-3 w-4 overflow-hidden text-sm text-white/25">
+        <div className="pointer-events-none absolute bottom-3 left-3 top-3 w-4 overflow-hidden text-sm text-theme-text/25">
           <div ref={markerRailRef} className="flex flex-col">
             {rawLines.map((_, index) => (
               <span
@@ -58,7 +58,7 @@ export function InputStudioRawSection({
         </div>
         <textarea
           className={cn(
-            "h-40 w-full resize-none rounded-lg border border-white/10 bg-black/40 pb-3 pl-8 pr-3 pt-3 text-sm text-white/80 outline-none focus:border-white/40",
+            "h-40 w-full resize-none rounded-lg border border-theme-border/10 bg-theme-surface/40 pb-3 pl-8 pr-3 pt-3 text-sm text-theme-text/80 outline-none focus:border-theme-border/40",
             lineHeightClass
           )}
           value={rawText}
@@ -68,9 +68,9 @@ export function InputStudioRawSection({
           disabled={disabled}
         />
       </div>
-      <p className="text-[11px] text-white/40">{helperText}</p>
+      <p className="text-[11px] text-theme-text/40">{helperText}</p>
       {syncDecisionCount > 0 && (
-        <p className="text-[11px] text-white/30">{summaryText}</p>
+        <p className="text-[11px] text-theme-text/30">{summaryText}</p>
       )}
     </section>
   );

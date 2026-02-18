@@ -35,23 +35,23 @@ export function ModStudioPanel() {
   return (
     <section
       data-mod-studio="panel"
-      className="fixed right-3 top-14 z-[70] h-[min(78vh,680px)] w-[min(92vw,820px)] overflow-hidden rounded-lg border border-white/15 bg-black/85 shadow-2xl backdrop-blur-md"
+      className="fixed right-3 top-14 z-[70] h-[min(78vh,680px)] w-[min(92vw,820px)] overflow-hidden rounded-lg border border-theme-border/15 bg-theme-surface/85 shadow-2xl backdrop-blur-md"
       aria-label="Mod Studio"
     >
-      <header className="flex items-center justify-between border-b border-white/10 px-3 py-2">
-        <div className="text-xs font-semibold uppercase tracking-[0.2em] text-white/70">
+      <header className="flex items-center justify-between border-b border-theme-border/10 px-3 py-2">
+        <div className="text-xs font-semibold uppercase tracking-[0.2em] text-theme-text/70">
           Mod Studio
         </div>
         <button
           type="button"
           onClick={close}
-          className="rounded border border-white/20 px-2 py-1 text-xs text-white/80 hover:bg-white/10"
+          className="rounded border border-theme-border/20 px-2 py-1 text-xs text-theme-text/80 hover:bg-theme-surface-soft"
         >
           Close
         </button>
       </header>
       <div className="flex h-[calc(100%-41px)] min-h-0">
-        <nav className="w-40 shrink-0 border-r border-white/10 p-2">
+        <nav className="w-40 shrink-0 border-r border-theme-border/10 p-2">
           <ul className="grid gap-1">
             {MOD_STUDIO_TABS.map((tab) => {
               const active = tab === activeTab;
@@ -62,8 +62,8 @@ export function ModStudioPanel() {
                     onClick={() => setActiveTab(tab)}
                     className={
                       active
-                        ? "w-full rounded bg-white/20 px-2 py-1.5 text-left text-xs text-white"
-                        : "w-full rounded px-2 py-1.5 text-left text-xs text-white/70 hover:bg-white/10 hover:text-white"
+                        ? "w-full rounded bg-theme-surface/20 px-2 py-1.5 text-left text-xs text-theme-text"
+                        : "w-full rounded px-2 py-1.5 text-left text-xs text-theme-text/70 hover:bg-theme-surface-soft hover:text-theme-text"
                     }
                   >
                     {TAB_LABELS[tab]}

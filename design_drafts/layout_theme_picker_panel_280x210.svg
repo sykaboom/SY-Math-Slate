@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 210" id="layout_theme_picker_panel_280x210">
+  <defs>
+    <style>
+      .panel { fill: #f8fafc; stroke: #334155; stroke-width: 2; }
+      .header { fill: #e2e8f0; stroke: #94a3b8; stroke-width: 1.5; }
+      .content { fill: #ffffff; stroke: #cbd5e1; stroke-width: 1.5; }
+      .card { fill: #f8fafc; stroke: #94a3b8; stroke-width: 1.2; }
+      .swatch-1 { fill: #0f172a; }
+      .swatch-2 { fill: #38bdf8; }
+      .swatch-3 { fill: #f8fafc; }
+      .text { font-family: monospace; font-size: 9px; fill: #1e293b; }
+      .label { font-family: monospace; font-size: 8px; fill: #475569; }
+      .active { fill: none; stroke: #2563eb; stroke-width: 2; }
+    </style>
+  </defs>
+
+  <rect id="panel_frame" class="panel" x="1" y="1" width="278" height="208" rx="12" />
+  <rect id="header_bar" class="header" x="0" y="0" width="280" height="36" rx="12" />
+  <text class="text" x="10" y="23">header: 280 x 36 (title + close)</text>
+
+  <rect id="content_region" class="content" x="0" y="36" width="280" height="174" rx="0" />
+  <text class="text" x="10" y="50">content: 280 x 174</text>
+
+  <g id="preset_card_1" transform="translate(16,58)">
+    <rect class="card" x="0" y="0" width="80" height="90" rx="8" />
+    <rect class="swatch-1" x="8" y="8" width="64" height="12" rx="2" />
+    <rect class="swatch-2" x="8" y="22" width="64" height="12" rx="2" />
+    <rect class="swatch-3" x="8" y="36" width="64" height="12" rx="2" />
+    <text class="label" x="8" y="66">swatch: 80 x 48</text>
+    <text class="text" x="8" y="81">Preset A</text>
+    <rect class="active" x="0" y="0" width="80" height="90" rx="8" />
+  </g>
+
+  <g id="preset_card_2" transform="translate(100,58)">
+    <rect class="card" x="0" y="0" width="80" height="90" rx="8" />
+    <rect class="swatch-1" x="8" y="8" width="64" height="12" rx="2" />
+    <rect class="swatch-2" x="8" y="22" width="64" height="12" rx="2" />
+    <rect class="swatch-3" x="8" y="36" width="64" height="12" rx="2" />
+    <text class="text" x="8" y="81">Preset B</text>
+  </g>
+
+  <g id="preset_card_3" transform="translate(184,58)">
+    <rect class="card" x="0" y="0" width="80" height="90" rx="8" />
+    <rect class="swatch-1" x="8" y="8" width="64" height="12" rx="2" />
+    <rect class="swatch-2" x="8" y="22" width="64" height="12" rx="2" />
+    <rect class="swatch-3" x="8" y="36" width="64" height="12" rx="2" />
+    <text class="text" x="8" y="81">Preset C</text>
+  </g>
+
+  <text class="label" x="10" y="202">defaultPosition: { x: 40, y: 64 } / rememberPosition: true</text>
+</svg>

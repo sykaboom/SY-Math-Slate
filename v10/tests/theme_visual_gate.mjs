@@ -15,6 +15,7 @@ const assertIncludes = (content, needle, message) => {
 const themeTokenSource = readText('src/core/config/themeTokens.ts');
 const presetSource = readText('src/core/themes/presets.ts');
 const isolationSource = readText('src/features/mod-studio/theme/themeIsolation.ts');
+const applyThemeSource = readText('src/core/theme/applyTheme.ts');
 const storeSource = readText('src/features/store/useModStudioStore.ts');
 
 ['chalk', 'parchment', 'notebook'].forEach((presetId) => {
@@ -50,19 +51,19 @@ assertIncludes(
   '[theme_visual_gate] resolveThemeDraftTokens is required for preset + override merge.'
 );
 assertIncludes(
-  isolationSource,
+  isolationSource + applyThemeSource,
   'THEME_MODULE_PREFIX',
   '[theme_visual_gate] module theme prefix constant is missing.'
 );
 assertIncludes(
-  isolationSource,
+  isolationSource + applyThemeSource,
   'toModuleScopedThemeVariable',
   '[theme_visual_gate] module scoped variable helper is missing.'
 );
 assertIncludes(
-  isolationSource,
+  isolationSource + applyThemeSource,
   'removeProperty(',
-  '[theme_visual_gate] stale theme variables must be removed during preview apply.'
+  '[theme_visual_gate] stale theme variables must be removed during preview/apply path.'
 );
 assertIncludes(
   storeSource,

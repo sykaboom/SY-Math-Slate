@@ -92,8 +92,8 @@ export function InputStudioBlocksSection({
   return (
     <section className={cn("flex min-h-0 flex-1 flex-col gap-2", className)}>
       <div className="flex items-center justify-between">
-        <span className="text-xs font-semibold text-white/60">{label}</span>
-        <span className="text-[11px] text-white/40">{blocks.length}개</span>
+        <span className="text-xs font-semibold text-theme-text/60">{label}</span>
+        <span className="text-[11px] text-theme-text/40">{blocks.length}개</span>
       </div>
       <div className="flex flex-wrap items-center gap-2">
         <Button
@@ -145,7 +145,7 @@ export function InputStudioBlocksSection({
 
               <div
                 className={cn(
-                  "group rounded-lg border bg-white/5",
+                  "group rounded-lg border bg-theme-surface-soft",
                   isBreakBlock
                     ? "min-h-9 border-dashed border-[var(--theme-accent)] bg-[var(--theme-accent-soft)] px-3 py-2"
                     : "border-[var(--theme-border)] p-3"
@@ -162,7 +162,7 @@ export function InputStudioBlocksSection({
                 }}
               >
                 <div className={cn("flex items-start gap-2", isBreakBlock && "items-center")}>
-                  <div className="text-white/40">
+                  <div className="text-theme-text/40">
                     <GripVertical className="h-4 w-4" />
                   </div>
 
@@ -173,15 +173,15 @@ export function InputStudioBlocksSection({
                   ) : (
                     <button
                       type="button"
-                      className="min-h-11 min-w-0 flex-1 rounded-md px-1 py-1 text-left hover:bg-white/5"
+                      className="min-h-11 min-w-0 flex-1 rounded-md px-1 py-1 text-left hover:bg-theme-surface-soft"
                       onClick={() =>
                         onExpandedBlockChange(isExpanded ? null : block.id)
                       }
                     >
-                      <span className="text-xs font-semibold text-white">
+                      <span className="text-xs font-semibold text-theme-text">
                         Step {stepNumber}
                       </span>
-                      <p className="mt-1 truncate text-[11px] text-white/45">
+                      <p className="mt-1 truncate text-[11px] text-theme-text/45">
                         {blockEntry.preview}
                       </p>
                     </button>
@@ -191,7 +191,7 @@ export function InputStudioBlocksSection({
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="h-11 w-11 text-white/60 hover:text-white"
+                      className="h-11 w-11 text-theme-text/60 hover:text-theme-text"
                       onClick={() =>
                         onExpandedBlockChange(isExpanded ? null : block.id)
                       }
@@ -207,7 +207,7 @@ export function InputStudioBlocksSection({
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="h-11 w-11 text-white/50 hover:text-white"
+                      className="h-11 w-11 text-theme-text/50 hover:text-theme-text"
                       onClick={() => onMoveBlockByIndex(index, -1)}
                       disabled={index === 0}
                     >
@@ -216,7 +216,7 @@ export function InputStudioBlocksSection({
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="h-11 w-11 text-white/50 hover:text-white"
+                      className="h-11 w-11 text-theme-text/50 hover:text-theme-text"
                       onClick={() => onMoveBlockByIndex(index, 1)}
                       disabled={index === blocks.length - 1}
                     >
@@ -225,7 +225,7 @@ export function InputStudioBlocksSection({
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="h-11 w-11 text-white/50 hover:text-white"
+                      className="h-11 w-11 text-theme-text/50 hover:text-theme-text"
                       onClick={() => onDeleteBlock(block.id)}
                     >
                       <Trash2 className="h-4 w-4" />

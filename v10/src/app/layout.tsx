@@ -4,6 +4,7 @@ import "../features/canvas/styles/content-layer.css";
 import "../features/canvas/styles/mathjax.css";
 import "../features/animation/styles/rich-text-animation.css";
 import "../features/layout/styles/prompter.css";
+import { ThemeProvider } from "@features/theme/ThemeProvider";
 
 export const metadata: Metadata = {
   title: "SY Math Slate (v10)",
@@ -17,7 +18,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko" className="dark">
-      <body className="antialiased">{children}</body>
+      <body className="antialiased">
+        <ThemeProvider>{children}</ThemeProvider>
+      </body>
     </html>
   );
 }

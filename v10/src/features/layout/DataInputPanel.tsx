@@ -683,7 +683,7 @@ export function DataInputPanel(props: DataInputPanelProps = {}) {
             return (
               <div
                 key={segment.id}
-                className="flex items-start gap-2 rounded-md border border-white/10 bg-black/30 p-2"
+                className="flex items-start gap-2 rounded-md border border-theme-border/10 bg-theme-surface/30 p-2"
                 draggable
                 onDragStart={(event) => {
                   event.dataTransfer.setData("text/plain", `${block.id}:${segment.id}`);
@@ -704,7 +704,7 @@ export function DataInputPanel(props: DataInputPanelProps = {}) {
               >
                 <span
                   data-segment-drag
-                  className="rounded-full border border-white/20 bg-white/10 px-2 py-0.5 text-[10px] uppercase text-white/70"
+                  className="rounded-full border border-theme-border/20 bg-theme-surface-soft px-2 py-0.5 text-[10px] uppercase text-theme-text/70"
                 >
                   {label}
                 </span>
@@ -717,8 +717,8 @@ export function DataInputPanel(props: DataInputPanelProps = {}) {
                           segmentRefs.current[segment.id] = node;
                         }}
                         className={cn(
-                          "min-h-[40px] rounded-md border border-white/10 bg-black/30 px-2 py-2 text-sm text-white/80 outline-none",
-                          "focus-within:border-white/40"
+                          "min-h-[40px] rounded-md border border-theme-border/10 bg-theme-surface/30 px-2 py-2 text-sm text-theme-text/80 outline-none",
+                          "focus-within:border-theme-border/40"
                         )}
                         style={editorStyle}
                         contentEditable
@@ -731,12 +731,12 @@ export function DataInputPanel(props: DataInputPanelProps = {}) {
 
                       <div className="flex flex-col gap-2">
                         <div className="flex flex-wrap items-center gap-2">
-                          <div className="inline-flex h-11 min-w-[192px] items-center gap-2 rounded-md border border-white/15 bg-black/40 px-2">
-                            <span className="text-[10px] font-semibold uppercase tracking-[0.12em] text-white/45">
+                          <div className="inline-flex h-11 min-w-[192px] items-center gap-2 rounded-md border border-theme-border/15 bg-theme-surface/40 px-2">
+                            <span className="text-[10px] font-semibold uppercase tracking-[0.12em] text-theme-text/45">
                               폰트
                             </span>
                             <select
-                              className="h-9 min-w-[108px] flex-1 rounded-md border border-white/15 bg-black/50 px-2 text-[11px] text-white/80 outline-none"
+                              className="h-9 min-w-[108px] flex-1 rounded-md border border-theme-border/15 bg-theme-surface/50 px-2 text-[11px] text-theme-text/80 outline-none"
                               value={textStyle?.fontFamily ?? ""}
                               onChange={(event) =>
                                 updateTextSegmentStyle(block.id, segment.id, {
@@ -752,10 +752,10 @@ export function DataInputPanel(props: DataInputPanelProps = {}) {
                             </select>
                           </div>
 
-                          <div className="inline-flex h-11 items-center rounded-md border border-white/15 bg-black/40">
+                          <div className="inline-flex h-11 items-center rounded-md border border-theme-border/15 bg-theme-surface/40">
                             <Button
                               variant="ghost"
-                              className="h-11 rounded-r-none px-3 text-[11px] text-white/75 hover:text-white"
+                              className="h-11 rounded-r-none px-3 text-[11px] text-theme-text/75 hover:text-theme-text"
                               onClick={() =>
                                 adjustTextSegmentFontSize(
                                   block.id,
@@ -772,7 +772,7 @@ export function DataInputPanel(props: DataInputPanelProps = {}) {
                             </span>
                             <Button
                               variant="ghost"
-                              className="h-11 rounded-l-none px-3 text-[11px] text-white/75 hover:text-white"
+                              className="h-11 rounded-l-none px-3 text-[11px] text-theme-text/75 hover:text-theme-text"
                               onClick={() =>
                                 adjustTextSegmentFontSize(
                                   block.id,
@@ -885,7 +885,7 @@ export function DataInputPanel(props: DataInputPanelProps = {}) {
                       </div>
                     </>
                   ) : (
-                    <div className="flex items-center gap-3 text-xs text-white/60">
+                    <div className="flex items-center gap-3 text-xs text-theme-text/60">
                       {segment.type === "image" ? (
                         // eslint-disable-next-line @next/next/no-img-element
                         <img
@@ -894,7 +894,7 @@ export function DataInputPanel(props: DataInputPanelProps = {}) {
                           className="h-12 w-12 rounded-md object-cover"
                         />
                       ) : (
-                        <div className="flex h-12 w-12 items-center justify-center rounded-md border border-white/20 bg-white/5 text-[10px] tracking-widest text-white/50">
+                        <div className="flex h-12 w-12 items-center justify-center rounded-md border border-theme-border/20 bg-theme-surface-soft text-[10px] tracking-widest text-theme-text/50">
                           PLAY
                         </div>
                       )}
@@ -908,7 +908,7 @@ export function DataInputPanel(props: DataInputPanelProps = {}) {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-10 w-10 text-white/50 hover:text-white"
+                  className="h-10 w-10 text-theme-text/50 hover:text-theme-text"
                   onClick={() => removeSegment(block.id, segment.id)}
                 >
                   <Minus className="h-4 w-4" />
@@ -937,7 +937,7 @@ export function DataInputPanel(props: DataInputPanelProps = {}) {
           </Button>
           <Button
             variant="ghost"
-            className="h-10 px-3 text-[11px] text-white/60 hover:text-white"
+            className="h-10 px-3 text-[11px] text-theme-text/60 hover:text-theme-text"
             onClick={() => {
               void handleMediaUrl(block.id, "image");
             }}
@@ -954,7 +954,7 @@ export function DataInputPanel(props: DataInputPanelProps = {}) {
           </Button>
           <Button
             variant="ghost"
-            className="h-10 px-3 text-[11px] text-white/60 hover:text-white"
+            className="h-10 px-3 text-[11px] text-theme-text/60 hover:text-theme-text"
             onClick={() => {
               void handleMediaUrl(block.id, "video");
             }}
@@ -1046,14 +1046,14 @@ export function DataInputPanel(props: DataInputPanelProps = {}) {
             />
           )}
 
-          <section className="rounded-lg border border-white/10 bg-black/30 p-3">
+          <section className="rounded-lg border border-theme-border/10 bg-theme-surface/30 p-3">
             <div className="flex items-center justify-between gap-2">
-              <p className="text-xs font-semibold text-white/70">LLM Draft</p>
-              <span className="text-[11px] text-white/45">role: {effectiveRole}</span>
+              <p className="text-xs font-semibold text-theme-text/70">LLM Draft</p>
+              <span className="text-[11px] text-theme-text/45">role: {effectiveRole}</span>
             </div>
 
             <textarea
-              className="mt-2 h-20 w-full resize-none rounded-md border border-white/15 bg-black/40 p-2 text-xs text-white/85 outline-none focus:border-white/35"
+              className="mt-2 h-20 w-full resize-none rounded-md border border-theme-border/15 bg-theme-surface/40 p-2 text-xs text-theme-text/85 outline-none focus:border-theme-border/35"
               value={llmPrompt}
               onChange={(event) => {
                 setLlmPrompt(event.target.value);
@@ -1077,7 +1077,7 @@ export function DataInputPanel(props: DataInputPanelProps = {}) {
               </Button>
               <Button
                 variant="ghost"
-                className="h-10 px-3 text-xs text-white/65"
+                className="h-10 px-3 text-xs text-theme-text/65"
                 disabled={!hasCandidate}
                 onClick={clearCandidate}
               >
@@ -1092,12 +1092,12 @@ export function DataInputPanel(props: DataInputPanelProps = {}) {
             )}
 
             {candidate && (
-              <div className="mt-3 rounded-md border border-white/10 bg-black/30 p-2">
-                <p className="text-[11px] text-white/70">
+              <div className="mt-3 rounded-md border border-theme-border/10 bg-theme-surface/30 p-2">
+                <p className="text-[11px] text-theme-text/70">
                   후보 블록: {candidate.diff.summary.totalCandidate}개 / 변경: {" "}
                   {candidate.diff.summary.changed}개
                 </p>
-                <p className="mt-1 text-[11px] text-white/45">
+                <p className="mt-1 text-[11px] text-theme-text/45">
                   추가 {candidate.diff.summary.added} / 수정 {candidate.diff.summary.modified} / 삭제 {candidate.diff.summary.removed}
                 </p>
                 <div className="mt-2 flex flex-wrap gap-2">
@@ -1194,7 +1194,7 @@ export function DataInputPanel(props: DataInputPanelProps = {}) {
         </Button>
         <Button
           variant="ghost"
-          className="h-10 px-3 text-xs text-white/65"
+          className="h-10 px-3 text-xs text-theme-text/65"
           disabled={!rollbackSnapshot}
           onClick={() => {
             clearSnapshots();

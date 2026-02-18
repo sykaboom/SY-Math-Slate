@@ -3,6 +3,7 @@ export const CORE_PANEL_POLICY_IDS = {
   MODERATION_CONSOLE: "core.moderation-console.panel",
   DATA_INPUT: "core.data-input.panel",
   PROMPTER: "core.prompter.panel",
+  THEME_PICKER: "core.theme-picker.panel",
   FLOATING_TOOLBAR: "core.floating-toolbar.panel",
 } as const;
 
@@ -79,6 +80,20 @@ export const CORE_PANEL_POLICY_SOURCE = {
         roleOverride: {
           host: { visible: true, defaultOpen: false },
           student: { visible: false, defaultOpen: false },
+        },
+      },
+    },
+    [CORE_PANEL_POLICY_IDS.THEME_PICKER]: {
+      slot: "toolbar-bottom",
+      behavior: {
+        displayMode: "windowed",
+        movable: true,
+        defaultPosition: { x: 40, y: 64 },
+        rememberPosition: true,
+        defaultOpen: false,
+        roleOverride: {
+          host: { visible: true, defaultOpen: false },
+          student: { visible: true, defaultOpen: false },
         },
       },
     },

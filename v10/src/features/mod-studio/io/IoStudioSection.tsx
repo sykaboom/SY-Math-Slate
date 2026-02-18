@@ -39,22 +39,22 @@ export function IoStudioSection() {
   };
 
   return (
-    <div className="grid gap-3 text-xs text-white/85">
-      <div className="text-[11px] uppercase tracking-[0.18em] text-white/60">
+    <div className="grid gap-3 text-xs text-theme-text/85">
+      <div className="text-[11px] uppercase tracking-[0.18em] text-theme-text/60">
         JSON Import / Export
       </div>
       <div className="flex items-center gap-2">
         <button
           type="button"
           onClick={handleExport}
-          className="rounded border border-white/20 px-2 py-1 text-[11px] text-white/80 hover:bg-white/10"
+          className="rounded border border-theme-border/20 px-2 py-1 text-[11px] text-theme-text/80 hover:bg-theme-surface-soft"
         >
           Export
         </button>
         <button
           type="button"
           onClick={handleImport}
-          className="rounded border border-white/20 px-2 py-1 text-[11px] text-white/80 hover:bg-white/10"
+          className="rounded border border-theme-border/20 px-2 py-1 text-[11px] text-theme-text/80 hover:bg-theme-surface-soft"
         >
           Import
         </button>
@@ -62,7 +62,7 @@ export function IoStudioSection() {
       <textarea
         value={payload}
         onChange={(event) => setPayload(event.target.value)}
-        className="h-64 w-full rounded border border-white/20 bg-black/50 p-2 font-mono text-[11px] text-white/90"
+        className="h-64 w-full rounded border border-theme-border/20 bg-theme-surface/50 p-2 font-mono text-[11px] text-theme-text/90"
         spellCheck={false}
       />
     </div>
