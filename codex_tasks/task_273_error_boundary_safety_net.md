@@ -1,6 +1,8 @@
 # Task 273: React Error Boundary 안전망 구축
 
 Status: SUPERSEDED
+Archive flag: DO NOT EXECUTE
+Execution source: use `task_276` + `task_277`.
 Owner: Codex (spec / review / implementation)
 Target: v10/
 Date: 2026-02-17

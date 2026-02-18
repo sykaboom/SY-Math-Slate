@@ -1,6 +1,8 @@
 # Task 267: UI/UX 디자인 시스템 점검 및 정비 기획안
 
 Status: SUPERSEDED (replaced by task_269 / task_270 / task_271)
+Archive flag: DO NOT EXECUTE
+Execution source: use `task_269`, `task_270`, `task_271` only.
 Owner: Codex (spec / review / implementation)
 Target: v10/
 Date: 2026-02-17

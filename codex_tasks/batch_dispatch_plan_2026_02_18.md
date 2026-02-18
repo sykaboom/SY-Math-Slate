@@ -1,6 +1,7 @@
 # Batch Dispatch Plan — 2026-02-18
 
-Status: DRAFT
+Status: ARCHIVE / HISTORICAL SNAPSHOT
+Note: This plan was executed and is retained for traceability only.
 Analyst: Claude Code
 Executor: Codex CLI
 

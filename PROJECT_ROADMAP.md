@@ -1,5 +1,11 @@
 # Project Roadmap (Post-Refactor)
 
+Status: ACTIVE SSOT
+
+This document is the only roadmap-level execution source.
+- Historical planning notes in other files are non-authoritative unless explicitly linked here.
+- Detailed implementation contracts are tracked in approved `codex_tasks/task_*.md`.
+
 This roadmap is the single source for **what to build next**. It assumes v10 refactors + AI_READ_ME are complete.
 
 ---

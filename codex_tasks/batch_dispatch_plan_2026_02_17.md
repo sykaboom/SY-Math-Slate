@@ -1,6 +1,10 @@
 # Batch Dispatch Plan — 2026-02-17
 
-Status: DRAFT
+Status: ARCHIVE / SUPERSEDED
+Superseded by: `codex_tasks/batch_dispatch_plan_2026_02_18.md`
+Execution authority: use latest approved dispatch plan only.
+
+Original status: DRAFT
 Analyst: Claude Code
 Executor: Codex CLI
 

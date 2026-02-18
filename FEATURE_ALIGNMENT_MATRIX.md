@@ -1,5 +1,11 @@
 # Feature Alignment Matrix (Draft)
 
+Status: ARCHIVE-DRAFT (reference only, not execution SSOT)
+
+Execution priority and implementation order are governed by:
+- `PROJECT_ROADMAP.md`
+- approved `codex_tasks/task_*.md`
+
 ## 이것은 무엇인가?
 레거시(single-file), v10, math‑pdf‑builder의 기능/UX를 한눈에 비교하는 표입니다.  
 목표는 “지금 있는 것 / 없는 것 / 부분적으로 있는 것”을 명확히 해 통합 파이프라인을 설계할 때 **우선순위와 갭**을 빠르게 파악하는 것입니다.

@@ -260,3 +260,31 @@ Trigger phrases:
 
 After user approval, Codex executes tasks in the approved wave/slot order.
 Claude Code does not implement code; Codex is the sole executor.
+
+---
+
+## 12) Task Hygiene Operation (Manual Trigger Only)
+
+Cadence rule:
+- No automatic weekly/monthly scheduler is assumed.
+- Hygiene is run only on explicit user trigger.
+
+Natural-language triggers:
+- Light cleanup:
+  - "태스크 라이트 정리해"
+  - "task hygiene light"
+- Archive wave:
+  - "태스크 아카이브 웨이브 실행"
+  - "task hygiene archive wave"
+
+Mandatory first step:
+1) Run `scripts/task_hygiene_report.sh`
+2) Use report output to decide:
+   - light cleanup (header/marker tightening only)
+   - archive wave (move/delete with explicit user approval)
+
+Safety defaults:
+- Light cleanup must not move/delete files.
+- Archive wave must keep execution SSOT clear:
+  - roadmap-level SSOT: `PROJECT_ROADMAP.md`
+  - execution SSOT: approved `codex_tasks/task_*.md`

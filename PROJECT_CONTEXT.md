@@ -38,9 +38,6 @@
 - Gemini: 디자인/컨텍스트/시안 중심.
 - 협업 규칙은 `GEMINI_CODEX_PROTOCOL.md`에 따른다.
 
-## 단기 로드맵 (요약)
-- Task 010: MathJax 통합
-  - 렌더러/규칙 모듈화
-  - displaystyle/frac 보정 유지
-  - 캐시 + 지연 렌더
-- 이후: DSL v0.1 초안, 토큰 레지스트리 구조 정의
+## 단기 로드맵 (Historical, Archived)
+- 이 섹션은 초기 단계(Task 010 시점) 컨텍스트이며, 현재 실행 계획 SSOT가 아니다.
+- 현재/다음 실행 계획은 `PROJECT_ROADMAP.md`와 승인된 `codex_tasks/*`를 따른다.

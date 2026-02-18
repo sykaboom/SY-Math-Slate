@@ -108,6 +108,21 @@ Non-negotiable invariants:
   - report slot efficiency metrics in closeout
 - Detailed scheduler rules live in `codex_tasks/_PLAYBOOK_subagent_oneclick.md`.
 
+### Task Hygiene Trigger (Natural Language, Manual Cadence)
+- Time-based automation is NOT assumed. Task hygiene runs only when user triggers it.
+- Light cleanup triggers (examples):
+  - `"태스크 라이트 정리해"`
+  - `"task hygiene light"`
+- Archive-wave triggers (examples):
+  - `"태스크 아카이브 웨이브 실행"`
+  - `"task hygiene archive wave"`
+- Required first command for hygiene run:
+  - `scripts/task_hygiene_report.sh`
+- Light cleanup default action:
+  - strengthen `ARCHIVE/SUPERSEDED` markers and SSOT pointers (no move/delete).
+- Archive-wave action:
+  - move/delete is allowed only with explicit user confirmation and hotfix/task log.
+
 ---
 
 ## Layout / SVG Gate (Gemini Optional)
