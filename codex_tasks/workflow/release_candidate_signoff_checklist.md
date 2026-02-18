@@ -22,5 +22,8 @@
 
 ## Rollback and Launch
 - [ ] Rollback plan verified for latest release commit.
+- [ ] Release rollback runbook reviewed and latest-good commit SHA captured (`codex_tasks/workflow/release_rollback_runbook.md`).
 - [ ] Feature flag registry reviewed for stale aliases/unknown keys.
+- [ ] Phase5 cutover flags validated (default OFF unless explicitly approved).
+- [ ] `node v10/tests/phase5_preflight_smoke.mjs` PASS.
 - [ ] Deployment target smoke-tested after production build.
