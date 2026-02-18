@@ -15,12 +15,18 @@ import {
   subscribeDeclarativePluginManifests,
   type DeclarativeSlotContribution,
 } from "@core/extensions/pluginLoader";
+import ErrorBoundary from "@ui/components/ErrorBoundary";
 import { Button } from "@ui/components/button";
 
 type ExtensionSlotProps = {
   name?: UISlotName;
   slot?: UISlotName;
   className?: string;
+};
+
+type DeclarativeEntryRendererProps = {
+  slotName: UISlotName;
+  entry: DeclarativeSlotContribution;
 };
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
@@ -49,11 +55,35 @@ export function ExtensionSlot(props: ExtensionSlotProps) {
   if (components.length === 0 && declarativeEntries.length === 0) return null;
 
   const renderedComponents = components.map((SlotComponent, index) => (
-    <SlotComponent key={`${slotName}-${index}`} />
+    <ErrorBoundary
+      key={`component-${slotName}-${index}`}
+      fallback={
+        <section
+          role="alert"
+          className="rounded border border-[var(--theme-border-strong)] bg-[var(--theme-danger-soft)] px-2 py-1 text-xs text-[var(--theme-text)]"
+        >
+          Extension component failed to render.
+        </section>
+      }
+    >
+      <SlotComponent />
+    </ErrorBoundary>
   ));
-  const renderedDeclarative = declarativeEntries.map((entry) =>
-    renderDeclarativeEntry(slotName, entry)
-  );
+  const renderedDeclarative = declarativeEntries.map((entry) => (
+    <ErrorBoundary
+      key={`declarative-${entry.contributionId}`}
+      fallback={
+        <section
+          role="alert"
+          className="rounded border border-[var(--theme-border-strong)] bg-[var(--theme-danger-soft)] px-2 py-1 text-xs text-[var(--theme-text)]"
+        >
+          Extension contribution failed to render.
+        </section>
+      }
+    >
+      <DeclarativeEntryRenderer slotName={slotName} entry={entry} />
+    </ErrorBoundary>
+  ));
   const rendered = [...renderedComponents, ...renderedDeclarative];
 
   if (!className) return <>{rendered}</>;
@@ -103,10 +133,15 @@ const renderDeclarativeEntry = (
   return (
     <section
       key={entry.contributionId}
-      className="rounded border border-slate-200 bg-white px-2 py-1 text-xs text-slate-700"
+      className="rounded border border-[var(--theme-border-strong)] bg-[var(--theme-surface)] px-2 py-1 text-xs text-[var(--theme-text)]"
     >
       {icon ? <span className="mr-1" aria-hidden>{icon}</span> : null}
       <span>{label}</span>
     </section>
   );
 };
+
+const DeclarativeEntryRenderer = ({
+  slotName,
+  entry,
+}: DeclarativeEntryRendererProps) => renderDeclarativeEntry(slotName, entry);

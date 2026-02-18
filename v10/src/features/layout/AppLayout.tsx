@@ -30,6 +30,7 @@ import { useResolvedPanelPolicy } from "@features/policy/useResolvedPanelPolicy"
 import { useAuthoringShortcuts } from "@features/shortcuts/useAuthoringShortcuts";
 import { useAsymmetricSessionSync } from "@features/sync/useAsymmetricSessionSync";
 import { Button } from "@ui/components/button";
+import ErrorBoundary from "@ui/components/ErrorBoundary";
 import { useChromeStore } from "@features/store/useChromeStore";
 import { useLocalStore } from "@features/store/useLocalStore";
 import { useUIStore } from "@features/store/useUIStoreBridge";
@@ -56,6 +57,9 @@ const createDefaultWindowHostClampBounds = (): WindowRuntimeRect => ({
   width: 960,
   height: 640,
 });
+
+const SHELL_ERROR_FALLBACK_CLASSNAME =
+  "rounded border border-[var(--theme-border-strong)] bg-[var(--theme-danger-soft)] px-2 py-1 text-xs text-[var(--theme-text)]";
 
 export function AppLayout({ children }: AppLayoutProps) {
   useAsymmetricSessionSync();
@@ -573,33 +577,57 @@ export function AppLayout({ children }: AppLayoutProps) {
         className={mainShellClass}
       >
         <div className={mainContentClass}>
-          <div data-layout-id="region_canvas_primary" className="min-w-0 flex-1">
-            <CanvasStage>{children}</CanvasStage>
-          </div>
+          <ErrorBoundary
+            fallback={
+              <section role="alert" className={SHELL_ERROR_FALLBACK_CLASSNAME}>
+                Canvas region failed to render.
+              </section>
+            }
+          >
+            <div data-layout-id="region_canvas_primary" className="min-w-0 flex-1">
+              <CanvasStage>{children}</CanvasStage>
+            </div>
+          </ErrorBoundary>
           {shouldOverlayLeftPanel ? (
-            <aside
-              data-layout-id="region_left_panel_overlay"
-              className="pointer-events-none absolute inset-y-0 left-0 z-20 w-full max-w-[min(420px,92vw)]"
+            <ErrorBoundary
+              fallback={
+                <section role="alert" className={SHELL_ERROR_FALLBACK_CLASSNAME}>
+                  Panel region failed to render.
+                </section>
+              }
             >
-              <div className="pointer-events-auto h-full w-full">
-                <ExtensionSlot slot="left-panel" />
-              </div>
-            </aside>
+              <aside
+                data-layout-id="region_left_panel_overlay"
+                className="pointer-events-none absolute inset-y-0 left-0 z-20 w-full max-w-[min(420px,92vw)]"
+              >
+                <div className="pointer-events-auto h-full w-full">
+                  <ExtensionSlot slot="left-panel" />
+                </div>
+              </aside>
+            </ErrorBoundary>
           ) : null}
           {useWindowHostPanels ? (
-            <div
-              ref={windowHostViewportRef}
-              data-layout-id="region_window_host"
-              className="pointer-events-none absolute inset-0 z-30"
+            <ErrorBoundary
+              fallback={
+                <section role="alert" className={SHELL_ERROR_FALLBACK_CLASSNAME}>
+                  Window host panel region failed to render.
+                </section>
+              }
             >
-              <WindowHost
-                panels={windowHostPanels}
-                clampBounds={windowHostClampBounds}
-                className="pointer-events-none h-full w-full"
-                dockedContainerClassName={windowHostDockedContainerClass}
-                windowLayerClassName="absolute inset-0 z-30"
-              />
-            </div>
+              <div
+                ref={windowHostViewportRef}
+                data-layout-id="region_window_host"
+                className="pointer-events-none absolute inset-0 z-30"
+              >
+                <WindowHost
+                  panels={windowHostPanels}
+                  clampBounds={windowHostClampBounds}
+                  className="pointer-events-none h-full w-full"
+                  dockedContainerClassName={windowHostDockedContainerClass}
+                  windowLayerClassName="absolute inset-0 z-30"
+                />
+              </div>
+            </ErrorBoundary>
           ) : null}
         </div>
       </main>
@@ -619,18 +647,26 @@ export function AppLayout({ children }: AppLayoutProps) {
               <PlayerBar readOnly />
             </div>
           ) : shouldRenderHostFooter ? (
-            <div
-              data-layout-id="region_toolchips"
-              className={
-                isFullscreenInkActive
-                  ? "pointer-events-auto flex w-full max-w-[min(980px,96vw)] flex-col gap-2"
-                  : "pointer-events-auto flex w-full max-w-[min(1120px,96vw)] flex-col gap-2 xl:max-w-[min(1120px,94vw)]"
+            <ErrorBoundary
+              fallback={
+                <section role="alert" className={SHELL_ERROR_FALLBACK_CLASSNAME}>
+                  Toolbar region failed to render.
+                </section>
               }
             >
-              <div data-extension-slot-host="toolbar-bottom" className="flex flex-col gap-2">
-                <ExtensionSlot slot="toolbar-bottom" />
+              <div
+                data-layout-id="region_toolchips"
+                className={
+                  isFullscreenInkActive
+                    ? "pointer-events-auto flex w-full max-w-[min(980px,96vw)] flex-col gap-2"
+                    : "pointer-events-auto flex w-full max-w-[min(1120px,96vw)] flex-col gap-2 xl:max-w-[min(1120px,94vw)]"
+                }
+              >
+                <div data-extension-slot-host="toolbar-bottom" className="flex flex-col gap-2">
+                  <ExtensionSlot slot="toolbar-bottom" />
+                </div>
               </div>
-            </div>
+            </ErrorBoundary>
           ) : null}
         </footer>
       )}

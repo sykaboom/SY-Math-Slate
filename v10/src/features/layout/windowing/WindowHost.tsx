@@ -3,6 +3,7 @@
 import { useMemo, useRef, type CSSProperties, type PointerEvent, type ReactNode } from "react";
 
 import { cn } from "@core/utils";
+import ErrorBoundary from "@ui/components/ErrorBoundary";
 import { useWindowRuntime } from "./useWindowRuntime";
 import type {
   WindowRuntimeDelta,
@@ -51,6 +52,8 @@ const shouldIgnorePointerEvent = (
 ): boolean => event.pointerType === "mouse" && event.button !== 0;
 
 const WINDOW_HOST_DRAG_HANDLE_ATTRIBUTE = "data-window-host-drag-handle";
+const PANEL_ERROR_FALLBACK_CLASSNAME =
+  "h-full w-full rounded border border-[var(--theme-border-strong)] bg-[var(--theme-danger-soft)] px-2 py-1 text-xs text-[var(--theme-text)]";
 
 const panelHasExplicitDragHandle = (panelNode: HTMLDivElement): boolean =>
   panelNode.querySelector(`[${WINDOW_HOST_DRAG_HANDLE_ATTRIBUTE}]`) !== null;
@@ -132,7 +135,15 @@ export function WindowHost({
                 data-window-host-display-mode={panel.displayMode}
                 onPointerDown={() => runtime.focusPanel(panel.panelId)}
               >
-                {panelModule.render(renderContextFor(panel))}
+                <ErrorBoundary
+                  fallback={
+                    <section role="alert" className={PANEL_ERROR_FALLBACK_CLASSNAME}>
+                      Panel failed to render.
+                    </section>
+                  }
+                >
+                  {panelModule.render(renderContextFor(panel))}
+                </ErrorBoundary>
               </div>
             );
           })}
@@ -210,7 +221,15 @@ export function WindowHost({
               onPointerCancel={endDragSession}
               onLostPointerCapture={endDragSession}
             >
-              {panelModule.render(renderContextFor(panel))}
+              <ErrorBoundary
+                fallback={
+                  <section role="alert" className={PANEL_ERROR_FALLBACK_CLASSNAME}>
+                    Panel failed to render.
+                  </section>
+                }
+              >
+                {panelModule.render(renderContextFor(panel))}
+              </ErrorBoundary>
             </div>
           );
         })}

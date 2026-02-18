@@ -1,0 +1,42 @@
+@layer base {
+  mjx-container {
+    display: inline-block !important;
+    vertical-align: middle !important;
+    margin: 0 2px;
+    cursor: text;
+    user-select: text;
+    -webkit-user-select: text;
+    color: inherit !important;
+  }
+
+  mjx-container[display="false"] {
+    padding-right: 0.1em;
+    transform: translateY(var(--math-inline-shift, 0em));
+  }
+
+  mjx-container svg {
+    overflow: visible;
+  }
+
+  mjx-container svg path,
+  mjx-container svg polygon {
+    fill: currentColor !important;
+    stroke: none !important;
+    stroke-width: 0 !important;
+  }
+
+  mjx-container svg rect:not([data-bgcolor]) {
+    fill: currentColor;
+    stroke: none;
+  }
+
+  mjx-container svg .mjx-boxed rect {
+    fill: none !important;
+    stroke: currentColor !important;
+    vector-effect: non-scaling-stroke;
+  }
+
+  mjx-container svg line {
+    stroke: currentColor !important;
+  }
+}

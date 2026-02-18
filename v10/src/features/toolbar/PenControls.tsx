@@ -10,10 +10,10 @@ import { cn } from "@core/utils";
 import { useUIStore, type PenType } from "@features/store/useUIStoreBridge";
 
 const colorPresets = [
-  { label: "Yellow", value: "#FFFF00", className: "bg-neon-yellow" },
-  { label: "Green", value: "#39FF14", className: "bg-neon-green" },
-  { label: "Cyan", value: "#00FFFF", className: "bg-neon-cyan" },
-  { label: "Pink", value: "#FF10F0", className: "bg-neon-pink" },
+  { label: "Yellow", value: "#FFFF00", className: "bg-swatch-yellow" },
+  { label: "Green", value: "#39FF14", className: "bg-swatch-green" },
+  { label: "Cyan", value: "#00FFFF", className: "bg-swatch-cyan" },
+  { label: "Pink", value: "#FF10F0", className: "bg-swatch-pink" },
   { label: "White", value: "#FFFFFF", className: "bg-toolbar-text" },
 ];
 

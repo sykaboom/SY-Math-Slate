@@ -46,9 +46,9 @@ export const TEXT_INLINE_BOLD_CLASS = "font-bold";
 
 export const TEXT_INLINE_COLOR_OPTIONS: ReadonlyArray<StyleOption> = [
   { label: "White", className: "text-toolbar-text" },
-  { label: "Yellow", className: "text-neon-yellow" },
-  { label: "Cyan", className: "text-neon-cyan" },
-  { label: "Green", className: "text-neon-green" },
+  { label: "Yellow", className: "text-swatch-yellow" },
+  { label: "Cyan", className: "text-swatch-cyan" },
+  { label: "Green", className: "text-swatch-green" },
 ];
 
 export const TEXT_INLINE_SIZE_OPTIONS: ReadonlyArray<StyleOption> = [

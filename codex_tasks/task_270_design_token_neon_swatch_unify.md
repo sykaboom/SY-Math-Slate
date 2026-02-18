@@ -1,6 +1,6 @@
 # Task 270: Design Token Neon/Swatch 통합 (Phase 2)
 
-Status: PENDING
+Status: COMPLETED
 Owner: Codex (spec / review / implementation)
 Target: v10/
 Date: 2026-02-17
@@ -100,16 +100,16 @@ If NO:
 - If YES:
   - [ ] Structure changes (file/folder add/move/delete):
     - 구조 변경 없으면 AI_READ_ME_MAP 업데이트 불필요
-  - [ ] Semantic/rule changes:
+  - [x] Semantic/rule changes:
     - 토큰 표준(`swatch` 정식화) 변경 시 `v10/AI_READ_ME.md` 반영
 
 ---
 
 ## Acceptance Criteria (Base Required)
 
-- [ ] AC-1: `globals.css`에서 중복 정의된 `neon-*`/`swatch-*`가 단일 체계로 통합됨.
-- [ ] AC-2: 선택된 정식 체계 외 이름은 alias 최소화 또는 제거됨.
-- [ ] AC-3: 색상 시각 결과가 유지됨(리디자인 없음).
+- [x] AC-1: `globals.css`에서 중복 정의된 `neon-*`/`swatch-*`가 단일 체계로 통합됨.
+- [x] AC-2: 선택된 정식 체계 외 이름은 alias 최소화 또는 제거됨.
+- [x] AC-3: 색상 시각 결과가 유지됨(리디자인 없음).
 - [ ] AC-4: `cd v10 && npm run lint` 통과
 - [ ] AC-5: `cd v10 && npm run build` 통과
 - [ ] AC-6: `VERIFY_STAGE=end bash scripts/run_repo_verifications.sh` 통과
@@ -151,8 +151,8 @@ If NO:
 
 ## Approval Gate (Base Required)
 
-- [ ] Spec self-reviewed by Codex
-- [ ] Explicit user approval received (or delegated chain approval reference)
+- [x] Spec self-reviewed by Codex
+- [x] Explicit user approval received (or delegated chain approval reference)
 
 > Implementation MUST NOT begin until both boxes are checked.
 
@@ -160,36 +160,52 @@ If NO:
 
 ## Implementation Log (Codex fills)
 
-Status: PENDING
+Status: COMPLETED
 
 Changed files:
-- ...
+- `v10/src/app/globals.css`
+- `v10/tailwind.config.ts`
+- `v10/src/features/toolbar/PenControls.tsx`
+- `v10/src/features/toolbar/LaserControls.tsx`
+- `v10/src/core/config/typography.ts`
+- `v10/src/features/canvas/CanvasStage.tsx`
+- `v10/src/features/canvas/AnchorIndicator.tsx`
+- `v10/AI_READ_ME.md`
+- `codex_tasks/task_270_design_token_neon_swatch_unify.md`
 
 Commands run (only if user asked or required by spec):
-- ...
+- `rg -n "neon-|swatch-" v10/src/app/globals.css`
+- `rg -n "neon-|swatch-" v10/src`
+- `bash scripts/check_layer_rules.sh`
 
 ## Gate Results (Codex fills)
 
 - Lint:
-  - N/A
+  - Not run (user constraint: no full lint/build in this task)
 - Build:
-  - N/A
+  - Not run (user constraint: no full lint/build in this task)
 - Script checks:
-  - N/A
+  - Not run (`VERIFY_STAGE=end bash scripts/run_repo_verifications.sh` deferred to final orchestrator gate)
+  - Supplemental guardrail check: `bash scripts/check_layer_rules.sh` PASS
 
 ## Failure Classification (Codex fills when any gate fails)
 
 - Pre-existing failures:
-  - N/A
+  - N/A (full gate commands not executed in this task)
 - Newly introduced failures:
-  - N/A
+  - None observed in scoped token grep checks
 - Blocking:
-  - N/A
+  - None
 - Mitigation:
-  - N/A
+  - Full lint/build/repo verification deferred to orchestrator final gate
 
 Manual verification notes:
-- N/A
+- `rg -n "neon-|swatch-" v10/src/app/globals.css`:
+  - `swatch-*`가 정식 정의로 수렴되었고, `neon-*`는 `swatch-*`를 참조하는 alias만 유지됨.
+  - light theme override도 `--swatch-green-rgb`, `--swatch-pink-rgb`로 이관되어 시각 값 유지.
+- `rg -n "neon-|swatch-" v10/src`:
+  - 소비자 참조가 `swatch-*` 기준으로 정렬됨 (`PenControls`, `LaserControls`, `typography`, `CanvasStage`, `AnchorIndicator`).
+  - `neon-*`는 `globals.css` alias 블록 외 런타임 소비 참조 없음.
 
 Notes:
 - task_267를 phase 분할한 2단계 실행 스펙.

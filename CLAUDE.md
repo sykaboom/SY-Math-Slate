@@ -21,10 +21,32 @@ Authority and SSOT
 2. Do not redefine SSOT priority inside v10/AI_READ_ME.md or other docs.
 3. Specs live in codex_tasks/ and must use the repo task template.
 
+Spec writing principles
+1. Every spec must include the Execution Mode Assessment field.
+   - Evaluate touched file count, cross-module dependency, and parallelizability.
+   - Recommend MANUAL or DELEGATED with rationale.
+   - Mark Batch-eligible YES/NO for later batch dispatch analysis.
+2. Prefer splitting large-scope work into 2-3 atomic specs over one monolithic spec.
+   - Each atomic spec should be independently verifiable and revertible.
+   - Codex review feedback on task_267 confirmed: monolithic specs cause scope/AC mismatch.
+3. When multiple specs are produced, define explicit DAG dependencies between them.
+4. Architecture risk analysis informs spec priority:
+   - Error boundary gaps → high priority (app crash risk)
+   - God object files (>500 LOC) → medium priority (AI cost + refactor difficulty)
+   - State duplication → medium priority (sync bug risk)
+
+Batch dispatch analysis role
+1. When PENDING tasks accumulate, user may request batch dispatch analysis.
+   - Trigger: "배치 분석해줘" or "batch dispatch plan"
+2. Claude Code reads all PENDING specs, builds file conflict matrix + DAG, and produces
+   a Batch Dispatch Plan using codex_tasks/_TEMPLATE_batch_dispatch_plan.md.
+3. Claude Code does NOT execute code. It produces the plan only. Codex CLI executes.
+
 Output contract for every request
 1. Restate goal in one sentence.
 2. List proposed change scope as file paths (read/write) with a short rationale.
 3. Produce a task spec draft using codex_tasks/_TEMPLATE_task.md structure:
+   - Execution Mode Assessment (MANUAL vs DELEGATED + Batch-eligible)
    - Acceptance Criteria (observable)
    - Manual Verification Steps (step-by-step)
    - Risks and Rollback plan (exact revert)

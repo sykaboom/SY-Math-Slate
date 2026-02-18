@@ -10,8 +10,8 @@ import { useUIStore, type LaserType } from "@features/store/useUIStoreBridge";
 
 const laserColors = [
   { label: "Red", value: "#FF3B30", className: "bg-toolbar-danger" },
-  { label: "Yellow", value: "#FFFF00", className: "bg-neon-yellow" },
-  { label: "Cyan", value: "#00FFFF", className: "bg-neon-cyan" },
+  { label: "Yellow", value: "#FFFF00", className: "bg-swatch-yellow" },
+  { label: "Cyan", value: "#00FFFF", className: "bg-swatch-cyan" },
 ];
 
 export function LaserControls() {

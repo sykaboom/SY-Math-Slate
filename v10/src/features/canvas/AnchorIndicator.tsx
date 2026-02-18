@@ -190,7 +190,7 @@ export function AnchorIndicator({ isAnimating }: AnchorIndicatorProps) {
                 border: `1px solid ${chalkTheme.colors.holderBorder}`,
                 background: chalkTheme.colors.holderBackground,
                 boxShadow: isBreakAnchor
-                  ? `${chalkTheme.colors.holderShadow}, 0 0 12px var(--neon-pink)`
+                  ? `${chalkTheme.colors.holderShadow}, 0 0 12px var(--swatch-pink)`
                   : chalkTheme.colors.holderShadow,
               }}
             >

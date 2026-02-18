@@ -1,0 +1,53 @@
+@layer base {
+  .text-layer {
+    column-fill: auto;
+  }
+
+  .text-item {
+    font-size: 1.25rem;
+    line-height: 1.625;
+    color: var(--theme-text);
+  }
+
+  .step-badge {
+    color: var(--step-color);
+    font-weight: 900;
+    margin-right: 0.5rem;
+  }
+
+  .force-break {
+    display: block;
+    break-before: column;
+    height: 1px;
+    margin: 0;
+    padding: 0;
+  }
+
+  .line-break-spacer {
+    display: block;
+    height: 1lh;
+    min-height: 1lh;
+    line-height: inherit;
+    margin: 0;
+    padding: 0;
+  }
+
+  .editing-breaks .line-break-spacer {
+    border-bottom: 1px dashed rgba(255, 255, 255, 0.25);
+  }
+
+  .editing-breaks .force-break {
+    height: 1lh;
+    border-left: 1px dashed rgba(255, 255, 255, 0.25);
+  }
+}
+
+@layer utilities {
+  .step-label {
+    color: var(--step-color);
+  }
+
+  .break-label {
+    color: var(--swatch-pink);
+  }
+}

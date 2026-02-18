@@ -37,9 +37,10 @@ required_command_ids=(
   "deletePage"
   "setColumnCount"
 )
+commands_root="v10/src/features/extensions/commands"
 for command_id in "${required_command_ids[@]}"; do
-  if ! rg -q "id:\\s*\"$command_id\"" "v10/src/features/extensions/commands/registerCoreCommands.ts"; then
-    echo "[check_v10_migration_baseline] FAIL: command '$command_id' not found in registerCoreCommands.ts" >&2
+  if ! rg -q "id:\\s*\"$command_id\"" "${commands_root}"; then
+    echo "[check_v10_migration_baseline] FAIL: command '$command_id' not found in ${commands_root}" >&2
     exit 1
   fi
 done

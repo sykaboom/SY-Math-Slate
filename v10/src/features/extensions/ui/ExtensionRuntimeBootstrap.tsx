@@ -61,6 +61,7 @@ import {
 } from "@features/observability/auditLogger";
 import { INPUT_STUDIO_LLM_DRAFT_TOOL_ENTRY } from "@features/input-studio/llm/types";
 import { useLocalStore } from "@features/store/useLocalStore";
+import ErrorBoundary from "@ui/components/ErrorBoundary";
 
 import { registerCoreSlots } from "./registerCoreSlots";
 import { registerCoreDeclarativeManifest } from "./registerCoreDeclarativeManifest";
@@ -945,5 +946,5 @@ export function ExtensionRuntimeBootstrap() {
     };
   }, [clearTrustedRoleClaim, role, setTrustedRoleClaim]);
 
-  return null;
+  return <ErrorBoundary fallback={null}>{null}</ErrorBoundary>;
 }

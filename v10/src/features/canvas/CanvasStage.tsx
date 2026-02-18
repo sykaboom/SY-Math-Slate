@@ -132,8 +132,8 @@ function NormalCanvasStage({
       onPointerDown={handleBackgroundPointer}
       {...viewportBind}
     >
-      <div className="pointer-events-none absolute inset-0 z-0 bg-[radial-gradient(circle_at_top,_rgba(var(--neon-cyan-rgb,0,255,255),0.04),_transparent_75%)]" />
-      <div className="pointer-events-none absolute inset-0 z-0 bg-[radial-gradient(circle_at_bottom,_rgba(var(--neon-pink-rgb),0.025),_transparent_75%)]" />
+      <div className="pointer-events-none absolute inset-0 z-0 bg-[radial-gradient(circle_at_top,_rgba(var(--swatch-cyan-rgb,0,255,255),0.04),_transparent_75%)]" />
+      <div className="pointer-events-none absolute inset-0 z-0 bg-[radial-gradient(circle_at_bottom,_rgba(var(--swatch-pink-rgb),0.025),_transparent_75%)]" />
       <PageViewport
         ratio={ratio}
         className="overflow-hidden"

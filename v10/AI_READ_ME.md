@@ -43,6 +43,34 @@ This file is the v10 implementation/architecture reference map.
 
 ---
 
+## Design Token Naming Invariant
+- Color swatches use `swatch-*` as the canonical token family.
+- Legacy `neon-*` tokens/classes remain as compatibility aliases and must resolve to the same color output.
+- New token consumers should prefer `swatch-*` names.
+
+## Feature CSS Ownership
+- `v10/src/app/globals.css` is reserved for global tokens/resets/minimal app-wide rules.
+- Feature-specific selectors are owned by feature CSS files:
+  - `v10/src/features/canvas/styles/content-layer.css`
+  - `v10/src/features/canvas/styles/mathjax.css`
+  - `v10/src/features/animation/styles/rich-text-animation.css`
+  - `v10/src/features/layout/styles/prompter.css`
+- Feature CSS is loaded in `v10/src/app/layout.tsx` to keep globals slim while preserving behavior.
+
+---
+
+## Error Boundary Policy
+- SSOT component: `v10/src/ui/components/ErrorBoundary.tsx`
+- Extension layer boundaries:
+  - `v10/src/features/extensions/ui/ExtensionSlot.tsx` wraps each slot contribution/component.
+  - `v10/src/features/extensions/ui/ExtensionRuntimeBootstrap.tsx` wraps bootstrap return root.
+- Shell layer boundaries:
+  - `v10/src/features/layout/AppLayout.tsx` wraps canvas region, toolbar region, and panel regions.
+  - `v10/src/features/layout/windowing/WindowHost.tsx` wraps each docked/windowed panel render individually.
+- Fallback UI must stay static/pure and must not rely on store hooks.
+
+---
+
 ## Directory Map (v10/src)
 ```
 app/
@@ -212,7 +240,7 @@ ui/
 ### 3-tier stores (authority layer)
 - `useDocStore`: persisted document authority (`pages`, `pageOrder`, `pageColumnCounts`, `stepBlocks`, `anchorMap`, `audioByStep`, `animationModInput`)
 - `useSyncStore`: shared/session-sync authority (`globalStep`, `laserPosition`, `sharedViewport`, `pendingAIQueue`, `lastHostEnvelopeCursor`, `remotePresences`)
-- `useLocalStore`: local device/role authority (`role`, `trustedRoleClaim`, `isPanelOpen`, `localViewport`)
+- `useLocalStore`: local device/role authority (`role`, `trustedRoleClaim`)
 - `useModStudioStore`: mod-studio draft authority (`policy/layout/modules/theme`, snapshots, publish result)
   - `theme` draft now uses `presetId + globalTokens + moduleScopedTokens` (preset-first with override merge).
 

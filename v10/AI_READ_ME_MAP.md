@@ -111,9 +111,11 @@ v10/src/
 |   |   |-- plan/
 |   |   |   |-- compileAnimationPlan.ts
 |   |   |   \-- measureAnimationPlan.ts
-|   |   \-- runtime/
-|   |       |-- playAnimationPlan.ts
-|   |       \-- types.ts
+|   |   |-- runtime/
+|   |   |   |-- playAnimationPlan.ts
+|   |   |   \-- types.ts
+|   |   \-- styles/
+|   |       \-- rich-text-animation.css
 |   |-- canvas/
 |   |   |-- actors/
 |   |   |   |-- ActorLayer.tsx
@@ -129,6 +131,9 @@ v10/src/
 |   |   |   \-- ImageBlock.tsx
 |   |   |-- paste/
 |   |   |   \-- pasteNormalization.ts
+|   |   |-- styles/
+|   |   |   |-- content-layer.css
+|   |   |   \-- mathjax.css
 |   |   |-- viewport/
 |   |   |   \-- useViewportInteraction.ts
 |   |   |-- AnchorIndicator.tsx
@@ -178,6 +183,10 @@ v10/src/
 |   |   |   |-- videoProviderAdapter.ts
 |   |   |   \-- webgpuOnnxLocalAdapter.ts
 |   |   |-- commands/
+|   |   |   |-- commands.canvas.ts
+|   |   |   |-- commands.doc.ts
+|   |   |   |-- commands.playback.ts
+|   |   |   |-- commands.tool.ts
 |   |   |   \-- registerCoreCommands.ts
 |   |   |-- jobs/
 |   |   |   |-- asyncJobOrchestrator.ts
@@ -250,6 +259,8 @@ v10/src/
 |   |   |   |-- mediaIO.ts
 |   |   |   |-- segmentCommands.ts
 |   |   |   \-- types.ts
+|   |   |-- styles/
+|   |   |   \-- prompter.css
 |   |   |-- windowing/
 |   |   |   |-- panelAdapters.tsx
 |   |   |   |-- panelBehavior.schema.ts
@@ -340,6 +351,7 @@ v10/src/
     \-- components/
         |-- button.tsx
         |-- dialog.tsx
+        |-- ErrorBoundary.tsx
         |-- popover.tsx
         |-- separator.tsx
         |-- slider.tsx
