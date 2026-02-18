@@ -1,9 +1,11 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 
 import { dispatchCommand } from "@core/engine/commandBus";
 import { cn } from "@core/utils";
+import { PublicToggle } from "@features/sharing/PublicToggle";
+import { ShareButton } from "@features/sharing/ShareButton";
 import { useCanvasStore } from "@features/store/useCanvasStore";
 import { useUIStore } from "@features/store/useUIStoreBridge";
 import { Pause, Play, Square, X } from "lucide-react";
@@ -17,6 +19,7 @@ type PlayerBarProps = {
 
 export function PlayerBar({ readOnly = false }: PlayerBarProps) {
   const { pages, currentPageId, currentStep } = useCanvasStore();
+  const [isPublic, setIsPublic] = useState(false);
   const {
     isAutoPlay,
     playbackSpeed,
@@ -214,6 +217,13 @@ export function PlayerBar({ readOnly = false }: PlayerBarProps) {
               </ToolbarPanel>
             </Popover>
           ))}
+
+        {!readOnly ? (
+          <div className="flex items-center gap-2">
+            <PublicToggle isPublic={isPublic} onChange={setIsPublic} />
+            <ShareButton isPublic={isPublic} />
+          </div>
+        ) : null}
 
         <button
           type="button"

@@ -52,9 +52,12 @@ Feature subsystems:
 - `features/extensions`: command registrations and UI slot runtime.
 - `features/layout`: app shell/window host.
 - `features/canvas`: board/cursor/render layers.
+- `features/sharing`: snapshot share adapters, live transport, policy/proposal flow, AI approval queue hook.
+- `features/viewer`: public viewer shell/session/live sync hooks.
 - `features/input-studio`: structured input + LLM draft flows.
 - `features/store`: zustand stores and compatibility bridges.
 - `features/theme`: end-user theme UI (`ThemePickerPanel`, provider wiring).
+- `features/mod-studio/theme`: advanced token editor, JSON IO, AI theme generation panel/hooks.
 
 ## 5) Store Authorities (SSOT)
 Authority-layer stores:
@@ -69,6 +72,9 @@ Compatibility / legacy:
 Theme state authority:
 - `useThemeStore`: active preset + token overrides + preferences + localStorage (`sy-theme-v1`)
 
+Session policy authority:
+- `useSessionPolicyStore`: active template/rules (`proposalRules`, `llmProviderId`, `autoPassLowRiskQuestions`, prompt profile fields)
+
 ## 6) Theme and Style Invariants
 Token naming:
 - `swatch-*` is canonical
@@ -79,6 +85,13 @@ Theme runtime SSOT:
 - `src/features/mod-studio/theme/themeIsolation.ts`: draft-preview path using separate applier instance
 - `src/features/theme/ThemeProvider.tsx`: mount-time active theme apply
 - `src/features/theme/ThemePickerPanel.tsx`: end-user preset entry (chalk/parchment/notebook)
+- `src/features/mod-studio/theme/useAIThemeGeneration.ts`: AI-generated token apply/preview path
+- `src/app/api/ai/theme/route.ts`: server-side AI theme token generation (structured JSON + token validation)
+
+AI call runtime:
+- `src/features/sharing/ai/LLMCallService.ts`: server/client call facade
+- `src/core/config/aiProviderRegistry.ts`: provider resolution and OpenAI/mock execution (no client key exposure)
+- `src/app/api/ai/call/route.ts`: server-side LLM proxy endpoint
 
 Ownership:
 - `src/app/globals.css`: global tokens/resets/minimal app-wide rules only

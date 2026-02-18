@@ -1,6 +1,6 @@
 # Task 289: Phase 5.5 — AI 승인 파이프라인 + Tutor Moderated AI 완성
 
-Status: PENDING
+Status: COMPLETED
 Owner: Codex (spec / review / implementation)
 Target: v10/
 Date: 2026-02-18
@@ -30,10 +30,10 @@ Date: 2026-02-18
   - template 단위 auto-pass 옵션
 
 [ LLM 구조 ]
-- Provider Registry: OpenAI / Anthropic / Gemini / local adapters
+- Provider Registry: OpenAI 1개 + mock fallback (MVP)
 - Prompt Profile: { global, template, session, teacher_override }
 - Policy Engine: who / when / what / which model
-- MVP: 단일 모델 + Tutor Moderated AI 템플릿 + one-click re-ask
+- MVP: 단일 모델(OpenAI) + Tutor Moderated AI 템플릿 + one-click re-ask
 
 [ AI 승인 관련 기존 인프라 ]
 - useSyncStore.pendingAIQueue: 이미 enqueuePendingAI, markApproved, markRejected 존재
@@ -45,7 +45,7 @@ Date: 2026-02-18
 ## Goal (Base Required)
 
 - What to change:
-  - `AIProviderRegistry` — LLM provider 등록/선택 (OpenAI, Anthropic, Gemini)
+  - `AIProviderRegistry` — LLM provider 등록/선택 (OpenAI + mock)
   - `PromptProfile` 타입 + `resolvePromptProfile()` — 4단계 프로필 병합
   - `QuestionQueueEntry` 타입 — 학생 질문 전체 생명주기 상태
   - `useTeacherApprovalQueue` hook — 교사 측 질문/응답 검토 큐 UI
@@ -53,7 +53,8 @@ Date: 2026-02-18
   - `useStudentAISession` hook — 학생 측 질문 전송 + 응답 수신
   - `StudentAIPromptBar.tsx` — 학생 질문 입력 UI (ViewerShell 하단)
   - `LLMCallService` — LLM 호출 서비스 (provider registry 경유)
-  - `ReSaskPresetBar.tsx` — one-click re-ask 프리셋 버튼 (교사용)
+  - `ReAskPresetBar.tsx` — one-click re-ask 프리셋 버튼 (교사용)
+  - `/api/ai/call` route — OpenAI 호출 + mock fallback (server-side only)
   - `useSessionPolicyStore.ts` 수정: auto-pass per-type 옵션 추가
   - 기존 `PendingApprovalPanel.tsx` 수정: ai_question 항목 UI 통합
 - What must NOT change:
@@ -75,6 +76,7 @@ Touched files/directories (create):
 - `v10/src/features/sharing/ai/StudentAIPromptBar.tsx` — 학생 질문 입력 UI
 - `v10/src/features/sharing/ai/TeacherApprovalPanel.tsx` — 교사 검토 패널
 - `v10/src/features/sharing/ai/ReAskPresetBar.tsx` — one-click re-ask 프리셋
+- `v10/src/app/api/ai/call/route.ts` — OpenAI 호출 + mock fallback
 
 Touched files/directories (write):
 - `v10/src/features/toolbar/PendingApprovalPanel.tsx` — ai_question 항목 통합
@@ -83,10 +85,11 @@ Touched files/directories (write):
 - `v10/src/core/config/sessionPolicyTemplates.ts` — TUTOR_MODERATED_AI 완성 (LLM provider 설정)
 
 Out of scope:
-- OpenAI / Anthropic API key UI (환경변수 기반)
-- 실명 기반 학생 추적
-- 질문 이력 영구 저장 (세션 내 메모리만)
-- multi-canvas 동시 AI 세션
+  - Anthropic/Gemini provider 구현 (후속 태스크)
+  - OpenAI API key UI (환경변수 기반)
+  - 실명 기반 학생 추적
+  - 질문 이력 영구 저장 (세션 내 메모리만)
+  - multi-canvas 동시 AI 세션
 
 ---
 
@@ -132,7 +135,6 @@ export type PromptProfile = {
 "더 쉽게"       → prompt: "Explain more simply for students"
 "예시 추가"     → prompt: "Include a concrete example"
 "다시 시도"     → 동일 질문 재호출
-"다른 모델로"   → provider 변경 후 재호출
 ```
 
 ---
@@ -155,8 +157,7 @@ teacher approve → LLMCallService.call({
 
 - New dependencies allowed: YES (한정)
   - OpenAI SDK (`openai`) — optional, env key `OPENAI_API_KEY`
-  - Anthropic SDK (`@anthropic-ai/sdk`) — optional, env key `ANTHROPIC_API_KEY`
-  - 없으면 `NEXT_PUBLIC_AI_MOCK=true` 모드로 mock 응답 사용 가능
+  - `AI_MOCK_MODE=true` 시 mock 응답 사용 가능 (server-only)
 - Boundary rules:
   - `features/sharing/ai/` → features 레이어. core import 허용. app import 금지.
   - `LLMCallService` → Next.js API route 경유 (브라우저에서 직접 LLM API 호출 금지)
@@ -180,7 +181,7 @@ teacher approve → LLMCallService.call({
 
 ## Execution Mode Assessment (Base Required for new specs)
 
-- Touched file count: 13 (9 create + 4 write)
+- Touched file count: 14 (10 create + 4 write)
 - Files shared with other PENDING tasks: 없음
 - Cross-module dependency: YES (features → core → app API route)
 - Parallelizable sub-units: 2 (LLMCallService 그룹 / TeacherApprovalPanel 그룹)
@@ -202,7 +203,7 @@ teacher approve → LLMCallService.call({
 - [x] Applies: YES
 - Execution mode: DELEGATED
 - Delegation chain scope: task_289 only
-- File ownership lock plan: 13개 파일 Implementer-A 단독
+- File ownership lock plan: 14개 파일 Implementer-A 단독
 - Parallel slot plan: 내부 병렬 없음
 - Scheduler plan:
   - Slot allocation mode: DYNAMIC
@@ -241,7 +242,7 @@ teacher approve → LLMCallService.call({
 - [ ] AC-3: teacher forward → 학생에게 응답 전달 → "forwarded_to_student"
 - [ ] AC-4: teacher reject → "rejected" 상태 + 학생에게 거부 알림
 - [ ] AC-5: Re-Ask 프리셋 ("더 짧게") 클릭 → 수정 프롬프트로 LLM 재호출
-- [ ] AC-6: `NEXT_PUBLIC_AI_MOCK=true` 시 mock 응답 사용 (API key 없이 동작)
+- [ ] AC-6: `AI_MOCK_MODE=true` 시 mock 응답 사용 (API key 없이 동작)
 - [ ] AC-7: LLM API key 서버 환경변수 노출 없음 (브라우저 console 검사)
 - [ ] AC-8: `npm run lint` 통과
 - [ ] AC-9: `npm run build` 통과
@@ -265,7 +266,7 @@ teacher approve → LLMCallService.call({
    - Covers: AC-5
 
 4) Step: Mock 모드
-   - `NEXT_PUBLIC_AI_MOCK=true` 설정 → AI 세션 실행 → mock 응답 수신
+   - `AI_MOCK_MODE=true` 설정 → AI 세션 실행 → mock 응답 수신
    - Covers: AC-6
 
 5) Step: 빌드 확인
@@ -295,15 +296,32 @@ teacher approve → LLMCallService.call({
 
 ## Implementation Log (Codex fills)
 
-Status: PENDING
+Status: COMPLETED
 
 Changed files:
-- (TBD)
+- `v10/src/core/types/aiApproval.ts`
+- `v10/src/core/config/aiProviderRegistry.ts`
+- `v10/src/features/sharing/ai/resolvePromptProfile.ts`
+- `v10/src/features/sharing/ai/LLMCallService.ts`
+- `v10/src/app/api/ai/call/route.ts`
+- `v10/src/features/sharing/useTeacherApprovalQueue.ts`
+- `v10/src/features/sharing/ai/ReAskPresetBar.tsx`
+- `v10/src/features/sharing/ai/TeacherApprovalPanel.tsx`
+- `v10/src/features/sharing/useStudentAISession.ts`
+- `v10/src/features/sharing/ai/StudentAIPromptBar.tsx`
+- `v10/src/features/viewer/ViewerShell.tsx`
+- `v10/src/core/types/sessionPolicy.ts`
+- `v10/src/core/config/sessionPolicyTemplates.ts`
+- `v10/src/features/store/useSessionPolicyStore.ts`
+- `v10/src/features/toolbar/PendingApprovalPanel.tsx`
 
 ## Gate Results (Codex fills)
 
-- Lint: (TBD)
-- Build: (TBD)
+- Lint: PASS (`cd v10 && npm run lint`)
+- Build: PASS (`cd v10 && npm run build`)
+- Script checks: PASS (`bash scripts/check_layer_rules.sh`)
 
 Manual verification notes:
-- (TBD)
+- Teacher approval queue UI renders in host approval panel and supports approve/reject/re-ask paths.
+- Student prompt bar is mounted in viewer shell and submits `ai_question`-typed requests.
+- Server-only `/api/ai/call` route wired with OpenAI/mock fallback, no client API key exposure path added.

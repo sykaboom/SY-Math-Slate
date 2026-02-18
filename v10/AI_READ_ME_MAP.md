@@ -32,18 +32,28 @@ v10/
 v10/src/
 |-- app/
 |   |-- api/
+|   |   |-- ai/
+|   |   |   |-- call/
+|   |   |   \-- theme/
 |   |   |-- community/
 |   |   |   \-- route.ts
 |   |   |-- extensions/
 |   |   |   \-- marketplace/
+|   |   |-- share/
+|   |   |   |-- [shareId]/
+|   |   |   \-- route.ts
 |   |   \-- trust/
 |   |       \-- role/
+|   |-- view/
+|   |   \-- [shareId]/
+|   |       \-- page.tsx
 |   |-- favicon.ico
 |   |-- globals.css
 |   |-- layout.tsx
 |   \-- page.tsx
 |-- core/
 |   |-- config/
+|   |   |-- aiProviderRegistry.ts
 |   |   |-- boardSpec.ts
 |   |   |-- capabilities.ts
 |   |   |-- experiments.ts
@@ -51,6 +61,7 @@ v10/src/
 |   |   |-- perfProfile.ts
 |   |   |-- rolePolicy.ts
 |   |   |-- rolePolicyGuards.ts
+|   |   |-- sessionPolicyTemplates.ts
 |   |   |-- themeTokens.ts
 |   |   |-- typography.ts
 |   |   \-- viewportContract.ts
@@ -101,7 +112,10 @@ v10/src/
 |   |   |-- chalkTheme.ts
 |   |   \-- presets.ts
 |   |-- types/
-|   |   \-- canvas.ts
+|   |   |-- aiApproval.ts
+|   |   |-- canvas.ts
+|   |   |-- sessionPolicy.ts
+|   |   \-- snapshot.ts
 |   \-- utils.ts
 |-- features/
 |   |-- animation/
@@ -281,6 +295,7 @@ v10/src/
 |   |   |-- OverviewStage.tsx
 |   |   |-- PlayerBar.tsx
 |   |   |-- Prompter.tsx
+|   |   |-- SessionPolicyPanel.tsx
 |   |   \-- useTabletShellProfile.ts
 |   |-- mod-studio/
 |   |   |-- core/
@@ -301,8 +316,16 @@ v10/src/
 |   |   |   |-- publishStudioDraft.ts
 |   |   |   \-- PublishStudioSection.tsx
 |   |   |-- theme/
+|   |   |   |-- AIThemeGenerationPanel.tsx
+|   |   |   |-- AIThemePromptBar.tsx
+|   |   |   |-- ThemeExportButton.tsx
+|   |   |   |-- ThemeImportButton.tsx
 |   |   |   |-- themeIsolation.ts
-|   |   |   \-- ThemeStudioSection.tsx
+|   |   |   |-- themeJsonIO.ts
+|   |   |   |-- ThemeStudioSection.tsx
+|   |   |   |-- TokenColorPicker.tsx
+|   |   |   |-- TokenEditorPanel.tsx
+|   |   |   \-- useAIThemeGeneration.ts
 |   |   \-- index.ts
 |   |-- moderation/
 |   |   |-- ModerationConsolePanel.tsx
@@ -312,6 +335,32 @@ v10/src/
 |   |-- policy/
 |   |   |-- policyShadow.ts
 |   |   \-- useResolvedPanelPolicy.ts
+|   |-- sharing/
+|   |   |-- adapters/
+|   |   |   |-- LocalSnapshotAdapter.ts
+|   |   |   |-- ServerSnapshotAdapter.ts
+|   |   |   |-- SnapshotAdapterInterface.ts
+|   |   |   \-- UpstashSnapshotAdapter.ts
+|   |   |-- ai/
+|   |   |   |-- LLMCallService.ts
+|   |   |   |-- ReAskPresetBar.tsx
+|   |   |   |-- resolvePromptProfile.ts
+|   |   |   |-- StudentAIPromptBar.tsx
+|   |   |   \-- TeacherApprovalPanel.tsx
+|   |   |-- transport/
+|   |   |   \-- LiveBroadcastTransport.ts
+|   |   |-- LayerPickerModal.tsx
+|   |   |-- ProposalCommandBus.ts
+|   |   |-- PublicToggle.tsx
+|   |   |-- ShareButton.tsx
+|   |   |-- ShareScopeSelector.tsx
+|   |   |-- snapshotSerializer.ts
+|   |   |-- useHostPolicyEngine.ts
+|   |   |-- useHostSession.ts
+|   |   |-- useParticipantSession.ts
+|   |   |-- useSnapshotShare.ts
+|   |   |-- useStudentAISession.ts
+|   |   \-- useTeacherApprovalQueue.ts
 |   |-- shortcuts/
 |   |   \-- useAuthoringShortcuts.ts
 |   |-- store/
@@ -322,8 +371,10 @@ v10/src/
 |   |   |-- useLocalStore.ts
 |   |   |-- useModStudioStore.ts
 |   |   |-- usePlaybackStore.ts
+|   |   |-- useSessionPolicyStore.ts
 |   |   |-- useSyncStore.ts
 |   |   |-- useThemeStore.ts
+|   |   |-- useTokenDraftStore.ts
 |   |   |-- useToolStore.ts
 |   |   |-- useUIStoreBridge.ts
 |   |   \-- useViewportStore.ts
@@ -337,19 +388,23 @@ v10/src/
 |   |-- theme/
 |   |   |-- ThemePickerPanel.tsx
 |   |   \-- ThemeProvider.tsx
-|   \-- toolbar/
-|       |-- atoms/
-|       |   |-- ToolbarPanel.tsx
-|       |   |-- ToolbarSeparator.tsx
-|       |   \-- ToolButton.tsx
-|       |-- FloatingToolbar.tsx
-|       |-- LaserControls.tsx
-|       |-- PageNavigator.tsx
-|       |-- PenControls.tsx
-|       |-- PendingApprovalPanel.tsx
-|       |-- PlaybackControls.tsx
-|       |-- ThumbZoneDock.tsx
-|       \-- useApprovalLogic.ts
+|   |-- toolbar/
+|   |   |-- atoms/
+|   |   |   |-- ToolbarPanel.tsx
+|   |   |   |-- ToolbarSeparator.tsx
+|   |   |   \-- ToolButton.tsx
+|   |   |-- FloatingToolbar.tsx
+|   |   |-- LaserControls.tsx
+|   |   |-- PageNavigator.tsx
+|   |   |-- PenControls.tsx
+|   |   |-- PendingApprovalPanel.tsx
+|   |   |-- PlaybackControls.tsx
+|   |   |-- ThumbZoneDock.tsx
+|   |   \-- useApprovalLogic.ts
+|   \-- viewer/
+|       |-- useViewerLiveSession.ts
+|       |-- useViewerSession.ts
+|       \-- ViewerShell.tsx
 |-- generated/
 |   \-- prisma/
 |       |-- internal/

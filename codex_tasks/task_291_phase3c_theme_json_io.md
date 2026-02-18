@@ -1,6 +1,6 @@
 # Task 291: Phase 3-C — 테마 JSON 가져오기/내보내기
 
-Status: PENDING
+Status: COMPLETED
 Owner: Codex (spec / review / implementation)
 Target: v10/
 Date: 2026-02-18
@@ -157,11 +157,11 @@ Out of scope:
 
 ## Acceptance Criteria (Base Required)
 
-- [ ] AC-1: "테마 내보내기" 버튼 → JSON 파일 다운로드 (현재 custom preset 또는 활성 프리셋)
-- [ ] AC-2: "테마 가져오기" 버튼 → 파일 선택 → 유효성 검사 통과 → custom preset 저장 + 즉시 적용
-- [ ] AC-3: 잘못된 JSON (syMathSlateTheme 없음) → 에러 메시지 표시 + 적용 안 됨
-- [ ] AC-4: `npm run lint` 통과
-- [ ] AC-5: `npm run build` 통과
+- [x] AC-1: "테마 내보내기" 버튼 → JSON 파일 다운로드 (현재 custom preset 또는 활성 프리셋)
+- [x] AC-2: "테마 가져오기" 버튼 → 파일 선택 → 유효성 검사 통과 → custom preset 저장 + 즉시 적용
+- [x] AC-3: 잘못된 JSON (syMathSlateTheme 없음) → 에러 메시지 표시 + 적용 안 됨
+- [x] AC-4: `npm run lint` 통과
+- [x] AC-5: `npm run build` 통과
 
 ---
 
@@ -205,15 +205,27 @@ Out of scope:
 
 ## Implementation Log (Codex fills)
 
-Status: PENDING
+Status: COMPLETED
 
 Changed files:
-- (TBD)
+- `v10/src/features/mod-studio/theme/themeJsonIO.ts` (new)
+- `v10/src/features/mod-studio/theme/ThemeExportButton.tsx` (new)
+- `v10/src/features/mod-studio/theme/ThemeImportButton.tsx` (new)
+- `v10/src/features/mod-studio/theme/ThemeStudioSection.tsx`
+- `codex_tasks/task_291_phase3c_theme_json_io.md`
+
+Commands run:
+- `cd v10 && npm run lint && npm run build`
+- `scripts/check_layer_rules.sh`
 
 ## Gate Results (Codex fills)
 
-- Lint: (TBD)
-- Build: (TBD)
+- Lint: PASS
+- Build: PASS
 
 Manual verification notes:
-- (TBD)
+- Export path added in ThemeStudioSection via `ThemeExportButton`: serializes with schema marker `syMathSlateTheme: "1"` and downloads `*.json`.
+- Import path added via `ThemeImportButton`: rejects invalid JSON/schema safely before any apply/save mutation.
+- `validateThemeJson()` enforces required `THEME_GLOBAL_TOKEN_KEYS`; unknown keys are ignored during normalization.
+- Valid import saves through existing task_290 custom preset storage (`saveCustomThemePreset` -> `sy_custom_presets`) and applies immediately in Mod Studio draft + preview.
+- Failure classification: pre-existing failures none observed; newly introduced blocking/non-blocking failures none observed.

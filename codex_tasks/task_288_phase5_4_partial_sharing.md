@@ -1,6 +1,6 @@
 # Task 288: Phase 5.4 — 레이어 단위 부분 공유 + 오브젝트 레벨 기반 준비
 
-Status: PENDING
+Status: COMPLETED
 Owner: Codex (spec / review / implementation)
 Target: v10/
 Date: 2026-02-18
@@ -172,13 +172,13 @@ scope = "viewport_only"  → 현재 viewport bounds 교차 아이템만 포함
 
 ## Acceptance Criteria (Base Required)
 
-- [ ] AC-1: ShareScopeSelector에서 full_canvas / selected_layer / viewport_only 선택 가능
-- [ ] AC-2: selected_layer 선택 → LayerPickerModal에서 특정 페이지 선택 → 해당 페이지만 스냅샷에 포함
-- [ ] AC-3: viewport_only 선택 → 현재 화면에 보이는 아이템만 스냅샷에 포함
-- [ ] AC-4: ViewerShell에서 scope = selected_layer 스냅샷 로드 시 선택된 레이어만 표시
-- [ ] AC-5: 기존 full_canvas 공유 동작 회귀 없음
-- [ ] AC-6: `npm run lint` 통과
-- [ ] AC-7: `npm run build` 통과
+- [x] AC-1: ShareScopeSelector에서 full_canvas / selected_layer / viewport_only 선택 가능
+- [x] AC-2: selected_layer 선택 → LayerPickerModal에서 특정 페이지 선택 → 해당 페이지만 스냅샷에 포함
+- [x] AC-3: viewport_only 선택 → 현재 화면에 보이는 아이템만 스냅샷에 포함
+- [x] AC-4: ViewerShell에서 scope = selected_layer 스냅샷 로드 시 선택된 레이어만 표시
+- [x] AC-5: 기존 full_canvas 공유 동작 회귀 없음
+- [x] AC-6: `npm run lint` 통과
+- [x] AC-7: `npm run build` 통과
 
 ---
 
@@ -225,15 +225,29 @@ scope = "viewport_only"  → 현재 viewport bounds 교차 아이템만 포함
 
 ## Implementation Log (Codex fills)
 
-Status: PENDING
+Status: COMPLETED
 
 Changed files:
-- (TBD)
+- `v10/src/features/sharing/ShareScopeSelector.tsx` (new)
+- `v10/src/features/sharing/LayerPickerModal.tsx` (new)
+- `v10/src/core/types/snapshot.ts`
+- `v10/src/features/sharing/snapshotSerializer.ts`
+- `v10/src/features/sharing/useSnapshotShare.ts`
+- `v10/src/features/sharing/ShareButton.tsx`
+- `v10/src/features/viewer/ViewerShell.tsx`
 
 ## Gate Results (Codex fills)
 
-- Lint: (TBD)
-- Build: (TBD)
+- Commands run:
+  - `cd v10 && npm run lint`
+  - `cd v10 && npm run build`
+  - `bash scripts/check_layer_rules.sh`
+- Lint: PASS
+- Build: PASS
+- Layer rules: PASS
 
 Manual verification notes:
-- (TBD)
+- selected_layer 경로: `ShareButton` -> `ShareScopeSelector`/`LayerPickerModal` -> `useSnapshotShare`에서 `layerIds` 전달 및 `applySnapshotScopeToCanvas` 필터 적용 확인.
+- viewport_only 경로: DOM viewport/board 교차 영역을 보드 좌표로 계산 후 snapshot 직렬화 필터에 전달되는 로직 확인.
+- viewer 안전성: `ViewerShell`에서 scope 재적용 + legacy `layerId` fallback + currentPage/currentStep 보정으로 필터된 스냅샷 로드 시 page/step 불일치 crash 방지 처리 확인.
+- 실패 분류: 신규 실패 없음 (blocking/non-blocking 모두 없음).

@@ -1,6 +1,6 @@
 # Task 285: Phase 5.1 — Snapshot Publish + Viewer Route (Client-Side MVP)
 
-Status: PENDING
+Status: COMPLETED
 Owner: Codex (spec / review / implementation)
 Target: v10/
 Date: 2026-02-18
@@ -215,16 +215,16 @@ export type ShareSessionMeta = {
 
 ## Acceptance Criteria (Base Required)
 
-- [ ] AC-1: `CanvasSnapshot` 타입 정의 완료. `schemaVersion`, `shareId`, `hostActorId`, `canvasVersion`, `scope`, `canvas` 필드 포함.
-- [ ] AC-2: `useSnapshotShare()` hook — 스냅샷 생성 → UUID shareId 생성 → `sy_share:${shareId}` localStorage 저장 → `/view/${shareId}` URL 반환
-- [ ] AC-3: `/view/[shareId]` 라우트 접근 시 ViewerShell 렌더링 (에디터 UI 없음)
-- [ ] AC-4: ViewerShell에서 캔버스 읽기 전용 (편집 불가, toolbar 없음)
-- [ ] AC-5: ViewerShell에서 step 네비게이션 동작 (currentStep 증감)
-- [ ] AC-6: ShareButton 클릭 → URL 클립보드 복사 → 성공 피드백 표시
-- [ ] AC-7: PublicToggle이 isPublic 플래그를 스냅샷에 반영
-- [ ] AC-8: 비공개 스냅샷을 shareId 없이 접근 불가 (URL 추측 불가 UUID)
-- [ ] AC-9: `npm run lint` 통과
-- [ ] AC-10: `npm run build` 통과
+- [x] AC-1: `CanvasSnapshot` 타입 정의 완료. `schemaVersion`, `shareId`, `hostActorId`, `canvasVersion`, `scope`, `canvas` 필드 포함.
+- [x] AC-2: `useSnapshotShare()` hook — 스냅샷 생성 → UUID shareId 생성 → `sy_share:${shareId}` localStorage 저장 → `/view/${shareId}` URL 반환
+- [x] AC-3: `/view/[shareId]` 라우트 접근 시 ViewerShell 렌더링 (에디터 UI 없음)
+- [x] AC-4: ViewerShell에서 캔버스 읽기 전용 (편집 불가, toolbar 없음)
+- [x] AC-5: ViewerShell에서 step 네비게이션 동작 (currentStep 증감)
+- [x] AC-6: ShareButton 클릭 → URL 클립보드 복사 → 성공 피드백 표시
+- [x] AC-7: PublicToggle이 isPublic 플래그를 스냅샷에 반영
+- [x] AC-8: 비공개 스냅샷을 shareId 없이 접근 불가 (URL 추측 불가 UUID)
+- [x] AC-9: `npm run lint` 통과
+- [x] AC-10: `npm run build` 통과
 
 ---
 
@@ -279,23 +279,36 @@ export type ShareSessionMeta = {
 
 ## Implementation Log (Codex fills)
 
-Status: PENDING
+Status: COMPLETED
 
 Changed files:
-- (TBD)
+- `v10/src/core/types/snapshot.ts` (new)
+- `v10/src/features/sharing/snapshotSerializer.ts` (new)
+- `v10/src/features/sharing/useSnapshotShare.ts` (new)
+- `v10/src/features/sharing/ShareButton.tsx` (new)
+- `v10/src/features/sharing/PublicToggle.tsx` (new)
+- `v10/src/features/viewer/ViewerShell.tsx` (new)
+- `v10/src/features/viewer/useViewerSession.ts` (new)
+- `v10/src/app/view/[shareId]/page.tsx` (new)
+- `v10/src/features/layout/PlayerBar.tsx` (edit)
+- `codex_tasks/task_285_phase5_1_snapshot_viewer.md` (closeout)
 
 Commands run:
-- (TBD)
+- `cd v10 && npm run lint && npm run build`
+- `scripts/check_layer_rules.sh`
 
 ## Gate Results (Codex fills)
 
-- Lint: (TBD)
-- Build: (TBD)
-- Script checks: (TBD)
+- Lint: PASS
+- Build: PASS
+- Script checks: PASS (`check_layer_rules.sh`)
 
 ## Failure Classification (Codex fills when any gate fails)
 
 - none
 
 Manual verification notes:
-- (TBD)
+- Implemented localStorage snapshot save/load flow with keys `sy_share:${shareId}` and `sy_share_index`.
+- Confirmed `/view/[shareId]` route builds and renders via standalone viewer shell path (without `AppLayout`/window host imports).
+- Verified step navigation wiring (`prevStep`/`nextStep`) and read-only safeguards in viewer shell through code path inspection.
+- Browser click-through manual test was not executed in this CLI session.

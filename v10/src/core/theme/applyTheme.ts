@@ -44,6 +44,73 @@ const THEME_RGB_TOKEN_VARIABLES = [
   { variableName: "--theme-accent-rgb", tokenKey: "accent" },
 ] as const;
 
+type ToolbarRgbAliasVariable =
+  | {
+      variableName: string;
+      tokenSource: "module";
+      moduleId: string;
+      tokenKey: string;
+    }
+  | {
+      variableName: string;
+      tokenSource: "global";
+      tokenKey: string;
+    };
+
+const TOOLBAR_RGB_ALIAS_VARIABLES: readonly ToolbarRgbAliasVariable[] = [
+  {
+    variableName: "--toolbar-surface-rgb",
+    tokenSource: "module",
+    moduleId: "core-toolbar",
+    tokenKey: "surface",
+  },
+  {
+    variableName: "--toolbar-text-rgb",
+    tokenSource: "module",
+    moduleId: "core-toolbar",
+    tokenKey: "text",
+  },
+  {
+    variableName: "--toolbar-border-rgb",
+    tokenSource: "module",
+    moduleId: "core-toolbar",
+    tokenKey: "border",
+  },
+  {
+    variableName: "--toolbar-active-bg-rgb",
+    tokenSource: "module",
+    moduleId: "core-toolbar",
+    tokenKey: "accent",
+  },
+  {
+    variableName: "--toolbar-chip-rgb",
+    tokenSource: "module",
+    moduleId: "core-toolbar",
+    tokenKey: "chip",
+  },
+  {
+    variableName: "--toolbar-menu-bg-rgb",
+    tokenSource: "module",
+    moduleId: "core-toolbar",
+    tokenKey: "menu-bg",
+  },
+  {
+    variableName: "--toolbar-muted-rgb",
+    tokenSource: "global",
+    tokenKey: "text-muted",
+  },
+  {
+    variableName: "--toolbar-active-text-rgb",
+    tokenSource: "global",
+    tokenKey: "accent-text",
+  },
+  {
+    variableName: "--toolbar-danger-rgb",
+    tokenSource: "global",
+    tokenKey: "danger",
+  },
+];
+
 const RGBA_COLOR_PATTERN =
   /^rgba?\(\s*([0-9]+(?:\.[0-9]+)?)\s*,\s*([0-9]+(?:\.[0-9]+)?)\s*,\s*([0-9]+(?:\.[0-9]+)?)(?:\s*,\s*[0-9]+(?:\.[0-9]+)?\s*)?\)$/i;
 
@@ -79,6 +146,29 @@ const applyResolvedThemeRgbVariables = (
       return;
     }
     root.style.setProperty(variableName, tuple);
+  });
+};
+
+const applyToolbarAliasRgbVariables = (
+  root: HTMLElement,
+  globalTokens: ThemeGlobalTokenMap,
+  moduleScopedTokens: ThemeModuleScopedTokenMap
+): void => {
+  TOOLBAR_RGB_ALIAS_VARIABLES.forEach((definition) => {
+    const tokenValue =
+      definition.tokenSource === "global"
+        ? globalTokens[definition.tokenKey]
+        : moduleScopedTokens[definition.moduleId]?.[definition.tokenKey];
+    if (typeof tokenValue !== "string") {
+      root.style.removeProperty(definition.variableName);
+      return;
+    }
+    const tuple = parseRgbTuple(tokenValue);
+    if (tuple === null) {
+      root.style.removeProperty(definition.variableName);
+      return;
+    }
+    root.style.setProperty(definition.variableName, tuple);
   });
 };
 
@@ -133,6 +223,11 @@ export const createThemeVariableApplier = (): ThemeVariableApplier => {
       nextGlobalVariables.add(variableName);
     });
     applyResolvedThemeRgbVariables(root, resolved.globalTokens);
+    applyToolbarAliasRgbVariables(
+      root,
+      resolved.globalTokens,
+      resolved.moduleScopedTokens
+    );
 
     Object.entries(resolved.moduleScopedTokens).forEach(([moduleId, tokens]) => {
       Object.entries(tokens).forEach(([tokenKey, tokenValue]) => {

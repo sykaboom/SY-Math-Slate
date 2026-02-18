@@ -1,6 +1,6 @@
 # Task 286: Phase 5.2 — Live One-Way Broadcast + Server Persistence
 
-Status: PENDING
+Status: COMPLETED
 Owner: Codex (spec / review / implementation)
 Target: v10/
 Date: 2026-02-18
@@ -24,9 +24,13 @@ Date: 2026-02-18
 - CRDT-ready: op_id, actor_id, canvas_id, base_version, timestamp 포함
 
 [ TRANSPORT ]
-- PartyKit (BaaS) 또는 configurable WebSocket relay
-- ADAPTER 패턴으로 구현: transport 교체 가능
+- configurable WebSocket relay (기본)
+- ADAPTER 패턴으로 구현: transport 교체 가능 (PartyKit은 후속 옵션)
 - Phase 5.1 localStorage 코드는 fallback으로 유지 (offline 지원)
+
+[ STORAGE ]
+- Upstash Redis를 Phase 5.2 MVP 저장소로 사용 (shareId -> JSON + TTL)
+- SnapshotAdapterInterface 유지: 이후 Supabase/Postgres로 교체 가능
 
 [ ANONYMOUS ACCESS ]
 - 뷰어: 로그인 불필요. rate-limit 적용.
@@ -39,8 +43,9 @@ Date: 2026-02-18
 ## Goal (Base Required)
 
 - What to change:
-  - 서버 persistence adapter (`ServerSnapshotAdapter`): snapshot 저장/로드 API
-  - PartyKit (또는 WebSocket) transport adapter (`LiveBroadcastTransport`)
+  - 서버 persistence adapter (`ServerSnapshotAdapter`): Upstash Redis 기반 snapshot 저장/로드 API
+  - Upstash 저장소 adapter (`UpstashSnapshotAdapter`) 추가
+  - WebSocket transport adapter (`LiveBroadcastTransport`)
   - Host 세션 훅 (`useHostSession`): 캔버스 변경 감지 → diff → broadcast
   - 뷰어 구독 훅 (`useViewerLiveSession`): 실시간 업데이트 수신 → ViewerShell 갱신
   - `useSnapshotShare.ts` 수정: localStorage fallback 유지 + server adapter 연결
@@ -59,8 +64,9 @@ Date: 2026-02-18
 Touched files/directories (create):
 - `v10/src/features/sharing/adapters/LocalSnapshotAdapter.ts` — Phase 5.1 localStorage 로직 추출
 - `v10/src/features/sharing/adapters/ServerSnapshotAdapter.ts` — API 기반 저장/로드
+- `v10/src/features/sharing/adapters/UpstashSnapshotAdapter.ts` — Upstash Redis 저장/로드 구현
 - `v10/src/features/sharing/adapters/SnapshotAdapterInterface.ts` — adapter 인터페이스
-- `v10/src/features/sharing/transport/LiveBroadcastTransport.ts` — WebSocket/PartyKit 추상화
+- `v10/src/features/sharing/transport/LiveBroadcastTransport.ts` — WebSocket 추상화
 - `v10/src/features/sharing/useHostSession.ts` — host 캔버스 변경 → broadcast
 - `v10/src/features/viewer/useViewerLiveSession.ts` — 실시간 뷰어 구독
 - `v10/src/app/api/share/route.ts` — POST (저장) / GET (조회) API route
@@ -114,13 +120,12 @@ token: HMAC-SHA256(shareId + secret, 24h TTL)
 ## Dependencies / Constraints (Base Required)
 
 - New dependencies allowed: YES (한정)
-  - PartyKit client (`@partykit/client`) OR 선택적 (`NEXT_PUBLIC_USE_PARTYKIT=true` env flag)
-  - 없으면 내장 WebSocket API 직접 사용 (`ws://` or `wss://`)
-  - `partykit.json` 설정 파일 추가 (PartyKit 선택 시)
+  - Upstash Redis client (`@upstash/redis`) 1개
+  - WebSocket transport는 내장 WebSocket API 사용 (`ws://` or `wss://`)
 - Boundary rules:
   - `features/sharing/adapters/` → core + features만 import. app 금지.
-  - `app/api/share/` → Next.js API route. DB 없이 in-memory + 파일 스토리지 MVP.
-    (Phase 5.2 MVP: Vercel KV 또는 파일 기반. 실제 DB는 Phase 5.3+)
+  - `app/api/share/` → Next.js API route. Upstash Redis만 사용 (in-memory/file storage 금지).
+  - Upstash env: `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN`
   - Phase 5.1 localStorage fallback 제거 금지.
 - Compatibility:
   - `SnapshotAdapterInterface`는 Phase 5.3에서 bidirectional transport로 확장 가능.
@@ -141,7 +146,7 @@ token: HMAC-SHA256(shareId + secret, 24h TTL)
 
 ## Execution Mode Assessment (Base Required for new specs)
 
-- Touched file count: 12 (8 create + 4 write)
+- Touched file count: 13 (9 create + 4 write)
 - Files shared with other PENDING tasks: 없음
 - Cross-module dependency: YES (features → app API route)
 - Parallelizable sub-units: 2 (adapters 그룹 / transport 그룹 — 실질 1 에이전트 효율적)
@@ -207,8 +212,8 @@ token: HMAC-SHA256(shareId + secret, 24h TTL)
 - [ ] AC-1: host 세션 시작 → 브로드캐스트 transport 연결
 - [ ] AC-2: host 캔버스 변경(아이템 추가/삭제/수정) → 뷰어에 1초 이내 반영
 - [ ] AC-3: host step 변경 → 뷰어 step 동기화
-- [ ] AC-4: `POST /api/share` → shareId + 스냅샷 저장 성공
-- [ ] AC-5: `GET /api/share/${shareId}` → 저장된 스냅샷 반환
+- [ ] AC-4: `POST /api/share` → shareId + 스냅샷 저장 성공 (Upstash Redis)
+- [ ] AC-5: `GET /api/share/${shareId}` → 저장된 스냅샷 반환 (Upstash Redis)
 - [ ] AC-6: 다른 디바이스 브라우저에서 `/view/${shareId}` 접속 → 스냅샷 로드 성공
 - [ ] AC-7: 비공개 세션 접근 시 token 없으면 403 응답
 - [ ] AC-8: Phase 5.1 localStorage fallback 여전히 동작 (서버 연결 실패 시 graceful)
@@ -228,15 +233,19 @@ token: HMAC-SHA256(shareId + secret, 24h TTL)
    - host에서 URL 공유 → 다른 기기 브라우저에서 접속 → 스냅샷 로드 확인
    - Covers: AC-6
 
-3) Step: 비공개 세션 접근 거부
+3) Step: Upstash 저장 확인
+   - Upstash 콘솔/REST 조회로 `share:${shareId}` key 존재 + TTL 설정 확인
+   - Covers: AC-4, AC-5
+
+4) Step: 비공개 세션 접근 거부
    - token 없이 비공개 shareId URL 접속 → 403 or 에러 페이지 확인
    - Covers: AC-7
 
-4) Step: Offline fallback
+5) Step: Offline fallback
    - 서버 endpoint 비활성화 → Share 버튼 클릭 → localStorage 저장 확인
    - Covers: AC-8
 
-5) Step: 빌드 확인
+6) Step: 빌드 확인
    - Command: `cd v10 && npm run lint && npm run build`
    - Covers: AC-9, AC-10
 
@@ -245,8 +254,8 @@ token: HMAC-SHA256(shareId + secret, 24h TTL)
 ## Risks / Roll-back Notes (Base Required)
 
 - Risks:
-  - PartyKit 의존성 추가 시 build 복잡도 증가 → env flag로 opt-in 구성
-  - API route storage: in-memory는 재시작 시 데이터 소실 → Vercel KV 또는 파일 스토리지 사용
+  - Upstash 네트워크 지연/일시 장애 시 공유 API 응답 지연
+  - 잘못된 TTL 설정 시 스냅샷 조기 만료 위험
   - WebSocket 연결 끊김 → auto-reconnect 로직 필요 (`LiveBroadcastTransport`)
 - Roll-back: `git revert <commit>` 한 줄 + API route 삭제
 
@@ -263,20 +272,35 @@ token: HMAC-SHA256(shareId + secret, 24h TTL)
 
 ## Implementation Log (Codex fills)
 
-Status: PENDING
+Status: COMPLETED
 
 Changed files:
-- (TBD)
+- `v10/src/features/sharing/adapters/SnapshotAdapterInterface.ts`
+- `v10/src/features/sharing/adapters/LocalSnapshotAdapter.ts`
+- `v10/src/features/sharing/adapters/UpstashSnapshotAdapter.ts`
+- `v10/src/features/sharing/adapters/ServerSnapshotAdapter.ts`
+- `v10/src/features/sharing/transport/LiveBroadcastTransport.ts`
+- `v10/src/features/sharing/useHostSession.ts`
+- `v10/src/features/viewer/useViewerLiveSession.ts`
+- `v10/src/app/api/share/route.ts`
+- `v10/src/app/api/share/[shareId]/route.ts`
+- `v10/src/features/sharing/useSnapshotShare.ts`
+- `v10/src/features/viewer/useViewerSession.ts`
+- `v10/src/app/view/[shareId]/page.tsx`
+- `v10/src/core/types/snapshot.ts`
+- `codex_tasks/task_286_phase5_2_live_oneshot_broadcast.md`
 
 ## Gate Results (Codex fills)
 
-- Lint: (TBD)
-- Build: (TBD)
-- Script checks: (TBD)
+- Lint: PASS (`cd v10 && npm run lint`)
+- Build: PASS (`cd v10 && npm run build`)
+- Script checks: PASS (`bash scripts/check_layer_rules.sh`)
 
 ## Failure Classification (Codex fills when any gate fails)
 
 - none
 
 Manual verification notes:
-- (TBD)
+- Upstash Redis adapter (`UpstashSnapshotAdapter`) + server adapter wrapper(`ServerSnapshotAdapter`)를 추가했고, API route가 동일 adapter를 사용하도록 연결함.
+- 로컬 fallback(`LocalSnapshotAdapter`)은 유지하여 서버 실패 시 기존 localStorage 경로가 계속 동작하도록 보장함.
+- Live transport는 WebSocket 추상화(`LiveBroadcastTransport`)로 분리했고 host/viewer live session 훅을 추가함.

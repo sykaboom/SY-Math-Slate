@@ -1,7 +1,12 @@
 "use client";
 
+import { TeacherApprovalPanel } from "@features/sharing/ai/TeacherApprovalPanel";
 import { Button } from "@ui/components/button";
 import { useLocalStore } from "@features/store/useLocalStore";
+import {
+  useSyncStore,
+  type PendingAIQueueEntry,
+} from "@features/store/useSyncStore";
 
 import { useApprovalLogic } from "./useApprovalLogic";
 
@@ -14,15 +19,33 @@ const formatCreatedAt = (value: number) => {
   }
 };
 
+const isAIQuestionQueueEntry = (entry: PendingAIQueueEntry): boolean => {
+  if (!entry.meta || typeof entry.meta !== "object") return false;
+  if (Array.isArray(entry.meta)) return false;
+  return entry.meta.queueType === "ai_question";
+};
+
 export function PendingApprovalPanel() {
   const role = useLocalStore((state) => state.role);
-  const { entries, counts, approve, reject } = useApprovalLogic();
+  const queue = useSyncStore((state) => state.pendingAIQueue);
+  const { entries, approve, reject } = useApprovalLogic();
 
   if (role !== "host") return null;
 
+  const pendingCount = queue.filter((entry) => entry.status === "pending").length;
+  const aiPendingCount = queue.filter(
+    (entry) => entry.status === "pending" && isAIQuestionQueueEntry(entry)
+  ).length;
+  const nonAiEntries = entries.filter(
+    (entry) => !isAIQuestionQueueEntry(entry)
+  );
+  const nonAiQueueCount = queue.filter(
+    (entry) => !isAIQuestionQueueEntry(entry)
+  ).length;
+
   return (
     <section
-      data-state={entries.length > 0 ? "pending" : "empty"}
+      data-state={queue.length > 0 ? "pending" : "empty"}
       className="flex w-full max-w-sm flex-col gap-2 rounded-2xl border border-toolbar-border/10 bg-toolbar-surface/90 p-3 text-toolbar-text/70 shadow-[var(--toolbar-panel-shadow)]"
       aria-label="Pending approvals"
     >
@@ -32,21 +55,28 @@ export function PendingApprovalPanel() {
             Pending Queue
           </p>
           <p className="text-xs text-toolbar-muted/70">
-            {counts.pending} pending / {counts.total} total
+            {pendingCount} pending / {queue.length} total
+          </p>
+          <p className="text-[10px] text-toolbar-muted/55">
+            AI pending: {aiPendingCount}
           </p>
         </div>
       </header>
 
-      {entries.length === 0 ? (
+      <TeacherApprovalPanel />
+
+      {nonAiEntries.length === 0 ? (
         <p
           data-state="empty"
           className="rounded-xl border border-toolbar-border/10 bg-toolbar-chip/5 px-3 py-2 text-xs text-toolbar-muted/70"
         >
-          Nothing to approve.
+          {nonAiQueueCount === 0
+            ? "Nothing to approve."
+            : "No non-AI approvals pending."}
         </p>
       ) : (
         <ul className="grid max-h-72 gap-2 overflow-y-auto pr-1">
-          {entries.map((entry) => (
+          {nonAiEntries.map((entry) => (
             <li
               key={entry.id}
               data-state={entry.status}

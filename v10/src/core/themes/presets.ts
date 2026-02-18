@@ -1,5 +1,8 @@
 import {
   DEFAULT_THEME_PRESET_ID,
+  THEME_PRESET_IDS,
+  normalizeThemeGlobalTokenMap,
+  normalizeThemeModuleScopedTokenMap,
   resolveThemePresetId,
   type ThemeModuleScopedTokenMap,
   type ThemePresetId,
@@ -10,6 +13,29 @@ export type ThemePresetDefinition = {
   id: ThemePresetId;
   label: string;
   description: string;
+  globalTokens: ThemeGlobalTokenMap;
+  moduleScopedTokens: ThemeModuleScopedTokenMap;
+};
+
+export const CUSTOM_THEME_PRESET_STORAGE_KEY = "sy_custom_presets";
+export const CUSTOM_THEME_PRESET_UPDATED_EVENT = "sy-custom-presets-updated";
+
+export type CustomThemePresetDefinition = {
+  id: string;
+  label: string;
+  description: string;
+  basePresetId: ThemePresetId;
+  globalTokens: ThemeGlobalTokenMap;
+  moduleScopedTokens: ThemeModuleScopedTokenMap;
+  createdAt: number;
+  updatedAt: number;
+};
+
+export type SaveCustomThemePresetInput = {
+  id?: string;
+  label: string;
+  description?: string;
+  basePresetId?: ThemePresetId;
   globalTokens: ThemeGlobalTokenMap;
   moduleScopedTokens: ThemeModuleScopedTokenMap;
 };
@@ -45,6 +71,8 @@ const THEME_PRESETS: Record<ThemePresetId, ThemePresetDefinition> = {
         text: "rgba(255, 255, 255, 0.92)",
         border: "rgba(255, 255, 255, 0.14)",
         accent: "rgba(255, 255, 0, 1)",
+        chip: "rgba(255, 255, 255, 1)",
+        "menu-bg": "rgba(0, 0, 0, 1)",
       },
       "mod-studio": {
         surface: "rgba(2, 6, 23, 0.9)",
@@ -83,6 +111,8 @@ const THEME_PRESETS: Record<ThemePresetId, ThemePresetDefinition> = {
         text: "rgba(58, 42, 24, 0.92)",
         border: "rgba(120, 88, 50, 0.24)",
         accent: "rgba(176, 106, 45, 1)",
+        chip: "rgba(148, 163, 184, 1)",
+        "menu-bg": "rgba(255, 255, 255, 1)",
       },
       "mod-studio": {
         surface: "rgba(240, 229, 199, 0.9)",
@@ -121,6 +151,8 @@ const THEME_PRESETS: Record<ThemePresetId, ThemePresetDefinition> = {
         text: "rgba(26, 52, 110, 0.92)",
         border: "rgba(120, 148, 201, 0.26)",
         accent: "rgba(30, 64, 175, 1)",
+        chip: "rgba(120, 148, 201, 1)",
+        "menu-bg": "rgba(20, 35, 70, 1)",
       },
       "mod-studio": {
         surface: "rgba(228, 237, 254, 0.92)",
@@ -151,6 +183,125 @@ const clonePreset = (preset: ThemePresetDefinition): ThemePresetDefinition => ({
   moduleScopedTokens: cloneModuleScopedTokens(preset.moduleScopedTokens),
 });
 
+const cloneCustomPreset = (
+  preset: CustomThemePresetDefinition
+): CustomThemePresetDefinition => ({
+  ...preset,
+  globalTokens: cloneTokenMap(preset.globalTokens),
+  moduleScopedTokens: cloneModuleScopedTokens(preset.moduleScopedTokens),
+});
+
+const RESERVED_PRESET_IDS = new Set<string>(THEME_PRESET_IDS);
+const FALLBACK_CUSTOM_LABEL = "Custom preset";
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null && !Array.isArray(value);
+
+const getStorage = (): Storage | null => {
+  if (typeof window === "undefined") return null;
+  try {
+    return window.localStorage;
+  } catch {
+    return null;
+  }
+};
+
+const toCustomPresetId = (): string => {
+  if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
+    return `custom-${crypto.randomUUID()}`;
+  }
+  return `custom-${Date.now().toString(36)}-${Math.random().toString(16).slice(2, 10)}`;
+};
+
+const normalizePresetLabel = (value: unknown): string => {
+  if (typeof value !== "string") return FALLBACK_CUSTOM_LABEL;
+  const trimmed = value.trim();
+  return trimmed.length > 0 ? trimmed : FALLBACK_CUSTOM_LABEL;
+};
+
+const normalizePresetDescription = (
+  value: unknown,
+  basePresetId: ThemePresetId
+): string => {
+  if (typeof value !== "string") return `Custom preset based on ${basePresetId}.`;
+  const trimmed = value.trim();
+  if (trimmed.length > 0) return trimmed;
+  return `Custom preset based on ${basePresetId}.`;
+};
+
+const normalizeTimestamp = (value: unknown, fallback: number): number =>
+  typeof value === "number" && Number.isFinite(value) ? value : fallback;
+
+const normalizeCustomPreset = (
+  value: unknown,
+  fallbackIndex: number
+): CustomThemePresetDefinition | null => {
+  if (!isRecord(value)) return null;
+
+  const basePresetId = resolveThemePresetId(value.basePresetId, DEFAULT_THEME_PRESET_ID);
+  const now = Date.now();
+  const idCandidate =
+    typeof value.id === "string" && value.id.trim().length > 0
+      ? value.id.trim()
+      : `custom-${fallbackIndex + 1}`;
+  if (RESERVED_PRESET_IDS.has(idCandidate)) return null;
+
+  return {
+    id: idCandidate,
+    label: normalizePresetLabel(value.label),
+    description: normalizePresetDescription(value.description, basePresetId),
+    basePresetId,
+    globalTokens: normalizeThemeGlobalTokenMap(value.globalTokens),
+    moduleScopedTokens: normalizeThemeModuleScopedTokenMap(value.moduleScopedTokens),
+    createdAt: normalizeTimestamp(value.createdAt, now),
+    updatedAt: normalizeTimestamp(value.updatedAt, now),
+  };
+};
+
+const readCustomPresetsFromStorage = (
+  storage: Storage | null = getStorage()
+): CustomThemePresetDefinition[] => {
+  if (!storage) return [];
+
+  const raw = storage.getItem(CUSTOM_THEME_PRESET_STORAGE_KEY);
+  if (!raw) return [];
+
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(raw);
+  } catch {
+    return [];
+  }
+  if (!Array.isArray(parsed)) return [];
+
+  const seenIds = new Set<string>();
+  const presets: CustomThemePresetDefinition[] = [];
+  parsed.forEach((entry, index) => {
+    const normalized = normalizeCustomPreset(entry, index);
+    if (!normalized) return;
+    if (seenIds.has(normalized.id)) return;
+    seenIds.add(normalized.id);
+    presets.push(normalized);
+  });
+  return presets;
+};
+
+const writeCustomPresetsToStorage = (
+  presets: CustomThemePresetDefinition[],
+  storage: Storage | null = getStorage()
+): boolean => {
+  if (!storage) return false;
+  try {
+    storage.setItem(CUSTOM_THEME_PRESET_STORAGE_KEY, JSON.stringify(presets));
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(new Event(CUSTOM_THEME_PRESET_UPDATED_EVENT));
+    }
+    return true;
+  } catch {
+    return false;
+  }
+};
+
 export const listThemePresets = (): ThemePresetDefinition[] =>
   Object.values(THEME_PRESETS).map(clonePreset);
 
@@ -159,4 +310,65 @@ export const getThemePreset = (
 ): ThemePresetDefinition => {
   const resolvedPreset = resolveThemePresetId(presetId, DEFAULT_THEME_PRESET_ID);
   return clonePreset(THEME_PRESETS[resolvedPreset]);
+};
+
+export const listCustomThemePresets = (): CustomThemePresetDefinition[] =>
+  readCustomPresetsFromStorage().map(cloneCustomPreset);
+
+export const getCustomThemePreset = (
+  presetId: string
+): CustomThemePresetDefinition | null => {
+  const normalizedId = presetId.trim();
+  if (!normalizedId || RESERVED_PRESET_IDS.has(normalizedId)) return null;
+  const preset = readCustomPresetsFromStorage().find((entry) => entry.id === normalizedId);
+  return preset ? cloneCustomPreset(preset) : null;
+};
+
+export const saveCustomThemePreset = (
+  input: SaveCustomThemePresetInput
+): CustomThemePresetDefinition | null => {
+  const storage = getStorage();
+  if (!storage) return null;
+
+  const existing = readCustomPresetsFromStorage(storage);
+  const now = Date.now();
+  const requestedId = input.id?.trim() ?? "";
+  const canUseRequestedId =
+    requestedId.length > 0 && !RESERVED_PRESET_IDS.has(requestedId);
+  const nextId = canUseRequestedId ? requestedId : toCustomPresetId();
+  const existingPreset = existing.find((entry) => entry.id === nextId);
+  const basePresetId = resolveThemePresetId(input.basePresetId, DEFAULT_THEME_PRESET_ID);
+  const nextPreset: CustomThemePresetDefinition = {
+    id: nextId,
+    label: normalizePresetLabel(input.label),
+    description: normalizePresetDescription(input.description, basePresetId),
+    basePresetId,
+    globalTokens: normalizeThemeGlobalTokenMap(input.globalTokens),
+    moduleScopedTokens: normalizeThemeModuleScopedTokenMap(input.moduleScopedTokens),
+    createdAt: existingPreset?.createdAt ?? now,
+    updatedAt: now,
+  };
+
+  const existingIndex = existing.findIndex((entry) => entry.id === nextId);
+  const nextPresets =
+    existingIndex >= 0
+      ? existing.map((entry, index) => (index === existingIndex ? nextPreset : entry))
+      : [...existing, nextPreset];
+  const written = writeCustomPresetsToStorage(nextPresets, storage);
+  if (!written) return null;
+
+  return cloneCustomPreset(nextPreset);
+};
+
+export const deleteCustomThemePreset = (presetId: string): boolean => {
+  const normalizedId = presetId.trim();
+  if (!normalizedId || RESERVED_PRESET_IDS.has(normalizedId)) return false;
+
+  const storage = getStorage();
+  if (!storage) return false;
+
+  const existing = readCustomPresetsFromStorage(storage);
+  const nextPresets = existing.filter((entry) => entry.id !== normalizedId);
+  if (nextPresets.length === existing.length) return false;
+  return writeCustomPresetsToStorage(nextPresets, storage);
 };

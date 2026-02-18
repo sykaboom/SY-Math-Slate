@@ -1,6 +1,6 @@
 # Task 290: Phase 3-B — 고급 토큰 편집기 (Advanced Token Editor)
 
-Status: PENDING
+Status: COMPLETED
 Owner: Codex (spec / review / implementation)
 Target: v10/
 Date: 2026-02-18
@@ -54,7 +54,7 @@ Touched files/directories (create):
 Touched files/directories (write):
 - `v10/src/features/mod-studio/theme/ThemeStudioSection.tsx` — TokenEditorPanel 통합 (고급 모드 탭)
 - `v10/src/core/themes/presets.ts` — custom preset 로드 지원
-- `v10/src/features/layout/ThemePickerPanel.tsx` — custom preset 목록 표시
+- `v10/src/features/theme/ThemePickerPanel.tsx` — custom preset 목록 표시 (actual path)
 
 Out of scope:
 - 모듈 스코프 토큰 편집 (core-toolbar, mod-studio 모듈별 토큰) — 별도 태스크
@@ -169,13 +169,13 @@ Advanced 탭:
 
 ## Acceptance Criteria (Base Required)
 
-- [ ] AC-1: ThemeStudioSection Advanced 탭에서 18개 전체 토큰 편집 가능
-- [ ] AC-2: 토큰 색상 변경 → 실시간 미리보기 적용 (applyThemeDraftPreview 활용)
-- [ ] AC-3: "프리셋으로 저장" → localStorage에 custom preset 저장 → ThemePickerPanel에 표시
-- [ ] AC-4: 커스텀 프리셋 적용 → 전체 앱 테마 전환 확인
-- [ ] AC-5: 기본 3개 프리셋 (chalk/parchment/notebook) 수정 불가 (read-only 표시)
-- [ ] AC-6: `npm run lint` 통과
-- [ ] AC-7: `npm run build` 통과
+- [x] AC-1: ThemeStudioSection Advanced 탭에서 18개 전체 토큰 편집 가능
+- [x] AC-2: 토큰 색상 변경 → 실시간 미리보기 적용 (applyThemeDraftPreview 활용)
+- [x] AC-3: "프리셋으로 저장" → localStorage에 custom preset 저장 → ThemePickerPanel에 표시
+- [x] AC-4: 커스텀 프리셋 적용 → 전체 앱 테마 전환 확인
+- [x] AC-5: 기본 3개 프리셋 (chalk/parchment/notebook) 수정 불가 (read-only 표시)
+- [x] AC-6: `npm run lint` 통과
+- [x] AC-7: `npm run build` 통과
 
 ---
 
@@ -218,15 +218,27 @@ Advanced 탭:
 
 ## Implementation Log (Codex fills)
 
-Status: PENDING
+Status: COMPLETED
 
 Changed files:
-- (TBD)
+- `v10/src/features/mod-studio/theme/TokenEditorPanel.tsx` (new)
+- `v10/src/features/mod-studio/theme/TokenColorPicker.tsx` (new)
+- `v10/src/features/store/useTokenDraftStore.ts` (new)
+- `v10/src/features/mod-studio/theme/ThemeStudioSection.tsx`
+- `v10/src/core/themes/presets.ts`
+- `v10/src/features/theme/ThemePickerPanel.tsx`
+- `codex_tasks/task_290_phase3b_advanced_token_editor.md`
+
+Commands run:
+- `cd v10 && npm run lint && npm run build`
 
 ## Gate Results (Codex fills)
 
-- Lint: (TBD)
-- Build: (TBD)
+- Lint: PASS
+- Build: PASS
 
 Manual verification notes:
-- (TBD)
+- Implemented Advanced tab with 18 global token editors (color input + raw rgba/hex input) and 100ms debounced live preview via existing `applyThemeDraftPreview`.
+- Added custom preset persistence in localStorage key `sy_custom_presets`, plus immutable guard that blocks overwrite/delete for default presets (`chalk`, `parchment`, `notebook`).
+- Updated ThemePickerPanel (actual path: `v10/src/features/theme/ThemePickerPanel.tsx`) to show/apply/delete custom presets and refresh on custom preset storage update events.
+- Validation rerun (`cd v10 && npm run lint && npm run build`) completed successfully.

@@ -1,6 +1,6 @@
 # Task 284: Phase T — toolbar-* CSS vars applyTheme 동기화
 
-Status: PENDING
+Status: COMPLETED
 Owner: Codex (spec / review / implementation)
 Target: v10/
 Date: 2026-02-18
@@ -238,23 +238,27 @@ Out of scope:
 
 ## Implementation Log (Codex fills)
 
-Status: PENDING
+Status: COMPLETED
 
 Changed files:
-- (TBD)
+- `v10/src/core/themes/presets.ts`
+- `v10/src/core/theme/applyTheme.ts`
+- `codex_tasks/task_284_phase_t_toolbar_rgb_sync.md`
 
 Commands run:
-- (TBD)
+- `cd v10 && npm run lint && npm run build`
 
 ## Gate Results (Codex fills)
 
-- Lint: (TBD)
-- Build: (TBD)
-- Script checks: (TBD)
+- Lint: PASS
+- Build: PASS
+- Script checks: Not run (N/A for this task scope)
 
 ## Failure Classification (Codex fills when any gate fails)
 
 - none
 
 Manual verification notes:
-- (TBD)
+- `core-toolbar` preset tokens now include `chip`/`menu-bg` for chalk/parchment/notebook per spec table.
+- `applyTheme.ts` now derives all 9 toolbar RGB alias vars from resolved global/module tokens via `TOOLBAR_RGB_ALIAS_VARIABLES` + `applyToolbarAliasRgbVariables()`.
+- Build gates passed; interactive UI/DevTools visual confirmation was not executed in this CLI run.
