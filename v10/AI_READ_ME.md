@@ -132,9 +132,15 @@ Fallback rule:
 - Navigation copy policy:
   - `src/features/toolbar/navigationLabels.ts` is the shared vocabulary source for Page/Outline/Playback step labels.
 
-## 9) Verification Gates
+## 9) Design SSOT and Verification Gates
+Design SSOT docs (read together):
+- `v10/docs/design/DESIGN_SYSTEM_BLUEPRINT.md`: canonical design-system rules and token/layout contracts.
+- `v10/docs/design/UI_GOLDEN_SCREEN.md`: UI baseline redlines used for fidelity and drift checks.
+- `v10/docs/design/LLM_DESIGN_PROMPT_TEMPLATE.md`: prompt contract for AI-assisted design outputs.
+
 Primary checks used by hooks/CI:
 - `scripts/check_layer_rules.sh`
+- `scripts/check_design_ssot_contract.sh`
 - `scripts/check_toolbar_contract.sh`
 - `scripts/check_v10_changed_lint.sh`
 - `scripts/check_v10_hardcoding_budget.sh`

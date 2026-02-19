@@ -8,6 +8,7 @@ Map scope: v10 structure only. See `v10/AI_READ_ME.md` for semantic rules.
 ## v10/ (top-level)
 ```text
 v10/
+|-- docs/
 |-- prisma/
 |-- public/
 |-- src/
