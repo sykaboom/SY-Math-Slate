@@ -136,6 +136,9 @@ export function AppLayout({ children }: AppLayoutProps) {
         paddingBottom: "calc(env(safe-area-inset-bottom) + 8px)",
       }
     : undefined;
+  const topChromeClassName = tabletShellProfile.shouldPadTopChromeWithSafeArea
+    ? "sticky top-0 z-40 border-b border-theme-border/10 bg-theme-surface/40 pt-[env(safe-area-inset-top)] backdrop-blur-md"
+    : "sticky top-0 z-40 border-b border-theme-border/10 bg-theme-surface/40 backdrop-blur-md";
   const mainShellClass = isPresentation
     ? useCompactHorizontalInsets
       ? "relative flex min-h-0 flex-1 overflow-hidden px-2 py-2.5 sm:px-3 sm:py-3 xl:px-6 xl:py-6"
@@ -177,9 +180,10 @@ export function AppLayout({ children }: AppLayoutProps) {
     !isPresentation && legacyRoleVisibility.showHostToolchips;
   const showHostToolchipsPolicy =
     !isPresentation && roleVisibilityPolicy.showHostToolchips;
-  // showThemePicker gates by session context only; role visibility remains
-  // controlled by CORE_PANEL_POLICY_SOURCE.behavior.roleOverride.
-  const showThemePicker = !isPresentation;
+  const runtimeRole = resolveExecutionRole(role);
+  // Keep layout-level gating aligned with runtime role policy; panel policy
+  // remains the final source of truth for role visibility.
+  const showThemePicker = !isPresentation && runtimeRole === "host";
   useAuthoringShortcuts({
     enabled: showHostToolchipsPolicy,
   });
@@ -203,12 +207,13 @@ export function AppLayout({ children }: AppLayoutProps) {
     }
     return map;
   }, []);
-  const runtimeRole = resolveExecutionRole(role);
   const isPendingApprovalOpen =
     windowRuntimePanelOpenState[CORE_PANEL_POLICY_IDS.PENDING_APPROVAL] === true;
   const isModerationConsoleOpen =
     windowRuntimePanelOpenState[CORE_PANEL_POLICY_IDS.MODERATION_CONSOLE] ===
     true;
+  const isHostLiveSessionOpen =
+    windowRuntimePanelOpenState[CORE_PANEL_POLICY_IDS.HOST_LIVE_SESSION] === true;
   const windowHostPanelModules = useMemo(
     () =>
       buildCoreWindowHostPanelAdapters({
@@ -231,6 +236,12 @@ export function AppLayout({ children }: AppLayoutProps) {
             CORE_PANEL_POLICY_IDS.MODERATION_CONSOLE,
             false
           ),
+        isHostLiveSessionOpen,
+        closeHostLiveSession: () =>
+          setWindowRuntimePanelOpenState(
+            CORE_PANEL_POLICY_IDS.HOST_LIVE_SESSION,
+            false
+          ),
         closeThemePicker: () =>
           setWindowRuntimePanelOpenState(CORE_PANEL_POLICY_IDS.THEME_PICKER, false),
         viewportSize: {
@@ -240,6 +251,7 @@ export function AppLayout({ children }: AppLayoutProps) {
       }),
     [
       closeDataInput,
+      isHostLiveSessionOpen,
       isDataInputOpen,
       isModerationConsoleOpen,
       isPendingApprovalOpen,
@@ -505,7 +517,7 @@ export function AppLayout({ children }: AppLayoutProps) {
       {showTopChromePolicy && (
         <header
           data-layout-id="region_chrome_top"
-          className="sticky top-0 z-40 border-b border-theme-border/10 bg-theme-surface/40 backdrop-blur-md"
+          className={topChromeClassName}
         >
           <div className="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-x-2 gap-y-1.5 px-2.5 py-1.5 sm:px-3 sm:py-2 lg:px-4 lg:py-2.5 xl:px-6 xl:py-3">
             <div className="flex min-w-0 items-center gap-2.5">

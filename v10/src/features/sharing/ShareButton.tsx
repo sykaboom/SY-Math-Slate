@@ -8,13 +8,16 @@ import { LayerPickerModal } from "@features/sharing/LayerPickerModal";
 import { ShareScopeSelector } from "@features/sharing/ShareScopeSelector";
 import { useSnapshotShare } from "@features/sharing/useSnapshotShare";
 import { useCanvasStore } from "@features/store/useCanvasStore";
+import { useHostShareStore } from "@features/store/useHostShareStore";
 
 type ShareButtonProps = {
   isPublic: boolean;
   disabled?: boolean;
 };
 
-type ShareStatus = "idle" | "copied" | "error";
+type ShareStatus = "idle" | "copied" | "copied_local_only" | "error";
+
+const LOCAL_ONLY_WARNING = "Copied (local only — may not open on other devices)";
 
 const copyText = async (text: string): Promise<boolean> => {
   if (
@@ -45,6 +48,8 @@ const copyText = async (text: string): Promise<boolean> => {
 
 export function ShareButton({ isPublic, disabled = false }: ShareButtonProps) {
   const { createSnapshotShare } = useSnapshotShare();
+  const setActiveSession = useHostShareStore((state) => state.setActiveSession);
+  const clearActiveSession = useHostShareStore((state) => state.clearActiveSession);
   const { pageOrder, currentPageId } = useCanvasStore((state) => ({
     pageOrder: state.pageOrder,
     currentPageId: state.currentPageId,
@@ -65,7 +70,7 @@ export function ShareButton({ isPublic, disabled = false }: ShareButtonProps) {
   }, [currentPageId, pageOrder, scope, selectedLayerIds]);
 
   useEffect(() => {
-    if (status !== "copied") return;
+    if (status !== "copied" && status !== "copied_local_only") return;
     const timeout = window.setTimeout(() => {
       setStatus("idle");
       setFeedback("");
@@ -76,6 +81,7 @@ export function ShareButton({ isPublic, disabled = false }: ShareButtonProps) {
 
   const buttonLabel = useMemo(() => {
     if (status === "copied") return "Copied";
+    if (status === "copied_local_only") return "Copied (local only)";
     return "Share";
   }, [status]);
 
@@ -88,7 +94,7 @@ export function ShareButton({ isPublic, disabled = false }: ShareButtonProps) {
       return;
     }
 
-    const result = createSnapshotShare({
+    const result = await createSnapshotShare({
       isPublic,
       scope,
       layerIds: resolvedLayerIds,
@@ -97,6 +103,16 @@ export function ShareButton({ isPublic, disabled = false }: ShareButtonProps) {
       setStatus("error");
       setFeedback(result.error);
       return;
+    }
+
+    if (result.meta.liveSession) {
+      setActiveSession({
+        shareId: result.meta.shareId,
+        hostActorId: result.snapshot.hostActorId,
+        liveSession: result.meta.liveSession,
+      });
+    } else {
+      clearActiveSession();
     }
 
     const absoluteViewerUrl =
@@ -111,8 +127,14 @@ export function ShareButton({ isPublic, disabled = false }: ShareButtonProps) {
       return;
     }
 
-    setStatus("copied");
-    setFeedback(absoluteViewerUrl);
+    if (result.serverSaved) {
+      setStatus("copied");
+      setFeedback(absoluteViewerUrl);
+      return;
+    }
+
+    setStatus("copied_local_only");
+    setFeedback(LOCAL_ONLY_WARNING);
   };
 
   return (
@@ -142,9 +164,11 @@ export function ShareButton({ isPublic, disabled = false }: ShareButtonProps) {
           disabled
             ? "cursor-not-allowed bg-theme-surface-soft text-theme-text/40"
             : status === "copied"
-              ? "bg-emerald-500/15 text-emerald-200 hover:bg-emerald-500/25"
+              ? "bg-[var(--theme-success-soft)] text-[var(--theme-success)] hover:bg-[var(--theme-success-soft)]"
+            : status === "copied_local_only"
+                ? "bg-theme-surface-soft text-theme-text/85 hover:bg-theme-surface/30"
               : status === "error"
-                ? "bg-rose-500/15 text-rose-200 hover:bg-rose-500/25"
+                ? "bg-[var(--theme-danger-soft)] text-[var(--theme-danger)] hover:bg-[var(--theme-danger-soft)]"
                 : "bg-theme-surface-soft text-theme-text/75 hover:bg-theme-surface/30"
         )}
         onClick={() => {
@@ -159,7 +183,11 @@ export function ShareButton({ isPublic, disabled = false }: ShareButtonProps) {
         <span
           className={cn(
             "max-w-[220px] truncate text-[10px]",
-            status === "error" ? "text-rose-200/90" : "text-theme-text/60"
+            status === "error"
+              ? "text-[var(--theme-danger)]"
+              : status === "copied_local_only"
+                ? "text-theme-text/75"
+                : "text-theme-text/60"
           )}
           title={feedback}
         >

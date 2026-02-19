@@ -250,7 +250,7 @@ export function ViewerShell({ shareId }: ViewerShellProps) {
       <main className="min-h-0 flex-1 p-3 sm:p-5">
         <div className="relative h-full w-full overflow-hidden rounded-xl border border-theme-border/15 bg-theme-surface/15">
           <CanvasStage />
-          <div className="absolute inset-0 z-40" aria-hidden="true" />
+          <div className="absolute inset-0 z-40 pointer-events-none" aria-hidden="true" />
         </div>
       </main>
 

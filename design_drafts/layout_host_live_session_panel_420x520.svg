@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 520" id="layout_host_live_session_panel_420x520">
+  <defs>
+    <style>
+      .frame { fill: #f8fafc; stroke: #0f172a; stroke-width: 2; }
+      .header { fill: #e2e8f0; stroke: #475569; stroke-width: 1.2; }
+      .section { fill: #ffffff; stroke: #94a3b8; stroke-width: 1; }
+      .touch { fill: #dbeafe; stroke: #1d4ed8; stroke-width: 1; }
+      .label { font-family: monospace; font-size: 9px; fill: #0f172a; }
+      .muted { font-family: monospace; font-size: 8px; fill: #334155; }
+      .redline { font-family: monospace; font-size: 8px; fill: #b91c1c; }
+      .guide { fill: none; stroke: #ef4444; stroke-width: 1; stroke-dasharray: 3 2; }
+    </style>
+  </defs>
+
+  <rect id="window_frame" class="frame" x="1" y="1" width="418" height="518" rx="14" />
+  <rect id="header_bar" class="header" x="0" y="0" width="420" height="44" rx="14" />
+  <text class="label" x="12" y="26">Host Live Session (420 x 520)</text>
+
+  <rect id="header_action_reset" class="touch" x="290" y="4" width="58" height="36" rx="8" />
+  <rect id="header_action_close" class="touch" x="354" y="4" width="58" height="36" rx="8" />
+  <text class="muted" x="292" y="26">Reset</text>
+  <text class="muted" x="358" y="26">Close</text>
+  <text class="redline" x="238" y="50">header touch targets: 58x36 each (&gt;=36px height)</text>
+
+  <rect id="section_status" class="section" x="12" y="56" width="396" height="72" rx="10" />
+  <text class="label" x="22" y="76">Status block: connection + policy summary</text>
+  <text class="muted" x="22" y="92">No active session / relay disabled notice appears here.</text>
+
+  <rect id="section_session_controls" class="section" x="12" y="136" width="396" height="98" rx="10" />
+  <text class="label" x="22" y="156">Session controls: Publish Snapshot / End Session / Clear</text>
+  <text class="muted" x="22" y="172">Share ID + Host Actor ID rows</text>
+
+  <rect id="section_pending_proposals" class="section" x="12" y="242" width="396" height="136" rx="10" />
+  <text class="label" x="22" y="262">Pending proposals list (scroll region)</text>
+  <text class="muted" x="22" y="278">Approve / Reject row per proposal</text>
+
+  <rect id="section_policy_rules" class="section" x="12" y="386" width="396" height="54" rx="10" />
+  <text class="label" x="22" y="406">Policy rules summary</text>
+
+  <rect id="section_teacher_approval" class="section" x="12" y="446" width="396" height="62" rx="10" />
+  <text class="label" x="22" y="466">TeacherApprovalPanel embed area</text>
+  <text class="muted" x="22" y="482">overflow-y scroll in runtime panel shell</text>
+
+  <line class="guide" x1="0" y1="0" x2="420" y2="0" />
+  <line class="guide" x1="0" y1="520" x2="420" y2="520" />
+  <line class="guide" x1="0" y1="0" x2="0" y2="520" />
+  <line class="guide" x1="420" y1="0" x2="420" y2="520" />
+
+  <text class="redline" x="12" y="514">redline: default 420x520, min 360x320, max 560x820</text>
+  <text class="redline" x="12" y="504">tablet checks: 768x1024, 820x1180, 1024x768, 1180x820</text>
+</svg>

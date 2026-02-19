@@ -1,6 +1,7 @@
 export const CORE_PANEL_POLICY_IDS = {
   PENDING_APPROVAL: "core.pending-approval.panel",
   MODERATION_CONSOLE: "core.moderation-console.panel",
+  HOST_LIVE_SESSION: "core.host-live-session.panel",
   DATA_INPUT: "core.data-input.panel",
   PROMPTER: "core.prompter.panel",
   THEME_PICKER: "core.theme-picker.panel",
@@ -13,6 +14,7 @@ export type CorePanelPolicyId =
 export const CORE_EDIT_ONLY_PANEL_POLICY_IDS: readonly CorePanelPolicyId[] = [
   CORE_PANEL_POLICY_IDS.PENDING_APPROVAL,
   CORE_PANEL_POLICY_IDS.MODERATION_CONSOLE,
+  CORE_PANEL_POLICY_IDS.HOST_LIVE_SESSION,
   CORE_PANEL_POLICY_IDS.DATA_INPUT,
   CORE_PANEL_POLICY_IDS.PROMPTER,
   CORE_PANEL_POLICY_IDS.FLOATING_TOOLBAR,
@@ -47,6 +49,20 @@ export const CORE_PANEL_POLICY_SOURCE = {
         displayMode: "windowed",
         movable: true,
         defaultPosition: { x: 24, y: 24 },
+        rememberPosition: true,
+        defaultOpen: false,
+        roleOverride: {
+          host: { visible: true, defaultOpen: false },
+          student: { visible: false, defaultOpen: false },
+        },
+      },
+    },
+    [CORE_PANEL_POLICY_IDS.HOST_LIVE_SESSION]: {
+      slot: "toolbar-bottom",
+      behavior: {
+        displayMode: "windowed",
+        movable: true,
+        defaultPosition: { x: 32, y: 56 },
         rememberPosition: true,
         defaultOpen: false,
         roleOverride: {
@@ -93,7 +109,7 @@ export const CORE_PANEL_POLICY_SOURCE = {
         defaultOpen: false,
         roleOverride: {
           host: { visible: true, defaultOpen: false },
-          student: { visible: true, defaultOpen: false },
+          student: { visible: false, defaultOpen: false },
         },
       },
     },

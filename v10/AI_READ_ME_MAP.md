@@ -34,6 +34,7 @@ v10/src/
 |   |-- api/
 |   |   |-- ai/
 |   |   |   |-- call/
+|   |   |   |-- module/
 |   |   |   \-- theme/
 |   |   |-- community/
 |   |   |   \-- route.ts
@@ -298,6 +299,10 @@ v10/src/
 |   |   |-- SessionPolicyPanel.tsx
 |   |   \-- useTabletShellProfile.ts
 |   |-- mod-studio/
+|   |   |-- ai/
+|   |   |   |-- AIModuleGenerationPanel.tsx
+|   |   |   |-- AIModulePromptBar.tsx
+|   |   |   \-- useAIModuleGeneration.ts
 |   |   |-- core/
 |   |   |   |-- ModStudioPanel.tsx
 |   |   |   |-- ModStudioShell.tsx
@@ -349,6 +354,7 @@ v10/src/
 |   |   |   \-- TeacherApprovalPanel.tsx
 |   |   |-- transport/
 |   |   |   \-- LiveBroadcastTransport.ts
+|   |   |-- HostLiveSessionPanel.tsx
 |   |   |-- LayerPickerModal.tsx
 |   |   |-- ProposalCommandBus.ts
 |   |   |-- PublicToggle.tsx
@@ -368,6 +374,7 @@ v10/src/
 |   |   |-- useCapabilityStore.ts
 |   |   |-- useChromeStore.ts
 |   |   |-- useDocStore.ts
+|   |   |-- useHostShareStore.ts
 |   |   |-- useLocalStore.ts
 |   |   |-- useModStudioStore.ts
 |   |   |-- usePlaybackStore.ts

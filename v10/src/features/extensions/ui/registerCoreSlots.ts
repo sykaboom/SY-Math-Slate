@@ -9,6 +9,7 @@ import {
   type CorePanelPolicyId,
 } from "@core/config/panel-policy";
 import { ModerationConsolePanel } from "@features/moderation/ModerationConsolePanel";
+import { HostLiveSessionPanel } from "@features/sharing/HostLiveSessionPanel";
 import { ThemePickerPanel } from "@features/theme/ThemePickerPanel";
 import { PendingApprovalPanel } from "@features/toolbar/PendingApprovalPanel";
 import {
@@ -98,6 +99,18 @@ const CORE_SLOT_BINDINGS: readonly CoreSlotBinding[] = [
       launcherId: "core-launcher-panel-moderation-console",
       title: "Moderation Console",
       description: "Opens trust and safety controls.",
+      icon: "Captions",
+    },
+  },
+  {
+    panelId: CORE_PANEL_POLICY_IDS.HOST_LIVE_SESSION,
+    component: HostLiveSessionPanel,
+    activation: "layout-slot-cutover",
+    registerInSlotRuntime: !LAYOUT_SLOT_CUTOVER_ENABLED,
+    launcher: {
+      launcherId: "core-launcher-panel-host-live-session",
+      title: "Host Live Session",
+      description: "Opens host live session controls and proposals.",
       icon: "Captions",
     },
   },

@@ -52,12 +52,13 @@ Feature subsystems:
 - `features/extensions`: command registrations and UI slot runtime.
 - `features/layout`: app shell/window host.
 - `features/canvas`: board/cursor/render layers.
-- `features/sharing`: snapshot share adapters, live transport, policy/proposal flow, AI approval queue hook.
+- `features/sharing`: snapshot share adapters, host live session panel/store wiring, live transport, policy/proposal flow, AI approval queue hook.
 - `features/viewer`: public viewer shell/session/live sync hooks.
 - `features/input-studio`: structured input + LLM draft flows.
 - `features/store`: zustand stores and compatibility bridges.
 - `features/theme`: end-user theme UI (`ThemePickerPanel`, provider wiring).
 - `features/mod-studio/theme`: advanced token editor, JSON IO, AI theme generation panel/hooks.
+- `features/mod-studio/ai`: in-studio AI module generation UI/hooks (`AIModuleGenerationPanel`, `useAIModuleGeneration`).
 
 ## 5) Store Authorities (SSOT)
 Authority-layer stores:
@@ -92,6 +93,7 @@ AI call runtime:
 - `src/features/sharing/ai/LLMCallService.ts`: server/client call facade
 - `src/core/config/aiProviderRegistry.ts`: provider resolution and OpenAI/mock execution (no client key exposure)
 - `src/app/api/ai/call/route.ts`: server-side LLM proxy endpoint
+- `src/app/api/ai/module/route.ts`: server-side AI module generation endpoint (mock-first + structured validation)
 
 Ownership:
 - `src/app/globals.css`: global tokens/resets/minimal app-wide rules only
@@ -131,6 +133,7 @@ Primary checks used by hooks/CI:
 - `scripts/check_v10_hardcoding_budget.sh`
 - `scripts/check_v10_legacy_freeze.sh`
 - `scripts/check_v10_migration_baseline.sh`
+- `scripts/scan_guardrails.sh`
 - `scripts/run_repo_verifications.sh`
 
 When touching `v10/src/**`, update this file (`v10/AI_READ_ME.md`) in same change set.

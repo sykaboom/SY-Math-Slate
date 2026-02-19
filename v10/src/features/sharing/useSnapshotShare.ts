@@ -35,6 +35,7 @@ export type CreateSnapshotShareResult =
       ok: true;
       snapshot: CanvasSnapshot;
       meta: ShareSessionMeta;
+      serverSaved: boolean;
     }
   | {
       ok: false;
@@ -175,7 +176,9 @@ export const useSnapshotShare = () => {
   const serverAdapter = useMemo(() => new ServerSnapshotAdapter(), []);
 
   const createSnapshotShare = useCallback(
-    (options: CreateSnapshotShareOptions): CreateSnapshotShareResult => {
+    async (
+      options: CreateSnapshotShareOptions
+    ): Promise<CreateSnapshotShareResult> => {
       if (typeof window === "undefined") {
         return {
           ok: false,
@@ -236,19 +239,23 @@ export const useSnapshotShare = () => {
         };
       }
 
-      void Promise.resolve(
+      const serverResult = await Promise.resolve(
         serverAdapter.saveSnapshot({
           snapshot,
           meta,
         })
       ).catch(() => {
-        // local fallback remains the source of truth when server persistence fails.
+        return {
+          ok: false as const,
+          error: "Failed to persist snapshot on server.",
+        };
       });
 
       return {
         ok: true,
         snapshot: localResult.snapshot,
         meta: localResult.meta,
+        serverSaved: serverResult.ok,
       };
     },
     [localAdapter, serverAdapter]

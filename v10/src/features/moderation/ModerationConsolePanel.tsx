@@ -82,7 +82,7 @@ export function ModerationConsolePanel() {
           type="button"
           size="sm"
           variant="outline"
-          className="h-7 border-toolbar-border/20 bg-transparent px-2 text-[11px] text-toolbar-text/80 hover:bg-toolbar-chip/15 hover:text-toolbar-text"
+          className="h-9 border-toolbar-border/20 bg-transparent px-2 text-[11px] text-toolbar-text/80 hover:bg-toolbar-chip/15 hover:text-toolbar-text"
           onClick={() => {
             void refresh();
           }}

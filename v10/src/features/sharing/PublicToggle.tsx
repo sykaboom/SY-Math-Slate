@@ -22,7 +22,7 @@ export function PublicToggle({
         disabled
           ? "cursor-not-allowed bg-theme-surface-soft text-theme-text/40"
           : isPublic
-            ? "bg-emerald-500/15 text-emerald-200 hover:bg-emerald-500/25"
+            ? "bg-[var(--theme-success-soft)] text-[var(--theme-success)] hover:bg-[var(--theme-success-soft)]"
             : "bg-theme-surface-soft text-theme-text/70 hover:bg-theme-surface/30"
       )}
       onClick={() => {

@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 
+import { listAppCommands } from "@core/engine/commandBus";
 import { listKnownUISlotNames, type UISlotName } from "@core/extensions/registry";
 import type { ModuleDraft } from "@features/mod-studio/core/types";
 import { getModuleDiagnostics } from "@features/mod-studio/modules/moduleDiagnostics";
@@ -25,7 +26,15 @@ export function ModuleStudioSection() {
   const removeModuleDraft = useModStudioStore((state) => state.removeModuleDraft);
   const [seed, setSeed] = useState<ModuleDraft>(createModuleSeed);
 
-  const diagnostics = useMemo(() => getModuleDiagnostics(modules), [modules]);
+  const knownCommands = listAppCommands();
+  const knownCommandIds = useMemo(
+    () => new Set(knownCommands.map((command) => command.id)),
+    [knownCommands]
+  );
+  const diagnostics = useMemo(
+    () => getModuleDiagnostics(modules, knownCommandIds),
+    [modules, knownCommandIds]
+  );
 
   const handleAdd = () => {
     const normalizedId = seed.id.trim();
@@ -88,18 +97,37 @@ export function ModuleStudioSection() {
             }
             className="rounded border border-theme-border/20 bg-theme-surface/40 px-2 py-1 text-xs text-theme-text"
           />
-          <input
-            type="text"
-            placeholder="command id"
-            value={seed.action.commandId}
-            onChange={(event) =>
-              setSeed((prev) => ({
-                ...prev,
-                action: { ...prev.action, commandId: event.target.value },
-              }))
-            }
-            className="col-span-2 rounded border border-theme-border/20 bg-theme-surface/40 px-2 py-1 text-xs text-theme-text"
-          />
+          {knownCommands.length > 0 ? (
+            <select
+              value={seed.action.commandId}
+              onChange={(event) =>
+                setSeed((prev) => ({
+                  ...prev,
+                  action: { ...prev.action, commandId: event.target.value },
+                }))
+              }
+              className="col-span-2 rounded border border-theme-border/20 bg-theme-surface/40 px-2 py-1 text-xs text-theme-text"
+            >
+              {knownCommands.map((command) => (
+                <option key={command.id} value={command.id}>
+                  {command.id}
+                </option>
+              ))}
+            </select>
+          ) : (
+            <input
+              type="text"
+              placeholder="command id (command catalog empty)"
+              value={seed.action.commandId}
+              onChange={(event) =>
+                setSeed((prev) => ({
+                  ...prev,
+                  action: { ...prev.action, commandId: event.target.value },
+                }))
+              }
+              className="col-span-2 rounded border border-theme-border/20 bg-theme-surface/40 px-2 py-1 text-xs text-theme-text"
+            />
+          )}
         </div>
         <button
           type="button"

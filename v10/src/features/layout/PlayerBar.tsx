@@ -92,151 +92,166 @@ export function PlayerBar({ readOnly = false }: PlayerBarProps) {
 
   return (
     <div className="w-[min(780px,92vw)]">
-      <div className="flex items-center gap-3 rounded-full border border-[var(--theme-border)] bg-[var(--theme-surface)] px-4 py-3 text-[var(--theme-text)] shadow-[var(--toolbar-shell-shadow)] backdrop-blur-md">
-        <button
-          type="button"
-          className={cn(
-            "flex h-11 w-11 items-center justify-center rounded-full border border-theme-border/10 text-theme-text",
-            readOnly
-              ? "cursor-not-allowed bg-theme-surface-soft opacity-50"
-              : isAnimating && !isPaused
-                ? "bg-theme-surface-soft"
-                : "bg-theme-surface-soft hover:bg-theme-surface/20"
-          )}
-          onClick={handlePlayPause}
-          disabled={readOnly}
-          aria-label={isAnimating ? (isPaused ? "Resume" : "Pause") : "Auto Play"}
-        >
-          {isAnimating && !isPaused ? (
-            <Pause className="h-5 w-5" />
-          ) : (
-            <Play className="h-5 w-5" />
-          )}
-        </button>
-        <button
-          type="button"
-          className={cn(
-            "flex h-9 w-9 items-center justify-center rounded-full border border-theme-border/10 text-theme-text/80",
-            readOnly ? "cursor-not-allowed opacity-50" : "hover:bg-theme-surface-soft"
-          )}
-          onClick={handleStop}
-          disabled={readOnly}
-          aria-label="Stop"
-        >
-          <Square className="h-4 w-4" />
-        </button>
+      <div className="flex flex-col gap-2 rounded-2xl border border-[var(--theme-border)] bg-[var(--theme-surface)] px-3 py-3 text-[var(--theme-text)] shadow-[var(--toolbar-shell-shadow)] backdrop-blur-md sm:flex-row sm:items-center sm:gap-3 sm:rounded-full sm:px-4">
+        <div className="flex min-w-0 items-center gap-2 sm:flex-1 sm:gap-3">
+          <button
+            type="button"
+            className={cn(
+              "flex h-11 w-11 items-center justify-center rounded-full border border-theme-border/10 text-theme-text",
+              readOnly
+                ? "cursor-not-allowed bg-theme-surface-soft opacity-50"
+                : isAnimating && !isPaused
+                  ? "bg-theme-surface-soft"
+                  : "bg-theme-surface-soft hover:bg-theme-surface/20"
+            )}
+            onClick={handlePlayPause}
+            disabled={readOnly}
+            aria-label={isAnimating ? (isPaused ? "Resume" : "Pause") : "Auto Play"}
+          >
+            {isAnimating && !isPaused ? (
+              <Pause className="h-5 w-5" />
+            ) : (
+              <Play className="h-5 w-5" />
+            )}
+          </button>
+          <button
+            type="button"
+            className={cn(
+              "flex h-9 w-9 items-center justify-center rounded-full border border-theme-border/10 text-theme-text/80",
+              readOnly ? "cursor-not-allowed opacity-50" : "hover:bg-theme-surface-soft"
+            )}
+            onClick={handleStop}
+            disabled={readOnly}
+            aria-label="Stop"
+          >
+            <Square className="h-4 w-4" />
+          </button>
 
-        <div className="flex flex-1 items-center gap-3">
-          <div className="relative h-1 flex-1 overflow-hidden rounded-full bg-theme-surface-soft">
-            <div
-              className="absolute inset-y-0 left-0 bg-theme-surface/70"
-              style={{ width: `${Math.min(100, Math.max(0, progress * 100))}%` }}
-            />
+          <div className="flex min-w-0 flex-1 items-center gap-2 sm:gap-3">
+            <div className="relative h-1 flex-1 overflow-hidden rounded-full bg-theme-surface-soft">
+              <div
+                className="absolute inset-y-0 left-0 bg-theme-surface/70"
+                style={{ width: `${Math.min(100, Math.max(0, progress * 100))}%` }}
+              />
+            </div>
+            <span className="min-w-[60px] text-xs text-theme-text/70">
+              {currentDisplay}/{totalSteps}
+            </span>
           </div>
-          <span className="min-w-[60px] text-xs text-theme-text/70">
-            {currentDisplay}/{totalSteps}
-          </span>
+
+          {canTiming ? (
+            <div className="hidden sm:flex">
+              {readOnly ? (
+                <span className="rounded-full border border-theme-border/10 bg-theme-surface-soft px-2 py-1 text-[11px] text-theme-text/50">
+                  {speedLabel}x
+                </span>
+              ) : (
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <button
+                      type="button"
+                      className={cn(
+                        "rounded-full border border-theme-border/10 bg-theme-surface-soft px-2 py-1 text-[11px] text-theme-text/70",
+                        "hover:text-theme-text focus:outline-none focus:ring-2 focus:ring-white/30"
+                      )}
+                      title="Speed"
+                    >
+                      {speedLabel}x
+                    </button>
+                  </PopoverTrigger>
+                  <ToolbarPanel side="top" align="center" sideOffset={18}>
+                    <div className="flex w-44 items-center gap-3">
+                      <Slider
+                        value={[playbackSpeed]}
+                        min={0.1}
+                        max={2}
+                        step={0.05}
+                        onValueChange={(value) =>
+                          dispatchPlayerCommand("setPlaybackSpeed", {
+                            speed: value[0] ?? playbackSpeed,
+                          })
+                        }
+                      />
+                      <span className="w-10 text-right text-xs text-theme-text/80">
+                        {speedLabel}x
+                      </span>
+                    </div>
+                  </ToolbarPanel>
+                </Popover>
+              )}
+            </div>
+          ) : null}
+
+          {canTiming ? (
+            <div className="hidden sm:flex">
+              {readOnly ? (
+                <span className="rounded-full border border-theme-border/10 bg-theme-surface-soft px-2 py-1 text-[11px] text-theme-text/50">
+                  {delayLabel}s
+                </span>
+              ) : (
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <button
+                      type="button"
+                      className={cn(
+                        "rounded-full border border-theme-border/10 bg-theme-surface-soft px-2 py-1 text-[11px] text-theme-text/70",
+                        "hover:text-theme-text focus:outline-none focus:ring-2 focus:ring-white/30"
+                      )}
+                      title="Delay"
+                    >
+                      {delayLabel}s
+                    </button>
+                  </PopoverTrigger>
+                  <ToolbarPanel side="top" align="center" sideOffset={18}>
+                    <div className="flex w-44 items-center gap-3">
+                      <Slider
+                        value={[autoPlayDelayMs]}
+                        min={300}
+                        max={3000}
+                        step={100}
+                        onValueChange={(value) =>
+                          dispatchPlayerCommand("setAutoPlayDelay", {
+                            delayMs: value[0] ?? autoPlayDelayMs,
+                          })
+                        }
+                      />
+                      <span className="w-10 text-right text-xs text-theme-text/80">
+                        {delayLabel}s
+                      </span>
+                    </div>
+                  </ToolbarPanel>
+                </Popover>
+              )}
+            </div>
+          ) : null}
+
+          {!readOnly ? (
+            <div className="hidden items-center gap-2 sm:flex">
+              <PublicToggle isPublic={isPublic} onChange={setIsPublic} />
+              <ShareButton isPublic={isPublic} />
+            </div>
+          ) : null}
+
+          <button
+            type="button"
+            className={cn(
+              "flex h-9 w-9 items-center justify-center rounded-full border border-theme-border/10 text-theme-text/70",
+              readOnly ? "cursor-not-allowed opacity-50" : "hover:bg-theme-surface-soft"
+            )}
+            onClick={handleExitPresentation}
+            disabled={readOnly}
+            aria-label="Exit Presentation Mode"
+          >
+            <X className="h-4 w-4" />
+          </button>
         </div>
 
-        {canTiming &&
-          (readOnly ? (
-            <span className="rounded-full border border-theme-border/10 bg-theme-surface-soft px-2 py-1 text-[11px] text-theme-text/50">
-              {speedLabel}x
-            </span>
-          ) : (
-            <Popover>
-              <PopoverTrigger asChild>
-                <button
-                  type="button"
-                  className={cn(
-                    "rounded-full border border-theme-border/10 bg-theme-surface-soft px-2 py-1 text-[11px] text-theme-text/70",
-                    "hover:text-theme-text focus:outline-none focus:ring-2 focus:ring-white/30"
-                  )}
-                  title="Speed"
-                >
-                  {speedLabel}x
-                </button>
-              </PopoverTrigger>
-              <ToolbarPanel side="top" align="center" sideOffset={18}>
-                <div className="flex w-44 items-center gap-3">
-                  <Slider
-                    value={[playbackSpeed]}
-                    min={0.1}
-                    max={2}
-                    step={0.05}
-                    onValueChange={(value) =>
-                      dispatchPlayerCommand("setPlaybackSpeed", {
-                        speed: value[0] ?? playbackSpeed,
-                      })
-                    }
-                  />
-                  <span className="w-10 text-right text-xs text-theme-text/80">
-                    {speedLabel}x
-                  </span>
-                </div>
-              </ToolbarPanel>
-            </Popover>
-          ))}
-
-        {canTiming &&
-          (readOnly ? (
-            <span className="rounded-full border border-theme-border/10 bg-theme-surface-soft px-2 py-1 text-[11px] text-theme-text/50">
-              {delayLabel}s
-            </span>
-          ) : (
-            <Popover>
-              <PopoverTrigger asChild>
-                <button
-                  type="button"
-                  className={cn(
-                    "rounded-full border border-theme-border/10 bg-theme-surface-soft px-2 py-1 text-[11px] text-theme-text/70",
-                    "hover:text-theme-text focus:outline-none focus:ring-2 focus:ring-white/30"
-                  )}
-                  title="Delay"
-                >
-                  {delayLabel}s
-                </button>
-              </PopoverTrigger>
-              <ToolbarPanel side="top" align="center" sideOffset={18}>
-                <div className="flex w-44 items-center gap-3">
-                  <Slider
-                    value={[autoPlayDelayMs]}
-                    min={300}
-                    max={3000}
-                    step={100}
-                    onValueChange={(value) =>
-                      dispatchPlayerCommand("setAutoPlayDelay", {
-                        delayMs: value[0] ?? autoPlayDelayMs,
-                      })
-                    }
-                  />
-                  <span className="w-10 text-right text-xs text-theme-text/80">
-                    {delayLabel}s
-                  </span>
-                </div>
-              </ToolbarPanel>
-            </Popover>
-          ))}
-
         {!readOnly ? (
-          <div className="flex items-center gap-2">
+          <div className="flex items-center justify-end gap-2 sm:hidden">
             <PublicToggle isPublic={isPublic} onChange={setIsPublic} />
             <ShareButton isPublic={isPublic} />
           </div>
         ) : null}
-
-        <button
-          type="button"
-          className={cn(
-            "flex h-9 w-9 items-center justify-center rounded-full border border-theme-border/10 text-theme-text/70",
-            readOnly ? "cursor-not-allowed opacity-50" : "hover:bg-theme-surface-soft"
-          )}
-          onClick={handleExitPresentation}
-          disabled={readOnly}
-          aria-label="Exit Presentation Mode"
-        >
-          <X className="h-4 w-4" />
-        </button>
       </div>
     </div>
   );

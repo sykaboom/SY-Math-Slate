@@ -11,6 +11,7 @@ import {
 import { DataInputPanel } from "@features/layout/DataInputPanel";
 import { Prompter } from "@features/layout/Prompter";
 import { ModerationConsolePanel } from "@features/moderation/ModerationConsolePanel";
+import { HostLiveSessionPanel } from "@features/sharing/HostLiveSessionPanel";
 import { ThemePickerPanel } from "@features/theme/ThemePickerPanel";
 import { FloatingToolbar } from "@features/toolbar/FloatingToolbar";
 import { PendingApprovalPanel } from "@features/toolbar/PendingApprovalPanel";
@@ -25,7 +26,9 @@ import type {
 } from "./WindowHost";
 
 const PANEL_HOST_ACTION_BUTTON_CLASS =
-  "inline-flex h-7 items-center rounded-md border border-theme-border/15 bg-theme-surface/35 px-2 text-[10px] font-semibold uppercase tracking-[0.12em] text-theme-text/70 transition hover:border-theme-border/30 hover:text-theme-text";
+  "inline-flex h-9 items-center rounded-md border border-theme-border/15 bg-theme-surface/35 px-2 text-[10px] font-semibold uppercase tracking-[0.12em] text-theme-text/70 transition hover:border-theme-border/30 hover:text-theme-text";
+const HOST_LIVE_SESSION_ACTION_BUTTON_CLASS =
+  "inline-flex h-9 items-center rounded-md border border-theme-border/15 bg-theme-surface/35 px-2.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-theme-text/70 transition hover:border-theme-border/30 hover:text-theme-text";
 
 const clamp = (value: number, min: number, max: number): number => {
   if (value <= min) return min;
@@ -125,10 +128,16 @@ const resolveModerationConsoleSize = (viewportSize: { width: number; height: num
   height: clamp(Math.round(viewportSize.height * 0.78), 320, 820),
 });
 
+const resolveHostLiveSessionSize = (viewportSize: { width: number; height: number }) => ({
+  width: clamp(420, 360, clamp(viewportSize.width, 360, 560)),
+  height: clamp(520, 320, clamp(viewportSize.height, 320, 820)),
+});
+
 type WindowPanelShellProps = {
   title: string;
   context: WindowHostPanelRenderContext;
   onRequestClose?: () => void;
+  actionButtonClassName?: string;
   children: ReactNode;
 };
 
@@ -136,8 +145,12 @@ const WindowPanelShell = ({
   title,
   context,
   onRequestClose,
+  actionButtonClassName,
   children,
 }: WindowPanelShellProps) => {
+  const resolvedActionButtonClassName =
+    actionButtonClassName ?? PANEL_HOST_ACTION_BUTTON_CLASS;
+
   return (
     <section className="flex h-full w-full min-h-0 flex-col overflow-hidden rounded-2xl border border-theme-border/15 bg-theme-surface/45 shadow-[0_18px_48px_rgba(0,0,0,0.5)]">
       <header className="flex items-center gap-2 border-b border-theme-border/10 bg-theme-surface/35 px-3 py-2">
@@ -149,7 +162,7 @@ const WindowPanelShell = ({
         </div>
         <button
           type="button"
-          className={PANEL_HOST_ACTION_BUTTON_CLASS}
+          className={resolvedActionButtonClassName}
           onClick={context.reset}
         >
           Reset
@@ -157,7 +170,7 @@ const WindowPanelShell = ({
         {onRequestClose ? (
           <button
             type="button"
-            className={PANEL_HOST_ACTION_BUTTON_CLASS}
+            className={resolvedActionButtonClassName}
             onClick={onRequestClose}
           >
             Close
@@ -181,6 +194,8 @@ export type CoreWindowHostPanelAdapterOptions = {
   closePendingApproval: () => void;
   isModerationConsoleOpen: boolean;
   closeModerationConsole: () => void;
+  isHostLiveSessionOpen: boolean;
+  closeHostLiveSession: () => void;
   closeThemePicker: () => void;
   viewportSize: {
     width: number;
@@ -277,6 +292,36 @@ export const buildCoreWindowHostPanelAdapters = (
           <div className="h-full w-full overflow-y-auto p-2">
             <ModerationConsolePanel />
           </div>
+        </WindowPanelShell>
+      ),
+    });
+  }
+
+  const hostLiveSessionContract = resolveCorePanelContract(
+    CORE_PANEL_POLICY_IDS.HOST_LIVE_SESSION,
+    runtimeRole,
+    options.layoutSlotCutoverEnabled
+  );
+  if (
+    hostLiveSessionContract &&
+    hostLiveSessionContract.visible &&
+    options.showHostToolchips
+  ) {
+    modules.push({
+      panelId: hostLiveSessionContract.panelId,
+      slot: hostLiveSessionContract.slot,
+      behavior: hostLiveSessionContract.behavior,
+      size: resolveHostLiveSessionSize(viewportSize),
+      isOpen: options.isHostLiveSessionOpen,
+      className: "pointer-events-auto w-full max-w-[min(560px,96vw)]",
+      render: (context) => (
+        <WindowPanelShell
+          title="Host Live Session"
+          context={context}
+          onRequestClose={options.closeHostLiveSession}
+          actionButtonClassName={HOST_LIVE_SESSION_ACTION_BUTTON_CLASS}
+        >
+          <HostLiveSessionPanel />
         </WindowPanelShell>
       ),
     });
