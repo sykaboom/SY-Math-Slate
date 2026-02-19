@@ -7,6 +7,14 @@ import { useChromeStore } from "./useChromeStore";
 export type Tool = "pen" | "eraser" | "laser" | "hand" | "text";
 export type LaserType = "standard" | "highlighter";
 export type { PenType };
+export const ERASER_WIDTH_MIN = 4;
+export const ERASER_WIDTH_MAX = 120;
+export const DEFAULT_ERASER_WIDTH = 40;
+
+const clampEraserWidth = (value: number): number => {
+  if (!Number.isFinite(value)) return DEFAULT_ERASER_WIDTH;
+  return Math.min(Math.max(value, ERASER_WIDTH_MIN), ERASER_WIDTH_MAX);
+};
 
 interface ToolStoreState {
   activeTool: Tool;
@@ -17,6 +25,7 @@ interface ToolStoreState {
   laserType: LaserType;
   laserColor: string;
   laserWidth: number;
+  eraserWidth: number;
   setTool: (tool: Tool) => void;
   setColor: (color: string) => void;
   setPenWidth: (width: number) => void;
@@ -25,6 +34,7 @@ interface ToolStoreState {
   setLaserType: (type: LaserType) => void;
   setLaserColor: (color: string) => void;
   setLaserWidth: (width: number) => void;
+  setEraserWidth: (width: number) => void;
 }
 
 export const useToolStore = create<ToolStoreState>((set) => ({
@@ -36,6 +46,7 @@ export const useToolStore = create<ToolStoreState>((set) => ({
   laserType: "standard",
   laserColor: "#FF3B30",
   laserWidth: 10,
+  eraserWidth: DEFAULT_ERASER_WIDTH,
   setTool: (tool) => {
     set(() => ({ activeTool: tool }));
     useChromeStore.getState().closePanel();
@@ -76,4 +87,6 @@ export const useToolStore = create<ToolStoreState>((set) => ({
     })),
   setLaserColor: (color) => set(() => ({ laserColor: color })),
   setLaserWidth: (width) => set(() => ({ laserWidth: width })),
+  setEraserWidth: (width) =>
+    set(() => ({ eraserWidth: clampEraserWidth(width) })),
 }));

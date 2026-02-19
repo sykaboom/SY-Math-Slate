@@ -7,8 +7,13 @@ import {
   useUIStore,
   type LaserType,
   type PenType,
+  type ToolbarDockPosition,
   type Tool,
 } from "@features/store/useUIStoreBridge";
+import {
+  ERASER_WIDTH_MAX,
+  ERASER_WIDTH_MIN,
+} from "@features/store/useToolStore";
 import {
   failValidation,
   isFiniteNumber,
@@ -19,16 +24,23 @@ import {
 
 type SetToolPayload = { tool: Tool };
 type SetViewModePayload = { mode: "edit" | "presentation" };
+type SetToolbarDockPayload = { position: ToolbarDockPosition };
 type SetPenTypePayload = { penType: PenType };
 type SetPenColorPayload = { color: string };
 type SetPenWidthPayload = { width: number };
 type SetPenOpacityPayload = { opacity: number };
+type SetEraserWidthPayload = { width: number };
 type SetLaserTypePayload = { laserType: LaserType };
 type SetLaserColorPayload = { color: string };
 type SetLaserWidthPayload = { width: number };
 
 const VALID_TOOLS = new Set<Tool>(["pen", "eraser", "laser", "hand", "text"]);
 const VALID_VIEW_MODES = new Set<SetViewModePayload["mode"]>(["edit", "presentation"]);
+const VALID_TOOLBAR_DOCK_POSITIONS = new Set<ToolbarDockPosition>([
+  "left",
+  "center",
+  "right",
+]);
 const VALID_PEN_TYPES = new Set<PenType>(["ink", "pencil", "highlighter"]);
 const VALID_LASER_TYPES = new Set<LaserType>(["standard", "highlighter"]);
 const HEX_COLOR_PATTERN = /^#[0-9a-fA-F]{6}$/;
@@ -84,6 +96,30 @@ const validateSetViewModePayload = (
     );
   }
   return okValidation({ mode });
+};
+
+const validateSetToolbarDockPayload = (
+  payload: unknown
+): AppCommandPayloadValidationResult<SetToolbarDockPayload> => {
+  const payloadValidation = validatePayloadObject(payload, {
+    allowedKeys: ["position"],
+  });
+  if (!payloadValidation.ok) return payloadValidation;
+  if (!isNonEmptyString(payloadValidation.value.position)) {
+    return failValidation(
+      "invalid-payload-toolbar-dock-position",
+      "payload.position must be a non-empty string."
+    );
+  }
+
+  const position = payloadValidation.value.position.trim() as ToolbarDockPosition;
+  if (!VALID_TOOLBAR_DOCK_POSITIONS.has(position)) {
+    return failValidation(
+      "invalid-payload-toolbar-dock-position-value",
+      "payload.position must be one of left/center/right."
+    );
+  }
+  return okValidation({ position });
 };
 
 const validateSetPenTypePayload = (
@@ -218,6 +254,26 @@ const validateSetLaserWidthPayload = (
   return okValidation({ width: payloadValidation.value.width });
 };
 
+const validateSetEraserWidthPayload = (
+  payload: unknown
+): AppCommandPayloadValidationResult<SetEraserWidthPayload> => {
+  const payloadValidation = validatePayloadObject(payload, { allowedKeys: ["width"] });
+  if (!payloadValidation.ok) return payloadValidation;
+  if (
+    !isNumberInRange(
+      payloadValidation.value.width,
+      ERASER_WIDTH_MIN,
+      ERASER_WIDTH_MAX
+    )
+  ) {
+    return failValidation(
+      "invalid-payload-eraser-width",
+      `payload.width must be between ${ERASER_WIDTH_MIN} and ${ERASER_WIDTH_MAX}.`
+    );
+  }
+  return okValidation({ width: payloadValidation.value.width });
+};
+
 const executeSetTool = (payload: SetToolPayload) => {
   const ui = useUIStore.getState();
   ui.setTool(payload.tool);
@@ -227,7 +283,13 @@ const executeSetTool = (payload: SetToolPayload) => {
 const executeSetViewMode = (payload: SetViewModePayload) => {
   const ui = useUIStore.getState();
   ui.setViewMode(payload.mode);
-  return { viewMode: useUIStore.getState().viewMode };
+  return { viewMode: payload.mode };
+};
+
+const executeSetToolbarDock = (payload: SetToolbarDockPayload) => {
+  const ui = useUIStore.getState();
+  ui.setToolbarDockPosition(payload.position);
+  return { toolbarDockPosition: payload.position };
 };
 
 const executeSetPenType = (payload: SetPenTypePayload) => {
@@ -245,19 +307,25 @@ const executeSetPenType = (payload: SetPenTypePayload) => {
 const executeSetPenColor = (payload: SetPenColorPayload) => {
   const ui = useUIStore.getState();
   ui.setColor(payload.color);
-  return { penColor: useUIStore.getState().penColor };
+  return { penColor: payload.color };
 };
 
 const executeSetPenWidth = (payload: SetPenWidthPayload) => {
   const ui = useUIStore.getState();
   ui.setPenWidth(payload.width);
-  return { penWidth: useUIStore.getState().penWidth };
+  return { penWidth: payload.width };
 };
 
 const executeSetPenOpacity = (payload: SetPenOpacityPayload) => {
   const ui = useUIStore.getState();
   ui.setPenOpacity(payload.opacity);
-  return { penOpacity: useUIStore.getState().penOpacity };
+  return { penOpacity: payload.opacity };
+};
+
+const executeSetEraserWidth = (payload: SetEraserWidthPayload) => {
+  const ui = useUIStore.getState();
+  ui.setEraserWidth(payload.width);
+  return { eraserWidth: payload.width };
 };
 
 const executeSetLaserType = (payload: SetLaserTypePayload) => {
@@ -274,13 +342,13 @@ const executeSetLaserType = (payload: SetLaserTypePayload) => {
 const executeSetLaserColor = (payload: SetLaserColorPayload) => {
   const ui = useUIStore.getState();
   ui.setLaserColor(payload.color);
-  return { laserColor: useUIStore.getState().laserColor };
+  return { laserColor: payload.color };
 };
 
 const executeSetLaserWidth = (payload: SetLaserWidthPayload) => {
   const ui = useUIStore.getState();
   ui.setLaserWidth(payload.width);
-  return { laserWidth: useUIStore.getState().laserWidth };
+  return { laserWidth: payload.width };
 };
 
 const setToolCommand: AppCommand<SetToolPayload, { tool: Tool }> = {
@@ -320,6 +388,27 @@ const setViewModeCommand: AppCommand<
   },
   validatePayload: validateSetViewModePayload,
   execute: executeSetViewMode,
+};
+
+const setToolbarDockCommand: AppCommand<
+  SetToolbarDockPayload,
+  { toolbarDockPosition: ToolbarDockPosition }
+> = {
+  id: "setToolbarDock",
+  description: "Set bottom toolbar dock position (left/center/right).",
+  mutationScope: "local",
+  requiresApproval: false,
+  auditTag: "command.set-toolbar-dock",
+  schema: {
+    type: "object",
+    required: ["position"],
+    properties: {
+      position: { type: "string", enum: ["left", "center", "right"] },
+    },
+    additionalProperties: false,
+  },
+  validatePayload: validateSetToolbarDockPayload,
+  execute: executeSetToolbarDock,
 };
 
 const setPenTypeCommand: AppCommand<
@@ -395,6 +484,31 @@ const setPenOpacityCommand: AppCommand<SetPenOpacityPayload, { penOpacity: numbe
   execute: executeSetPenOpacity,
 };
 
+const setEraserWidthCommand: AppCommand<
+  SetEraserWidthPayload,
+  { eraserWidth: number }
+> = {
+  id: "setEraserWidth",
+  description: "Set eraser width.",
+  mutationScope: "local",
+  requiresApproval: false,
+  auditTag: "command.set-eraser-width",
+  schema: {
+    type: "object",
+    required: ["width"],
+    properties: {
+      width: {
+        type: "number",
+        minimum: ERASER_WIDTH_MIN,
+        maximum: ERASER_WIDTH_MAX,
+      },
+    },
+    additionalProperties: false,
+  },
+  validatePayload: validateSetEraserWidthPayload,
+  execute: executeSetEraserWidth,
+};
+
 const setLaserTypeCommand: AppCommand<
   SetLaserTypePayload,
   { laserType: LaserType; laserColor: string; laserWidth: number }
@@ -453,10 +567,12 @@ const setLaserWidthCommand: AppCommand<SetLaserWidthPayload, { laserWidth: numbe
 export const TOOL_COMMANDS: readonly AppCommand<unknown, unknown>[] = [
   setToolCommand as AppCommand<unknown, unknown>,
   setViewModeCommand as AppCommand<unknown, unknown>,
+  setToolbarDockCommand as AppCommand<unknown, unknown>,
   setPenTypeCommand as AppCommand<unknown, unknown>,
   setPenColorCommand as AppCommand<unknown, unknown>,
   setPenWidthCommand as AppCommand<unknown, unknown>,
   setPenOpacityCommand as AppCommand<unknown, unknown>,
+  setEraserWidthCommand as AppCommand<unknown, unknown>,
   setLaserTypeCommand as AppCommand<unknown, unknown>,
   setLaserColorCommand as AppCommand<unknown, unknown>,
   setLaserWidthCommand as AppCommand<unknown, unknown>,

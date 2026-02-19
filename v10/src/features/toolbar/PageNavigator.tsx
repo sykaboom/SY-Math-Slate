@@ -93,9 +93,10 @@ export function PageNavigator() {
             type="button"
             className="whitespace-nowrap rounded-full px-2 py-1 text-[11px] text-toolbar-text/70 hover:text-toolbar-text disabled:text-toolbar-muted/40"
             disabled={isOverviewMode || !canOutlineJump}
-            title={currentEntry?.label ?? "Outline"}
+            title={currentEntry?.label ?? "Step Outline"}
           >
-            Outline {canOutlineJump ? currentStepIndex + 1 : 0}/{outlineEntries.length}
+            Outline Step {canOutlineJump ? currentStepIndex + 1 : 0}/
+            {outlineEntries.length}
           </button>
         </PopoverTrigger>
         {canOutlineJump && (
@@ -115,7 +116,7 @@ export function PageNavigator() {
                     onClick={() => jumpToStep(entry.stepIndex)}
                   >
                     <span className="text-[10px] uppercase tracking-wide text-toolbar-muted/50">
-                      Step {entry.stepIndex + 1}
+                      Outline Step {entry.stepIndex + 1}
                     </span>
                     <span className="truncate text-xs">{entry.preview}</span>
                   </button>

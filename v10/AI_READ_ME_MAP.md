@@ -400,6 +400,7 @@ v10/src/
 |   |   |   |-- ToolbarPanel.tsx
 |   |   |   |-- ToolbarSeparator.tsx
 |   |   |   \-- ToolButton.tsx
+|   |   |-- EraserControls.tsx
 |   |   |-- FloatingToolbar.tsx
 |   |   |-- LaserControls.tsx
 |   |   |-- PageNavigator.tsx

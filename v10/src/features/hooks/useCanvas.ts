@@ -114,9 +114,6 @@ const createStrokeId = () => {
 const isStrokeItem = (item: CanvasItem): item is StrokeItem =>
   item.type === "stroke";
 
-const ERASER_WIDTH = 40;
-const ERASER_RADIUS = ERASER_WIDTH / 2;
-
 const distanceToSegment = (point: Point, a: Point, b: Point) => {
   const dx = b.x - a.x;
   const dy = b.y - a.y;
@@ -202,6 +199,7 @@ export function useCanvas() {
     laserType,
     laserColor,
     laserWidth,
+    eraserWidth,
     overviewViewportRatio,
     isViewportInteracting,
     releaseGestureLock,
@@ -227,6 +225,7 @@ export function useCanvas() {
   const laserTrailMaxLifeMs = perfProfile.laserTrailMaxLifeMs;
   const laserShadowMultiplier = perfProfile.laserShadowMultiplier;
   const maxCoalescedEvents = perfProfile.maxCoalescedEvents;
+  const eraserRadius = eraserWidth / 2;
 
   const canPublishSyncedLaser = trustedRoleClaim === "host";
 
@@ -517,7 +516,7 @@ export function useCanvas() {
 
       strokes.forEach((stroke) => {
         if (erased.has(stroke.id)) return;
-        if (strokeIntersectsSegment(stroke, from, to, ERASER_RADIUS)) {
+        if (strokeIntersectsSegment(stroke, from, to, eraserRadius)) {
           erased.add(stroke.id);
           deleteItem(stroke.id);
           didErase = true;
@@ -530,7 +529,7 @@ export function useCanvas() {
         renderAll(remaining);
       }
     },
-    [deleteItem, renderAll, strokes]
+    [deleteItem, eraserRadius, renderAll, strokes]
   );
 
   const clearLaserCanvas = useCallback(() => {

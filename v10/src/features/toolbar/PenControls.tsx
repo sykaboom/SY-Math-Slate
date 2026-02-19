@@ -10,15 +10,17 @@ import { cn } from "@core/utils";
 import { useUIStore, type PenType } from "@features/store/useUIStoreBridge";
 
 const colorPresets = [
-  { label: "Yellow", value: "#FFFF00", className: "bg-swatch-yellow" },
-  { label: "Green", value: "#39FF14", className: "bg-swatch-green" },
-  { label: "Cyan", value: "#00FFFF", className: "bg-swatch-cyan" },
-  { label: "Pink", value: "#FF10F0", className: "bg-swatch-pink" },
-  { label: "White", value: "#FFFFFF", className: "bg-toolbar-text" },
+  { label: "Graphite", value: "#1F2937" },
+  { label: "Blue", value: "#2563EB" },
+  { label: "Green", value: "#15803D" },
+  { label: "Orange", value: "#D97706" },
+  { label: "Red", value: "#DC2626" },
+  { label: "White", value: "#FFFFFF" },
 ];
 
 export function PenControls() {
   const { penColor, penWidth, penOpacity, penType } = useUIStore();
+  const normalizedPenColor = penColor.toLowerCase();
 
   const dispatchPenCommand = (commandId: string, payload: unknown) => {
     void dispatchCommand(commandId, payload, {
@@ -67,11 +69,11 @@ export function PenControls() {
               }
               className={cn(
                 "h-7 w-7 rounded-full border border-toolbar-border/10 transition",
-                preset.className,
-                penColor.toLowerCase() === preset.value.toLowerCase()
+                normalizedPenColor === preset.value.toLowerCase()
                   ? "ring-2 ring-toolbar-active-bg"
                   : "hover:scale-110"
               )}
+              style={{ backgroundColor: preset.value }}
               aria-label={preset.label}
             />
           ))}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useSyncExternalStore } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import type { ChangeEvent } from "react";
 
 import { Popover, PopoverTrigger } from "@ui/components/popover";
@@ -28,11 +28,15 @@ import {
   MoreHorizontal,
   PenLine,
   Redo2,
+  SlidersHorizontal,
   Type,
   Undo2,
+  Volume2,
+  VolumeX,
   Zap,
 } from "lucide-react";
 
+import { EraserControls } from "./EraserControls";
 import { LaserControls } from "./LaserControls";
 import { PenControls } from "./PenControls";
 import { ToolButton } from "./atoms/ToolButton";
@@ -70,6 +74,33 @@ type FloatingToolbarProps = {
   className?: string;
 };
 
+type ToolbarNoticeTone = "info" | "success" | "error";
+
+type ToolbarNotice = {
+  tone: ToolbarNoticeTone;
+  message: string;
+};
+
+type ToolbarMode = "draw" | "playback" | "canvas";
+
+const TOOLBAR_MODES: ReadonlyArray<{
+  id: ToolbarMode;
+  label: string;
+}> = [
+  { id: "draw", label: "Draw" },
+  { id: "playback", label: "Playback" },
+  { id: "canvas", label: "Canvas" },
+];
+
+const TOOLBAR_DOCK_OPTIONS: ReadonlyArray<{
+  value: "left" | "center" | "right";
+  label: string;
+}> = [
+  { value: "left", label: "Left" },
+  { value: "center", label: "Center" },
+  { value: "right", label: "Right" },
+];
+
 export function FloatingToolbar(props: FloatingToolbarProps = {}) {
   const { mountMode = "legacy-shell", className } = props;
   const isCompactViewport = useSyncExternalStore(
@@ -83,8 +114,12 @@ export function FloatingToolbar(props: FloatingToolbarProps = {}) {
   const { insertImageFile } = useImageInsert();
   const { saveNow, clearLocal, saveStatus } = usePersistence();
   const { enableSound, disableSound, isSoundEnabled } = useSFX();
+  const [toolbarNotice, setToolbarNotice] = useState<ToolbarNotice | null>(null);
+  const [isResetConfirmArmed, setIsResetConfirmArmed] = useState(false);
+  const [toolbarMode, setToolbarMode] = useState<ToolbarMode>("draw");
   const {
     activeTool,
+    penColor,
     openPanel,
     openPasteHelper,
     togglePanel,
@@ -98,6 +133,7 @@ export function FloatingToolbar(props: FloatingToolbarProps = {}) {
     toggleDataInput,
     closeDataInput,
     fullscreenInkMode,
+    toolbarDockPosition,
     enterFullscreenInkNative,
     enterFullscreenInkFallback,
     exitFullscreenInk,
@@ -120,7 +156,11 @@ export function FloatingToolbar(props: FloatingToolbarProps = {}) {
   } = useCanvasStore();
 
   const isPenOpen = openPanel === "pen";
+  const isEraserOpen = openPanel === "eraser";
   const isLaserOpen = openPanel === "laser";
+  const isDrawMode = toolbarMode === "draw";
+  const isPlaybackMode = toolbarMode === "playback";
+  const isCanvasMode = toolbarMode === "canvas";
   const currentItems = pages[currentPageId] ?? [];
   const canUndo = currentItems.some((item) => item.type === "stroke");
   const canRedo = (strokeRedoByPage[currentPageId]?.length ?? 0) > 0;
@@ -157,29 +197,54 @@ export function FloatingToolbar(props: FloatingToolbarProps = {}) {
     "rounded-md border border-toolbar-border/10 bg-toolbar-menu-bg/20 px-2 py-1.5 text-left text-[11px] text-toolbar-text/70 hover:border-toolbar-border/30";
   const useDeclarativeCoreToolbar =
     process.env.NEXT_PUBLIC_CORE_TOOLBAR_CUTOVER !== "0";
+  const isLegacyCoreToolbarFallback = !useDeclarativeCoreToolbar;
+  const showLegacyDrawTools = isLegacyCoreToolbarFallback && isDrawMode;
+  const showLegacyPlaybackExtras = isLegacyCoreToolbarFallback && isPlaybackMode;
+  const showLegacyBreakActions = isLegacyCoreToolbarFallback && isDrawMode;
+  const normalizedPenColor = penColor;
   const dispatchToolbarCommand = (commandId: string, payload: unknown = {}) => {
     void dispatchCommand(commandId, payload, {
       meta: { source: "toolbar.floating-toolbar" },
     }).catch(() => undefined);
   };
+  const pushToolbarNotice = (tone: ToolbarNoticeTone, message: string) => {
+    setToolbarNotice({ tone, message });
+  };
 
   const handleTool = (tool: Tool) => () =>
     dispatchToolbarCommand("setTool", { tool });
 
-  const handlePenClick = () => {
-    if (activeTool === "pen") {
-      togglePanel("pen");
+  const handleToolPanelClick = (tool: Tool, panel: "pen" | "eraser" | "laser") => {
+    if (activeTool === tool) {
+      togglePanel(panel);
       return;
     }
-    dispatchToolbarCommand("setTool", { tool: "pen" });
+    dispatchToolbarCommand("setTool", { tool });
   };
 
-  const handleLaserClick = () => {
-    if (activeTool === "laser") {
-      togglePanel("laser");
-      return;
+  const ensureToolPanelOpen = (tool: Tool, panel: "pen" | "eraser" | "laser") => {
+    if (activeTool !== tool) {
+      dispatchToolbarCommand("setTool", { tool });
     }
-    dispatchToolbarCommand("setTool", { tool: "laser" });
+    if (openPanel !== panel) {
+      togglePanel(panel);
+    }
+  };
+
+  const handleToolPopoverOpenChange =
+    (panel: "pen" | "eraser" | "laser") => (open: boolean) => {
+      if (!open && openPanel === panel) {
+        togglePanel(panel);
+      }
+    };
+
+  const handlePenClick = () => handleToolPanelClick("pen", "pen");
+  const handlePenSettingsClick = () => ensureToolPanelOpen("pen", "pen");
+  const handleEraserClick = () => handleToolPanelClick("eraser", "eraser");
+  const handleLaserClick = () => handleToolPanelClick("laser", "laser");
+
+  const handleToolbarDockSelect = (position: "left" | "center" | "right") => {
+    dispatchToolbarCommand("setToolbarDock", { position });
   };
 
   const handleOpenClick = () => {
@@ -191,9 +256,9 @@ export function FloatingToolbar(props: FloatingToolbarProps = {}) {
     if (!file) return;
     const result = await importSlate(file);
     if (result.ok) {
-      window.alert("불러오기 완료");
+      pushToolbarNotice("success", "불러오기 완료");
     } else {
-      window.alert("파일을 불러오지 못했습니다.");
+      pushToolbarNotice("error", "파일을 불러오지 못했습니다.");
     }
     event.target.value = "";
   };
@@ -255,25 +320,39 @@ export function FloatingToolbar(props: FloatingToolbarProps = {}) {
   const handleSoundToggle = async () => {
     if (isSoundEnabled) {
       disableSound();
+      pushToolbarNotice("info", "사운드를 껐습니다.");
       return;
     }
     const ok = await enableSound();
     if (!ok) {
-      window.alert("소리 재생이 차단되었습니다. 화면을 한 번 눌러주세요.");
+      pushToolbarNotice(
+        "error",
+        "소리 재생이 차단되었습니다. 화면을 한 번 눌러주세요."
+      );
+      return;
     }
+    pushToolbarNotice("success", "사운드를 켰습니다.");
   };
 
   const handleResetLocal = () => {
-    const ok = window.confirm(
-      "로컬 데이터와 캐시를 초기화할까요? 되돌릴 수 없습니다."
-    );
-    if (!ok) return;
-    const result = clearLocal();
-    if (!result.ok) {
-      window.alert("로컬 초기화에 실패했습니다.");
+    if (!isResetConfirmArmed) {
+      setIsResetConfirmArmed(true);
+      pushToolbarNotice(
+        "info",
+        "한 번 더 누르면 로컬 데이터와 캐시를 초기화합니다."
+      );
       return;
     }
-    window.location.reload();
+    const result = clearLocal();
+    setIsResetConfirmArmed(false);
+    if (!result.ok) {
+      pushToolbarNotice("error", "로컬 초기화에 실패했습니다.");
+      return;
+    }
+    pushToolbarNotice("success", "로컬 데이터를 초기화했습니다. 화면을 갱신합니다.");
+    if (typeof window !== "undefined") {
+      window.setTimeout(() => window.location.reload(), 180);
+    }
   };
 
   const handleInsertBreak = (type: "line" | "column" | "page") => {
@@ -297,8 +376,80 @@ export function FloatingToolbar(props: FloatingToolbarProps = {}) {
       document.removeEventListener("fullscreenchange", handleFullscreenChange);
   }, [exitFullscreenInk, fullscreenInkMode]);
 
+  useEffect(() => {
+    if (!toolbarNotice || typeof window === "undefined") return;
+    const timeoutId = window.setTimeout(() => setToolbarNotice(null), 3200);
+    return () => window.clearTimeout(timeoutId);
+  }, [toolbarNotice]);
+
+  useEffect(() => {
+    if (!isResetConfirmArmed || typeof window === "undefined") return;
+    const timeoutId = window.setTimeout(() => setIsResetConfirmArmed(false), 5000);
+    return () => window.clearTimeout(timeoutId);
+  }, [isResetConfirmArmed]);
+
+  const toolbarModeSelector = (
+    <div className="flex items-center gap-1 rounded-full border border-toolbar-border/10 bg-toolbar-chip/5 p-1">
+      {TOOLBAR_MODES.map((mode) => {
+        const isActive = toolbarMode === mode.id;
+        return (
+          <button
+            key={mode.id}
+            type="button"
+            onClick={() => setToolbarMode(mode.id)}
+            className={cn(
+              "rounded-full px-2.5 py-1 text-[11px] transition",
+              isActive
+                ? "bg-toolbar-active-bg text-toolbar-active-text shadow-[var(--toolbar-active-shadow)]"
+                : "text-toolbar-text/70 hover:bg-toolbar-chip/15 hover:text-toolbar-text"
+            )}
+          >
+            {mode.label}
+          </button>
+        );
+      })}
+    </div>
+  );
+
+  const toolbarDockSelector = (
+    <div className="flex items-center gap-1 rounded-full border border-toolbar-border/10 bg-toolbar-chip/5 p-1">
+      {TOOLBAR_DOCK_OPTIONS.map((dockOption) => {
+        const isActive = toolbarDockPosition === dockOption.value;
+        return (
+          <button
+            key={dockOption.value}
+            type="button"
+            onClick={() => handleToolbarDockSelect(dockOption.value)}
+            className={cn(
+              "rounded-full px-2.5 py-1 text-[11px] transition",
+              isActive
+                ? "bg-toolbar-active-bg text-toolbar-active-text shadow-[var(--toolbar-active-shadow)]"
+                : "text-toolbar-text/70 hover:bg-toolbar-chip/15 hover:text-toolbar-text"
+            )}
+          >
+            {dockOption.label}
+          </button>
+        );
+      })}
+    </div>
+  );
+
   const morePanelContent = (
     <div className="grid gap-3 text-[11px] text-toolbar-text/70">
+      <div className="grid gap-2">
+        <span className="text-[10px] uppercase tracking-wide text-toolbar-muted/40">
+          Mode
+        </span>
+        <div className="flex items-center">{toolbarModeSelector}</div>
+      </div>
+
+      <div className="grid gap-2">
+        <span className="text-[10px] uppercase tracking-wide text-toolbar-muted/40">
+          Dock
+        </span>
+        <div className="flex items-center">{toolbarDockSelector}</div>
+      </div>
+
       <div className="grid gap-2">
         <span className="text-[10px] uppercase tracking-wide text-toolbar-muted/40">
           Profile
@@ -339,8 +490,10 @@ export function FloatingToolbar(props: FloatingToolbarProps = {}) {
             onClick={async () => {
               const result = await exportSlate();
               if (!result.ok) {
-                window.alert("파일 저장에 실패했습니다.");
+                pushToolbarNotice("error", "파일 저장에 실패했습니다.");
+                return;
               }
+              pushToolbarNotice("success", "파일 저장을 완료했습니다.");
             }}
           >
             파일 저장
@@ -348,10 +501,14 @@ export function FloatingToolbar(props: FloatingToolbarProps = {}) {
           {canAdvancedExport && (
             <button
               type="button"
-              className={cn(menuButtonClass, "col-span-2")}
-              onClick={() => window.alert("준비 중입니다.")}
+              className={cn(
+                menuButtonClass,
+                "col-span-2 cursor-not-allowed text-toolbar-muted/50"
+              )}
+              disabled
+              aria-disabled="true"
             >
-              Export
+              Export (준비 중)
             </button>
           )}
         </div>
@@ -368,14 +525,24 @@ export function FloatingToolbar(props: FloatingToolbarProps = {}) {
             onClick={() => {
               const result = saveNow();
               if (!result.ok) {
-                window.alert("저장하지 못했습니다.");
+                pushToolbarNotice("error", "로컬 저장에 실패했습니다.");
+                return;
               }
+              pushToolbarNotice("success", "로컬 저장을 완료했습니다.");
             }}
           >
             로컬 저장
           </button>
-          <button type="button" className={menuButtonClass} onClick={handleResetLocal}>
-            로컬 초기화
+          <button
+            type="button"
+            className={cn(
+              menuButtonClass,
+              isResetConfirmArmed &&
+                "border-toolbar-danger/60 bg-toolbar-danger/10 text-toolbar-danger"
+            )}
+            onClick={handleResetLocal}
+          >
+            {isResetConfirmArmed ? "초기화 확인" : "로컬 초기화"}
           </button>
           <button
             type="button"
@@ -573,6 +740,20 @@ export function FloatingToolbar(props: FloatingToolbarProps = {}) {
         </div>
       </div>
 
+      {isLegacyCoreToolbarFallback && (
+        <div className="grid gap-2">
+          <span className="text-[10px] uppercase tracking-wide text-toolbar-muted/40">
+            Fallback
+          </span>
+          <div className="rounded-2xl border border-toolbar-border/10 bg-toolbar-chip/5 p-2">
+            <PlaybackControls />
+          </div>
+          <div className="rounded-2xl border border-toolbar-border/10 bg-toolbar-chip/5 p-2">
+            <PageNavigator />
+          </div>
+        </div>
+      )}
+
       {saveStatus !== "idle" && (
         <div
           className={cn(
@@ -629,7 +810,7 @@ export function FloatingToolbar(props: FloatingToolbarProps = {}) {
         </div>
       </div>
 
-      {!useDeclarativeCoreToolbar && (
+      {isLegacyCoreToolbarFallback && (
         <div className="grid gap-3 text-[11px] text-toolbar-text/70">
           {/* Safety fallback while core template cutover is disabled. */}
           <div className="rounded-2xl border border-toolbar-border/10 bg-toolbar-chip/5 p-2">
@@ -677,6 +858,13 @@ export function FloatingToolbar(props: FloatingToolbarProps = {}) {
     </div>
   );
 
+  const toolbarNoticeClass =
+    toolbarNotice?.tone === "error"
+      ? "border-toolbar-danger/40 bg-toolbar-danger/10 text-toolbar-danger"
+      : toolbarNotice?.tone === "success"
+        ? "border-toolbar-border/30 bg-toolbar-chip/10 text-toolbar-text/80"
+        : "border-toolbar-border/20 bg-toolbar-chip/10 text-toolbar-text/70";
+
   return (
     <div
       data-panel-mount-mode={mountMode}
@@ -702,7 +890,223 @@ export function FloatingToolbar(props: FloatingToolbarProps = {}) {
           compact
           controls={
             <>
-              {!useDeclarativeCoreToolbar && (
+              <div className="shrink-0">{toolbarModeSelector}</div>
+
+              {isDrawMode && (
+                <>
+                  {showLegacyDrawTools && (
+                    <>
+                      {/* Safety fallback while core template cutover is disabled. */}
+                      <ToolButton
+                        icon={Hand}
+                        label="Hand"
+                        active={activeTool === "hand"}
+                        onClick={handleTool("hand")}
+                        className="h-11 w-11 shrink-0"
+                      />
+                      <Popover
+                        open={isPenOpen}
+                        onOpenChange={handleToolPopoverOpenChange("pen")}
+                      >
+                        <PopoverTrigger asChild>
+                          <ToolButton
+                            icon={PenLine}
+                            label="Pen"
+                            active={activeTool === "pen"}
+                            colorIndicator={normalizedPenColor}
+                            onClick={handlePenClick}
+                            className="h-11 w-11 shrink-0"
+                          />
+                        </PopoverTrigger>
+                        <ToolbarPanel side="top" align="center" sideOffset={14}>
+                          <PenControls />
+                        </ToolbarPanel>
+                      </Popover>
+                      <ToolButton
+                        icon={SlidersHorizontal}
+                        label="Pen Settings"
+                        active={isPenOpen}
+                        onClick={handlePenSettingsClick}
+                        className="h-11 w-11 shrink-0"
+                      />
+                    </>
+                  )}
+
+                  <Popover
+                    open={isEraserOpen}
+                    onOpenChange={handleToolPopoverOpenChange("eraser")}
+                  >
+                    <PopoverTrigger asChild>
+                      <ToolButton
+                        icon={Eraser}
+                        label="Eraser"
+                        active={activeTool === "eraser"}
+                        onClick={handleEraserClick}
+                        className="h-11 w-11 shrink-0"
+                      />
+                    </PopoverTrigger>
+                    <ToolbarPanel side="top" align="center" sideOffset={14}>
+                      <EraserControls />
+                    </ToolbarPanel>
+                  </Popover>
+
+                  {showLegacyDrawTools && (
+                    <Popover
+                      open={isLaserOpen}
+                      onOpenChange={handleToolPopoverOpenChange("laser")}
+                    >
+                      <PopoverTrigger asChild>
+                        <ToolButton
+                          icon={Zap}
+                          label="Laser"
+                          active={activeTool === "laser"}
+                          onClick={handleLaserClick}
+                          className="h-11 w-11 shrink-0"
+                        />
+                      </PopoverTrigger>
+                      <ToolbarPanel side="top" align="center" sideOffset={14}>
+                        <LaserControls />
+                      </ToolbarPanel>
+                    </Popover>
+                  )}
+
+                  <ToolButton
+                    icon={Type}
+                    label="Text"
+                    active={isDataInputOpen}
+                    onClick={toggleDataInput}
+                    disabled={isOverviewMode}
+                    className="h-11 w-11 shrink-0"
+                  />
+                  <ToolButton
+                    icon={ImageIcon}
+                    label="Image"
+                    onClick={handleImagePicker}
+                    disabled={isOverviewMode}
+                    className="h-11 w-11 shrink-0"
+                  />
+                  <ToolButton
+                    icon={ClipboardList}
+                    label="붙여넣기 도움말"
+                    onClick={handlePasteHelper}
+                    disabled={isOverviewMode}
+                    className="h-11 w-11 shrink-0"
+                  />
+
+                  {showLegacyBreakActions && (
+                    <>
+                      <ToolButton
+                        icon={CornerDownLeft}
+                        label="Line Break"
+                        onClick={() => handleInsertBreak("line")}
+                        disabled={isOverviewMode}
+                        className="h-11 w-11 shrink-0"
+                      />
+                      <ToolButton
+                        icon={Columns}
+                        label="Column Break"
+                        onClick={() => handleInsertBreak("column")}
+                        disabled={isOverviewMode}
+                        className="h-11 w-11 shrink-0"
+                      />
+                      <ToolButton
+                        icon={FilePlus}
+                        label="Page Break"
+                        onClick={() => handleInsertBreak("page")}
+                        disabled={isOverviewMode}
+                        className="h-11 w-11 shrink-0"
+                      />
+                    </>
+                  )}
+                </>
+              )}
+
+              {isPlaybackMode && (
+                <>
+                  <ToolButton
+                    icon={Undo2}
+                    label="Undo"
+                    onClick={() => dispatchToolbarCommand("undo")}
+                    disabled={!canUndo || isOverviewMode}
+                    className="h-11 w-11 shrink-0"
+                  />
+                  <ToolButton
+                    icon={Redo2}
+                    label="Redo"
+                    onClick={() => dispatchToolbarCommand("redo")}
+                    disabled={!canRedo || isOverviewMode}
+                    className="h-11 w-11 shrink-0"
+                  />
+                  <ToolButton
+                    icon={ChevronsLeft}
+                    label="Previous Step"
+                    onClick={() => dispatchToolbarCommand("prevStep")}
+                    disabled={!canStepPrev}
+                    className="h-11 w-11 shrink-0"
+                  />
+                  <ToolButton
+                    icon={ChevronsRight}
+                    label="Next Step"
+                    onClick={() => dispatchToolbarCommand("nextStep")}
+                    disabled={!canStepNext}
+                    className="h-11 w-11 shrink-0"
+                  />
+                  <ToolButton
+                    icon={isSoundEnabled ? Volume2 : VolumeX}
+                    label={isSoundEnabled ? "Sound On" : "Sound Off"}
+                    active={isSoundEnabled}
+                    onClick={() => {
+                      void handleSoundToggle();
+                    }}
+                    className="h-11 w-11 shrink-0"
+                  />
+                </>
+              )}
+
+              {isCanvasMode && (
+                <>
+                  <ToolButton
+                    icon={isFullscreenInkActive ? Minimize2 : Maximize2}
+                    label={isFullscreenInkActive ? "필기 전체화면 종료" : "필기 전체화면"}
+                    active={isFullscreenInkActive}
+                    onClick={() => {
+                      if (isFullscreenInkActive) {
+                        void handleExitFullscreenInk();
+                        return;
+                      }
+                      void handleEnterFullscreenInk();
+                    }}
+                    className="h-11 w-11 shrink-0"
+                    data-layout-id={
+                      isFullscreenInkActive
+                        ? "action_exit_fullscreen_ink_toolbar"
+                        : "action_enter_fullscreen_ink_toolbar"
+                    }
+                  />
+                  <ToolButton
+                    icon={isSoundEnabled ? Volume2 : VolumeX}
+                    label={isSoundEnabled ? "Sound On" : "Sound Off"}
+                    active={isSoundEnabled}
+                    onClick={() => {
+                      void handleSoundToggle();
+                    }}
+                    className="h-11 w-11 shrink-0"
+                  />
+                  <div className="shrink-0">{toolbarDockSelector}</div>
+                </>
+              )}
+            </>
+          }
+          expandedPanel={compactExpandedPanel}
+          panelClassName="p-3"
+        />
+      ) : (
+        <div className="flex flex-nowrap items-center gap-2 rounded-3xl border border-toolbar-border/10 bg-toolbar-surface/90 px-4 py-3 shadow-[var(--toolbar-shell-shadow)] backdrop-blur-md">
+          <div className="shrink-0">{toolbarModeSelector}</div>
+
+          {isDrawMode && (
+            <>
+              {showLegacyDrawTools && (
                 <>
                   {/* Safety fallback while core template cutover is disabled. */}
                   <ToolButton
@@ -710,38 +1114,54 @@ export function FloatingToolbar(props: FloatingToolbarProps = {}) {
                     label="Hand"
                     active={activeTool === "hand"}
                     onClick={handleTool("hand")}
-                    className="h-11 w-11 shrink-0"
                   />
                   <Popover
                     open={isPenOpen}
-                    onOpenChange={(open) => !open && isPenOpen && togglePanel("pen")}
+                    onOpenChange={handleToolPopoverOpenChange("pen")}
                   >
                     <PopoverTrigger asChild>
                       <ToolButton
                         icon={PenLine}
                         label="Pen"
                         active={activeTool === "pen"}
+                        colorIndicator={normalizedPenColor}
                         onClick={handlePenClick}
-                        className="h-11 w-11 shrink-0"
                       />
                     </PopoverTrigger>
-                    <ToolbarPanel side="top" align="center" sideOffset={14}>
+                    <ToolbarPanel side="top" align="center" sideOffset={18}>
                       <PenControls />
                     </ToolbarPanel>
                   </Popover>
+                  <ToolButton
+                    icon={SlidersHorizontal}
+                    label="Pen Settings"
+                    active={isPenOpen}
+                    onClick={handlePenSettingsClick}
+                  />
                 </>
               )}
-              <ToolButton
-                icon={Eraser}
-                label="Eraser"
-                active={activeTool === "eraser"}
-                onClick={handleTool("eraser")}
-                className="h-11 w-11 shrink-0"
-              />
-              {!useDeclarativeCoreToolbar && (
+
+              <Popover
+                open={isEraserOpen}
+                onOpenChange={handleToolPopoverOpenChange("eraser")}
+              >
+                <PopoverTrigger asChild>
+                  <ToolButton
+                    icon={Eraser}
+                    label="Eraser"
+                    active={activeTool === "eraser"}
+                    onClick={handleEraserClick}
+                  />
+                </PopoverTrigger>
+                <ToolbarPanel side="top" align="center" sideOffset={18}>
+                  <EraserControls />
+                </ToolbarPanel>
+              </Popover>
+
+              {showLegacyDrawTools && (
                 <Popover
                   open={isLaserOpen}
-                  onOpenChange={(open) => !open && isLaserOpen && togglePanel("laser")}
+                  onOpenChange={handleToolPopoverOpenChange("laser")}
                 >
                   <PopoverTrigger asChild>
                     <ToolButton
@@ -749,149 +1169,147 @@ export function FloatingToolbar(props: FloatingToolbarProps = {}) {
                       label="Laser"
                       active={activeTool === "laser"}
                       onClick={handleLaserClick}
-                      className="h-11 w-11 shrink-0"
                     />
                   </PopoverTrigger>
-                  <ToolbarPanel side="top" align="center" sideOffset={14}>
+                  <ToolbarPanel side="top" align="center" sideOffset={18}>
                     <LaserControls />
                   </ToolbarPanel>
                 </Popover>
               )}
+
               <ToolButton
                 icon={Type}
                 label="Text"
                 active={isDataInputOpen}
                 onClick={toggleDataInput}
                 disabled={isOverviewMode}
-                className="h-11 w-11 shrink-0"
               />
-            </>
-          }
-          expandedPanel={compactExpandedPanel}
-          panelClassName="p-3"
-        />
-      ) : (
-        <div className="flex flex-nowrap items-center gap-2 overflow-hidden rounded-3xl border border-toolbar-border/10 bg-toolbar-surface/90 px-4 py-3 shadow-[var(--toolbar-shell-shadow)] backdrop-blur-md">
-          {!useDeclarativeCoreToolbar && (
-            <>
-              {/* Safety fallback while core template cutover is disabled. */}
               <ToolButton
-                icon={Hand}
-                label="Hand"
-                active={activeTool === "hand"}
-                onClick={handleTool("hand")}
+                icon={ImageIcon}
+                label="Image"
+                onClick={handleImagePicker}
+                disabled={isOverviewMode}
               />
-              <Popover
-                open={isPenOpen}
-                onOpenChange={(open) => !open && isPenOpen && togglePanel("pen")}
-              >
-                <PopoverTrigger asChild>
+              <ToolButton
+                icon={ClipboardList}
+                label="붙여넣기 도움말"
+                onClick={handlePasteHelper}
+                disabled={isOverviewMode}
+              />
+
+              {showLegacyBreakActions && (
+                <div className="flex items-center gap-1 rounded-full border border-toolbar-border/10 bg-toolbar-chip/5 px-2 py-1 text-[11px] text-toolbar-text/70">
                   <ToolButton
-                    icon={PenLine}
-                    label="Pen"
-                    active={activeTool === "pen"}
-                    onClick={handlePenClick}
+                    icon={CornerDownLeft}
+                    label="Line Break"
+                    onClick={() => handleInsertBreak("line")}
+                    disabled={isOverviewMode}
+                    className="h-8 w-8"
                   />
-                </PopoverTrigger>
-                <ToolbarPanel side="top" align="center" sideOffset={18}>
-                  <PenControls />
-                </ToolbarPanel>
-              </Popover>
+                  <ToolButton
+                    icon={Columns}
+                    label="Column Break"
+                    onClick={() => handleInsertBreak("column")}
+                    disabled={isOverviewMode}
+                    className="h-8 w-8"
+                  />
+                  <ToolButton
+                    icon={FilePlus}
+                    label="Page Break"
+                    onClick={() => handleInsertBreak("page")}
+                    disabled={isOverviewMode}
+                    className="h-8 w-8"
+                  />
+                </div>
+              )}
             </>
           )}
 
-          <ToolButton
-            icon={Eraser}
-            label="Eraser"
-            active={activeTool === "eraser"}
-            onClick={handleTool("eraser")}
-          />
-
-          {!useDeclarativeCoreToolbar && (
-            <Popover
-              open={isLaserOpen}
-              onOpenChange={(open) => !open && isLaserOpen && togglePanel("laser")}
-            >
-              <PopoverTrigger asChild>
+          {isPlaybackMode && (
+            <>
+              <div className="flex items-center gap-1 rounded-full border border-toolbar-border/10 bg-toolbar-chip/5 px-2 py-1 text-[11px] text-toolbar-text/70">
                 <ToolButton
-                  icon={Zap}
-                  label="Laser"
-                  active={activeTool === "laser"}
-                  onClick={handleLaserClick}
+                  icon={ChevronsLeft}
+                  label="Previous Step"
+                  onClick={() => dispatchToolbarCommand("prevStep")}
+                  disabled={!canStepPrev}
+                  className="h-8 w-8"
                 />
-              </PopoverTrigger>
-              <ToolbarPanel side="top" align="center" sideOffset={18}>
-                <LaserControls />
-              </ToolbarPanel>
-            </Popover>
+                <span className="min-w-[44px] text-center">
+                  {displayStep}/{totalSteps}
+                </span>
+                <ToolButton
+                  icon={ChevronsRight}
+                  label="Next Step"
+                  onClick={() => dispatchToolbarCommand("nextStep")}
+                  disabled={!canStepNext}
+                  className="h-8 w-8"
+                />
+              </div>
+              <div className="flex items-center gap-1 rounded-full border border-toolbar-border/10 bg-toolbar-chip/5 px-2 py-1">
+                <ToolButton
+                  icon={Undo2}
+                  label="Undo"
+                  onClick={() => dispatchToolbarCommand("undo")}
+                  disabled={!canUndo || isOverviewMode}
+                  className="h-8 w-8"
+                />
+                <ToolButton
+                  icon={Redo2}
+                  label="Redo"
+                  onClick={() => dispatchToolbarCommand("redo")}
+                  disabled={!canRedo || isOverviewMode}
+                  className="h-8 w-8"
+                />
+              </div>
+              {showLegacyPlaybackExtras && <PlaybackControls />}
+              {showLegacyPlaybackExtras && <PageNavigator />}
+              <ToolButton
+                icon={isSoundEnabled ? Volume2 : VolumeX}
+                label={isSoundEnabled ? "Sound On" : "Sound Off"}
+                active={isSoundEnabled}
+                onClick={() => {
+                  void handleSoundToggle();
+                }}
+              />
+            </>
           )}
 
-          <ToolButton
-            icon={Type}
-            label="Text"
-            active={isDataInputOpen}
-            onClick={toggleDataInput}
-            disabled={isOverviewMode}
-          />
-          <ToolButton
-            icon={ImageIcon}
-            label="Image"
-            onClick={handleImagePicker}
-            disabled={isOverviewMode}
-          />
-          <ToolButton
-            icon={ClipboardList}
-            label="붙여넣기 도움말"
-            onClick={handlePasteHelper}
-            disabled={isOverviewMode}
-          />
-          <ToolButton
-            icon={isFullscreenInkActive ? Minimize2 : Maximize2}
-            label={isFullscreenInkActive ? "필기 전체화면 종료" : "필기 전체화면"}
-            active={isFullscreenInkActive}
-            onClick={() => {
-              if (isFullscreenInkActive) {
-                void handleExitFullscreenInk();
-                return;
-              }
-              void handleEnterFullscreenInk();
-            }}
-            data-layout-id={
-              isFullscreenInkActive
-                ? "action_exit_fullscreen_ink_toolbar"
-                : "action_enter_fullscreen_ink_toolbar"
-            }
-          />
-          {!useDeclarativeCoreToolbar && <PlaybackControls />}
-          {!useDeclarativeCoreToolbar && <PageNavigator />}
+          {isCanvasMode && (
+            <>
+              <ToolButton
+                icon={isFullscreenInkActive ? Minimize2 : Maximize2}
+                label={isFullscreenInkActive ? "필기 전체화면 종료" : "필기 전체화면"}
+                active={isFullscreenInkActive}
+                onClick={() => {
+                  if (isFullscreenInkActive) {
+                    void handleExitFullscreenInk();
+                    return;
+                  }
+                  void handleEnterFullscreenInk();
+                }}
+                data-layout-id={
+                  isFullscreenInkActive
+                    ? "action_exit_fullscreen_ink_toolbar"
+                    : "action_enter_fullscreen_ink_toolbar"
+                }
+              />
+              <ToolButton
+                icon={isSoundEnabled ? Volume2 : VolumeX}
+                label={isSoundEnabled ? "Sound On" : "Sound Off"}
+                active={isSoundEnabled}
+                onClick={() => {
+                  void handleSoundToggle();
+                }}
+              />
+              <div className="flex items-center">{toolbarDockSelector}</div>
+            </>
+          )}
+
           <div data-extension-slot-host="toolbar-inline" className="flex items-center">
             <ExtensionSlot slot="toolbar-inline" />
           </div>
-          {!useDeclarativeCoreToolbar && (
-            <div className="flex items-center gap-1 rounded-full border border-toolbar-border/10 bg-toolbar-chip/5 px-2 py-1 text-[11px] text-toolbar-text/70">
-              <ToolButton
-                icon={CornerDownLeft}
-                label="Line Break"
-                onClick={() => handleInsertBreak("line")}
-                disabled={isOverviewMode}
-                className="h-8 w-8"
-              />
-              <ToolButton
-                icon={Columns}
-                label="Column Break"
-                onClick={() => handleInsertBreak("column")}
-                disabled={isOverviewMode}
-                className="h-8 w-8"
-              />
-              <ToolButton
-                icon={FilePlus}
-                label="Page Break"
-                onClick={() => handleInsertBreak("page")}
-                disabled={isOverviewMode}
-                className="h-8 w-8"
-              />
-            </div>
-          )}
+
           <Popover>
             <PopoverTrigger asChild>
               <ToolButton icon={MoreHorizontal} label="More" />
@@ -900,6 +1318,25 @@ export function FloatingToolbar(props: FloatingToolbarProps = {}) {
               {morePanelContent}
             </ToolbarPanel>
           </Popover>
+        </div>
+      )}
+
+      {isFullscreenInkActive && (
+        <div className="mt-2 rounded-xl border border-toolbar-border/20 bg-toolbar-surface/70 px-3 py-1.5 text-[11px] text-toolbar-text/70">
+          전체화면 종료: Esc 키 또는 전체화면 버튼을 다시 누르세요.
+        </div>
+      )}
+
+      {toolbarNotice && (
+        <div
+          role="status"
+          aria-live="polite"
+          className={cn(
+            "mt-2 rounded-xl border px-3 py-1.5 text-[11px]",
+            toolbarNoticeClass
+          )}
+        >
+          {toolbarNotice.message}
         </div>
       )}
     </div>

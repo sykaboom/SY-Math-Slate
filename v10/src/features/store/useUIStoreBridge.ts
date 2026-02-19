@@ -4,13 +4,18 @@ import type { CapabilityKey, CapabilityProfileName } from "@core/config/capabili
 import type { AlignmentGuide } from "@features/hooks/useSnap";
 
 import { useCapabilityStore } from "./useCapabilityStore";
-import { useChromeStore, type FullscreenInkMode, type PanelId } from "./useChromeStore";
+import {
+  useChromeStore,
+  type FullscreenInkMode,
+  type PanelId,
+  type ToolbarDockPosition,
+} from "./useChromeStore";
 import { usePlaybackStore } from "./usePlaybackStore";
 import { useToolStore, type LaserType, type PenType, type Tool } from "./useToolStore";
 import { useViewportStore, type ViewMode, type ViewportState } from "./useViewportStore";
 
 export type { Tool, LaserType, PenType } from "./useToolStore";
-export type { FullscreenInkMode, PanelId } from "./useChromeStore";
+export type { FullscreenInkMode, PanelId, ToolbarDockPosition } from "./useChromeStore";
 export type { ViewMode, ViewportState } from "./useViewportStore";
 
 export interface UIState {
@@ -22,6 +27,7 @@ export interface UIState {
   laserType: LaserType;
   laserColor: string;
   laserWidth: number;
+  eraserWidth: number;
   isPanelOpen: boolean;
   openPanel: PanelId;
   isPasteHelperOpen: boolean;
@@ -46,6 +52,7 @@ export interface UIState {
   isSoundEnabled: boolean;
   isDataInputOpen: boolean;
   fullscreenInkMode: FullscreenInkMode;
+  toolbarDockPosition: ToolbarDockPosition;
   showCursors: boolean;
   showBreakGuides: boolean;
   showCanvasBorder: boolean;
@@ -57,6 +64,7 @@ export interface UIState {
   setLaserType: (type: LaserType) => void;
   setLaserColor: (color: string) => void;
   setLaserWidth: (width: number) => void;
+  setEraserWidth: (width: number) => void;
   togglePanel: (panel: Exclude<PanelId, null>) => void;
   openPasteHelper: () => void;
   closePasteHelper: () => void;
@@ -91,6 +99,7 @@ export interface UIState {
   closeDataInput: () => void;
   toggleDataInput: () => void;
   setFullscreenInkMode: (mode: FullscreenInkMode) => void;
+  setToolbarDockPosition: (position: ToolbarDockPosition) => void;
   enterFullscreenInkNative: () => void;
   enterFullscreenInkFallback: () => void;
   exitFullscreenInk: () => void;
@@ -110,6 +119,7 @@ const getToolSliceState = () => {
     laserType: state.laserType,
     laserColor: state.laserColor,
     laserWidth: state.laserWidth,
+    eraserWidth: state.eraserWidth,
   };
 };
 
@@ -151,6 +161,7 @@ const getChromeSliceState = () => {
     isPasteHelperOpen: state.isPasteHelperOpen,
     isDataInputOpen: state.isDataInputOpen,
     fullscreenInkMode: state.fullscreenInkMode,
+    toolbarDockPosition: state.toolbarDockPosition,
     showCursors: state.showCursors,
     showBreakGuides: state.showBreakGuides,
     showCanvasBorder: state.showCanvasBorder,
@@ -178,6 +189,7 @@ export const useUIStoreBridge = create<UIState>(() => ({
   setLaserType: (type) => useToolStore.getState().setLaserType(type),
   setLaserColor: (color) => useToolStore.getState().setLaserColor(color),
   setLaserWidth: (width) => useToolStore.getState().setLaserWidth(width),
+  setEraserWidth: (width) => useToolStore.getState().setEraserWidth(width),
   togglePanel: (panel) => useChromeStore.getState().togglePanel(panel),
   openPasteHelper: () => useChromeStore.getState().openPasteHelper(),
   closePasteHelper: () => useChromeStore.getState().closePasteHelper(),
@@ -219,6 +231,8 @@ export const useUIStoreBridge = create<UIState>(() => ({
   closeDataInput: () => useChromeStore.getState().closeDataInput(),
   toggleDataInput: () => useChromeStore.getState().toggleDataInput(),
   setFullscreenInkMode: (mode) => useChromeStore.getState().setFullscreenInkMode(mode),
+  setToolbarDockPosition: (position) =>
+    useChromeStore.getState().setToolbarDockPosition(position),
   enterFullscreenInkNative: () => useChromeStore.getState().enterFullscreenInkNative(),
   enterFullscreenInkFallback: () =>
     useChromeStore.getState().enterFullscreenInkFallback(),

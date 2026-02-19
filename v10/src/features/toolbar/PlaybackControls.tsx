@@ -115,7 +115,7 @@ export function PlaybackControls() {
       <div className="flex items-center gap-1 rounded-full border border-toolbar-border/10 bg-toolbar-chip/5 px-2 py-1">
         <ToolButton
           icon={ChevronLeft}
-          label="Previous Step"
+          label="Previous Playback Step"
           onClick={() => dispatchPlaybackCommand("prevStep")}
           disabled={!canStepPrev}
           className="h-7 w-7"
@@ -127,7 +127,7 @@ export function PlaybackControls() {
               className="whitespace-nowrap rounded-full px-2 py-1 text-[11px] text-toolbar-text/70 hover:text-toolbar-text disabled:text-toolbar-muted/40"
               disabled={!canStepJump}
             >
-              Step {displayStep}/{totalSteps}
+              Playback Step {displayStep}/{totalSteps}
             </button>
           </PopoverTrigger>
           {canStepJump && (
@@ -149,7 +149,7 @@ export function PlaybackControls() {
         </Popover>
         <ToolButton
           icon={ChevronRight}
-          label="Next Step"
+          label="Next Playback Step"
           onClick={() => dispatchPlaybackCommand("nextStep")}
           disabled={!canStepNext}
           className="h-7 w-7"

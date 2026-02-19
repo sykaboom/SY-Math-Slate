@@ -9,8 +9,9 @@ import type {
   WindowRuntimePersistedState,
 } from "@features/layout/windowing/windowRuntime.types";
 
-export type PanelId = "pen" | "laser" | null;
+export type PanelId = "pen" | "eraser" | "laser" | null;
 export type FullscreenInkMode = "off" | "native" | "app";
+export type ToolbarDockPosition = "left" | "center" | "right";
 export type WindowRuntimePanelOpenState = Record<string, boolean>;
 
 const DATA_INPUT_PANEL_ID = CORE_PANEL_POLICY_IDS.DATA_INPUT;
@@ -27,6 +28,7 @@ interface ChromeStoreState {
   isPasteHelperOpen: boolean;
   isDataInputOpen: boolean;
   fullscreenInkMode: FullscreenInkMode;
+  toolbarDockPosition: ToolbarDockPosition;
   showCursors: boolean;
   showBreakGuides: boolean;
   showCanvasBorder: boolean;
@@ -41,6 +43,7 @@ interface ChromeStoreState {
   closeDataInput: () => void;
   toggleDataInput: () => void;
   setFullscreenInkMode: (mode: FullscreenInkMode) => void;
+  setToolbarDockPosition: (position: ToolbarDockPosition) => void;
   enterFullscreenInkNative: () => void;
   enterFullscreenInkFallback: () => void;
   exitFullscreenInk: () => void;
@@ -239,6 +242,7 @@ export const useChromeStore = create<ChromeStoreState>((set, get) => ({
   isPasteHelperOpen: false,
   isDataInputOpen: false,
   fullscreenInkMode: "off",
+  toolbarDockPosition: "center",
   showCursors: false,
   showBreakGuides: true,
   showCanvasBorder: true,
@@ -290,6 +294,13 @@ export const useChromeStore = create<ChromeStoreState>((set, get) => ({
       };
     }),
   setFullscreenInkMode: (mode) => set(() => ({ fullscreenInkMode: mode })),
+  setToolbarDockPosition: (position) =>
+    set((state) => {
+      if (state.toolbarDockPosition === position) {
+        return state;
+      }
+      return { toolbarDockPosition: position };
+    }),
   enterFullscreenInkNative: () => set(() => ({ fullscreenInkMode: "native" })),
   enterFullscreenInkFallback: () => set(() => ({ fullscreenInkMode: "app" })),
   exitFullscreenInk: () => set(() => ({ fullscreenInkMode: "off" })),

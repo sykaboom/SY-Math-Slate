@@ -16,6 +16,7 @@ const laserColors = [
 
 export function LaserControls() {
   const { laserType, laserColor } = useUIStore();
+  const normalizedLaserColor = laserColor.toLowerCase();
 
   const dispatchLaserCommand = (commandId: string, payload: unknown) => {
     void dispatchCommand(commandId, payload, {
@@ -62,13 +63,27 @@ export function LaserControls() {
               className={cn(
                 "h-7 w-7 rounded-full border border-toolbar-border/10 transition",
                 color.className,
-                laserColor === color.value
+                normalizedLaserColor === color.value.toLowerCase()
                   ? "ring-2 ring-toolbar-active-bg"
                   : "hover:scale-110"
               )}
               aria-label={color.label}
             />
           ))}
+          <label className="relative flex h-7 w-7 items-center justify-center rounded-full border border-toolbar-border/10 bg-toolbar-chip/5 text-toolbar-text/70 transition hover:scale-110">
+            <input
+              type="color"
+              value={laserColor}
+              onChange={(event) =>
+                dispatchLaserCommand("setLaserColor", {
+                  color: event.target.value,
+                })
+              }
+              className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+              aria-label="Custom color"
+            />
+            <span className="text-[10px] font-semibold">+</span>
+          </label>
         </div>
       </div>
     </div>

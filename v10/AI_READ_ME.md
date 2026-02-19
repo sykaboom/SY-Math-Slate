@@ -52,6 +52,7 @@ Feature subsystems:
 - `features/extensions`: command registrations and UI slot runtime.
 - `features/layout`: app shell/window host.
 - `features/canvas`: board/cursor/render layers.
+- `features/toolbar`: mode-split floating toolbar, pen/laser/eraser controls, dock selector UI.
 - `features/sharing`: snapshot share adapters, host live session panel/store wiring, live transport, policy/proposal flow, AI approval queue hook.
 - `features/viewer`: public viewer shell/session/live sync hooks.
 - `features/input-studio`: structured input + LLM draft flows.
@@ -65,6 +66,7 @@ Authority-layer stores:
 - `useDocStore`: persisted document authority
 - `useSyncStore`: shared session/sync authority
 - `useLocalStore`: local role authority (`role`, `trustedRoleClaim`)
+- `useChromeStore`: chrome/panel authority including `toolbarDockPosition`
 
 Compatibility / legacy:
 - `useUIStoreBridge`: transitional bridge

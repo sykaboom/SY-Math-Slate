@@ -80,6 +80,7 @@ export function AppLayout({ children }: AppLayoutProps) {
     closeDataInput,
     isDataInputOpen,
     fullscreenInkMode,
+    toolbarDockPosition,
     enterFullscreenInkNative,
     enterFullscreenInkFallback,
     exitFullscreenInk,
@@ -155,6 +156,12 @@ export function AppLayout({ children }: AppLayoutProps) {
   const presentationFooterClass = useCompactHorizontalInsets
     ? "relative flex items-center justify-center px-2 pb-2 sm:px-3 sm:pb-3 xl:px-6 xl:pb-6"
     : "relative flex items-center justify-center px-3 pb-3 sm:px-4 sm:pb-4 xl:px-6 xl:pb-6";
+  const toolbarDockAlignmentClass =
+    toolbarDockPosition === "left"
+      ? "items-start"
+      : toolbarDockPosition === "right"
+        ? "items-end"
+        : "items-center";
   const legacyRoleVisibility: LayoutRoleVisibilityPolicy =
     resolveLegacyLayoutVisibilityForRole(role);
 
@@ -677,8 +684,8 @@ export function AppLayout({ children }: AppLayoutProps) {
                 data-layout-id="region_toolchips"
                 className={
                   isFullscreenInkActive
-                    ? "pointer-events-auto flex w-full max-w-[min(980px,96vw)] flex-col gap-2"
-                    : "pointer-events-auto flex w-full max-w-[min(1120px,96vw)] flex-col gap-2 xl:max-w-[min(1120px,94vw)]"
+                    ? `pointer-events-auto flex w-full max-w-[min(980px,96vw)] flex-col gap-2 ${toolbarDockAlignmentClass}`
+                    : `pointer-events-auto flex w-full max-w-[min(1120px,96vw)] flex-col gap-2 ${toolbarDockAlignmentClass} xl:max-w-[min(1120px,94vw)]`
                 }
               >
                 <div data-extension-slot-host="toolbar-bottom" className="flex flex-col gap-2">

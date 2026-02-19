@@ -17,10 +17,12 @@ export const COMMAND_MIGRATION_MAP: Record<
   "doc-core": ["insertBlock", "updateBlock", "deleteBlock"],
   tooling: [
     "setTool",
+    "setToolbarDock",
     "setPenType",
     "setPenColor",
     "setPenWidth",
     "setPenOpacity",
+    "setEraserWidth",
     "setLaserType",
     "setLaserColor",
     "setLaserWidth",

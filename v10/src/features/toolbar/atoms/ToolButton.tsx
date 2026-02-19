@@ -13,12 +13,14 @@ type ToolButtonProps = {
   icon: LucideIcon;
   label: string;
   active?: boolean;
+  colorIndicator?: string;
 } & Omit<HTMLMotionProps<"button">, "children">;
 
 export function ToolButton({
   icon: Icon,
   label,
   active,
+  colorIndicator,
   className,
   ...props
 }: ToolButtonProps) {
@@ -33,7 +35,7 @@ export function ToolButton({
       whileTap={{ scale: 0.9 }}
       className={cn(
         buttonVariants({ variant: "ghost", size: "icon" }),
-        "h-11 w-11 bg-toolbar-chip/5 text-toolbar-text/70 hover:bg-toolbar-chip/5 hover:text-toolbar-text disabled:text-toolbar-muted/60",
+        "relative h-11 w-11 bg-toolbar-chip/5 text-toolbar-text/70 hover:bg-toolbar-chip/5 hover:text-toolbar-text disabled:text-toolbar-muted/60",
         active && activeButtonClass,
         className
       )}
@@ -41,6 +43,13 @@ export function ToolButton({
       {...props}
     >
       <Icon className="h-4 w-4" />
+      {colorIndicator ? (
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute right-1.5 top-1.5 h-2.5 w-2.5 rounded-full border border-black/20"
+          style={{ backgroundColor: colorIndicator }}
+        />
+      ) : null}
     </motion.button>
   );
 }

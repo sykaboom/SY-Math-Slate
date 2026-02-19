@@ -45,7 +45,12 @@ export function ThumbZoneDock({
         className
       )}
     >
-      <div className={cn("flex min-w-0 items-center", compact ? "gap-1" : "gap-2")}>
+      <div
+        className={cn(
+          "flex min-w-0 flex-1 items-center overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
+          compact ? "gap-1" : "gap-2"
+        )}
+      >
         {controls}
       </div>
 
