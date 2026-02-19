@@ -202,10 +202,13 @@ export function FloatingToolbar(props: FloatingToolbarProps = {}) {
   const menuButtonClass =
     "rounded-md border border-toolbar-border/10 bg-toolbar-menu-bg/20 px-2 py-1.5 text-left text-[11px] text-toolbar-text/70 hover:border-toolbar-border/30";
   const toolbarRenderPolicy = resolveToolbarRenderPolicy(toolbarMode);
-  const isLegacyCoreToolbarFallback = !toolbarRenderPolicy.cutoverEnabled;
   const showDrawCoreTools = toolbarRenderPolicy.showDrawCoreTools;
   const showPlaybackExtras = toolbarRenderPolicy.showPlaybackExtras;
   const showBreakActions = toolbarRenderPolicy.showBreakActions;
+  const showCompactImageClipboardActions = !isDrawMode;
+  const showCompactFullscreenAction = !isCanvasMode;
+  const showCompactQuickActions =
+    showCompactImageClipboardActions || showCompactFullscreenAction;
   const normalizedPenColor = penColor;
   const dispatchToolbarCommand = (
     commandId: string,
@@ -459,13 +462,6 @@ export function FloatingToolbar(props: FloatingToolbarProps = {}) {
     <div className="grid gap-3 text-[11px] text-toolbar-text/70">
       <div className="grid gap-2">
         <span className="text-[10px] uppercase tracking-wide text-toolbar-muted/40">
-          Mode
-        </span>
-        <div className="flex items-center">{toolbarModeSelector}</div>
-      </div>
-
-      <div className="grid gap-2">
-        <span className="text-[10px] uppercase tracking-wide text-toolbar-muted/40">
           Dock
         </span>
         <div className="flex items-center">{toolbarDockSelector}</div>
@@ -708,71 +704,61 @@ export function FloatingToolbar(props: FloatingToolbarProps = {}) {
         </div>
       )}
 
-      <div className="grid gap-2">
-        <span className="text-[10px] uppercase tracking-wide text-toolbar-muted/40">
-          Steps
-        </span>
-        <div className="flex items-center justify-between">
-          <span>스텝</span>
-          <div className="flex items-center gap-2">
-            <ToolButton
-              icon={ChevronsLeft}
-              label="Previous Step"
-              onClick={() => dispatchToolbarCommand("prevStep")}
-              disabled={!canStepPrev}
-              className="h-8 w-8"
-            />
-            <span>
-              {displayStep}/{totalSteps}
+      {!isPlaybackMode && (
+        <>
+          <div className="grid gap-2">
+            <span className="text-[10px] uppercase tracking-wide text-toolbar-muted/40">
+              Steps
             </span>
-            <ToolButton
-              icon={ChevronsRight}
-              label="Next Step"
-              onClick={() => dispatchToolbarCommand("nextStep")}
-              disabled={!canStepNext}
-              className="h-8 w-8"
-            />
+            <div className="flex items-center justify-between">
+              <span>스텝</span>
+              <div className="flex items-center gap-2">
+                <ToolButton
+                  icon={ChevronsLeft}
+                  label="Previous Step"
+                  onClick={() => dispatchToolbarCommand("prevStep")}
+                  disabled={!canStepPrev}
+                  className="h-8 w-8"
+                />
+                <span>
+                  {displayStep}/{totalSteps}
+                </span>
+                <ToolButton
+                  icon={ChevronsRight}
+                  label="Next Step"
+                  onClick={() => dispatchToolbarCommand("nextStep")}
+                  disabled={!canStepNext}
+                  className="h-8 w-8"
+                />
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
 
-      <div className="grid gap-2">
-        <span className="text-[10px] uppercase tracking-wide text-toolbar-muted/40">
-          History
-        </span>
-        <div className="flex items-center justify-between">
-          <span>되돌리기</span>
-          <div className="flex items-center gap-2">
-            <ToolButton
-              icon={Undo2}
-              label="Undo"
-              onClick={() => dispatchToolbarCommand("undo")}
-              disabled={!canUndo || isOverviewMode}
-              className="h-8 w-8"
-            />
-            <ToolButton
-              icon={Redo2}
-              label="Redo"
-              onClick={() => dispatchToolbarCommand("redo")}
-              disabled={!canRedo || isOverviewMode}
-              className="h-8 w-8"
-            />
+          <div className="grid gap-2">
+            <span className="text-[10px] uppercase tracking-wide text-toolbar-muted/40">
+              History
+            </span>
+            <div className="flex items-center justify-between">
+              <span>되돌리기</span>
+              <div className="flex items-center gap-2">
+                <ToolButton
+                  icon={Undo2}
+                  label="Undo"
+                  onClick={() => dispatchToolbarCommand("undo")}
+                  disabled={!canUndo || isOverviewMode}
+                  className="h-8 w-8"
+                />
+                <ToolButton
+                  icon={Redo2}
+                  label="Redo"
+                  onClick={() => dispatchToolbarCommand("redo")}
+                  disabled={!canRedo || isOverviewMode}
+                  className="h-8 w-8"
+                />
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
-
-      {isLegacyCoreToolbarFallback && (
-        <div className="grid gap-2">
-          <span className="text-[10px] uppercase tracking-wide text-toolbar-muted/40">
-            Fallback
-          </span>
-          <div className="rounded-2xl border border-toolbar-border/10 bg-toolbar-chip/5 p-2">
-            <PlaybackControls />
-          </div>
-          <div className="rounded-2xl border border-toolbar-border/10 bg-toolbar-chip/5 p-2">
-            <PageNavigator />
-          </div>
-        </div>
+        </>
       )}
 
       {saveStatus !== "idle" && (
@@ -794,82 +780,50 @@ export function FloatingToolbar(props: FloatingToolbarProps = {}) {
       <div className="sticky top-0 z-10 -mx-1 rounded-md border border-toolbar-border/10 bg-toolbar-surface/90 px-2 py-1 text-[10px] uppercase tracking-[0.14em] text-toolbar-muted/60 backdrop-blur">
         {COMPACT_TOOLBAR_SCROLL_HINT}
       </div>
-      <div className="grid gap-2 text-[11px] text-toolbar-text/70">
-        <span className="text-[10px] uppercase tracking-wide text-toolbar-muted/40">
-          Quick Actions
-        </span>
-        <div className="grid grid-cols-3 gap-2">
-          <ToolButton
-            icon={ImageIcon}
-            label="Image"
-            onClick={handleImagePicker}
-            disabled={isOverviewMode}
-            className="h-11 w-11 justify-self-center"
-          />
-          <ToolButton
-            icon={ClipboardList}
-            label="붙여넣기 도움말"
-            onClick={handlePasteHelper}
-            disabled={isOverviewMode}
-            className="h-11 w-11 justify-self-center"
-          />
-          <ToolButton
-            icon={isFullscreenInkActive ? Minimize2 : Maximize2}
-            label={isFullscreenInkActive ? "필기 전체화면 종료" : "필기 전체화면"}
-            active={isFullscreenInkActive}
-            onClick={() => {
-              if (isFullscreenInkActive) {
-                void handleExitFullscreenInk();
-                return;
-              }
-              void handleEnterFullscreenInk();
-            }}
-            className="h-11 w-11 justify-self-center"
-            data-layout-id={
-              isFullscreenInkActive
-                ? "action_exit_fullscreen_ink_toolbar"
-                : "action_enter_fullscreen_ink_toolbar"
-            }
-          />
-        </div>
-      </div>
-
-      {isLegacyCoreToolbarFallback && (
-        <div className="grid gap-3 text-[11px] text-toolbar-text/70">
-          {/* Safety fallback while core template cutover is disabled. */}
-          <div className="rounded-2xl border border-toolbar-border/10 bg-toolbar-chip/5 p-2">
-            <PlaybackControls />
-          </div>
-          <div className="rounded-2xl border border-toolbar-border/10 bg-toolbar-chip/5 p-2">
-            <PageNavigator />
-          </div>
-          <div className="grid gap-2">
-            <span className="text-[10px] uppercase tracking-wide text-toolbar-muted/40">
-              Break
-            </span>
-            <div className="flex items-center gap-2 rounded-2xl border border-toolbar-border/10 bg-toolbar-chip/5 p-2">
+      {showCompactQuickActions && (
+        <div className="grid gap-2 text-[11px] text-toolbar-text/70">
+          <span className="text-[10px] uppercase tracking-wide text-toolbar-muted/40">
+            Quick Actions
+          </span>
+          <div className="grid grid-cols-3 gap-2">
+            {showCompactImageClipboardActions && (
+              <>
+                <ToolButton
+                  icon={ImageIcon}
+                  label="Image"
+                  onClick={handleImagePicker}
+                  disabled={isOverviewMode}
+                  className="h-11 w-11 justify-self-center"
+                />
+                <ToolButton
+                  icon={ClipboardList}
+                  label="붙여넣기 도움말"
+                  onClick={handlePasteHelper}
+                  disabled={isOverviewMode}
+                  className="h-11 w-11 justify-self-center"
+                />
+              </>
+            )}
+            {showCompactFullscreenAction && (
               <ToolButton
-                icon={CornerDownLeft}
-                label="Line Break"
-                onClick={() => handleInsertBreak("line")}
-                disabled={isOverviewMode}
-                className="h-11 w-11"
+                icon={isFullscreenInkActive ? Minimize2 : Maximize2}
+                label={isFullscreenInkActive ? "필기 전체화면 종료" : "필기 전체화면"}
+                active={isFullscreenInkActive}
+                onClick={() => {
+                  if (isFullscreenInkActive) {
+                    void handleExitFullscreenInk();
+                    return;
+                  }
+                  void handleEnterFullscreenInk();
+                }}
+                className="h-11 w-11 justify-self-center"
+                data-layout-id={
+                  isFullscreenInkActive
+                    ? "action_exit_fullscreen_ink_toolbar"
+                    : "action_enter_fullscreen_ink_toolbar"
+                }
               />
-              <ToolButton
-                icon={Columns}
-                label="Column Break"
-                onClick={() => handleInsertBreak("column")}
-                disabled={isOverviewMode}
-                className="h-11 w-11"
-              />
-              <ToolButton
-                icon={FilePlus}
-                label="Page Break"
-                onClick={() => handleInsertBreak("page")}
-                disabled={isOverviewMode}
-                className="h-11 w-11"
-              />
-            </div>
+            )}
           </div>
         </div>
       )}
