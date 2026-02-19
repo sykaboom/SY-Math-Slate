@@ -52,7 +52,7 @@ Feature subsystems:
 - `features/extensions`: command registrations and UI slot runtime.
 - `features/layout`: app shell/window host.
 - `features/canvas`: board/cursor/render layers.
-- `features/toolbar`: mode-split floating toolbar, pen/laser/eraser controls, dock selector UI.
+- `features/toolbar`: mode-split floating toolbar, pen/laser/eraser controls, dock selector UI, compact IA sections, centralized toolbar feedback/notices.
 - `features/sharing`: snapshot share adapters, host live session panel/store wiring, live transport, policy/proposal flow, AI approval queue hook.
 - `features/viewer`: public viewer shell/session/live sync hooks.
 - `features/input-studio`: structured input + LLM draft flows.
@@ -127,10 +127,15 @@ Fallback rule:
   - `commands.playback.ts`
   - `commands.tool.ts`
 - Migration/guard scripts must scan command directory, not single monolith file assumptions.
+- Toolbar runtime policy:
+  - `src/features/toolbar/toolbarModePolicy.ts` is the single env/cutover resolver for toolbar mode render behavior.
+- Navigation copy policy:
+  - `src/features/toolbar/navigationLabels.ts` is the shared vocabulary source for Page/Outline/Playback step labels.
 
 ## 9) Verification Gates
 Primary checks used by hooks/CI:
 - `scripts/check_layer_rules.sh`
+- `scripts/check_toolbar_contract.sh`
 - `scripts/check_v10_changed_lint.sh`
 - `scripts/check_v10_hardcoding_budget.sh`
 - `scripts/check_v10_legacy_freeze.sh`

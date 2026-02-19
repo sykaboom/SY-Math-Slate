@@ -39,11 +39,21 @@ import {
 import { EraserControls } from "./EraserControls";
 import { LaserControls } from "./LaserControls";
 import { PenControls } from "./PenControls";
+import { COMPACT_TOOLBAR_SCROLL_HINT } from "./compactToolbarSections";
+import {
+  resolveToolbarRenderPolicy,
+  type ToolbarMode,
+} from "./toolbarModePolicy";
 import { ToolButton } from "./atoms/ToolButton";
 import { ToolbarPanel } from "./atoms/ToolbarPanel";
 import { PageNavigator } from "./PageNavigator";
 import { PlaybackControls } from "./PlaybackControls";
 import { ThumbZoneDock } from "./ThumbZoneDock";
+import {
+  fireToolbarCommand,
+  subscribeToolbarNotice,
+  type ToolbarFeedbackTone,
+} from "./toolbarFeedback";
 
 const COMPACT_TOOLBAR_QUERY = "(max-width: 1279px)";
 
@@ -74,14 +84,10 @@ type FloatingToolbarProps = {
   className?: string;
 };
 
-type ToolbarNoticeTone = "info" | "success" | "error";
-
 type ToolbarNotice = {
-  tone: ToolbarNoticeTone;
+  tone: ToolbarFeedbackTone;
   message: string;
 };
-
-type ToolbarMode = "draw" | "playback" | "canvas";
 
 const TOOLBAR_MODES: ReadonlyArray<{
   id: ToolbarMode;
@@ -195,19 +201,27 @@ export function FloatingToolbar(props: FloatingToolbarProps = {}) {
   ] as const;
   const menuButtonClass =
     "rounded-md border border-toolbar-border/10 bg-toolbar-menu-bg/20 px-2 py-1.5 text-left text-[11px] text-toolbar-text/70 hover:border-toolbar-border/30";
-  const useDeclarativeCoreToolbar =
-    process.env.NEXT_PUBLIC_CORE_TOOLBAR_CUTOVER !== "0";
-  const isLegacyCoreToolbarFallback = !useDeclarativeCoreToolbar;
-  const showLegacyDrawTools = isLegacyCoreToolbarFallback && isDrawMode;
-  const showLegacyPlaybackExtras = isLegacyCoreToolbarFallback && isPlaybackMode;
-  const showLegacyBreakActions = isLegacyCoreToolbarFallback && isDrawMode;
+  const toolbarRenderPolicy = resolveToolbarRenderPolicy(toolbarMode);
+  const isLegacyCoreToolbarFallback = !toolbarRenderPolicy.cutoverEnabled;
+  const showDrawCoreTools = toolbarRenderPolicy.showDrawCoreTools;
+  const showPlaybackExtras = toolbarRenderPolicy.showPlaybackExtras;
+  const showBreakActions = toolbarRenderPolicy.showBreakActions;
   const normalizedPenColor = penColor;
-  const dispatchToolbarCommand = (commandId: string, payload: unknown = {}) => {
+  const dispatchToolbarCommand = (
+    commandId: string,
+    payload: unknown = {},
+    errorMessage?: string
+  ) => {
     void dispatchCommand(commandId, payload, {
       meta: { source: "toolbar.floating-toolbar" },
-    }).catch(() => undefined);
+    }).catch(() => {
+      pushToolbarNotice(
+        "error",
+        errorMessage ?? "요청을 처리하지 못했습니다."
+      );
+    });
   };
-  const pushToolbarNotice = (tone: ToolbarNoticeTone, message: string) => {
+  const pushToolbarNotice = (tone: ToolbarFeedbackTone, message: string) => {
     setToolbarNotice({ tone, message });
   };
 
@@ -356,11 +370,12 @@ export function FloatingToolbar(props: FloatingToolbarProps = {}) {
   };
 
   const handleInsertBreak = (type: "line" | "column" | "page") => {
-    void dispatchCommand(
-      "insertBreak",
-      { type, panelOpen: isDataInputOpen },
-      { meta: { source: "floating-toolbar", region: "break-actions" } }
-    ).catch(() => undefined);
+    fireToolbarCommand({
+      commandId: "insertBreak",
+      payload: { type, panelOpen: isDataInputOpen },
+      source: "floating-toolbar.break-actions",
+      errorMessage: "구분선 삽입을 처리하지 못했습니다.",
+    });
   };
 
   useEffect(() => {
@@ -375,6 +390,12 @@ export function FloatingToolbar(props: FloatingToolbarProps = {}) {
     return () =>
       document.removeEventListener("fullscreenchange", handleFullscreenChange);
   }, [exitFullscreenInk, fullscreenInkMode]);
+
+  useEffect(() => {
+    return subscribeToolbarNotice((notice) => {
+      setToolbarNotice(notice);
+    });
+  }, []);
 
   useEffect(() => {
     if (!toolbarNotice || typeof window === "undefined") return;
@@ -770,6 +791,9 @@ export function FloatingToolbar(props: FloatingToolbarProps = {}) {
 
   const compactExpandedPanel = (
     <div className="grid gap-4">
+      <div className="sticky top-0 z-10 -mx-1 rounded-md border border-toolbar-border/10 bg-toolbar-surface/90 px-2 py-1 text-[10px] uppercase tracking-[0.14em] text-toolbar-muted/60 backdrop-blur">
+        {COMPACT_TOOLBAR_SCROLL_HINT}
+      </div>
       <div className="grid gap-2 text-[11px] text-toolbar-text/70">
         <span className="text-[10px] uppercase tracking-wide text-toolbar-muted/40">
           Quick Actions
@@ -894,7 +918,7 @@ export function FloatingToolbar(props: FloatingToolbarProps = {}) {
 
               {isDrawMode && (
                 <>
-                  {showLegacyDrawTools && (
+                  {showDrawCoreTools && (
                     <>
                       {/* Safety fallback while core template cutover is disabled. */}
                       <ToolButton
@@ -950,7 +974,7 @@ export function FloatingToolbar(props: FloatingToolbarProps = {}) {
                     </ToolbarPanel>
                   </Popover>
 
-                  {showLegacyDrawTools && (
+                  {showDrawCoreTools && (
                     <Popover
                       open={isLaserOpen}
                       onOpenChange={handleToolPopoverOpenChange("laser")}
@@ -993,7 +1017,7 @@ export function FloatingToolbar(props: FloatingToolbarProps = {}) {
                     className="h-11 w-11 shrink-0"
                   />
 
-                  {showLegacyBreakActions && (
+                  {showBreakActions && (
                     <>
                       <ToolButton
                         icon={CornerDownLeft}
@@ -1106,7 +1130,7 @@ export function FloatingToolbar(props: FloatingToolbarProps = {}) {
 
           {isDrawMode && (
             <>
-              {showLegacyDrawTools && (
+              {showDrawCoreTools && (
                 <>
                   {/* Safety fallback while core template cutover is disabled. */}
                   <ToolButton
@@ -1158,7 +1182,7 @@ export function FloatingToolbar(props: FloatingToolbarProps = {}) {
                 </ToolbarPanel>
               </Popover>
 
-              {showLegacyDrawTools && (
+              {showDrawCoreTools && (
                 <Popover
                   open={isLaserOpen}
                   onOpenChange={handleToolPopoverOpenChange("laser")}
@@ -1197,7 +1221,7 @@ export function FloatingToolbar(props: FloatingToolbarProps = {}) {
                 disabled={isOverviewMode}
               />
 
-              {showLegacyBreakActions && (
+              {showBreakActions && (
                 <div className="flex items-center gap-1 rounded-full border border-toolbar-border/10 bg-toolbar-chip/5 px-2 py-1 text-[11px] text-toolbar-text/70">
                   <ToolButton
                     icon={CornerDownLeft}
@@ -1262,8 +1286,8 @@ export function FloatingToolbar(props: FloatingToolbarProps = {}) {
                   className="h-8 w-8"
                 />
               </div>
-              {showLegacyPlaybackExtras && <PlaybackControls />}
-              {showLegacyPlaybackExtras && <PageNavigator />}
+              {showPlaybackExtras && <PlaybackControls />}
+              {showPlaybackExtras && <PageNavigator />}
               <ToolButton
                 icon={isSoundEnabled ? Volume2 : VolumeX}
                 label={isSoundEnabled ? "Sound On" : "Sound Off"}

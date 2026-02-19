@@ -400,14 +400,18 @@ v10/src/
 |   |   |   |-- ToolbarPanel.tsx
 |   |   |   |-- ToolbarSeparator.tsx
 |   |   |   \-- ToolButton.tsx
+|   |   |-- compactToolbarSections.ts
 |   |   |-- EraserControls.tsx
 |   |   |-- FloatingToolbar.tsx
 |   |   |-- LaserControls.tsx
+|   |   |-- navigationLabels.ts
 |   |   |-- PageNavigator.tsx
 |   |   |-- PenControls.tsx
 |   |   |-- PendingApprovalPanel.tsx
 |   |   |-- PlaybackControls.tsx
 |   |   |-- ThumbZoneDock.tsx
+|   |   |-- toolbarFeedback.ts
+|   |   |-- toolbarModePolicy.ts
 |   |   \-- useApprovalLogic.ts
 |   \-- viewer/
 |       |-- useViewerLiveSession.ts

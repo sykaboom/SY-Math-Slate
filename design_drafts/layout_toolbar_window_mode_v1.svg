@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1180 820" id="toolbar_window_mode_v1">
+  <defs>
+    <style>
+      .bg { fill: #f8fafc; }
+      .chrome { fill: #e2e8f0; stroke: #94a3b8; stroke-width: 2; }
+      .safe { fill: #ffffff; stroke: #cbd5e1; stroke-width: 2; }
+      .snap { fill: none; stroke: #f97316; stroke-width: 3; }
+      .panel { fill: #ffffff; stroke: #334155; stroke-width: 2; }
+      .txt { font-family: monospace; font-size: 14px; fill: #334155; }
+      .guard { fill: none; stroke: #ef4444; stroke-dasharray: 6 4; stroke-width: 2; }
+    </style>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="1180" height="820" />
+  <rect id="zone_top_chrome" class="chrome" x="0" y="0" width="1180" height="60" />
+  <rect id="zone_bottom_chrome" class="chrome" x="0" y="760" width="1180" height="60" />
+  <rect id="zone_canvas_safe" class="safe" x="0" y="60" width="1180" height="700" />
+
+  <rect id="window_clamp_bounds" class="guard" x="16" y="76" width="1148" height="668" />
+  <text class="txt" x="28" y="98">window clamp bounds (padding 16)</text>
+
+  <rect id="toolbar_window_default" class="panel" x="430" y="640" width="320" height="120" rx="12" />
+  <text class="txt" x="444" y="668">floating toolbar window</text>
+  <text class="txt" x="444" y="688">size clamp: w 320~1120, h 112~180</text>
+
+  <line class="snap" x1="16" y1="410" x2="64" y2="410" />
+  <line class="snap" x1="1164" y1="410" x2="1116" y2="410" />
+  <line class="snap" x1="590" y1="76" x2="590" y2="124" />
+  <line class="snap" x1="590" y1="744" x2="590" y2="696" />
+  <text class="txt" x="72" y="412">snap-left</text>
+  <text class="txt" x="996" y="412">snap-right</text>
+  <text class="txt" x="600" y="120">snap-top</text>
+  <text class="txt" x="600" y="728">snap-bottom</text>
+
+  <rect id="launcher_anchor" class="panel" x="24" y="680" width="56" height="56" rx="10" />
+  <text class="txt" x="92" y="714">launcher anchor recover path</text>
+
+  <rect id="menu_visibility_guard" class="panel" x="820" y="520" width="332" height="210" rx="12" />
+  <text class="txt" x="834" y="548">menu visibility guard:</text>
+  <text class="txt" x="834" y="568">no overflow clipping in toolbar shell</text>
+
+  <text class="txt" x="24" y="36">tablet landscape 1180x820 edge-snap window mode redline</text>
+</svg>

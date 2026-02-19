@@ -4,7 +4,6 @@ import { useMemo } from "react";
 
 import { Popover, PopoverTrigger } from "@ui/components/popover";
 import { Slider } from "@ui/components/slider";
-import { dispatchCommand } from "@core/engine/commandBus";
 import { cn } from "@core/utils";
 import { useUIStore } from "@features/store/useUIStoreBridge";
 import { useCanvasStore } from "@features/store/useCanvasStore";
@@ -19,6 +18,8 @@ import {
 } from "lucide-react";
 
 import { ToolButton } from "./atoms/ToolButton";
+import { NAVIGATION_LABELS } from "./navigationLabels";
+import { fireToolbarCommand } from "./toolbarFeedback";
 import { ToolbarPanel } from "./atoms/ToolbarPanel";
 
 export function PlaybackControls() {
@@ -61,9 +62,12 @@ export function PlaybackControls() {
   const showSettings = canAutoPlay || canTiming;
 
   const dispatchPlaybackCommand = (commandId: string, payload: unknown = {}) => {
-    void dispatchCommand(commandId, payload, {
-      meta: { source: "toolbar.playback-controls" },
-    }).catch(() => undefined);
+    fireToolbarCommand({
+      commandId,
+      payload,
+      source: "toolbar.playback-controls",
+      errorMessage: "재생 제어 요청을 처리하지 못했습니다.",
+    });
   };
 
   const handlePlayToggle = () => {
@@ -126,8 +130,9 @@ export function PlaybackControls() {
               type="button"
               className="whitespace-nowrap rounded-full px-2 py-1 text-[11px] text-toolbar-text/70 hover:text-toolbar-text disabled:text-toolbar-muted/40"
               disabled={!canStepJump}
+              title={NAVIGATION_LABELS.playbackStep.hint}
             >
-              Playback Step {displayStep}/{totalSteps}
+              {NAVIGATION_LABELS.playbackStep.short} {displayStep}/{totalSteps}
             </button>
           </PopoverTrigger>
           {canStepJump && (

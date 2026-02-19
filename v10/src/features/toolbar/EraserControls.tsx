@@ -1,20 +1,23 @@
 "use client";
 
-import { dispatchCommand } from "@core/engine/commandBus";
 import {
   ERASER_WIDTH_MAX,
   ERASER_WIDTH_MIN,
   useToolStore,
 } from "@features/store/useToolStore";
 import { Slider } from "@ui/components/slider";
+import { fireToolbarCommand } from "./toolbarFeedback";
 
 export function EraserControls() {
   const eraserWidth = useToolStore((state) => state.eraserWidth);
 
   const dispatchEraserCommand = (commandId: string, payload: unknown) => {
-    void dispatchCommand(commandId, payload, {
-      meta: { source: "toolbar.eraser-controls" },
-    }).catch(() => undefined);
+    fireToolbarCommand({
+      commandId,
+      payload,
+      source: "toolbar.eraser-controls",
+      errorMessage: "지우개 설정을 적용하지 못했습니다.",
+    });
   };
 
   return (

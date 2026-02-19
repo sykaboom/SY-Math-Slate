@@ -4,9 +4,9 @@ import {
   ToggleGroup,
   ToggleGroupItem,
 } from "@ui/components/toggle-group";
-import { dispatchCommand } from "@core/engine/commandBus";
 import { cn } from "@core/utils";
 import { useUIStore, type LaserType } from "@features/store/useUIStoreBridge";
+import { fireToolbarCommand } from "./toolbarFeedback";
 
 const laserColors = [
   { label: "Red", value: "#FF3B30", className: "bg-toolbar-danger" },
@@ -19,9 +19,12 @@ export function LaserControls() {
   const normalizedLaserColor = laserColor.toLowerCase();
 
   const dispatchLaserCommand = (commandId: string, payload: unknown) => {
-    void dispatchCommand(commandId, payload, {
-      meta: { source: "toolbar.laser-controls" },
-    }).catch(() => undefined);
+    fireToolbarCommand({
+      commandId,
+      payload,
+      source: "toolbar.laser-controls",
+      errorMessage: "레이저 설정을 적용하지 못했습니다.",
+    });
   };
 
   return (

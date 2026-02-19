@@ -5,9 +5,9 @@ import {
   ToggleGroup,
   ToggleGroupItem,
 } from "@ui/components/toggle-group";
-import { dispatchCommand } from "@core/engine/commandBus";
 import { cn } from "@core/utils";
 import { useUIStore, type PenType } from "@features/store/useUIStoreBridge";
+import { fireToolbarCommand } from "./toolbarFeedback";
 
 const colorPresets = [
   { label: "Graphite", value: "#1F2937" },
@@ -23,9 +23,12 @@ export function PenControls() {
   const normalizedPenColor = penColor.toLowerCase();
 
   const dispatchPenCommand = (commandId: string, payload: unknown) => {
-    void dispatchCommand(commandId, payload, {
-      meta: { source: "toolbar.pen-controls" },
-    }).catch(() => undefined);
+    fireToolbarCommand({
+      commandId,
+      payload,
+      source: "toolbar.pen-controls",
+      errorMessage: "펜 설정을 적용하지 못했습니다.",
+    });
   };
 
   return (

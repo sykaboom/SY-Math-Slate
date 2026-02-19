@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 1180" id="toolbar_compact_ia_v1">
+  <defs>
+    <style>
+      .bg { fill: #f8fafc; }
+      .chrome { fill: #e2e8f0; stroke: #94a3b8; stroke-width: 2; }
+      .safe { fill: #ffffff; stroke: #cbd5e1; stroke-width: 2; }
+      .dock { fill: #0f172a; opacity: 0.08; stroke: #334155; stroke-width: 2; }
+      .panel { fill: #ffffff; stroke: #334155; stroke-width: 2; }
+      .hint { fill: #f1f5f9; stroke: #64748b; stroke-width: 1.5; }
+      .txt { font-family: monospace; font-size: 14px; fill: #334155; }
+      .warn { fill: none; stroke: #ef4444; stroke-dasharray: 6 4; stroke-width: 2; }
+    </style>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="820" height="1180" />
+  <rect id="zone_top_chrome" class="chrome" x="0" y="0" width="820" height="60" />
+  <rect id="zone_bottom_chrome" class="chrome" x="0" y="1120" width="820" height="60" />
+  <rect id="zone_canvas_safe" class="safe" x="0" y="60" width="820" height="1060" />
+
+  <rect id="toolbar_row_compact" class="dock" x="16" y="1036" width="788" height="68" rx="16" />
+  <text class="txt" x="28" y="1078">compact controls row (min 48px hit target)</text>
+
+  <rect id="compact_more_panel" class="panel" x="460" y="536" width="340" height="488" rx="14" />
+  <rect id="scroll_hint_top" class="hint" x="472" y="548" width="316" height="28" rx="8" />
+  <text class="txt" x="480" y="567">Scroll for more sections</text>
+
+  <rect id="quick_actions_block" class="hint" x="472" y="588" width="316" height="92" rx="8" />
+  <text class="txt" x="480" y="612">quick actions (first layer)</text>
+
+  <rect id="context_sections" class="hint" x="472" y="692" width="316" height="292" rx="8" />
+  <text class="txt" x="480" y="716">progressive sections (file/local/layout...)</text>
+
+  <rect id="extension_slot_inline" class="hint" x="24" y="972" width="420" height="48" rx="10" />
+  <text class="txt" x="34" y="1002">toolbar-inline slot must remain visible</text>
+
+  <rect id="no_clip_guard" class="warn" x="16" y="76" width="788" height="1028" />
+  <text class="txt" x="24" y="96">clamp / no-clip guard region</text>
+
+  <text class="txt" x="24" y="36">tablet portrait 820x1180 compact IA redline</text>
+  <text class="txt" x="24" y="1158">max-h: mobile 52vh / tablet 46vh / tablet-landscape 44vh</text>
+</svg>

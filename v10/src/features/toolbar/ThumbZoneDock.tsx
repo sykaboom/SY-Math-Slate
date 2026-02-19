@@ -6,6 +6,7 @@ import { MoreHorizontal } from "lucide-react";
 
 import { Popover, PopoverTrigger } from "@ui/components/popover";
 import { cn } from "@core/utils";
+import { COMPACT_MORE_PANEL_CLASSNAME } from "./compactToolbarSections";
 
 import { ToolButton } from "./atoms/ToolButton";
 import { ToolbarPanel } from "./atoms/ToolbarPanel";
@@ -65,7 +66,7 @@ export function ThumbZoneDock({
             side="top"
             align="end"
             sideOffset={16}
-            className={cn("w-[min(94vw,360px)] max-h-[40vh] overflow-y-auto p-3", panelClassName)}
+            className={cn(COMPACT_MORE_PANEL_CLASSNAME, panelClassName)}
           >
             {expandedPanel}
           </ToolbarPanel>

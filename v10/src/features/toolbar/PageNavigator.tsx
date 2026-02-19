@@ -2,7 +2,6 @@
 
 import { ChevronLeft, ChevronRight, Minus, Plus, Trash2 } from "lucide-react";
 
-import { dispatchCommand } from "@core/engine/commandBus";
 import { useDocumentOutline } from "@features/hooks/useDocumentOutline";
 import { useCanvasStore } from "@features/store/useCanvasStore";
 import { useUIStore } from "@features/store/useUIStoreBridge";
@@ -10,6 +9,8 @@ import { Popover, PopoverTrigger } from "@ui/components/popover";
 import { Slider } from "@ui/components/slider";
 
 import { ToolButton } from "./atoms/ToolButton";
+import { NAVIGATION_LABELS } from "./navigationLabels";
+import { fireToolbarCommand } from "./toolbarFeedback";
 import { ToolbarPanel } from "./atoms/ToolbarPanel";
 
 export function PageNavigator() {
@@ -37,9 +38,12 @@ export function PageNavigator() {
   const pageSliderValue = Math.min(currentIndex + 1, totalPages);
 
   const dispatchPageCommand = (commandId: string, payload: unknown = {}) => {
-    void dispatchCommand(commandId, payload, {
-      meta: { source: "toolbar.page-navigator" },
-    }).catch(() => undefined);
+    fireToolbarCommand({
+      commandId,
+      payload,
+      source: "toolbar.page-navigator",
+      errorMessage: "페이지/아웃라인 이동 요청을 처리하지 못했습니다.",
+    });
   };
 
   const handleJump = (value: number) => {
@@ -66,8 +70,9 @@ export function PageNavigator() {
             type="button"
             className="whitespace-nowrap rounded-full px-2 py-1 text-[11px] text-toolbar-text/70 hover:text-toolbar-text disabled:text-toolbar-muted/40"
             disabled={isOverviewMode || !canPageJump}
+            title={NAVIGATION_LABELS.page.hint}
           >
-            Page {currentIndex + 1} / {totalPages}
+            {NAVIGATION_LABELS.page.short} {currentIndex + 1} / {totalPages}
           </button>
         </PopoverTrigger>
         {canPageJump && (
@@ -93,9 +98,10 @@ export function PageNavigator() {
             type="button"
             className="whitespace-nowrap rounded-full px-2 py-1 text-[11px] text-toolbar-text/70 hover:text-toolbar-text disabled:text-toolbar-muted/40"
             disabled={isOverviewMode || !canOutlineJump}
-            title={currentEntry?.label ?? "Step Outline"}
+            title={currentEntry?.label ?? NAVIGATION_LABELS.outlineStep.hint}
           >
-            Outline Step {canOutlineJump ? currentStepIndex + 1 : 0}/
+            {NAVIGATION_LABELS.outlineStep.short}{" "}
+            {canOutlineJump ? currentStepIndex + 1 : 0}/
             {outlineEntries.length}
           </button>
         </PopoverTrigger>
@@ -116,7 +122,7 @@ export function PageNavigator() {
                     onClick={() => jumpToStep(entry.stepIndex)}
                   >
                     <span className="text-[10px] uppercase tracking-wide text-toolbar-muted/50">
-                      Outline Step {entry.stepIndex + 1}
+                      {NAVIGATION_LABELS.outlineStep.short} {entry.stepIndex + 1}
                     </span>
                     <span className="truncate text-xs">{entry.preview}</span>
                   </button>

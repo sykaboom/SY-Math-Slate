@@ -14,6 +14,7 @@ import type {
 } from "./windowRuntime.types";
 
 const MIN_Z_INDEX = 1;
+const WINDOW_EDGE_SNAP_THRESHOLD_PX = 24;
 
 const normalizeFinite = (value: number, fallback: number): number =>
   Number.isFinite(value) ? value : fallback;
@@ -93,9 +94,27 @@ export const clampWindowRuntimePosition = (
   const maxX = nextBounds.x + nextBounds.width - nextSize.width;
   const maxY = nextBounds.y + nextBounds.height - nextSize.height;
 
+  const clampedX = clampFinite(nextPosition.x, minX, maxX);
+  const clampedY = clampFinite(nextPosition.y, minY, maxY);
+  const snapThreshold = WINDOW_EDGE_SNAP_THRESHOLD_PX;
+
+  const snappedX =
+    Math.abs(clampedX - minX) <= snapThreshold
+      ? minX
+      : Math.abs(clampedX - maxX) <= snapThreshold
+        ? maxX
+        : clampedX;
+
+  const snappedY =
+    Math.abs(clampedY - minY) <= snapThreshold
+      ? minY
+      : Math.abs(clampedY - maxY) <= snapThreshold
+        ? maxY
+        : clampedY;
+
   return {
-    x: clampFinite(nextPosition.x, minX, maxX),
-    y: clampFinite(nextPosition.y, minY, maxY),
+    x: snappedX,
+    y: snappedY,
   };
 };
 

@@ -138,6 +138,7 @@ type WindowPanelShellProps = {
   context: WindowHostPanelRenderContext;
   onRequestClose?: () => void;
   actionButtonClassName?: string;
+  allowOverflow?: boolean;
   children: ReactNode;
 };
 
@@ -146,13 +147,18 @@ const WindowPanelShell = ({
   context,
   onRequestClose,
   actionButtonClassName,
+  allowOverflow = false,
   children,
 }: WindowPanelShellProps) => {
   const resolvedActionButtonClassName =
     actionButtonClassName ?? PANEL_HOST_ACTION_BUTTON_CLASS;
 
   return (
-    <section className="flex h-full w-full min-h-0 flex-col overflow-hidden rounded-2xl border border-theme-border/15 bg-theme-surface/45 shadow-[0_18px_48px_rgba(0,0,0,0.5)]">
+    <section
+      className={`flex h-full w-full min-h-0 flex-col rounded-2xl border border-theme-border/15 bg-theme-surface/45 shadow-[0_18px_48px_rgba(0,0,0,0.5)] ${
+        allowOverflow ? "overflow-visible" : "overflow-hidden"
+      }`}
+    >
       <header className="flex items-center gap-2 border-b border-theme-border/10 bg-theme-surface/35 px-3 py-2">
         <div
           data-window-host-drag-handle="true"
@@ -177,7 +183,9 @@ const WindowPanelShell = ({
           </button>
         ) : null}
       </header>
-      <div className="min-h-0 flex-1">{children}</div>
+      <div className={`min-h-0 flex-1 ${allowOverflow ? "overflow-visible" : ""}`}>
+        {children}
+      </div>
     </section>
   );
 };
@@ -369,10 +377,10 @@ export const buildCoreWindowHostPanelAdapters = (
       isOpen: floatingToolbarContract.behavior.defaultOpen,
       className: "pointer-events-auto",
       render: (context) => (
-        <WindowPanelShell title="Floating Toolbar" context={context}>
+        <WindowPanelShell title="Floating Toolbar" context={context} allowOverflow>
           <div
             data-layout-id="region_toolchips"
-            className="h-full w-full overflow-hidden px-3 pb-3 pt-2"
+            className="h-full w-full overflow-visible px-3 pb-3 pt-2"
           >
             <FloatingToolbar mountMode="window-host" />
           </div>
