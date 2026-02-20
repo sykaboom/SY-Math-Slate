@@ -43,6 +43,7 @@ export type CoreTemplateLauncherEntry = CoreTemplateLauncherMetadata & {
 
 const CORE_TOOLBAR_TEMPLATE_CUTOVER_ENABLED =
   process.env.NEXT_PUBLIC_CORE_TOOLBAR_CUTOVER !== "0";
+const CORE_TEMPLATE_BASE_ACTION_INJECTION_ENABLED = false;
 
 const isTemplatePackRuntimeEnabled = (): boolean =>
   getPrimaryRuntimeTemplatePack() !== null;
@@ -224,6 +225,9 @@ for (const template of CORE_TEMPLATE_MANIFESTS) {
 
 const isTemplateActivationEnabled = (activation: CoreTemplateActivation): boolean => {
   if (activation === "core-toolbar-cutover") {
+    if (!CORE_TEMPLATE_BASE_ACTION_INJECTION_ENABLED) {
+      return false;
+    }
     return CORE_TOOLBAR_TEMPLATE_CUTOVER_ENABLED && isTemplatePackRuntimeEnabled();
   }
   return false;

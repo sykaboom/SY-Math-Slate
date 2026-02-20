@@ -28,7 +28,6 @@ import {
   CoreFloatingToolbarSlot,
   CorePrompterSlot,
 } from "./CoreSlotComponents";
-import { listActiveCoreTemplateManifests } from "./coreTemplates";
 
 const LAYOUT_SLOT_CUTOVER_ENABLED =
   process.env.NEXT_PUBLIC_LAYOUT_SLOT_CUTOVER !== "0";
@@ -326,10 +325,6 @@ export const registerCoreSlots = (): void => {
 
     const entry = resolveCorePanelPolicyEntry(binding.panelId);
     registerUISlotComponent(entry.slot, binding.component);
-  }
-
-  for (const template of listActiveCoreTemplateManifests()) {
-    registerUISlotComponent(template.slot, template.component);
   }
 
   for (const pack of listRuntimeTemplatePacks()) {

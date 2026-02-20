@@ -54,6 +54,7 @@ Feature subsystems:
 - `features/canvas`: board/cursor/render layers.
 - `features/toolbar`: mode-split floating toolbar, pen/laser/eraser controls, dock selector UI, compact IA sections, centralized toolbar feedback/notices.
   - Toolbar dedup IA rule: mode-lane controls are primary; `More` is settings/secondary only; avoid duplicate action surfaces for the same command in the same mode.
+  - Toolbar single-source invariant: base mode actions must be produced only by `FloatingToolbar` mode slices (`DrawModeTools.tsx`, `PlaybackModeTools.tsx`, `CanvasModeTools.tsx`); core declarative/template base injection into `toolbar-inline` remains disabled.
   - Mode surface split: `DrawModeTools.tsx`, `PlaybackModeTools.tsx`, `CanvasModeTools.tsx`, `MorePanel.tsx` are the primary render slices; `FloatingToolbar.tsx` is orchestration shell.
   - Toolbar SSOT/policy files:
     - `src/features/toolbar/catalog/toolbarActionCatalog.ts`
@@ -163,6 +164,10 @@ Primary checks used by hooks/CI:
 - `scripts/check_template_pack_contract.mjs`
 - `scripts/scan_guardrails.sh`
 - `scripts/run_repo_verifications.sh`
+
+Toolbar dedup verifier expectation:
+- `node scripts/check_toolbar_surface_uniqueness.mjs` => PASS in normal runtime analysis.
+- `node scripts/check_toolbar_surface_uniqueness.mjs --self-test-duplicate` => intentional FAIL with non-zero exit.
 
 When touching `v10/src/**`, update this file (`v10/AI_READ_ME.md`) in same change set.
 
