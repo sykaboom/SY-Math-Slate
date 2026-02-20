@@ -58,6 +58,8 @@ v10/src/
 |   |   |-- aiProviderRegistry.ts
 |   |   |-- boardSpec.ts
 |   |   |-- capabilities.ts
+|   |   |-- coreModBoundary.guards.ts
+|   |   |-- coreModBoundary.ts
 |   |   |-- experiments.ts
 |   |   |-- panel-policy.ts
 |   |   |-- perfProfile.ts
@@ -309,6 +311,7 @@ v10/src/
 |   |   |   |-- ModStudioShell.tsx
 |   |   |   \-- types.ts
 |   |   |-- io/
+|   |   |   |-- __fixtures__/
 |   |   |   |-- ioStudio.ts
 |   |   |   \-- IoStudioSection.tsx
 |   |   |-- layout/
@@ -401,6 +404,11 @@ v10/src/
 |   |   |   |-- ToolbarPanel.tsx
 |   |   |   |-- ToolbarSeparator.tsx
 |   |   |   \-- ToolButton.tsx
+|   |   |-- catalog/
+|   |   |   |-- toolbarActionCatalog.ts
+|   |   |   |-- toolbarActionSelectors.ts
+|   |   |   |-- toolbarSurfacePolicy.ts
+|   |   |   \-- toolbarViewportProfile.ts
 |   |   |-- CanvasModeTools.tsx
 |   |   |-- compactToolbarSections.ts
 |   |   |-- DrawModeTools.tsx
@@ -426,6 +434,19 @@ v10/src/
 |   \-- prisma/
 |       |-- internal/
 |       \-- models/
+|-- mod/
+|   |-- runtime/
+|   |   \-- templatePackRegistry.ts
+|   \-- templates/
+|       |-- _contracts/
+|       |   |-- templatePack.guards.ts
+|       |   \-- templatePack.types.ts
+|       |-- base-education/
+|       |   |-- layout.ts
+|       |   |-- manifest.ts
+|       |   |-- modules.ts
+|       |   \-- theme.ts
+|       \-- index.ts
 \-- ui/
     \-- components/
         |-- button.tsx

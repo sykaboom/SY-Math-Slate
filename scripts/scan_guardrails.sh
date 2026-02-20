@@ -101,6 +101,34 @@ else
 fi
 echo ""
 
+# 5. core/mod 경계 가드레일
+echo "[5] core/mod 경계 가드레일 검사..."
+if bash scripts/check_core_mod_boundary.sh; then
+  echo "  [PASS] core/mod 경계 규칙 통과"
+else
+  echo "  [FAIL] core/mod 경계 규칙 위반"
+  FAIL=1
+fi
+echo ""
+
+# 6. 툴바 surface 중복 규칙 (단계형: SKIP 허용)
+echo "[6] 툴바 surface 중복 검사..."
+toolbar_check_output="$(node scripts/check_toolbar_surface_uniqueness.mjs 2>&1 || true)"
+echo "$toolbar_check_output"
+if printf "%s" "$toolbar_check_output" | rg -q "FAIL"; then
+  FAIL=1
+fi
+echo ""
+
+# 7. 템플릿 팩 계약 검사 (단계형: SKIP 허용)
+echo "[7] 템플릿 팩 계약 검사..."
+template_check_output="$(node scripts/check_template_pack_contract.mjs 2>&1 || true)"
+echo "$template_check_output"
+if printf "%s" "$template_check_output" | rg -q "FAIL"; then
+  FAIL=1
+fi
+echo ""
+
 echo "=== 스캔 완료 ==="
 if [ "$STRICT" -eq 1 ] && [ "$WARN" -gt 0 ]; then
   echo "결과: FAIL (strict 모드: WARN 항목을 실패로 처리)"

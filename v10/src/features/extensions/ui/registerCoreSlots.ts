@@ -3,11 +3,13 @@ import {
   type UISlotComponent,
   type UISlotName,
 } from "@core/extensions/registry";
+import { listRuntimeTemplatePacks } from "../../../mod/runtime/templatePackRegistry";
 import {
   CORE_PANEL_POLICY_IDS,
   CORE_PANEL_POLICY_SOURCE,
   type CorePanelPolicyId,
 } from "@core/config/panel-policy";
+import { assertRuntimeSurfaceClassOrThrow } from "@core/config/coreModBoundary.guards";
 import { ModerationConsolePanel } from "@features/moderation/ModerationConsolePanel";
 import { HostLiveSessionPanel } from "@features/sharing/HostLiveSessionPanel";
 import { ThemePickerPanel } from "@features/theme/ThemePickerPanel";
@@ -164,6 +166,31 @@ const CORE_SLOT_BINDINGS: readonly CoreSlotBinding[] = [
   },
 ];
 
+for (const binding of CORE_SLOT_BINDINGS) {
+  const expectedClass =
+    binding.panelId === CORE_PANEL_POLICY_IDS.FLOATING_TOOLBAR
+      ? "core-engine"
+      : "mod-managed";
+  assertRuntimeSurfaceClassOrThrow(`panel:${binding.panelId}`, expectedClass);
+}
+
+assertRuntimeSurfaceClassOrThrow(
+  "engine:engine.toolbar.mode-selector-shell",
+  "core-engine"
+);
+assertRuntimeSurfaceClassOrThrow(
+  "engine:engine.command.dispatch-shell",
+  "core-engine"
+);
+assertRuntimeSurfaceClassOrThrow(
+  "engine:engine.policy.role-gate-bridge",
+  "core-engine"
+);
+assertRuntimeSurfaceClassOrThrow(
+  "engine:engine.window-host.mount-bridge",
+  "core-engine"
+);
+
 const cloneRoleOverride = (
   value: PanelBehaviorContract["roleOverride"]
 ): PanelBehaviorContract["roleOverride"] => {
@@ -303,6 +330,12 @@ export const registerCoreSlots = (): void => {
 
   for (const template of listActiveCoreTemplateManifests()) {
     registerUISlotComponent(template.slot, template.component);
+  }
+
+  for (const pack of listRuntimeTemplatePacks()) {
+    for (const slotComponent of pack.slotComponents ?? []) {
+      registerUISlotComponent(slotComponent.slot, slotComponent.component);
+    }
   }
 
   hasRegisteredCoreSlots = true;

@@ -21,6 +21,7 @@ import {
   type StudioDraftBundle,
   type StudioPublishResult,
   type StudioSnapshot,
+  type TemplateDraft,
   type ThemeDraft,
 } from "@features/mod-studio/core/types";
 
@@ -69,11 +70,38 @@ const normalizeThemeDraft = (theme: Partial<ThemeDraft> | ThemeDraft): ThemeDraf
   moduleScopedTokens: normalizeThemeModuleScopedTokenMap(theme.moduleScopedTokens),
 });
 
+const cloneTemplateDraft = (template: TemplateDraft): TemplateDraft => ({
+  packId: template.packId,
+  title: template.title,
+  description: template.description,
+  defaultEnabled: Boolean(template.defaultEnabled),
+});
+
+const normalizeTemplateDraft = (
+  template: Partial<TemplateDraft> | TemplateDraft | undefined
+): TemplateDraft => ({
+  packId:
+    typeof template?.packId === "string" && template.packId.trim() !== ""
+      ? template.packId.trim()
+      : "base-education",
+  title:
+    typeof template?.title === "string" && template.title.trim() !== ""
+      ? template.title.trim()
+      : "Base Education Template",
+  description:
+    typeof template?.description === "string"
+      ? template.description.trim()
+      : "",
+  defaultEnabled:
+    typeof template?.defaultEnabled === "boolean" ? template.defaultEnabled : true,
+});
+
 const cloneDraftBundle = (bundle: StudioDraftBundle): StudioDraftBundle => ({
   policy: JSON.parse(JSON.stringify(bundle.policy)),
   layout: cloneLayoutDraft(bundle.layout),
   modules: bundle.modules.map(cloneModuleDraft),
   theme: cloneThemeDraft(bundle.theme),
+  template: cloneTemplateDraft(bundle.template),
 });
 
 const createDefaultLayoutDraft = (): LayoutDraft => ({
@@ -101,11 +129,19 @@ const createDefaultThemeDraft = (): ThemeDraft => ({
   })(),
 });
 
+const createDefaultTemplateDraft = (): TemplateDraft => ({
+  packId: "base-education",
+  title: "Base Education Template",
+  description: "Default education-focused template.",
+  defaultEnabled: true,
+});
+
 const createDefaultDraftBundle = (): StudioDraftBundle => ({
   policy: JSON.parse(JSON.stringify(getRolePolicyDocument())),
   layout: createDefaultLayoutDraft(),
   modules: [],
   theme: createDefaultThemeDraft(),
+  template: createDefaultTemplateDraft(),
 });
 
 const normalizeTab = (tab: ModStudioTab): ModStudioTab => {
@@ -137,6 +173,7 @@ type ModStudioState = {
     slot: UISlotName,
     updates: Partial<Pick<LayoutSlotDraft, "moduleOrder" | "hidden">>
   ) => void;
+  updateTemplateDraft: (template: Partial<TemplateDraft>) => void;
   upsertModuleDraft: (module: ModuleDraft) => void;
   removeModuleDraft: (moduleId: string) => void;
   setThemePreset: (presetId: ThemePresetId) => void;
@@ -170,6 +207,7 @@ export const useModStudioStore = create<ModStudioState>((set, get) => ({
       draft: {
         ...cloneDraftBundle(next),
         theme: normalizeThemeDraft(next.theme),
+        template: normalizeTemplateDraft(next.template),
       },
     })),
   updatePolicyDraft: (policy) =>
@@ -196,6 +234,16 @@ export const useModStudioStore = create<ModStudioState>((set, get) => ({
             };
           }),
         },
+      },
+    })),
+  updateTemplateDraft: (template) =>
+    set((state) => ({
+      draft: {
+        ...state.draft,
+        template: normalizeTemplateDraft({
+          ...state.draft.template,
+          ...template,
+        }),
       },
     })),
   upsertModuleDraft: (module) =>

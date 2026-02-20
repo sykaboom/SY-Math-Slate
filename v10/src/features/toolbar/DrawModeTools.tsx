@@ -28,14 +28,28 @@ import { fireToolbarCommand, publishToolbarNotice } from "./toolbarFeedback";
 
 type DrawModeToolsProps = {
   compact?: boolean;
-  showDrawCoreTools: boolean;
+  showHandTool: boolean;
+  showPenTool: boolean;
+  showEraserTool: boolean;
+  showLaserTool: boolean;
+  showTextTool: boolean;
+  showImageTool: boolean;
+  showClipboardTool: boolean;
+  showUndoRedo: boolean;
   showBreakActions: boolean;
   onImagePicker: () => void;
 };
 
 export function DrawModeTools({
   compact = false,
-  showDrawCoreTools,
+  showHandTool,
+  showPenTool,
+  showEraserTool,
+  showLaserTool,
+  showTextTool,
+  showImageTool,
+  showClipboardTool,
+  showUndoRedo,
   showBreakActions,
   onImagePicker,
 }: DrawModeToolsProps) {
@@ -113,15 +127,18 @@ export function DrawModeTools({
 
   return (
     <>
-      {showDrawCoreTools && (
+      {showHandTool && (
+        <ToolButton
+          icon={Hand}
+          label="Hand"
+          active={activeTool === "hand"}
+          onClick={handleTool("hand")}
+          className={compact ? "h-11 w-11 shrink-0" : undefined}
+        />
+      )}
+
+      {showPenTool && (
         <>
-          <ToolButton
-            icon={Hand}
-            label="Hand"
-            active={activeTool === "hand"}
-            onClick={handleTool("hand")}
-            className={compact ? "h-11 w-11 shrink-0" : undefined}
-          />
           <Popover
             open={isPenOpen}
             onOpenChange={handleToolPopoverOpenChange("pen")}
@@ -143,25 +160,27 @@ export function DrawModeTools({
         </>
       )}
 
-      <Popover
-        open={isEraserOpen}
-        onOpenChange={handleToolPopoverOpenChange("eraser")}
-      >
-        <PopoverTrigger asChild>
-          <ToolButton
-            icon={Eraser}
-            label="Eraser"
-            active={activeTool === "eraser"}
-            onClick={handleEraserClick}
-            className={compact ? "h-11 w-11 shrink-0" : undefined}
-          />
-        </PopoverTrigger>
-        <ToolbarPanel side="top" align="center" sideOffset={popoverOffset}>
-          <EraserControls />
-        </ToolbarPanel>
-      </Popover>
+      {showEraserTool && (
+        <Popover
+          open={isEraserOpen}
+          onOpenChange={handleToolPopoverOpenChange("eraser")}
+        >
+          <PopoverTrigger asChild>
+            <ToolButton
+              icon={Eraser}
+              label="Eraser"
+              active={activeTool === "eraser"}
+              onClick={handleEraserClick}
+              className={compact ? "h-11 w-11 shrink-0" : undefined}
+            />
+          </PopoverTrigger>
+          <ToolbarPanel side="top" align="center" sideOffset={popoverOffset}>
+            <EraserControls />
+          </ToolbarPanel>
+        </Popover>
+      )}
 
-      {showDrawCoreTools && (
+      {showLaserTool && (
         <Popover
           open={isLaserOpen}
           onOpenChange={handleToolPopoverOpenChange("laser")}
@@ -181,64 +200,71 @@ export function DrawModeTools({
         </Popover>
       )}
 
-      <ToolButton
-        icon={Type}
-        label="Text"
-        active={isDataInputOpen}
-        onClick={toggleDataInput}
-        disabled={isOverviewMode}
-        className={compact ? "h-11 w-11 shrink-0" : undefined}
-      />
-      <ToolButton
-        icon={ImageIcon}
-        label="Image"
-        onClick={onImagePicker}
-        disabled={isOverviewMode}
-        className={compact ? "h-11 w-11 shrink-0" : undefined}
-      />
-      <ToolButton
-        icon={ClipboardList}
-        label="붙여넣기 도움말"
-        onClick={handlePasteHelper}
-        disabled={isOverviewMode}
-        className={compact ? "h-11 w-11 shrink-0" : undefined}
-      />
-
-      {compact ? (
-        <>
-          <ToolButton
-            icon={Undo2}
-            label="Undo"
-            onClick={() => dispatchToolbarCommand("undo")}
-            disabled={!canUndo || isOverviewMode}
-            className="h-11 w-11 shrink-0"
-          />
-          <ToolButton
-            icon={Redo2}
-            label="Redo"
-            onClick={() => dispatchToolbarCommand("redo")}
-            disabled={!canRedo || isOverviewMode}
-            className="h-11 w-11 shrink-0"
-          />
-        </>
-      ) : (
-        <div className="flex items-center gap-1 rounded-full border border-toolbar-border/10 bg-toolbar-chip/5 px-2 py-1">
-          <ToolButton
-            icon={Undo2}
-            label="Undo"
-            onClick={() => dispatchToolbarCommand("undo")}
-            disabled={!canUndo || isOverviewMode}
-            className="h-8 w-8"
-          />
-          <ToolButton
-            icon={Redo2}
-            label="Redo"
-            onClick={() => dispatchToolbarCommand("redo")}
-            disabled={!canRedo || isOverviewMode}
-            className="h-8 w-8"
-          />
-        </div>
+      {showTextTool && (
+        <ToolButton
+          icon={Type}
+          label="Text"
+          active={isDataInputOpen}
+          onClick={toggleDataInput}
+          disabled={isOverviewMode}
+          className={compact ? "h-11 w-11 shrink-0" : undefined}
+        />
       )}
+      {showImageTool && (
+        <ToolButton
+          icon={ImageIcon}
+          label="Image"
+          onClick={onImagePicker}
+          disabled={isOverviewMode}
+          className={compact ? "h-11 w-11 shrink-0" : undefined}
+        />
+      )}
+      {showClipboardTool && (
+        <ToolButton
+          icon={ClipboardList}
+          label="붙여넣기 도움말"
+          onClick={handlePasteHelper}
+          disabled={isOverviewMode}
+          className={compact ? "h-11 w-11 shrink-0" : undefined}
+        />
+      )}
+
+      {showUndoRedo &&
+        (compact ? (
+          <>
+            <ToolButton
+              icon={Undo2}
+              label="Undo"
+              onClick={() => dispatchToolbarCommand("undo")}
+              disabled={!canUndo || isOverviewMode}
+              className="h-11 w-11 shrink-0"
+            />
+            <ToolButton
+              icon={Redo2}
+              label="Redo"
+              onClick={() => dispatchToolbarCommand("redo")}
+              disabled={!canRedo || isOverviewMode}
+              className="h-11 w-11 shrink-0"
+            />
+          </>
+        ) : (
+          <div className="flex items-center gap-1 rounded-full border border-toolbar-border/10 bg-toolbar-chip/5 px-2 py-1">
+            <ToolButton
+              icon={Undo2}
+              label="Undo"
+              onClick={() => dispatchToolbarCommand("undo")}
+              disabled={!canUndo || isOverviewMode}
+              className="h-8 w-8"
+            />
+            <ToolButton
+              icon={Redo2}
+              label="Redo"
+              onClick={() => dispatchToolbarCommand("redo")}
+              disabled={!canRedo || isOverviewMode}
+              className="h-8 w-8"
+            />
+          </div>
+        ))}
 
       {showBreakActions &&
         (compact ? (

@@ -2,7 +2,9 @@
 
 import { createElement } from "react";
 import { dispatchCommand } from "@core/engine/commandBus";
+import { assertRuntimeSurfaceClassOrThrow } from "@core/config/coreModBoundary.guards";
 import type { UISlotComponent, UISlotName } from "@core/extensions/registry";
+import { getPrimaryRuntimeTemplatePack } from "../../../mod/runtime/templatePackRegistry";
 import { Popover, PopoverTrigger } from "@ui/components/popover";
 import { useUIStore, type Tool } from "@features/store/useUIStoreBridge";
 import { LaserControls } from "@features/toolbar/LaserControls";
@@ -41,6 +43,9 @@ export type CoreTemplateLauncherEntry = CoreTemplateLauncherMetadata & {
 
 const CORE_TOOLBAR_TEMPLATE_CUTOVER_ENABLED =
   process.env.NEXT_PUBLIC_CORE_TOOLBAR_CUTOVER !== "0";
+
+const isTemplatePackRuntimeEnabled = (): boolean =>
+  getPrimaryRuntimeTemplatePack() !== null;
 
 const dispatchToolbarCommand = (commandId: string, payload: unknown): void => {
   void dispatchCommand(commandId, payload, {
@@ -210,9 +215,16 @@ const CORE_TEMPLATE_MANIFESTS: readonly CoreTemplateManifest[] = [
   },
 ] as const;
 
+for (const template of CORE_TEMPLATE_MANIFESTS) {
+  assertRuntimeSurfaceClassOrThrow(
+    `template:${template.templateId}`,
+    "mod-managed"
+  );
+}
+
 const isTemplateActivationEnabled = (activation: CoreTemplateActivation): boolean => {
   if (activation === "core-toolbar-cutover") {
-    return CORE_TOOLBAR_TEMPLATE_CUTOVER_ENABLED;
+    return CORE_TOOLBAR_TEMPLATE_CUTOVER_ENABLED && isTemplatePackRuntimeEnabled();
   }
   return false;
 };

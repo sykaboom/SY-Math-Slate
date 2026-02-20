@@ -334,7 +334,7 @@ If NO:
 
 ## Implementation Log (Codex fills)
 
-Status: PENDING
+Status: SUPERSEDED (archived, do not execute)
 
 Changed files:
 - ...

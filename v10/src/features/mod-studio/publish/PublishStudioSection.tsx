@@ -83,6 +83,11 @@ export function PublishStudioSection() {
         Publish & Rollback
       </div>
 
+      <div className="rounded border border-theme-border/10 bg-theme-surface-soft px-2 py-1 text-[11px] text-theme-text/70">
+        Active template pack:{" "}
+        <span className="font-semibold text-theme-text/85">{draft.template.packId}</span>
+      </div>
+
       <div className="flex flex-wrap items-center gap-2">
         <button
           type="button"

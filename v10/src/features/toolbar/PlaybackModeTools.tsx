@@ -20,11 +20,17 @@ import { publishToolbarNotice } from "./toolbarFeedback";
 
 type PlaybackModeToolsProps = {
   compact?: boolean;
+  showStepNav: boolean;
+  showUndoRedo: boolean;
+  showSoundToggle: boolean;
   showPlaybackExtras: boolean;
 };
 
 export function PlaybackModeTools({
   compact = false,
+  showStepNav,
+  showUndoRedo,
+  showSoundToggle,
   showPlaybackExtras,
 }: PlaybackModeToolsProps) {
   const { isOverviewMode } = useUIStore();
@@ -80,34 +86,101 @@ export function PlaybackModeTools({
   if (compact) {
     return (
       <>
-        <ToolButton
-          icon={Undo2}
-          label="Undo"
-          onClick={() => dispatchToolbarCommand("undo")}
-          disabled={!canUndo || isOverviewMode}
-          className="h-11 w-11 shrink-0"
-        />
-        <ToolButton
-          icon={Redo2}
-          label="Redo"
-          onClick={() => dispatchToolbarCommand("redo")}
-          disabled={!canRedo || isOverviewMode}
-          className="h-11 w-11 shrink-0"
-        />
-        <ToolButton
-          icon={ChevronsLeft}
-          label="Previous Step"
-          onClick={() => dispatchToolbarCommand("prevStep")}
-          disabled={!canStepPrev}
-          className="h-11 w-11 shrink-0"
-        />
-        <ToolButton
-          icon={ChevronsRight}
-          label="Next Step"
-          onClick={() => dispatchToolbarCommand("nextStep")}
-          disabled={!canStepNext}
-          className="h-11 w-11 shrink-0"
-        />
+        {showUndoRedo && (
+          <>
+            <ToolButton
+              icon={Undo2}
+              label="Undo"
+              onClick={() => dispatchToolbarCommand("undo")}
+              disabled={!canUndo || isOverviewMode}
+              className="h-11 w-11 shrink-0"
+            />
+            <ToolButton
+              icon={Redo2}
+              label="Redo"
+              onClick={() => dispatchToolbarCommand("redo")}
+              disabled={!canRedo || isOverviewMode}
+              className="h-11 w-11 shrink-0"
+            />
+          </>
+        )}
+        {showStepNav && (
+          <>
+            <ToolButton
+              icon={ChevronsLeft}
+              label="Previous Step"
+              onClick={() => dispatchToolbarCommand("prevStep")}
+              disabled={!canStepPrev}
+              className="h-11 w-11 shrink-0"
+            />
+            <ToolButton
+              icon={ChevronsRight}
+              label="Next Step"
+              onClick={() => dispatchToolbarCommand("nextStep")}
+              disabled={!canStepNext}
+              className="h-11 w-11 shrink-0"
+            />
+          </>
+        )}
+        {showSoundToggle && (
+          <ToolButton
+            icon={isSoundEnabled ? Volume2 : VolumeX}
+            label={isSoundEnabled ? "Sound On" : "Sound Off"}
+            active={isSoundEnabled}
+            onClick={() => {
+              void handleSoundToggle();
+            }}
+            className="h-11 w-11 shrink-0"
+          />
+        )}
+      </>
+    );
+  }
+
+  return (
+    <>
+      {showStepNav && (
+        <div className="flex items-center gap-1 rounded-full border border-toolbar-border/10 bg-toolbar-chip/5 px-2 py-1 text-[11px] text-toolbar-text/70">
+          <ToolButton
+            icon={ChevronsLeft}
+            label="Previous Step"
+            onClick={() => dispatchToolbarCommand("prevStep")}
+            disabled={!canStepPrev}
+            className="h-8 w-8"
+          />
+          <span className="min-w-[44px] text-center">
+            {displayStep}/{totalSteps}
+          </span>
+          <ToolButton
+            icon={ChevronsRight}
+            label="Next Step"
+            onClick={() => dispatchToolbarCommand("nextStep")}
+            disabled={!canStepNext}
+            className="h-8 w-8"
+          />
+        </div>
+      )}
+      {showUndoRedo && (
+        <div className="flex items-center gap-1 rounded-full border border-toolbar-border/10 bg-toolbar-chip/5 px-2 py-1">
+          <ToolButton
+            icon={Undo2}
+            label="Undo"
+            onClick={() => dispatchToolbarCommand("undo")}
+            disabled={!canUndo || isOverviewMode}
+            className="h-8 w-8"
+          />
+          <ToolButton
+            icon={Redo2}
+            label="Redo"
+            onClick={() => dispatchToolbarCommand("redo")}
+            disabled={!canRedo || isOverviewMode}
+            className="h-8 w-8"
+          />
+        </div>
+      )}
+      {showPlaybackExtras && <PlaybackControls />}
+      {showPlaybackExtras && <PageNavigator />}
+      {showSoundToggle && (
         <ToolButton
           icon={isSoundEnabled ? Volume2 : VolumeX}
           label={isSoundEnabled ? "Sound On" : "Sound Off"}
@@ -115,59 +188,8 @@ export function PlaybackModeTools({
           onClick={() => {
             void handleSoundToggle();
           }}
-          className="h-11 w-11 shrink-0"
         />
-      </>
-    );
-  }
-
-  return (
-    <>
-      <div className="flex items-center gap-1 rounded-full border border-toolbar-border/10 bg-toolbar-chip/5 px-2 py-1 text-[11px] text-toolbar-text/70">
-        <ToolButton
-          icon={ChevronsLeft}
-          label="Previous Step"
-          onClick={() => dispatchToolbarCommand("prevStep")}
-          disabled={!canStepPrev}
-          className="h-8 w-8"
-        />
-        <span className="min-w-[44px] text-center">
-          {displayStep}/{totalSteps}
-        </span>
-        <ToolButton
-          icon={ChevronsRight}
-          label="Next Step"
-          onClick={() => dispatchToolbarCommand("nextStep")}
-          disabled={!canStepNext}
-          className="h-8 w-8"
-        />
-      </div>
-      <div className="flex items-center gap-1 rounded-full border border-toolbar-border/10 bg-toolbar-chip/5 px-2 py-1">
-        <ToolButton
-          icon={Undo2}
-          label="Undo"
-          onClick={() => dispatchToolbarCommand("undo")}
-          disabled={!canUndo || isOverviewMode}
-          className="h-8 w-8"
-        />
-        <ToolButton
-          icon={Redo2}
-          label="Redo"
-          onClick={() => dispatchToolbarCommand("redo")}
-          disabled={!canRedo || isOverviewMode}
-          className="h-8 w-8"
-        />
-      </div>
-      {showPlaybackExtras && <PlaybackControls />}
-      {showPlaybackExtras && <PageNavigator />}
-      <ToolButton
-        icon={isSoundEnabled ? Volume2 : VolumeX}
-        label={isSoundEnabled ? "Sound On" : "Sound Off"}
-        active={isSoundEnabled}
-        onClick={() => {
-          void handleSoundToggle();
-        }}
-      />
+      )}
     </>
   );
 }

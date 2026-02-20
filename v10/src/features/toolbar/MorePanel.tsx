@@ -16,18 +16,25 @@ import {
 
 import { ToolButton } from "./atoms/ToolButton";
 import { fireToolbarCommand, publishToolbarNotice } from "./toolbarFeedback";
-import type { ToolbarMode } from "./toolbarModePolicy";
 
 const menuButtonClass =
   "rounded-md border border-toolbar-border/10 bg-toolbar-menu-bg/20 px-2 py-1.5 text-left text-[11px] text-toolbar-text/70 hover:border-toolbar-border/30";
 
 type MorePanelProps = {
-  toolbarMode: ToolbarMode;
   toolbarDockSelector: ReactNode;
+  showDockSection: boolean;
+  showStepSection: boolean;
+  showHistorySection: boolean;
   onOpenClick: () => void;
 };
 
-export function MorePanel({ toolbarMode, toolbarDockSelector, onOpenClick }: MorePanelProps) {
+export function MorePanel({
+  toolbarDockSelector,
+  showDockSection,
+  showStepSection,
+  showHistorySection,
+  onOpenClick,
+}: MorePanelProps) {
   const { exportSlate } = useFileIO();
   const { saveNow, clearLocal, saveStatus } = usePersistence();
   const {
@@ -53,7 +60,6 @@ export function MorePanel({ toolbarMode, toolbarDockSelector, onOpenClick }: Mor
 
   const [isResetConfirmArmed, setIsResetConfirmArmed] = useState(false);
 
-  const isPlaybackMode = toolbarMode === "playback";
   const currentItems = pages[currentPageId] ?? [];
   const canUndo = currentItems.some((item) => item.type === "stroke");
   const canRedo = (strokeRedoByPage[currentPageId]?.length ?? 0) > 0;
@@ -124,12 +130,14 @@ export function MorePanel({ toolbarMode, toolbarDockSelector, onOpenClick }: Mor
 
   return (
     <div className="grid gap-3 text-[11px] text-toolbar-text/70">
-      <div className="grid gap-2">
-        <span className="text-[10px] uppercase tracking-wide text-toolbar-muted/40">
-          Dock
-        </span>
-        <div className="flex items-center">{toolbarDockSelector}</div>
-      </div>
+      {showDockSection && (
+        <div className="grid gap-2">
+          <span className="text-[10px] uppercase tracking-wide text-toolbar-muted/40">
+            Dock
+          </span>
+          <div className="flex items-center">{toolbarDockSelector}</div>
+        </div>
+      )}
 
       <div className="grid gap-2">
         <span className="text-[10px] uppercase tracking-wide text-toolbar-muted/40">
@@ -365,7 +373,7 @@ export function MorePanel({ toolbarMode, toolbarDockSelector, onOpenClick }: Mor
         </div>
       )}
 
-      {!isPlaybackMode && (
+      {showStepSection && (
         <>
           <div className="grid gap-2">
             <span className="text-[10px] uppercase tracking-wide text-toolbar-muted/40">
@@ -394,7 +402,11 @@ export function MorePanel({ toolbarMode, toolbarDockSelector, onOpenClick }: Mor
               </div>
             </div>
           </div>
+        </>
+      )}
 
+      {showHistorySection && (
+        <>
           <div className="grid gap-2">
             <span className="text-[10px] uppercase tracking-wide text-toolbar-muted/40">
               History

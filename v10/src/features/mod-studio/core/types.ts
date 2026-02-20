@@ -48,11 +48,19 @@ export type ThemeDraft = {
   moduleScopedTokens: ThemeModuleScopedTokenMap;
 };
 
+export type TemplateDraft = {
+  packId: string;
+  title: string;
+  description: string;
+  defaultEnabled: boolean;
+};
+
 export type StudioDraftBundle = {
   policy: RolePolicyDocument;
   layout: LayoutDraft;
   modules: ModuleDraft[];
   theme: ThemeDraft;
+  template: TemplateDraft;
 };
 
 export type StudioSnapshot = {

@@ -22,6 +22,7 @@ const createModuleSeed = (): ModuleDraft => ({
 
 export function ModuleStudioSection() {
   const modules = useModStudioStore((state) => state.draft.modules);
+  const template = useModStudioStore((state) => state.draft.template);
   const upsertModuleDraft = useModStudioStore((state) => state.upsertModuleDraft);
   const removeModuleDraft = useModStudioStore((state) => state.removeModuleDraft);
   const [seed, setSeed] = useState<ModuleDraft>(createModuleSeed);
@@ -53,6 +54,10 @@ export function ModuleStudioSection() {
     <div className="grid gap-3 text-xs text-theme-text/85">
       <div className="text-[11px] uppercase tracking-[0.18em] text-theme-text/60">
         Module Manager
+      </div>
+
+      <div className="rounded border border-theme-border/10 bg-theme-surface-soft px-2 py-1 text-[11px] text-theme-text/70">
+        Template: <span className="font-semibold text-theme-text/85">{template.packId}</span>
       </div>
 
       <section className="grid gap-2 rounded border border-theme-border/10 bg-theme-surface-soft p-2">

@@ -1,0 +1,86 @@
+{
+  "version": 1,
+  "policy": {
+    "version": 1,
+    "defaultDecision": "deny",
+    "roles": {
+      "host": {
+        "surfaces": {
+          "command.permissions": {
+            "dispatch": "allow"
+          },
+          "command.approval": {
+            "route-command-approval-queue": "deny"
+          },
+          "tool.permissions": {
+            "execute": "allow"
+          },
+          "tool.approval": {
+            "route-tool-approval-queue": "deny"
+          },
+          "ui.visibility": {
+            "show-top-chrome": "allow",
+            "show-data-input-panel": "allow",
+            "show-editing-footer": "allow",
+            "show-paste-helper-modal": "allow",
+            "show-student-player-bar": "deny"
+          }
+        }
+      },
+      "student": {
+        "surfaces": {
+          "command.permissions": {
+            "dispatch": "allow"
+          },
+          "command.approval": {
+            "route-command-approval-queue": "allow"
+          },
+          "tool.permissions": {
+            "execute": "allow"
+          },
+          "tool.approval": {
+            "route-tool-approval-queue": "allow"
+          },
+          "ui.visibility": {
+            "show-top-chrome": "deny",
+            "show-data-input-panel": "deny",
+            "show-editing-footer": "deny",
+            "show-paste-helper-modal": "deny",
+            "show-student-player-bar": "allow"
+          }
+        }
+      }
+    }
+  },
+  "layout": {
+    "slots": [
+      {
+        "slot": "chrome-top-toolbar",
+        "moduleOrder": [],
+        "hidden": false
+      },
+      {
+        "slot": "left-panel",
+        "moduleOrder": [],
+        "hidden": false
+      },
+      {
+        "slot": "toolbar-inline",
+        "moduleOrder": [],
+        "hidden": false
+      },
+      {
+        "slot": "toolbar-bottom",
+        "moduleOrder": [],
+        "hidden": false
+      }
+    ]
+  },
+  "modules": [],
+  "theme": {
+    "presetId": "chalk",
+    "globalTokens": {},
+    "moduleScopedTokens": {}
+  }
+}
+

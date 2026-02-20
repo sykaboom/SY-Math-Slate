@@ -46,7 +46,7 @@ Core subsystems:
 - `core/extensions`: plugin loader, registry, MCP gateway.
 - `core/themes`: theme presets.
 - `core/theme`: runtime theme apply/preference schema.
-- `core/config`: tokens, capability/config defaults.
+- `core/config`: tokens, capability/config defaults, and core/mod boundary contract (`coreModBoundary.ts`, guards).
 
 Feature subsystems:
 - `features/extensions`: command registrations and UI slot runtime.
@@ -55,6 +55,11 @@ Feature subsystems:
 - `features/toolbar`: mode-split floating toolbar, pen/laser/eraser controls, dock selector UI, compact IA sections, centralized toolbar feedback/notices.
   - Toolbar dedup IA rule: mode-lane controls are primary; `More` is settings/secondary only; avoid duplicate action surfaces for the same command in the same mode.
   - Mode surface split: `DrawModeTools.tsx`, `PlaybackModeTools.tsx`, `CanvasModeTools.tsx`, `MorePanel.tsx` are the primary render slices; `FloatingToolbar.tsx` is orchestration shell.
+  - Toolbar SSOT/policy files:
+    - `src/features/toolbar/catalog/toolbarActionCatalog.ts`
+    - `src/features/toolbar/catalog/toolbarActionSelectors.ts`
+    - `src/features/toolbar/catalog/toolbarSurfacePolicy.ts`
+    - `src/features/toolbar/catalog/toolbarViewportProfile.ts`
 - `features/sharing`: snapshot share adapters, host live session panel/store wiring, live transport, policy/proposal flow, AI approval queue hook.
 - `features/viewer`: public viewer shell/session/live sync hooks.
 - `features/input-studio`: structured input + LLM draft flows.
@@ -62,6 +67,10 @@ Feature subsystems:
 - `features/theme`: end-user theme UI (`ThemePickerPanel`, provider wiring).
 - `features/mod-studio/theme`: advanced token editor, JSON IO, AI theme generation panel/hooks.
 - `features/mod-studio/ai`: in-studio AI module generation UI/hooks (`AIModuleGenerationPanel`, `useAIModuleGeneration`).
+
+Template pack runtime:
+- `src/mod/templates/*`: folder-based template packs and contract guards.
+- `src/mod/runtime/templatePackRegistry.ts`: runtime pack registry/bootstrap.
 
 ## 5) Store Authorities (SSOT)
 Authority-layer stores:
@@ -131,6 +140,7 @@ Fallback rule:
 - Migration/guard scripts must scan command directory, not single monolith file assumptions.
 - Toolbar runtime policy:
   - `src/features/toolbar/toolbarModePolicy.ts` is the single env/cutover resolver for toolbar mode render behavior.
+  - `src/features/toolbar/catalog/toolbarSurfacePolicy.ts` is the single source for mode/viewport/action surface placement.
 - Navigation copy policy:
   - `src/features/toolbar/navigationLabels.ts` is the shared vocabulary source for Page/Outline/Playback step labels.
 
@@ -148,6 +158,9 @@ Primary checks used by hooks/CI:
 - `scripts/check_v10_hardcoding_budget.sh`
 - `scripts/check_v10_legacy_freeze.sh`
 - `scripts/check_v10_migration_baseline.sh`
+- `scripts/check_core_mod_boundary.sh`
+- `scripts/check_toolbar_surface_uniqueness.mjs`
+- `scripts/check_template_pack_contract.mjs`
 - `scripts/scan_guardrails.sh`
 - `scripts/run_repo_verifications.sh`
 

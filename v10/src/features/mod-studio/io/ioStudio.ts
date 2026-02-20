@@ -67,6 +67,47 @@ const hasValidTheme = (theme: unknown): boolean => {
   );
 };
 
+type LegacyTemplatePayload = {
+  packId: string;
+  title: string;
+  description: string;
+  defaultEnabled: boolean;
+};
+
+const hasValidTemplate = (
+  template: unknown
+): template is LegacyTemplatePayload => {
+  if (!isPlainRecord(template)) return false;
+  if (typeof template.packId !== "string" || template.packId.trim() === "") {
+    return false;
+  }
+  if (typeof template.title !== "string" || template.title.trim() === "") {
+    return false;
+  }
+  if (typeof template.description !== "string") return false;
+  if (typeof template.defaultEnabled !== "boolean") return false;
+  return true;
+};
+
+const normalizeTemplate = (
+  template: unknown
+): StudioDraftBundle["template"] => {
+  if (hasValidTemplate(template)) {
+    return {
+      packId: template.packId.trim(),
+      title: template.title.trim(),
+      description: template.description.trim(),
+      defaultEnabled: template.defaultEnabled,
+    };
+  }
+  return {
+    packId: "base-education",
+    title: "Base Education Template",
+    description: "",
+    defaultEnabled: true,
+  };
+};
+
 export const exportStudioDraftBundle = (bundle: StudioDraftBundle): string =>
   JSON.stringify(
     {
@@ -75,6 +116,7 @@ export const exportStudioDraftBundle = (bundle: StudioDraftBundle): string =>
       layout: bundle.layout,
       modules: bundle.modules,
       theme: bundle.theme,
+      template: bundle.template,
     },
     null,
     2
@@ -130,6 +172,10 @@ export const importStudioDraftBundle = (payloadText: string): ImportResult => {
           ),
         } as StudioDraftBundle["theme"];
       })(),
+      template: normalizeTemplate(
+        (parsed as Record<string, unknown>).template ??
+          (migrated.value as Record<string, unknown>).template
+      ),
     },
   };
 };

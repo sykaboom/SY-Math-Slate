@@ -24,6 +24,17 @@ import { MorePanel } from "./MorePanel";
 import { PlaybackModeTools } from "./PlaybackModeTools";
 import { COMPACT_TOOLBAR_SCROLL_HINT } from "./compactToolbarSections";
 import {
+  selectCanvasToolbarActions,
+  selectDrawToolbarActions,
+  selectMorePanelActions,
+  selectPlaybackToolbarActions,
+} from "./catalog/toolbarActionSelectors";
+import {
+  getToolbarViewportProfileSnapshot,
+  subscribeToolbarViewportProfile,
+  type ToolbarViewportProfile,
+} from "./catalog/toolbarViewportProfile";
+import {
   resolveToolbarRenderPolicy,
   type ToolbarMode,
 } from "./toolbarModePolicy";
@@ -35,28 +46,6 @@ import {
   publishToolbarNotice,
   type ToolbarFeedbackTone,
 } from "./toolbarFeedback";
-
-const COMPACT_TOOLBAR_QUERY = "(max-width: 1279px)";
-
-const getCompactViewportSnapshot = () => {
-  if (typeof window === "undefined") return false;
-  return window.matchMedia(COMPACT_TOOLBAR_QUERY).matches;
-};
-
-const subscribeCompactViewport = (callback: () => void) => {
-  if (typeof window === "undefined") {
-    return () => undefined;
-  }
-
-  const mediaQuery = window.matchMedia(COMPACT_TOOLBAR_QUERY);
-  if (typeof mediaQuery.addEventListener === "function") {
-    mediaQuery.addEventListener("change", callback);
-    return () => mediaQuery.removeEventListener("change", callback);
-  }
-
-  mediaQuery.addListener(callback);
-  return () => mediaQuery.removeListener(callback);
-};
 
 export type FloatingToolbarMountMode = "legacy-shell" | "window-host";
 
@@ -90,11 +79,12 @@ const TOOLBAR_DOCK_OPTIONS: ReadonlyArray<{
 
 export function FloatingToolbar(props: FloatingToolbarProps = {}) {
   const { mountMode = "legacy-shell", className } = props;
-  const isCompactViewport = useSyncExternalStore(
-    subscribeCompactViewport,
-    getCompactViewportSnapshot,
-    () => false
+  const viewportProfile = useSyncExternalStore<ToolbarViewportProfile>(
+    subscribeToolbarViewportProfile,
+    getToolbarViewportProfileSnapshot,
+    () => "desktop"
   );
+  const isCompactViewport = viewportProfile !== "desktop";
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const imageInputRef = useRef<HTMLInputElement | null>(null);
   const { importSlate } = useFileIO();
@@ -120,6 +110,16 @@ export function FloatingToolbar(props: FloatingToolbarProps = {}) {
   const isFullscreenInkActive = fullscreenInkMode !== "off";
   const isNativeFullscreen = fullscreenInkMode === "native";
   const toolbarRenderPolicy = resolveToolbarRenderPolicy(toolbarMode);
+  const drawToolbarActions = selectDrawToolbarActions(
+    viewportProfile,
+    toolbarRenderPolicy.cutoverEnabled
+  );
+  const playbackToolbarActions = selectPlaybackToolbarActions(
+    viewportProfile,
+    toolbarRenderPolicy.cutoverEnabled
+  );
+  const canvasToolbarActions = selectCanvasToolbarActions(viewportProfile);
+  const morePanelActions = selectMorePanelActions(toolbarMode, viewportProfile);
 
   const handleToolbarDockSelect = (position: "left" | "center" | "right") => {
     void dispatchCommand("setToolbarDock", { position }, {
@@ -278,8 +278,10 @@ export function FloatingToolbar(props: FloatingToolbarProps = {}) {
 
   const morePanelContent = (
     <MorePanel
-      toolbarMode={toolbarMode}
       toolbarDockSelector={toolbarDockSelector}
+      showDockSection={morePanelActions.dock}
+      showStepSection={morePanelActions.step}
+      showHistorySection={morePanelActions.history}
       onOpenClick={handleOpenClick}
     />
   );
@@ -400,8 +402,15 @@ export function FloatingToolbar(props: FloatingToolbarProps = {}) {
               {isDrawMode && (
                 <DrawModeTools
                   compact
-                  showDrawCoreTools={toolbarRenderPolicy.showDrawCoreTools}
-                  showBreakActions={toolbarRenderPolicy.showBreakActions}
+                  showHandTool={drawToolbarActions.hand}
+                  showPenTool={drawToolbarActions.pen}
+                  showEraserTool={drawToolbarActions.eraser}
+                  showLaserTool={drawToolbarActions.laser}
+                  showTextTool={drawToolbarActions.text}
+                  showImageTool={drawToolbarActions.image}
+                  showClipboardTool={drawToolbarActions.clipboard}
+                  showUndoRedo={drawToolbarActions.undoRedo}
+                  showBreakActions={drawToolbarActions.breakActions}
                   onImagePicker={handleImagePicker}
                 />
               )}
@@ -409,13 +418,19 @@ export function FloatingToolbar(props: FloatingToolbarProps = {}) {
               {isPlaybackMode && (
                 <PlaybackModeTools
                   compact
-                  showPlaybackExtras={toolbarRenderPolicy.showPlaybackExtras}
+                  showStepNav={playbackToolbarActions.step}
+                  showUndoRedo={playbackToolbarActions.undoRedo}
+                  showSoundToggle={playbackToolbarActions.sound}
+                  showPlaybackExtras={playbackToolbarActions.extras}
                 />
               )}
 
               {isCanvasMode && (
                 <CanvasModeTools
                   compact
+                  showFullscreen={canvasToolbarActions.fullscreen}
+                  showSoundToggle={canvasToolbarActions.sound}
+                  showDockSelector={canvasToolbarActions.dock}
                   toolbarDockSelector={toolbarDockSelector}
                 />
               )}
@@ -430,20 +445,35 @@ export function FloatingToolbar(props: FloatingToolbarProps = {}) {
 
           {isDrawMode && (
             <DrawModeTools
-              showDrawCoreTools={toolbarRenderPolicy.showDrawCoreTools}
-              showBreakActions={toolbarRenderPolicy.showBreakActions}
+              showHandTool={drawToolbarActions.hand}
+              showPenTool={drawToolbarActions.pen}
+              showEraserTool={drawToolbarActions.eraser}
+              showLaserTool={drawToolbarActions.laser}
+              showTextTool={drawToolbarActions.text}
+              showImageTool={drawToolbarActions.image}
+              showClipboardTool={drawToolbarActions.clipboard}
+              showUndoRedo={drawToolbarActions.undoRedo}
+              showBreakActions={drawToolbarActions.breakActions}
               onImagePicker={handleImagePicker}
             />
           )}
 
           {isPlaybackMode && (
             <PlaybackModeTools
-              showPlaybackExtras={toolbarRenderPolicy.showPlaybackExtras}
+              showStepNav={playbackToolbarActions.step}
+              showUndoRedo={playbackToolbarActions.undoRedo}
+              showSoundToggle={playbackToolbarActions.sound}
+              showPlaybackExtras={playbackToolbarActions.extras}
             />
           )}
 
           {isCanvasMode && (
-            <CanvasModeTools toolbarDockSelector={toolbarDockSelector} />
+            <CanvasModeTools
+              showFullscreen={canvasToolbarActions.fullscreen}
+              showSoundToggle={canvasToolbarActions.sound}
+              showDockSelector={canvasToolbarActions.dock}
+              toolbarDockSelector={toolbarDockSelector}
+            />
           )}
 
           <div

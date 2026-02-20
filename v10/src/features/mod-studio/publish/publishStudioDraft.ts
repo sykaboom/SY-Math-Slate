@@ -23,6 +23,7 @@ import type {
   StudioDraftBundle,
   StudioPublishResult,
   StudioSnapshot,
+  TemplateDraft,
   ThemeDraft,
 } from "@features/mod-studio/core/types";
 import { getModuleDiagnostics } from "@features/mod-studio/modules/moduleDiagnostics";
@@ -101,6 +102,14 @@ const applyThemeDraft = (themeDraft: ThemeDraft): void => {
   );
 };
 
+const isValidTemplateDraft = (template: TemplateDraft): boolean =>
+  typeof template.packId === "string" &&
+  template.packId.trim() !== "" &&
+  typeof template.title === "string" &&
+  template.title.trim() !== "" &&
+  typeof template.description === "string" &&
+  typeof template.defaultEnabled === "boolean";
+
 export type StudioPublishPreflightResult =
   | { ok: true; manifest: DeclarativePluginManifestV1 }
   | { ok: false; message: string };
@@ -108,6 +117,13 @@ export type StudioPublishPreflightResult =
 export const preflightStudioPublish = (
   bundle: StudioDraftBundle
 ): StudioPublishPreflightResult => {
+  if (!isValidTemplateDraft(bundle.template)) {
+    return {
+      ok: false,
+      message: "template metadata is invalid (packId/title/defaultEnabled).",
+    };
+  }
+
   const moduleDiagnostics = getModuleDiagnostics(bundle.modules);
   const blocking = moduleDiagnostics.find((entry) => entry.level === "error");
   if (blocking) {
@@ -155,8 +171,8 @@ export const publishStudioDraftBundle = (
   return {
     ok: true,
     message: registration.replaced
-      ? "studio publish updated existing runtime manifest"
-      : "studio publish created runtime manifest",
+      ? `studio publish updated existing runtime manifest (${bundle.template.packId})`
+      : `studio publish created runtime manifest (${bundle.template.packId})`,
   };
 };
 
@@ -182,6 +198,7 @@ export const createStudioSnapshot = (
       }));
     })(),
     theme: draft.theme,
+    template: draft.template,
   }),
 });
 

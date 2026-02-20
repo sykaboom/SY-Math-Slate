@@ -11,11 +11,17 @@ import { publishToolbarNotice } from "./toolbarFeedback";
 
 type CanvasModeToolsProps = {
   compact?: boolean;
+  showFullscreen: boolean;
+  showSoundToggle: boolean;
+  showDockSelector: boolean;
   toolbarDockSelector: ReactNode;
 };
 
 export function CanvasModeTools({
   compact = false,
+  showFullscreen,
+  showSoundToggle,
+  showDockSelector,
   toolbarDockSelector,
 }: CanvasModeToolsProps) {
   const {
@@ -83,36 +89,42 @@ export function CanvasModeTools({
 
   return (
     <>
-      <ToolButton
-        icon={isFullscreenInkActive ? Minimize2 : Maximize2}
-        label={isFullscreenInkActive ? "필기 전체화면 종료" : "필기 전체화면"}
-        active={isFullscreenInkActive}
-        onClick={() => {
-          if (isFullscreenInkActive) {
-            void handleExitFullscreenInk();
-            return;
+      {showFullscreen && (
+        <ToolButton
+          icon={isFullscreenInkActive ? Minimize2 : Maximize2}
+          label={isFullscreenInkActive ? "필기 전체화면 종료" : "필기 전체화면"}
+          active={isFullscreenInkActive}
+          onClick={() => {
+            if (isFullscreenInkActive) {
+              void handleExitFullscreenInk();
+              return;
+            }
+            void handleEnterFullscreenInk();
+          }}
+          className={compact ? "h-11 w-11 shrink-0" : undefined}
+          data-layout-id={
+            isFullscreenInkActive
+              ? "action_exit_fullscreen_ink_toolbar"
+              : "action_enter_fullscreen_ink_toolbar"
           }
-          void handleEnterFullscreenInk();
-        }}
-        className={compact ? "h-11 w-11 shrink-0" : undefined}
-        data-layout-id={
-          isFullscreenInkActive
-            ? "action_exit_fullscreen_ink_toolbar"
-            : "action_enter_fullscreen_ink_toolbar"
-        }
-      />
-      <ToolButton
-        icon={isSoundEnabled ? Volume2 : VolumeX}
-        label={isSoundEnabled ? "Sound On" : "Sound Off"}
-        active={isSoundEnabled}
-        onClick={() => {
-          void handleSoundToggle();
-        }}
-        className={compact ? "h-11 w-11 shrink-0" : undefined}
-      />
-      <div className={compact ? "shrink-0" : "flex items-center"}>
-        {toolbarDockSelector}
-      </div>
+        />
+      )}
+      {showSoundToggle && (
+        <ToolButton
+          icon={isSoundEnabled ? Volume2 : VolumeX}
+          label={isSoundEnabled ? "Sound On" : "Sound Off"}
+          active={isSoundEnabled}
+          onClick={() => {
+            void handleSoundToggle();
+          }}
+          className={compact ? "h-11 w-11 shrink-0" : undefined}
+        />
+      )}
+      {showDockSelector && (
+        <div className={compact ? "shrink-0" : "flex items-center"}>
+          {toolbarDockSelector}
+        </div>
+      )}
     </>
   );
 }
