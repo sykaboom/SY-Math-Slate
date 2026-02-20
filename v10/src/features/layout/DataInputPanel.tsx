@@ -172,6 +172,11 @@ export function DataInputPanel(props: DataInputPanelProps = {}) {
     BatchTransformDiagnostic[]
   >([]);
   const [publishMessage, setPublishMessage] = useState<string | null>(null);
+  const [mediaUrlInput, setMediaUrlInput] = useState<{
+    blockId: string;
+    type: "image" | "video";
+  } | null>(null);
+  const [mediaUrlValue, setMediaUrlValue] = useState("");
 
   const segmentRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const selectionRef = useRef<Record<string, Range | null>>({});
@@ -471,27 +476,39 @@ export function DataInputPanel(props: DataInputPanelProps = {}) {
     [addMediaSegment]
   );
 
-  const handleMediaUrl = useCallback(
-    async (blockId: string, type: "image" | "video") => {
-      const promptLabel = type === "image" ? "이미지 URL" : "비디오 URL";
-      const url = window.prompt(promptLabel);
-      if (!url) return;
-
-      try {
-        if (type === "image") {
-          const data = await readImageUrl(url);
-          addMediaSegment(blockId, "image", data.src, data.width, data.height);
-          return;
-        }
-
-        const data = await readVideoUrl(url);
-        addMediaSegment(blockId, "video", data.src, data.width, data.height);
-      } catch {
-        // no-op
-      }
+  const openMediaUrlInput = useCallback(
+    (blockId: string, type: "image" | "video") => {
+      setMediaUrlInput({ blockId, type });
+      setMediaUrlValue("");
     },
-    [addMediaSegment]
+    []
   );
+
+  const submitMediaUrl = useCallback(async () => {
+    if (!mediaUrlInput || !mediaUrlValue.trim()) return;
+    const { blockId, type } = mediaUrlInput;
+    const url = mediaUrlValue.trim();
+    setMediaUrlInput(null);
+    setMediaUrlValue("");
+
+    try {
+      if (type === "image") {
+        const data = await readImageUrl(url);
+        addMediaSegment(blockId, "image", data.src, data.width, data.height);
+        return;
+      }
+
+      const data = await readVideoUrl(url);
+      addMediaSegment(blockId, "video", data.src, data.width, data.height);
+    } catch {
+      // no-op
+    }
+  }, [mediaUrlInput, mediaUrlValue, addMediaSegment]);
+
+  const cancelMediaUrlInput = useCallback(() => {
+    setMediaUrlInput(null);
+    setMediaUrlValue("");
+  }, []);
 
   const runNormalizePipeline = useCallback((inputBlocks: StepBlockDraft[]) => {
     return runBatchTransformPipeline({
@@ -939,7 +956,7 @@ export function DataInputPanel(props: DataInputPanelProps = {}) {
             variant="ghost"
             className="h-10 px-3 text-[11px] text-theme-text/60 hover:text-theme-text"
             onClick={() => {
-              void handleMediaUrl(block.id, "image");
+              openMediaUrlInput(block.id, "image");
             }}
           >
             URL
@@ -956,12 +973,50 @@ export function DataInputPanel(props: DataInputPanelProps = {}) {
             variant="ghost"
             className="h-10 px-3 text-[11px] text-theme-text/60 hover:text-theme-text"
             onClick={() => {
-              void handleMediaUrl(block.id, "video");
+              openMediaUrlInput(block.id, "video");
             }}
           >
             URL
           </Button>
         </div>
+        {mediaUrlInput && mediaUrlInput.blockId === block.id && (
+          <div className="flex items-center gap-2 rounded-lg border border-theme-border/20 bg-theme-surface/60 px-2 py-1.5">
+            <input
+              type="url"
+              value={mediaUrlValue}
+              onChange={(e) => setMediaUrlValue(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  void submitMediaUrl();
+                } else if (e.key === "Escape") {
+                  cancelMediaUrlInput();
+                }
+              }}
+              placeholder={
+                mediaUrlInput.type === "image" ? "이미지 URL" : "비디오 URL"
+              }
+              className="min-w-0 flex-1 bg-transparent text-xs text-theme-text outline-none placeholder:text-theme-text/40"
+              autoFocus
+            />
+            <Button
+              variant="ghost"
+              className="h-7 shrink-0 px-2 text-[11px]"
+              onClick={() => {
+                void submitMediaUrl();
+              }}
+              disabled={!mediaUrlValue.trim()}
+            >
+              확인
+            </Button>
+            <Button
+              variant="ghost"
+              className="h-7 shrink-0 px-2 text-[11px] text-theme-text/50"
+              onClick={cancelMediaUrlInput}
+            >
+              취소
+            </Button>
+          </div>
+        )}
       </>
     );
   };

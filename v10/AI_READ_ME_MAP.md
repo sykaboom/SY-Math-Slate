@@ -401,15 +401,19 @@ v10/src/
 |   |   |   |-- ToolbarPanel.tsx
 |   |   |   |-- ToolbarSeparator.tsx
 |   |   |   \-- ToolButton.tsx
+|   |   |-- CanvasModeTools.tsx
 |   |   |-- compactToolbarSections.ts
+|   |   |-- DrawModeTools.tsx
 |   |   |-- EraserControls.tsx
 |   |   |-- FloatingToolbar.tsx
 |   |   |-- LaserControls.tsx
+|   |   |-- MorePanel.tsx
 |   |   |-- navigationLabels.ts
 |   |   |-- PageNavigator.tsx
 |   |   |-- PenControls.tsx
 |   |   |-- PendingApprovalPanel.tsx
 |   |   |-- PlaybackControls.tsx
+|   |   |-- PlaybackModeTools.tsx
 |   |   |-- ThumbZoneDock.tsx
 |   |   |-- toolbarFeedback.ts
 |   |   |-- toolbarModePolicy.ts

@@ -62,7 +62,7 @@ export function PageNavigator() {
         label="Previous Page"
         onClick={() => dispatchPageCommand("prevPage")}
         disabled={currentIndex === 0 || isOverviewMode}
-        className="h-7 w-7"
+        className="h-8 w-8"
       />
       <Popover>
         <PopoverTrigger asChild>
@@ -137,21 +137,21 @@ export function PageNavigator() {
         label="Next Page"
         onClick={() => dispatchPageCommand("nextPage")}
         disabled={currentIndex >= totalPages - 1 || isOverviewMode}
-        className="h-7 w-7"
+        className="h-8 w-8"
       />
       <ToolButton
         icon={Plus}
         label="Add Page"
         onClick={() => dispatchPageCommand("addPage")}
         disabled={isOverviewMode}
-        className="h-7 w-7"
+        className="h-8 w-8"
       />
       <ToolButton
         icon={Trash2}
         label="Delete Page"
         onClick={() => dispatchPageCommand("deletePage")}
         disabled={!canDelete || isOverviewMode}
-        className="h-7 w-7"
+        className="h-8 w-8"
       />
       <span className="h-4 border-r border-toolbar-border/10" />
       <div className="flex items-center gap-1 rounded-full border border-toolbar-border/10 bg-toolbar-chip/5 px-1 py-0.5">
@@ -162,7 +162,7 @@ export function PageNavigator() {
             dispatchPageCommand("setColumnCount", { count: columnCount - 1 })
           }
           disabled={!canDecrease || isOverviewMode}
-          className="h-6 w-6"
+          className="h-8 w-8"
         />
         <span className="min-w-[36px] text-center text-[11px] text-toolbar-text/70">
           {columnCount}단
@@ -174,7 +174,7 @@ export function PageNavigator() {
             dispatchPageCommand("setColumnCount", { count: columnCount + 1 })
           }
           disabled={!canIncrease || isOverviewMode}
-          className="h-6 w-6"
+          className="h-8 w-8"
         />
       </div>
     </div>

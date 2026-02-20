@@ -1,14 +1,14 @@
 export const NAVIGATION_LABELS = {
   page: {
     short: "Page",
-    hint: "Physical canvas page order",
+    hint: "Canvas page navigation",
   },
   outlineStep: {
-    short: "Outline Step",
-    hint: "Document outline structure step",
+    short: "Outline",
+    hint: "Document outline structure",
   },
   playbackStep: {
-    short: "Playback Step",
-    hint: "Runtime playback progression step",
+    short: "Step",
+    hint: "Playback step progression",
   },
 } as const;

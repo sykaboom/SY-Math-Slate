@@ -122,7 +122,7 @@ export function PlaybackControls() {
           label="Previous Playback Step"
           onClick={() => dispatchPlaybackCommand("prevStep")}
           disabled={!canStepPrev}
-          className="h-7 w-7"
+          className="h-8 w-8"
         />
         <Popover>
           <PopoverTrigger asChild>
@@ -157,7 +157,7 @@ export function PlaybackControls() {
           label="Next Playback Step"
           onClick={() => dispatchPlaybackCommand("nextStep")}
           disabled={!canStepNext}
-          className="h-7 w-7"
+          className="h-8 w-8"
         />
       </div>
 
