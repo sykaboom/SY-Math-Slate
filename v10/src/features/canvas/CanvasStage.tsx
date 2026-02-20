@@ -126,6 +126,8 @@ function NormalCanvasStage({
     <div
       ref={dropRef}
       data-canvas-stage
+      data-mod-keyboard-boundary="canvas-stage"
+      tabIndex={-1}
       className="relative flex h-full w-full min-h-0 flex-1 overflow-hidden"
       onDragOver={handleDragOver}
       onDrop={handleDrop}

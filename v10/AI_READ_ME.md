@@ -10,8 +10,9 @@ Audience: Codex/Claude/Gemini-style coding agents, not human narrative reading.
 3. `AGENTS.md`
 4. approved `codex_tasks/task_*.md`
 5. `PROJECT_ROADMAP.md` (roadmap SSOT)
-6. this file (`v10/AI_READ_ME.md`)
-7. `v10/AI_READ_ME_MAP.md` (auto-generated structure map)
+6. `v10/docs/architecture/ModEngine.md` (canonical Mod/ModPackage architecture doc)
+7. this file (`v10/AI_READ_ME.md`)
+8. `v10/AI_READ_ME_MAP.md` (auto-generated structure map)
 
 ## 1) Non-negotiable Invariants
 - No `eval` / `new Function`.
@@ -44,7 +45,10 @@ Core subsystems:
 - `core/engine`: command bus and preflight execution.
 - `core/contracts`: runtime guards/contracts.
 - `core/extensions`: plugin loader, registry, MCP gateway.
-- `core/mod`: mod contracts, runtime host manager/registry, and builtin mods (`draw`, `playback`, `canvas`, `lecture`) under one contract.
+- `core/mod/contracts`: mod runtime contracts and normalized event/context types.
+- `core/mod/package`: canonical package contracts/registry/selectors/guards and template-pack adapter (`types.ts`, `registry.ts`, `selectors.ts`, `guards.ts`, `templatePackAdapter.ts`).
+- `core/mod/host`: mod runtime manager/registry and normalized routing bridge (`manager.ts`, `registry.ts`, `inputRoutingBridge.ts`).
+- `core/mod/builtin`: builtin mods (`draw`, `playback`, `canvas`, `lecture`) under one contract.
 - `core/themes`: theme presets.
 - `core/theme`: runtime theme apply/preference schema.
 - `core/config`: tokens, capability/config defaults, and core/mod boundary contract (`coreModBoundary.ts`, guards).
@@ -73,7 +77,7 @@ Feature subsystems:
 
 Template pack runtime:
 - `src/mod/templates/*`: folder-based template packs and contract guards.
-- `src/mod/runtime/templatePackRegistry.ts`: runtime pack registry/bootstrap.
+- `src/mod/runtime/templatePackRegistry.ts`: compatibility facade that syncs template packs through `core/mod/package` runtime registry/selectors.
 
 ## 5) Store Authorities (SSOT)
 Authority-layer stores:
@@ -184,8 +188,10 @@ When touching `v10/src/**`, update this file (`v10/AI_READ_ME.md`) in same chang
 Execution planning sources:
 - roadmap-level: `PROJECT_ROADMAP.md`
 - execution-level: approved `codex_tasks/task_*.md`
+- architecture-level: `v10/docs/architecture/ModEngine.md` (canonical active path)
 
 Historical/non-SSOT artifacts must be treated as reference only:
 - archived batch plans
 - superseded tasks
 - draft matrices
+- legacy `ModeEngine.md` path mentions (archive history only)

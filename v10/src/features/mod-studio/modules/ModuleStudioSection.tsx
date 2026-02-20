@@ -5,6 +5,7 @@ import { useMemo, useState } from "react";
 import { listAppCommands } from "@core/engine/commandBus";
 import { listKnownUISlotNames, type UISlotName } from "@core/extensions/registry";
 import { getRuntimeModManager, getRuntimeModRegistry } from "@core/mod/host";
+import { listRuntimeModPackages } from "@core/mod/package";
 import type { ModuleDraft } from "@features/mod-studio/core/types";
 import {
   getModuleDiagnostics,
@@ -33,6 +34,7 @@ export function ModuleStudioSection() {
   const template = useModStudioStore((state) => state.draft.template);
   const upsertModuleDraft = useModStudioStore((state) => state.upsertModuleDraft);
   const removeModuleDraft = useModStudioStore((state) => state.removeModuleDraft);
+  const activePackageId = useModStore((state) => state.activePackageId);
   const activeModId = useModStore((state) => state.activeModId);
   const [seed, setSeed] = useState<ModuleDraft>(createModuleSeed);
 
@@ -48,21 +50,29 @@ export function ModuleStudioSection() {
   const runtimeModDiagnostics = useMemo(() => {
     const runtimeRegistry = getRuntimeModRegistry();
     const runtimeManager = getRuntimeModManager();
-    const toolbarMode = resolveToolbarModeFromActiveModId(activeModId);
+    const registeredPackages = listRuntimeModPackages();
+    const toolbarMode = resolveToolbarModeFromActiveModId(activeModId, {
+      activePackageId,
+      packageDefinitions: registeredPackages,
+    });
     const reservedActionIds = new Set(listToolbarActionIdsByMode(toolbarMode));
     const rawToolbarContributions = runtimeManager.listToolbarContributions();
     const resolvedToolbarContributions = listResolvedModToolbarContributions({
       mountMode: "window-host",
       role: "host",
       reservedActionIds,
+      activePackageId,
     });
     return getRuntimeModDiagnostics({
       activeModId,
+      activePackageId,
+      registeredPackages,
+      toolbarMode,
       registeredMods: runtimeRegistry.list(),
       rawToolbarContributions,
       resolvedToolbarContributions,
     });
-  }, [activeModId]);
+  }, [activeModId, activePackageId]);
 
   const handleAdd = () => {
     const normalizedId = seed.id.trim();
@@ -230,6 +240,32 @@ export function ModuleStudioSection() {
             {runtimeModDiagnostics.activeModId ?? "(none)"}
           </span>
         </div>
+        <div className="text-[11px] text-theme-text/70">
+          active package:{" "}
+          <span className="font-semibold text-theme-text/85">
+            {runtimeModDiagnostics.resolvedActivePackageId ?? "(none)"}
+          </span>
+          {runtimeModDiagnostics.activePackageFallbackToPrimary ? (
+            <span className="text-[var(--theme-warning)]">
+              {" "}
+              (fallback from {runtimeModDiagnostics.requestedActivePackageId ?? "(none)"})
+            </span>
+          ) : null}
+        </div>
+        <div className="text-[11px] text-theme-text/70">
+          package mods:{" "}
+          {runtimeModDiagnostics.activePackageModIds.length > 0 ? (
+            runtimeModDiagnostics.activePackageModIds.join(", ")
+          ) : (
+            <span className="text-theme-text/55">(none)</span>
+          )}
+        </div>
+        <div className="text-[11px] text-theme-text/70">
+          policy target ({runtimeModDiagnostics.toolbarMode}):{" "}
+          <span className="font-semibold text-theme-text/85">
+            {runtimeModDiagnostics.expectedActiveModIdForToolbarMode ?? "(none)"}
+          </span>
+        </div>
         <div className="flex flex-wrap items-center gap-2 text-[11px] text-theme-text/70">
           {runtimeModDiagnostics.orderedMods.length === 0 ? (
             <span>no registered mods</span>
@@ -244,6 +280,37 @@ export function ModuleStudioSection() {
             ))
           )}
         </div>
+        {runtimeModDiagnostics.declaredConflictPackageIds.length > 0 ? (
+          <div className="text-[11px] text-theme-text/70">
+            declared package conflicts:{" "}
+            {runtimeModDiagnostics.declaredConflictPackageIds.join(", ")}
+          </div>
+        ) : (
+          <div className="text-[11px] text-[var(--theme-success)]">
+            no declared package conflicts
+          </div>
+        )}
+        {runtimeModDiagnostics.reverseConflictPackageIds.length > 0 ? (
+          <div className="text-[11px] text-[var(--theme-warning)]">
+            incoming conflicts from other packages:{" "}
+            {runtimeModDiagnostics.reverseConflictPackageIds.join(", ")}
+          </div>
+        ) : null}
+        {runtimeModDiagnostics.conflictPackageIds.length > 0 ? (
+          <div className="text-[11px] text-[var(--theme-warning)]">
+            active conflicts in registry: {runtimeModDiagnostics.conflictPackageIds.join(", ")}
+          </div>
+        ) : (
+          <div className="text-[11px] text-[var(--theme-success)]">
+            no active package conflicts
+          </div>
+        )}
+        {runtimeModDiagnostics.missingConflictPackageIds.length > 0 ? (
+          <div className="text-[11px] text-[var(--theme-warning)]">
+            unknown conflict targets:{" "}
+            {runtimeModDiagnostics.missingConflictPackageIds.join(", ")}
+          </div>
+        ) : null}
         {runtimeModDiagnostics.blockedContributionIds.length > 0 ? (
           <div className="text-[11px] text-[var(--theme-warning)]">
             blocked contributions: {runtimeModDiagnostics.blockedContributionIds.join(", ")}

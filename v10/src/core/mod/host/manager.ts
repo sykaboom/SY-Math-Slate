@@ -211,6 +211,11 @@ export class ModManager {
   }
 }
 
+export type ModManagerInputRouter = Pick<
+  ModManager,
+  "routePointer" | "routeKey" | "routeWheel"
+>;
+
 export const createModManager = (options: ModManagerOptions): ModManager =>
   new ModManager(options);
 

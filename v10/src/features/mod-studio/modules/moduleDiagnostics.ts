@@ -1,5 +1,15 @@
 import type { ModuleDraft } from "@features/mod-studio/core/types";
 import type { ModDefinition, ModToolbarItem } from "@core/mod/contracts";
+import {
+  selectActiveModPackage,
+  selectActiveModPackageConflictSummary,
+  selectActiveModPackageContainsModId,
+  selectActiveModPackageResolution,
+  selectModPackageActivationModIdForToolbarMode,
+  type ModPackageDefinition,
+  type ModPackageId,
+  type ModPackageToolbarMode,
+} from "@core/mod/package";
 
 export type ModuleDiagnostic = {
   level: "error" | "warning";
@@ -14,6 +24,16 @@ export type RuntimeModOrderEntry = {
 
 export type RuntimeModDiagnostics = {
   activeModId: string | null;
+  requestedActivePackageId: ModPackageId | null;
+  resolvedActivePackageId: ModPackageId | null;
+  activePackageFallbackToPrimary: boolean;
+  activePackageModIds: string[];
+  declaredConflictPackageIds: ModPackageId[];
+  reverseConflictPackageIds: ModPackageId[];
+  conflictPackageIds: ModPackageId[];
+  missingConflictPackageIds: ModPackageId[];
+  toolbarMode: ModPackageToolbarMode;
+  expectedActiveModIdForToolbarMode: string | null;
   orderedMods: RuntimeModOrderEntry[];
   blockedContributionIds: string[];
   diagnostics: ModuleDiagnostic[];
@@ -21,6 +41,9 @@ export type RuntimeModDiagnostics = {
 
 type RuntimeModDiagnosticsInput = {
   activeModId: string | null;
+  activePackageId: ModPackageId | null;
+  registeredPackages: readonly ModPackageDefinition[];
+  toolbarMode: ModPackageToolbarMode;
   registeredMods: readonly ModDefinition[];
   rawToolbarContributions: readonly ModToolbarItem[];
   resolvedToolbarContributions: readonly ModToolbarItem[];
@@ -131,6 +154,30 @@ export const getRuntimeModDiagnostics = (
     });
 
   const diagnostics: ModuleDiagnostic[] = [];
+  const registeredModIdSet = new Set(orderedMods.map((mod) => mod.id));
+
+  const activePackageResolution = selectActiveModPackageResolution(
+    input.registeredPackages,
+    input.activePackageId
+  );
+  const activePackage = selectActiveModPackage(
+    input.registeredPackages,
+    input.activePackageId
+  );
+  const packageConflictSummary = selectActiveModPackageConflictSummary(
+    input.registeredPackages,
+    input.activePackageId
+  );
+  const expectedActiveModIdForToolbarMode =
+    selectModPackageActivationModIdForToolbarMode(
+      activePackage,
+      input.toolbarMode
+    );
+  const activeModIsInResolvedPackage = selectActiveModPackageContainsModId(
+    input.registeredPackages,
+    input.activePackageId,
+    input.activeModId
+  );
 
   const modsByPriority = new Map<number, string[]>();
   for (const mod of orderedMods) {
@@ -181,12 +228,80 @@ export const getRuntimeModDiagnostics = (
     diagnostics.push({
       level: "warning",
       code: "blocked-contributions",
-      message: `${blockedContributionIds.length} toolbar contributions were filtered by host policy.`,
+      message: `${blockedContributionIds.length} toolbar contributions were filtered by host/package policy.`,
+    });
+  }
+
+  if (
+    activePackageResolution.fallbackToPrimary &&
+    activePackageResolution.requestedPackageId
+  ) {
+    diagnostics.push({
+      level: "warning",
+      code: "active-package-fallback",
+      message: `requested active package '${activePackageResolution.requestedPackageId}' is unavailable; using '${activePackageResolution.resolvedPackageId ?? "(none)"}'.`,
+    });
+  }
+
+  if (packageConflictSummary.registeredConflictIds.length > 0) {
+    diagnostics.push({
+      level: "warning",
+      code: "package-conflicts-active",
+      message: `active package conflicts: ${packageConflictSummary.registeredConflictIds.join(", ")}`,
+    });
+  }
+
+  if (packageConflictSummary.missingConflictIds.length > 0) {
+    diagnostics.push({
+      level: "warning",
+      code: "package-conflicts-missing-packages",
+      message: `active package declares unknown conflicts: ${packageConflictSummary.missingConflictIds.join(", ")}`,
+    });
+  }
+
+  if (activePackage && input.activeModId && !activeModIsInResolvedPackage) {
+    diagnostics.push({
+      level: "warning",
+      code: "policy-mismatch-active-mod-not-in-package",
+      message: `active mod '${input.activeModId}' is outside active package '${activePackage.packId}'.`,
+    });
+  }
+
+  if (
+    input.activeModId &&
+    expectedActiveModIdForToolbarMode &&
+    input.activeModId !== expectedActiveModIdForToolbarMode
+  ) {
+    diagnostics.push({
+      level: "warning",
+      code: "policy-mismatch-toolbar-mode-target",
+      message: `toolbar mode '${input.toolbarMode}' expects mod '${expectedActiveModIdForToolbarMode}' but runtime active mod is '${input.activeModId}'.`,
+    });
+  }
+
+  if (
+    expectedActiveModIdForToolbarMode &&
+    !registeredModIdSet.has(expectedActiveModIdForToolbarMode)
+  ) {
+    diagnostics.push({
+      level: "warning",
+      code: "policy-mismatch-unregistered-target-mod",
+      message: `active package policy targets '${expectedActiveModIdForToolbarMode}' for toolbar mode '${input.toolbarMode}', but runtime registry does not contain it.`,
     });
   }
 
   return {
     activeModId: input.activeModId,
+    requestedActivePackageId: activePackageResolution.requestedPackageId,
+    resolvedActivePackageId: activePackageResolution.resolvedPackageId,
+    activePackageFallbackToPrimary: activePackageResolution.fallbackToPrimary,
+    activePackageModIds: activePackage ? [...activePackage.modIds] : [],
+    declaredConflictPackageIds: packageConflictSummary.declaredConflictIds,
+    reverseConflictPackageIds: packageConflictSummary.reverseConflictIds,
+    conflictPackageIds: packageConflictSummary.registeredConflictIds,
+    missingConflictPackageIds: packageConflictSummary.missingConflictIds,
+    toolbarMode: input.toolbarMode,
+    expectedActiveModIdForToolbarMode,
     orderedMods,
     blockedContributionIds,
     diagnostics,

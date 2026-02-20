@@ -15,6 +15,7 @@ import { HostLiveSessionPanel } from "@features/sharing/HostLiveSessionPanel";
 import { ThemePickerPanel } from "@features/theme/ThemePickerPanel";
 import { FloatingToolbar } from "@features/toolbar/FloatingToolbar";
 import { PendingApprovalPanel } from "@features/toolbar/PendingApprovalPanel";
+import { useModStore } from "@features/store/useModStore";
 import { listResolvedModPanelContributions } from "@features/ui-host/modContributionBridge";
 import type {
   PanelBehaviorContract,
@@ -415,8 +416,10 @@ export const buildCoreWindowHostPanelAdapters = (
     });
   }
 
+  const activePackageId = useModStore.getState().activePackageId;
   const modPanelContributions = listResolvedModPanelContributions({
     role: runtimeRole,
+    activePackageId,
   });
   for (const contribution of modPanelContributions) {
     const panelId = `mod-panel:${contribution.id}`;

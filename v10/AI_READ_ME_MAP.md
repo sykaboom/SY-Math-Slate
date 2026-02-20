@@ -117,8 +117,17 @@ v10/src/
 |   |   |   \-- types.ts
 |   |   |-- host/
 |   |   |   |-- index.ts
+|   |   |   |-- inputRoutingBridge.ts
 |   |   |   |-- manager.ts
 |   |   |   \-- registry.ts
+|   |   |-- package/
+|   |   |   |-- guards.ts
+|   |   |   |-- index.ts
+|   |   |   |-- registry.ts
+|   |   |   |-- selectors.ts
+|   |   |   |-- templatePackAdapter.ts
+|   |   |   |-- templatePackAdapter.types.ts
+|   |   |   \-- types.ts
 |   |   \-- index.ts
 |   |-- persistence/
 |   |   \-- buildPersistedDoc.ts

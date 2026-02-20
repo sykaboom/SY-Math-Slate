@@ -178,8 +178,11 @@ export function FloatingToolbar(props: FloatingToolbarProps = {}) {
   const [toolbarNotice, setToolbarNotice] = useState<ToolbarNotice | null>(
     null
   );
+  const activePackageId = useModStore((state) => state.activePackageId);
   const activeModId = useModStore((state) => state.activeModId);
-  const toolbarMode = resolveToolbarModeFromActiveModId(activeModId);
+  const toolbarMode = resolveToolbarModeFromActiveModId(activeModId, {
+    activePackageId,
+  });
   const {
     toolbarDockPosition,
     isOverviewMode,
@@ -226,7 +229,9 @@ export function FloatingToolbar(props: FloatingToolbarProps = {}) {
   const handleToolbarModeSelect = (mode: ToolbarMode) => {
     activateToolbarRuntimeMod(
       modRuntimeManager,
-      resolveActiveModIdFromToolbarMode(mode)
+      resolveActiveModIdFromToolbarMode(mode, {
+        activePackageId,
+      })
     );
   };
   const handleModToolbarContributionClick = (
@@ -340,9 +345,13 @@ export function FloatingToolbar(props: FloatingToolbarProps = {}) {
   }, []);
 
   useEffect(() => {
-    const nextModId = activeModId ?? resolveActiveModIdFromToolbarMode("draw");
+    const nextModId =
+      activeModId ??
+      resolveActiveModIdFromToolbarMode("draw", {
+        activePackageId,
+      });
     activateToolbarRuntimeMod(modRuntimeManager, nextModId);
-  }, [activeModId, modRuntimeManager]);
+  }, [activeModId, activePackageId, modRuntimeManager]);
 
   useEffect(() => {
     if (!toolbarNotice || typeof window === "undefined") return;

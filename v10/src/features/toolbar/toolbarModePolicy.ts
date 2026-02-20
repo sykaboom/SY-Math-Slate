@@ -1,40 +1,73 @@
+import {
+  listRuntimeModPackages,
+  selectActiveModPackageActivationModIdForToolbarMode,
+  selectActiveModPackageActivationToolbarModeMappedModId,
+  selectActiveModPackageToolbarModeForActivationModId,
+  type ModPackageDefinition,
+  type ModPackageId,
+} from "@core/mod/package";
 import type { ModId } from "@core/mod/contracts";
 import { DEFAULT_ACTIVE_MOD_ID } from "@features/store/useModStore";
 
 export type ToolbarMod = "draw" | "playback" | "canvas";
 export type ToolbarMode = ToolbarMod;
-export type ToolbarModeModId = "draw" | "lecture" | "canvas";
+export type ToolbarModeActivationContext = {
+  activePackageId?: ModPackageId | null;
+  packageDefinitions?: readonly ModPackageDefinition[];
+};
 
 export const DEFAULT_TOOLBAR_MODE: ToolbarMode = "draw";
 
-const TOOLBAR_MODE_TO_MOD_ID: Record<ToolbarMode, ToolbarModeModId> = {
-  draw: "draw",
-  playback: "lecture",
-  canvas: "canvas",
-};
-
-const resolveToolbarModeFromKnownModId = (
-  modId: ModId
-): ToolbarMode | null => {
-  if (modId === "draw") return "draw";
-  if (modId === "playback" || modId === "lecture") return "playback";
-  if (modId === "canvas") return "canvas";
-  return null;
-};
+const resolvePackageDefinitions = (
+  activationContext: ToolbarModeActivationContext
+): readonly ModPackageDefinition[] =>
+  activationContext.packageDefinitions ?? listRuntimeModPackages();
 
 export const resolveActiveModIdFromToolbarMode = (
-  mode: ToolbarMode
-): ToolbarModeModId => TOOLBAR_MODE_TO_MOD_ID[mode];
+  mode: ToolbarMode,
+  activationContext: ToolbarModeActivationContext = {}
+): ModId => {
+  const packageDefinitions = resolvePackageDefinitions(activationContext);
+  const mappedActivationPolicyModId =
+    selectActiveModPackageActivationToolbarModeMappedModId(
+      packageDefinitions,
+      activationContext.activePackageId,
+      mode
+    );
+  if (mappedActivationPolicyModId) {
+    return mappedActivationPolicyModId;
+  }
+  const activationPolicyModId =
+    selectActiveModPackageActivationModIdForToolbarMode(
+      packageDefinitions,
+      activationContext.activePackageId,
+      mode
+    );
+  if (activationPolicyModId) {
+    return activationPolicyModId;
+  }
+  return DEFAULT_ACTIVE_MOD_ID;
+};
 
 export const resolveToolbarModeFromActiveModId = (
-  activeModId: ModId | null | undefined
+  activeModId: ModId | null | undefined,
+  activationContext: ToolbarModeActivationContext = {}
 ): ToolbarMode => {
   if (!activeModId) return DEFAULT_TOOLBAR_MODE;
-  const resolvedActiveMode = resolveToolbarModeFromKnownModId(activeModId);
-  if (resolvedActiveMode) {
-    return resolvedActiveMode;
+  const packageDefinitions = resolvePackageDefinitions(activationContext);
+  const activationPolicyMode = selectActiveModPackageToolbarModeForActivationModId(
+    packageDefinitions,
+    activationContext.activePackageId,
+    activeModId
+  );
+  if (activationPolicyMode) {
+    return activationPolicyMode;
   }
-  const resolvedDefaultMode = resolveToolbarModeFromKnownModId(DEFAULT_ACTIVE_MOD_ID);
+  const resolvedDefaultMode = selectActiveModPackageToolbarModeForActivationModId(
+    packageDefinitions,
+    activationContext.activePackageId,
+    DEFAULT_ACTIVE_MOD_ID
+  );
   if (resolvedDefaultMode) {
     return resolvedDefaultMode;
   }

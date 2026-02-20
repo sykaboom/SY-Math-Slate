@@ -35,6 +35,22 @@ const eslintConfig = defineConfig([
     },
   },
   {
+    files: ["src/core/mod/package/**/*.{ts,tsx}"],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: [
+            "@features/*",
+            "@features/**",
+            "@core/mod/host",
+            "@core/mod/host/*",
+          ],
+        },
+      ],
+    },
+  },
+  {
     files: ["src/features/ui-host/**/*.{ts,tsx}"],
     rules: {
       "no-restricted-imports": [

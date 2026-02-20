@@ -1,45 +1,32 @@
-import type { UISlotComponent, UISlotName } from "@core/extensions/registry";
+import type {
+  TemplatePackAdapterActionSurfaceRule,
+  TemplatePackAdapterLayoutSlot,
+  TemplatePackAdapterManifest,
+  TemplatePackAdapterSlotComponentEntry,
+  TemplatePackAdapterSurface,
+  TemplatePackAdapterThemeDraft,
+  TemplatePackAdapterToolbarMode,
+  TemplatePackAdapterViewportProfile,
+} from "@core/mod/package";
 
 export const TEMPLATE_PACK_MANIFEST_VERSION = 1 as const;
 
-export type TemplateToolbarMode = "draw" | "playback" | "canvas";
-export type TemplateViewportProfile = "desktop" | "tablet" | "mobile";
-export type TemplateSurface = "primary" | "more" | "hidden";
+export type TemplateToolbarMode = TemplatePackAdapterToolbarMode;
+export type TemplateViewportProfile = TemplatePackAdapterViewportProfile;
+export type TemplateSurface = TemplatePackAdapterSurface;
 
-export type TemplateActionSurfaceRule = {
-  mode: TemplateToolbarMode;
-  viewport: TemplateViewportProfile;
-  actionId: string;
-  surface: TemplateSurface;
-};
+export type TemplateActionSurfaceRule = TemplatePackAdapterActionSurfaceRule;
 
-export type TemplateLayoutSlot = {
-  slot: UISlotName;
-  moduleOrder: string[];
-  hidden: boolean;
-};
+export type TemplateLayoutSlot = TemplatePackAdapterLayoutSlot;
 
-export type TemplateThemeDraft = {
-  presetId?: string;
-  globalTokens?: Record<string, string>;
-  moduleScopedTokens?: Record<string, Record<string, string>>;
-};
+export type TemplateThemeDraft = TemplatePackAdapterThemeDraft;
 
-export type TemplatePackSlotComponentEntry = {
-  id: string;
-  slot: UISlotName;
-  component: UISlotComponent;
-};
+export type TemplatePackSlotComponentEntry =
+  TemplatePackAdapterSlotComponentEntry;
 
-export type TemplatePackManifest = {
+export type TemplatePackManifest = Omit<
+  TemplatePackAdapterManifest,
+  "manifestVersion"
+> & {
   manifestVersion: typeof TEMPLATE_PACK_MANIFEST_VERSION;
-  packId: string;
-  title: string;
-  description: string;
-  kind: "base" | "custom";
-  actionSurfaceRules: readonly TemplateActionSurfaceRule[];
-  layout: readonly TemplateLayoutSlot[];
-  slotComponents?: readonly TemplatePackSlotComponentEntry[];
-  theme?: TemplateThemeDraft;
-  defaultEnabled?: boolean;
 };

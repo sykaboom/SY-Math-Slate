@@ -111,12 +111,12 @@ else
 fi
 echo ""
 
-# 6. 툴바 surface 중복 규칙 (단계형: SKIP 허용)
-echo "[6] mod contract 검사..."
+# 6. mod/package 계약 + 경계 + runtime matrix 규칙
+echo "[6] mod/package contract + boundary + runtime matrix(desktop/tablet/mobile) 검사..."
 if bash scripts/check_mod_contract.sh; then
-  echo "  [PASS] mod contract 규칙 통과"
+  echo "  [PASS] mod/package contract + boundary + runtime matrix 규칙 통과"
 else
-  echo "  [FAIL] mod contract 규칙 위반"
+  echo "  [FAIL] mod/package contract + boundary + runtime matrix 규칙 위반"
   FAIL=1
 fi
 echo ""

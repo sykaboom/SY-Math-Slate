@@ -2,11 +2,19 @@
 
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import type {
+  FocusEvent as ReactFocusEvent,
+  KeyboardEvent as ReactKeyboardEvent,
   PointerEvent as ReactPointerEvent,
   RefObject,
   WheelEvent as ReactWheelEvent,
 } from "react";
 
+import {
+  getRuntimeModManager,
+  routeModKeyInput,
+  routeModPointerInput,
+  routeModWheelInput,
+} from "@core/mod/host";
 import { useLocalStore } from "@features/store/useLocalStore";
 import { useSyncStore } from "@features/store/useSyncStore";
 import { useToolStore } from "@features/store/useToolStore";
@@ -41,8 +49,18 @@ const isEditableElement = (element: Element | null) => {
   if (element instanceof HTMLInputElement) return true;
   if (element instanceof HTMLTextAreaElement) return true;
   if (element instanceof HTMLSelectElement) return true;
-  if (element instanceof HTMLElement && element.isContentEditable) return true;
-  return false;
+  if (!(element instanceof HTMLElement)) return false;
+  if (element.isContentEditable) return true;
+  return Boolean(
+    element.closest(
+      "input, textarea, select, [contenteditable='true'], [contenteditable='plaintext-only']"
+    )
+  );
+};
+
+const asElement = (target: EventTarget | null): Element | null => {
+  if (target instanceof Element) return target;
+  return null;
 };
 
 const getViewportRect = (container: HTMLElement | null) => {
@@ -136,6 +154,35 @@ export function useViewportInteraction(
     [isStudent, setSharedViewport, setViewportPan]
   );
 
+  const routePointerThroughMod = useCallback(
+    (event: ReactPointerEvent<HTMLDivElement>) =>
+      routeModPointerInput({
+        manager: getRuntimeModManager(),
+        event,
+        toLocalPoint: (clientX, clientY) =>
+          getViewportPoint(containerRef.current, clientX, clientY),
+      }),
+    [containerRef]
+  );
+
+  const routeWheelThroughMod = useCallback(
+    (event: ReactWheelEvent<HTMLDivElement>) =>
+      routeModWheelInput({
+        manager: getRuntimeModManager(),
+        event,
+      }),
+    []
+  );
+
+  const routeKeyThroughMod = useCallback(
+    (event: ReactKeyboardEvent<HTMLDivElement>) =>
+      routeModKeyInput({
+        manager: getRuntimeModManager(),
+        event,
+      }),
+    []
+  );
+
   const cancelPointerPan = useCallback(() => {
     const panState = panStateRef.current;
     if (!panState.active) return;
@@ -193,31 +240,11 @@ export function useViewportInteraction(
   ]);
 
   useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.code !== "Space") return;
-      if (isEditableElement(document.activeElement)) return;
-      spacePressedRef.current = true;
-      event.preventDefault();
-    };
-
-    const handleKeyUp = (event: KeyboardEvent) => {
-      if (event.code !== "Space") return;
+    const handleWindowBlur = () => {
       spacePressedRef.current = false;
     };
-
-    const handleBlur = () => {
-      spacePressedRef.current = false;
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    window.addEventListener("keyup", handleKeyUp);
-    window.addEventListener("blur", handleBlur);
-
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-      window.removeEventListener("keyup", handleKeyUp);
-      window.removeEventListener("blur", handleBlur);
-    };
+    window.addEventListener("blur", handleWindowBlur);
+    return () => window.removeEventListener("blur", handleWindowBlur);
   }, []);
 
   useEffect(() => {
@@ -309,6 +336,11 @@ export function useViewportInteraction(
 
   const handlePointerDownCapture = useCallback(
     (event: ReactPointerEvent<HTMLDivElement>) => {
+      if (!isEditableElement(asElement(event.target))) {
+        event.currentTarget.focus({
+          preventScroll: true,
+        });
+      }
       if (isStudent) return;
       const viewportState = useViewportStore.getState();
       if (viewportState.isGestureLocked) return;
@@ -316,7 +348,13 @@ export function useViewportInteraction(
       const isSpacePan =
         spacePressedRef.current && !isEditableElement(document.activeElement);
       const isHandPan = activeTool === "hand";
-      if (!isMiddleButton && !isSpacePan && !isHandPan) return;
+      if (!isMiddleButton && !isSpacePan && !isHandPan) {
+        const routingResult = routePointerThroughMod(event);
+        if (routingResult !== "handled") return;
+        event.preventDefault();
+        event.stopPropagation();
+        return;
+      }
       if (pinchStateRef.current.active) return;
       if (event.pointerType === "mouse" && !isMiddleButton && event.button !== 0) {
         return;
@@ -334,7 +372,68 @@ export function useViewportInteraction(
       event.preventDefault();
       event.stopPropagation();
     },
-    [activeTool, isStudent, setViewportInteracting]
+    [activeTool, isStudent, routePointerThroughMod, setViewportInteracting]
+  );
+
+  const handleKeyDownCapture = useCallback(
+    (event: ReactKeyboardEvent<HTMLDivElement>) => {
+      if (
+        isEditableElement(asElement(event.target)) ||
+        isEditableElement(document.activeElement)
+      ) {
+        return;
+      }
+
+      if (event.code === "Space") {
+        spacePressedRef.current = true;
+      }
+
+      const routingResult = routeKeyThroughMod(event);
+      if (event.code === "Space") {
+        event.preventDefault();
+        if (routingResult === "handled") {
+          event.stopPropagation();
+        }
+        return;
+      }
+      if (routingResult !== "handled") return;
+      event.preventDefault();
+      event.stopPropagation();
+    },
+    [routeKeyThroughMod]
+  );
+
+  const handleKeyUpCapture = useCallback(
+    (event: ReactKeyboardEvent<HTMLDivElement>) => {
+      if (event.code === "Space") {
+        spacePressedRef.current = false;
+      }
+      if (
+        isEditableElement(asElement(event.target)) ||
+        isEditableElement(document.activeElement)
+      ) {
+        return;
+      }
+      const routingResult = routeKeyThroughMod(event);
+      if (routingResult !== "handled") return;
+      event.preventDefault();
+      event.stopPropagation();
+    },
+    [routeKeyThroughMod]
+  );
+
+  const handleBlurCapture = useCallback(
+    (event: ReactFocusEvent<HTMLDivElement>) => {
+      const relatedTarget = event.relatedTarget;
+      if (
+        relatedTarget instanceof Node &&
+        event.currentTarget.contains(relatedTarget)
+      ) {
+        return;
+      }
+      spacePressedRef.current = false;
+    },
+    []
   );
 
   const handlePointerMoveCapture = useCallback(
@@ -345,7 +444,13 @@ export function useViewportInteraction(
         return;
       }
       const panState = panStateRef.current;
-      if (!panState.active || panState.pointerId !== event.pointerId) return;
+      if (!panState.active || panState.pointerId !== event.pointerId) {
+        const routingResult = routePointerThroughMod(event);
+        if (routingResult !== "handled") return;
+        event.preventDefault();
+        event.stopPropagation();
+        return;
+      }
       const dx = event.clientX - panState.startX;
       const dy = event.clientY - panState.startY;
       const nextPan = {
@@ -356,13 +461,26 @@ export function useViewportInteraction(
       event.preventDefault();
       event.stopPropagation();
     },
-    [applyViewportPan, cancelPointerPan, isGestureLocked, isStudent]
+    [
+      applyViewportPan,
+      cancelPointerPan,
+      isGestureLocked,
+      isStudent,
+      routePointerThroughMod,
+    ]
   );
 
   const handlePointerUpCapture = useCallback(
     (event: ReactPointerEvent<HTMLDivElement>) => {
       const panState = panStateRef.current;
-      if (!panState.active || panState.pointerId !== event.pointerId) return;
+      if (!panState.active || panState.pointerId !== event.pointerId) {
+        if (isStudent || isGestureLocked) return;
+        const routingResult = routePointerThroughMod(event);
+        if (routingResult !== "handled") return;
+        event.preventDefault();
+        event.stopPropagation();
+        return;
+      }
       panStateRef.current = {
         active: false,
         pointerId: null,
@@ -379,16 +497,22 @@ export function useViewportInteraction(
       event.preventDefault();
       event.stopPropagation();
     },
-    [setViewportInteracting]
+    [isGestureLocked, isStudent, routePointerThroughMod, setViewportInteracting]
   );
 
   const handleWheel = useCallback(
     (event: ReactWheelEvent<HTMLDivElement>) => {
       if (isStudent) return;
-      const container = containerRef.current;
-      if (!container || event.deltaY === 0) return;
       const viewportState = useViewportStore.getState();
       if (viewportState.isGestureLocked) return;
+      const routingResult = routeWheelThroughMod(event);
+      const container = containerRef.current;
+      if (!container || event.deltaY === 0) {
+        if (routingResult !== "handled") return;
+        event.preventDefault();
+        event.stopPropagation();
+        return;
+      }
       event.preventDefault();
 
       const { viewport } = viewportState;
@@ -409,8 +533,11 @@ export function useViewportInteraction(
       };
 
       applyViewport(nextZoom, nextPan);
+      if (routingResult === "handled") {
+        event.stopPropagation();
+      }
     },
-    [applyViewport, containerRef, isStudent]
+    [applyViewport, containerRef, isStudent, routeWheelThroughMod]
   );
 
   return useMemo(
@@ -421,8 +548,14 @@ export function useViewportInteraction(
       onPointerUpCapture: handlePointerUpCapture,
       onPointerCancelCapture: handlePointerUpCapture,
       onPointerLeave: handlePointerUpCapture,
+      onKeyDownCapture: handleKeyDownCapture,
+      onKeyUpCapture: handleKeyUpCapture,
+      onBlurCapture: handleBlurCapture,
     }),
     [
+      handleBlurCapture,
+      handleKeyDownCapture,
+      handleKeyUpCapture,
       handlePointerDownCapture,
       handlePointerMoveCapture,
       handlePointerUpCapture,

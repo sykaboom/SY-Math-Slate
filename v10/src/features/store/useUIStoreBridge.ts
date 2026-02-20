@@ -57,6 +57,7 @@ export interface UIState {
   showCursors: boolean;
   showBreakGuides: boolean;
   showCanvasBorder: boolean;
+  activePackageId?: string | null;
   activeModId?: string | null;
   setTool: (tool: Tool) => void;
   setColor: (color: string) => void;
@@ -178,12 +179,14 @@ const getCapabilitySliceState = () => {
 };
 
 type ModStoreSliceState = {
+  activePackageId: string | null;
   activeModId: string | null;
 };
 
-const getModSliceState = (): Partial<Pick<UIState, "activeModId">> => {
+const getModSliceState = (): Partial<Pick<UIState, "activePackageId" | "activeModId">> => {
   const state = useModStore.getState() as ModStoreSliceState;
   return {
+    activePackageId: state.activePackageId ?? null,
     activeModId: state.activeModId ?? null,
   };
 };
