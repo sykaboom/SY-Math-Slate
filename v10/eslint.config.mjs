@@ -5,6 +5,46 @@ import nextTs from "eslint-config-next/typescript";
 const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
+  {
+    files: ["src/core/mod/builtin/**/*.{ts,tsx}"],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: [
+            "@features/layout",
+            "@features/layout/*",
+            "@features/store",
+            "@features/store/*",
+            "@features/layout/windowing",
+            "@features/layout/windowing/*",
+          ],
+        },
+      ],
+    },
+  },
+  {
+    files: ["src/core/mod/host/**/*.{ts,tsx}"],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: ["@features/*"],
+        },
+      ],
+    },
+  },
+  {
+    files: ["src/features/ui-host/**/*.{ts,tsx}"],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: ["@core/mod/**/internal/*"],
+        },
+      ],
+    },
+  },
   // Override default ignores of eslint-config-next.
   globalIgnores([
     // Default ignores of eslint-config-next:

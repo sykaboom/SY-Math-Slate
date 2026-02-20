@@ -3,10 +3,20 @@
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import type { ChangeEvent } from "react";
 
+import type { ModContext, ModId } from "@core/mod/contracts";
+import { registerBuiltinMods } from "@core/mod/builtin";
+import {
+  configureRuntimeModManager,
+  type ModManager,
+} from "@core/mod/host";
 import { Popover, PopoverTrigger } from "@ui/components/popover";
 import { useFileIO } from "@features/hooks/useFileIO";
 import { useImageInsert } from "@features/hooks/useImageInsert";
 import { ExtensionSlot } from "@features/extensions/ui/ExtensionSlot";
+import { useCanvasStore } from "@features/store/useCanvasStore";
+import { listResolvedModToolbarContributions } from "@features/ui-host/modContributionBridge";
+import { useLocalStore } from "@features/store/useLocalStore";
+import { useModStore } from "@features/store/useModStore";
 import { dispatchCommand } from "@core/engine/commandBus";
 import { cn } from "@core/utils";
 import { useUIStore } from "@features/store/useUIStoreBridge";
@@ -29,12 +39,15 @@ import {
   selectMorePanelActions,
   selectPlaybackToolbarActions,
 } from "./catalog/toolbarActionSelectors";
+import { listToolbarActionIdsByMode } from "./catalog/toolbarActionCatalog";
 import {
   getToolbarViewportProfileSnapshot,
   subscribeToolbarViewportProfile,
   type ToolbarViewportProfile,
 } from "./catalog/toolbarViewportProfile";
 import {
+  resolveActiveModIdFromToolbarMode,
+  resolveToolbarModeFromActiveModId,
   resolveToolbarRenderPolicy,
   type ToolbarMode,
 } from "./toolbarModePolicy";
@@ -77,8 +90,81 @@ const TOOLBAR_DOCK_OPTIONS: ReadonlyArray<{
   { value: "right", label: "Right" },
 ];
 
+const publishToolbarRequestFailureNotice = (): void => {
+  publishToolbarNotice({
+    tone: "error",
+    message: "요청을 처리하지 못했습니다.",
+  });
+};
+
+const resolveToolbarRuntimeRole = (): "host" | "student" => {
+  const state = useLocalStore.getState();
+  return state.trustedRoleClaim ?? state.role;
+};
+
+const resolveToolbarModContext = (modId: ModId): ModContext => ({
+  modId,
+  dispatchCommand: (commandId, payload, meta) =>
+    dispatchCommand(commandId, payload, {
+      meta: {
+        source: "toolbar.mod-manager-bridge",
+        modId,
+        ...(meta ?? {}),
+      },
+    }),
+  query: {
+    activeTool: () => useUIStore.getState().activeTool,
+    playbackStep: () => {
+      const canvas = useCanvasStore.getState();
+      const maxStep = Object.values(canvas.pages).reduce((max, items) => {
+        return items.reduce((innerMax, item) => {
+          if (item.type !== "text" && item.type !== "image") return innerMax;
+          const stepIndex =
+            typeof item.stepIndex === "number" ? item.stepIndex : 0;
+          return Math.max(innerMax, stepIndex);
+        }, max);
+      }, -1);
+      const total = Math.max(maxStep + 1, 0);
+      const current = total === 0 ? 0 : Math.min(canvas.currentStep + 1, total);
+      return { current, total };
+    },
+    role: () => resolveToolbarRuntimeRole(),
+  },
+  publishNotice: (tone, message) => {
+    publishToolbarNotice({ tone, message });
+  },
+});
+
+const createToolbarModManager = (): ModManager => {
+  registerBuiltinMods();
+  return configureRuntimeModManager({
+    resolveContext: resolveToolbarModContext,
+    stateAdapter: {
+      getActiveModId: () => useModStore.getState().activeModId ?? null,
+      setActiveModId: (modId) => {
+        if (!modId) return;
+        useModStore.getState().setActiveModId(modId);
+      },
+    },
+  });
+};
+
+const activateToolbarRuntimeMod = (manager: ModManager, modId: ModId): void => {
+  void manager
+    .activate({ modId })
+    .then((result) => {
+      if (!result.ok) {
+        publishToolbarRequestFailureNotice();
+      }
+    })
+    .catch(() => {
+      publishToolbarRequestFailureNotice();
+    });
+};
+
 export function FloatingToolbar(props: FloatingToolbarProps = {}) {
   const { mountMode = "legacy-shell", className } = props;
+  const [modRuntimeManager] = useState<ModManager>(createToolbarModManager);
   const viewportProfile = useSyncExternalStore<ToolbarViewportProfile>(
     subscribeToolbarViewportProfile,
     getToolbarViewportProfileSnapshot,
@@ -92,7 +178,8 @@ export function FloatingToolbar(props: FloatingToolbarProps = {}) {
   const [toolbarNotice, setToolbarNotice] = useState<ToolbarNotice | null>(
     null
   );
-  const [toolbarMode, setToolbarMode] = useState<ToolbarMode>("draw");
+  const activeModId = useModStore((state) => state.activeModId);
+  const toolbarMode = resolveToolbarModeFromActiveModId(activeModId);
   const {
     toolbarDockPosition,
     isOverviewMode,
@@ -120,16 +207,46 @@ export function FloatingToolbar(props: FloatingToolbarProps = {}) {
   );
   const canvasToolbarActions = selectCanvasToolbarActions(viewportProfile);
   const morePanelActions = selectMorePanelActions(toolbarMode, viewportProfile);
+  const reservedToolbarActionIds = new Set(listToolbarActionIdsByMode(toolbarMode));
+  const activeModToolbarContributions = listResolvedModToolbarContributions({
+    mountMode,
+    role: resolveToolbarRuntimeRole(),
+    reservedActionIds: reservedToolbarActionIds,
+  });
+  const activeModToolbarContributionCount = activeModToolbarContributions.length;
 
   const handleToolbarDockSelect = (position: "left" | "center" | "right") => {
     void dispatchCommand("setToolbarDock", { position }, {
       meta: { source: "toolbar.floating-toolbar" },
     }).catch(() => {
-      publishToolbarNotice({
-        tone: "error",
-        message: "요청을 처리하지 못했습니다.",
-      });
+      publishToolbarRequestFailureNotice();
     });
+  };
+
+  const handleToolbarModeSelect = (mode: ToolbarMode) => {
+    activateToolbarRuntimeMod(
+      modRuntimeManager,
+      resolveActiveModIdFromToolbarMode(mode)
+    );
+  };
+  const handleModToolbarContributionClick = (
+    contribution: (typeof activeModToolbarContributions)[number]
+  ) => {
+    void dispatchCommand(contribution.commandId, {}, {
+      meta: {
+        source: "toolbar.mod-contribution",
+        contributionId: contribution.id,
+        mode: toolbarMode,
+      },
+    })
+      .then((result) => {
+        if (!result.ok) {
+          publishToolbarRequestFailureNotice();
+        }
+      })
+      .catch(() => {
+        publishToolbarRequestFailureNotice();
+      });
   };
 
   const handleOpenClick = () => {
@@ -223,6 +340,11 @@ export function FloatingToolbar(props: FloatingToolbarProps = {}) {
   }, []);
 
   useEffect(() => {
+    const nextModId = activeModId ?? resolveActiveModIdFromToolbarMode("draw");
+    activateToolbarRuntimeMod(modRuntimeManager, nextModId);
+  }, [activeModId, modRuntimeManager]);
+
+  useEffect(() => {
     if (!toolbarNotice || typeof window === "undefined") return;
     const timeoutId = window.setTimeout(() => setToolbarNotice(null), 3200);
     return () => window.clearTimeout(timeoutId);
@@ -238,7 +360,7 @@ export function FloatingToolbar(props: FloatingToolbarProps = {}) {
           <button
             key={mode.id}
             type="button"
-            onClick={() => setToolbarMode(mode.id)}
+            onClick={() => handleToolbarModeSelect(mode.id)}
             className={cn(
               "rounded-full px-2.5 py-1 text-[11px] transition",
               isActive
@@ -350,6 +472,7 @@ export function FloatingToolbar(props: FloatingToolbarProps = {}) {
 
       <div
         data-extension-slot-host="toolbar-inline"
+        data-mod-toolbar-bridge-count={activeModToolbarContributionCount}
         className="flex items-center"
       >
         <ExtensionSlot slot="toolbar-inline" />
@@ -357,6 +480,27 @@ export function FloatingToolbar(props: FloatingToolbarProps = {}) {
       <div className="h-px bg-toolbar-border/10" />
       {morePanelContent}
     </div>
+  );
+  const compactModToolbarContributionButtons = activeModToolbarContributions.map(
+    (contribution) => (
+      <ToolButton
+        key={`compact-mod-${contribution.id}`}
+        icon={MoreHorizontal}
+        label={contribution.label}
+        onClick={() => handleModToolbarContributionClick(contribution)}
+        className="h-11 w-11 shrink-0"
+      />
+    )
+  );
+  const desktopModToolbarContributionButtons = activeModToolbarContributions.map(
+    (contribution) => (
+      <ToolButton
+        key={`desktop-mod-${contribution.id}`}
+        icon={MoreHorizontal}
+        label={contribution.label}
+        onClick={() => handleModToolbarContributionClick(contribution)}
+      />
+    )
   );
 
   const toolbarNoticeClass =
@@ -434,6 +578,7 @@ export function FloatingToolbar(props: FloatingToolbarProps = {}) {
                   toolbarDockSelector={toolbarDockSelector}
                 />
               )}
+              {compactModToolbarContributionButtons}
             </>
           }
           expandedPanel={compactExpandedPanel}
@@ -475,9 +620,11 @@ export function FloatingToolbar(props: FloatingToolbarProps = {}) {
               toolbarDockSelector={toolbarDockSelector}
             />
           )}
+          {desktopModToolbarContributionButtons}
 
           <div
             data-extension-slot-host="toolbar-inline"
+            data-mod-toolbar-bridge-count={activeModToolbarContributionCount}
             className="flex items-center"
           >
             <ExtensionSlot slot="toolbar-inline" />

@@ -44,6 +44,7 @@ Core subsystems:
 - `core/engine`: command bus and preflight execution.
 - `core/contracts`: runtime guards/contracts.
 - `core/extensions`: plugin loader, registry, MCP gateway.
+- `core/mod`: mod contracts, runtime host manager/registry, and builtin mods (`draw`, `playback`, `canvas`, `lecture`) under one contract.
 - `core/themes`: theme presets.
 - `core/theme`: runtime theme apply/preference schema.
 - `core/config`: tokens, capability/config defaults, and core/mod boundary contract (`coreModBoundary.ts`, guards).
@@ -51,6 +52,7 @@ Core subsystems:
 Feature subsystems:
 - `features/extensions`: command registrations and UI slot runtime.
 - `features/layout`: app shell/window host.
+- `features/ui-host`: host-side aggregation bridge for mod toolbar/panel contributions.
 - `features/canvas`: board/cursor/render layers.
 - `features/toolbar`: mode-split floating toolbar, pen/laser/eraser controls, dock selector UI, compact IA sections, centralized toolbar feedback/notices.
   - Toolbar dedup IA rule: mode-lane controls are primary; `More` is settings/secondary only; avoid duplicate action surfaces for the same command in the same mode.
@@ -153,6 +155,7 @@ Design SSOT docs (read together):
 
 Primary checks used by hooks/CI:
 - `scripts/check_layer_rules.sh`
+- `scripts/check_mod_contract.sh`
 - `scripts/check_design_ssot_contract.sh`
 - `scripts/check_toolbar_contract.sh`
 - `scripts/check_v10_changed_lint.sh`

@@ -1,4 +1,45 @@
-export type ToolbarMode = "draw" | "playback" | "canvas";
+import type { ModId } from "@core/mod/contracts";
+import { DEFAULT_ACTIVE_MOD_ID } from "@features/store/useModStore";
+
+export type ToolbarMod = "draw" | "playback" | "canvas";
+export type ToolbarMode = ToolbarMod;
+export type ToolbarModeModId = "draw" | "lecture" | "canvas";
+
+export const DEFAULT_TOOLBAR_MODE: ToolbarMode = "draw";
+
+const TOOLBAR_MODE_TO_MOD_ID: Record<ToolbarMode, ToolbarModeModId> = {
+  draw: "draw",
+  playback: "lecture",
+  canvas: "canvas",
+};
+
+const resolveToolbarModeFromKnownModId = (
+  modId: ModId
+): ToolbarMode | null => {
+  if (modId === "draw") return "draw";
+  if (modId === "playback" || modId === "lecture") return "playback";
+  if (modId === "canvas") return "canvas";
+  return null;
+};
+
+export const resolveActiveModIdFromToolbarMode = (
+  mode: ToolbarMode
+): ToolbarModeModId => TOOLBAR_MODE_TO_MOD_ID[mode];
+
+export const resolveToolbarModeFromActiveModId = (
+  activeModId: ModId | null | undefined
+): ToolbarMode => {
+  if (!activeModId) return DEFAULT_TOOLBAR_MODE;
+  const resolvedActiveMode = resolveToolbarModeFromKnownModId(activeModId);
+  if (resolvedActiveMode) {
+    return resolvedActiveMode;
+  }
+  const resolvedDefaultMode = resolveToolbarModeFromKnownModId(DEFAULT_ACTIVE_MOD_ID);
+  if (resolvedDefaultMode) {
+    return resolvedDefaultMode;
+  }
+  return DEFAULT_TOOLBAR_MODE;
+};
 
 export type ToolbarRenderPolicy = {
   cutoverEnabled: boolean;

@@ -15,6 +15,7 @@ import { HostLiveSessionPanel } from "@features/sharing/HostLiveSessionPanel";
 import { ThemePickerPanel } from "@features/theme/ThemePickerPanel";
 import { FloatingToolbar } from "@features/toolbar/FloatingToolbar";
 import { PendingApprovalPanel } from "@features/toolbar/PendingApprovalPanel";
+import { listResolvedModPanelContributions } from "@features/ui-host/modContributionBridge";
 import type {
   PanelBehaviorContract,
   PanelRoleOverride,
@@ -131,6 +132,10 @@ const resolveModerationConsoleSize = (viewportSize: { width: number; height: num
 const resolveHostLiveSessionSize = (viewportSize: { width: number; height: number }) => ({
   width: clamp(420, 360, clamp(viewportSize.width, 360, 560)),
   height: clamp(520, 320, clamp(viewportSize.height, 320, 820)),
+});
+const resolveModPanelSize = (viewportSize: { width: number; height: number }) => ({
+  width: clamp(Math.round(viewportSize.width * 0.34), 300, 460),
+  height: clamp(Math.round(viewportSize.height * 0.36), 220, 420),
 });
 
 type WindowPanelShellProps = {
@@ -406,6 +411,40 @@ export const buildCoreWindowHostPanelAdapters = (
         <div data-layout-id="region_prompter" className="w-full">
           <Prompter />
         </div>
+      ),
+    });
+  }
+
+  const modPanelContributions = listResolvedModPanelContributions({
+    role: runtimeRole,
+  });
+  for (const contribution of modPanelContributions) {
+    const panelId = `mod-panel:${contribution.id}`;
+    if (modules.some((module) => module.panelId === panelId)) continue;
+    modules.push({
+      panelId,
+      slot: contribution.slot,
+      behavior: {
+        displayMode: "windowed",
+        movable: true,
+        defaultPosition: { x: 24, y: 24 },
+        rememberPosition: true,
+        defaultOpen: contribution.defaultOpen ?? false,
+      },
+      size: resolveModPanelSize(viewportSize),
+      className: "pointer-events-auto",
+      render: (context) => (
+        <WindowPanelShell
+          title={contribution.title}
+          context={context}
+          onRequestClose={() => context.setOpen(false)}
+        >
+          <div className="h-full w-full overflow-y-auto p-3 text-xs text-theme-text/70">
+            <div className="rounded border border-theme-border/10 bg-theme-surface-soft p-2">
+              This panel is contributed by the active mod runtime.
+            </div>
+          </div>
+        </WindowPanelShell>
       ),
     });
   }

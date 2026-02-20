@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1180 820">
+  <defs>
+    <style>
+      .bg { fill: #f8fafc; stroke: #cbd5e1; stroke-width: 2; }
+      .safe { fill: #ffffff; stroke: #94a3b8; stroke-width: 2; }
+      .dock-h { fill: #dbeafe; stroke: #3b82f6; stroke-width: 2; }
+      .dock-v { fill: #dcfce7; stroke: #22c55e; stroke-width: 2; }
+      .clamp { fill: none; stroke: #ef4444; stroke-width: 2; stroke-dasharray: 6 4; }
+      .txt { font-family: monospace; font-size: 14px; fill: #334155; }
+    </style>
+  </defs>
+
+  <!-- viewport -->
+  <rect class="bg" x="0" y="0" width="1180" height="820" />
+
+  <!-- base safe region (top/bottom chrome already reserved) -->
+  <rect class="safe" x="0" y="60" width="1180" height="700" />
+  <text class="txt" x="14" y="50">canvas-safe base: x=0,y=60,w=1180,h=700</text>
+
+  <!-- snap threshold -->
+  <rect class="clamp" x="24" y="84" width="1132" height="652" />
+  <text class="txt" x="26" y="78">snap threshold: 24px</text>
+
+  <!-- top dock -->
+  <g transform="translate(0,60)">
+    <rect class="dock-h" x="0" y="0" width="1180" height="72" />
+    <text class="txt" x="12" y="24">top dock strip max 72px</text>
+  </g>
+
+  <!-- bottom dock -->
+  <g transform="translate(0,688)">
+    <rect class="dock-h" x="0" y="0" width="1180" height="72" />
+    <text class="txt" x="12" y="24">bottom dock strip max 72px</text>
+  </g>
+
+  <!-- left dock -->
+  <g transform="translate(0,60)">
+    <rect class="dock-v" x="0" y="0" width="84" height="700" />
+    <text class="txt" x="8" y="24">left 84</text>
+  </g>
+
+  <!-- right dock -->
+  <g transform="translate(1096,60)">
+    <rect class="dock-v" x="0" y="0" width="84" height="700" />
+    <text class="txt" x="8" y="24">right 84</text>
+  </g>
+
+  <text class="txt" x="14" y="794">minimum visible canvas after inset: 320x240</text>
+</svg>

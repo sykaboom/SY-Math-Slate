@@ -1,3 +1,4 @@
+import type { ModToolbarItem } from "@core/mod/contracts";
 import type { ToolbarMode } from "@features/toolbar/toolbarModePolicy";
 import {
   resolveCanvasToolbarSurfacePolicy,
@@ -25,3 +26,18 @@ export const selectMorePanelActions = (
   viewport: ToolbarViewportProfile
 ) => resolveMorePanelSurfacePolicy(mode, viewport);
 
+export type ToolbarContributionBridgeMountMode = "legacy-shell" | "window-host";
+
+const EMPTY_MOD_TOOLBAR_ITEMS: readonly ModToolbarItem[] = Object.freeze([]);
+
+export const shouldBridgeActiveModToolbarContributions = (
+  mountMode: ToolbarContributionBridgeMountMode
+): boolean => mountMode === "window-host";
+
+export const selectActiveModToolbarContributions = (
+  mountMode: ToolbarContributionBridgeMountMode,
+  contributions: readonly ModToolbarItem[]
+): readonly ModToolbarItem[] =>
+  shouldBridgeActiveModToolbarContributions(mountMode)
+    ? contributions
+    : EMPTY_MOD_TOOLBAR_ITEMS;

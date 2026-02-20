@@ -105,6 +105,21 @@ v10/src/
 |   |-- migrations/
 |   |   |-- migrateToV2.ts
 |   |   \-- modStudioMigration.ts
+|   |-- mod/
+|   |   |-- builtin/
+|   |   |   |-- canvas.mod.ts
+|   |   |   |-- draw.mod.ts
+|   |   |   |-- index.ts
+|   |   |   |-- lecture.mod.ts
+|   |   |   \-- playback.mod.ts
+|   |   |-- contracts/
+|   |   |   |-- index.ts
+|   |   |   \-- types.ts
+|   |   |-- host/
+|   |   |   |-- index.ts
+|   |   |   |-- manager.ts
+|   |   |   \-- registry.ts
+|   |   \-- index.ts
 |   |-- persistence/
 |   |   \-- buildPersistedDoc.ts
 |   |-- sanitize/
@@ -380,6 +395,7 @@ v10/src/
 |   |   |-- useDocStore.ts
 |   |   |-- useHostShareStore.ts
 |   |   |-- useLocalStore.ts
+|   |   |-- useModStore.ts
 |   |   |-- useModStudioStore.ts
 |   |   |-- usePlaybackStore.ts
 |   |   |-- useSessionPolicyStore.ts
@@ -426,6 +442,8 @@ v10/src/
 |   |   |-- toolbarFeedback.ts
 |   |   |-- toolbarModePolicy.ts
 |   |   \-- useApprovalLogic.ts
+|   |-- ui-host/
+|   |   \-- modContributionBridge.ts
 |   \-- viewer/
 |       |-- useViewerLiveSession.ts
 |       |-- useViewerSession.ts

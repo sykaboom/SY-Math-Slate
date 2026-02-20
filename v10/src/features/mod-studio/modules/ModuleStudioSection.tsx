@@ -4,8 +4,16 @@ import { useMemo, useState } from "react";
 
 import { listAppCommands } from "@core/engine/commandBus";
 import { listKnownUISlotNames, type UISlotName } from "@core/extensions/registry";
+import { getRuntimeModManager, getRuntimeModRegistry } from "@core/mod/host";
 import type { ModuleDraft } from "@features/mod-studio/core/types";
-import { getModuleDiagnostics } from "@features/mod-studio/modules/moduleDiagnostics";
+import {
+  getModuleDiagnostics,
+  getRuntimeModDiagnostics,
+} from "@features/mod-studio/modules/moduleDiagnostics";
+import { useModStore } from "@features/store/useModStore";
+import { resolveToolbarModeFromActiveModId } from "@features/toolbar/toolbarModePolicy";
+import { listToolbarActionIdsByMode } from "@features/toolbar/catalog/toolbarActionCatalog";
+import { listResolvedModToolbarContributions } from "@features/ui-host/modContributionBridge";
 import { useModStudioStore } from "@features/store/useModStudioStore";
 
 const createModuleSeed = (): ModuleDraft => ({
@@ -25,6 +33,7 @@ export function ModuleStudioSection() {
   const template = useModStudioStore((state) => state.draft.template);
   const upsertModuleDraft = useModStudioStore((state) => state.upsertModuleDraft);
   const removeModuleDraft = useModStudioStore((state) => state.removeModuleDraft);
+  const activeModId = useModStore((state) => state.activeModId);
   const [seed, setSeed] = useState<ModuleDraft>(createModuleSeed);
 
   const knownCommands = listAppCommands();
@@ -36,6 +45,24 @@ export function ModuleStudioSection() {
     () => getModuleDiagnostics(modules, knownCommandIds),
     [modules, knownCommandIds]
   );
+  const runtimeModDiagnostics = useMemo(() => {
+    const runtimeRegistry = getRuntimeModRegistry();
+    const runtimeManager = getRuntimeModManager();
+    const toolbarMode = resolveToolbarModeFromActiveModId(activeModId);
+    const reservedActionIds = new Set(listToolbarActionIdsByMode(toolbarMode));
+    const rawToolbarContributions = runtimeManager.listToolbarContributions();
+    const resolvedToolbarContributions = listResolvedModToolbarContributions({
+      mountMode: "window-host",
+      role: "host",
+      reservedActionIds,
+    });
+    return getRuntimeModDiagnostics({
+      activeModId,
+      registeredMods: runtimeRegistry.list(),
+      rawToolbarContributions,
+      resolvedToolbarContributions,
+    });
+  }, [activeModId]);
 
   const handleAdd = () => {
     const normalizedId = seed.id.trim();
@@ -190,6 +217,59 @@ export function ModuleStudioSection() {
               [{item.code}] {item.message}
             </div>
           ))
+        )}
+      </section>
+
+      <section className="grid gap-1 rounded border border-theme-border/10 bg-theme-surface-soft p-2">
+        <div className="text-[11px] font-semibold text-theme-text/75">
+          Runtime Mod Diagnostics
+        </div>
+        <div className="text-[11px] text-theme-text/70">
+          active mod:{" "}
+          <span className="font-semibold text-theme-text/85">
+            {runtimeModDiagnostics.activeModId ?? "(none)"}
+          </span>
+        </div>
+        <div className="flex flex-wrap items-center gap-2 text-[11px] text-theme-text/70">
+          {runtimeModDiagnostics.orderedMods.length === 0 ? (
+            <span>no registered mods</span>
+          ) : (
+            runtimeModDiagnostics.orderedMods.map((mod) => (
+              <span
+                key={`${mod.id}-${mod.priority}`}
+                className="rounded border border-theme-border/20 bg-theme-surface/40 px-2 py-0.5"
+              >
+                {mod.id} (p{mod.priority})
+              </span>
+            ))
+          )}
+        </div>
+        {runtimeModDiagnostics.blockedContributionIds.length > 0 ? (
+          <div className="text-[11px] text-[var(--theme-warning)]">
+            blocked contributions: {runtimeModDiagnostics.blockedContributionIds.join(", ")}
+          </div>
+        ) : (
+          <div className="text-[11px] text-[var(--theme-success)]">
+            no blocked contributions
+          </div>
+        )}
+        {runtimeModDiagnostics.diagnostics.length > 0 ? (
+          runtimeModDiagnostics.diagnostics.map((item, index) => (
+            <div
+              key={`runtime-${item.code}-${index}`}
+              className={
+                item.level === "error"
+                  ? "text-[11px] text-[var(--theme-danger)]"
+                  : "text-[11px] text-[var(--theme-warning)]"
+              }
+            >
+              [{item.code}] {item.message}
+            </div>
+          ))
+        ) : (
+          <div className="text-[11px] text-[var(--theme-success)]">
+            runtime mod diagnostics clean
+          </div>
         )}
       </section>
     </div>

@@ -112,7 +112,17 @@ fi
 echo ""
 
 # 6. 툴바 surface 중복 규칙 (단계형: SKIP 허용)
-echo "[6] 툴바 surface 중복 검사..."
+echo "[6] mod contract 검사..."
+if bash scripts/check_mod_contract.sh; then
+  echo "  [PASS] mod contract 규칙 통과"
+else
+  echo "  [FAIL] mod contract 규칙 위반"
+  FAIL=1
+fi
+echo ""
+
+# 7. 툴바 surface 중복 규칙 (단계형: SKIP 허용)
+echo "[7] 툴바 surface 중복 검사..."
 toolbar_check_output="$(node scripts/check_toolbar_surface_uniqueness.mjs 2>&1 || true)"
 echo "$toolbar_check_output"
 if printf "%s" "$toolbar_check_output" | rg -q "FAIL"; then
@@ -120,8 +130,8 @@ if printf "%s" "$toolbar_check_output" | rg -q "FAIL"; then
 fi
 echo ""
 
-# 7. 템플릿 팩 계약 검사 (단계형: SKIP 허용)
-echo "[7] 템플릿 팩 계약 검사..."
+# 8. 템플릿 팩 계약 검사 (단계형: SKIP 허용)
+echo "[8] 템플릿 팩 계약 검사..."
 template_check_output="$(node scripts/check_template_pack_contract.mjs 2>&1 || true)"
 echo "$template_check_output"
 if printf "%s" "$template_check_output" | rg -q "FAIL"; then

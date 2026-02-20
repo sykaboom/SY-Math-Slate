@@ -11,6 +11,7 @@ import {
   type ToolbarDockPosition,
 } from "./useChromeStore";
 import { usePlaybackStore } from "./usePlaybackStore";
+import { useModStore } from "./useModStore";
 import { useToolStore, type LaserType, type PenType, type Tool } from "./useToolStore";
 import { useViewportStore, type ViewMode, type ViewportState } from "./useViewportStore";
 
@@ -56,6 +57,7 @@ export interface UIState {
   showCursors: boolean;
   showBreakGuides: boolean;
   showCanvasBorder: boolean;
+  activeModId?: string | null;
   setTool: (tool: Tool) => void;
   setColor: (color: string) => void;
   setPenWidth: (width: number) => void;
@@ -175,12 +177,24 @@ const getCapabilitySliceState = () => {
   };
 };
 
+type ModStoreSliceState = {
+  activeModId: string | null;
+};
+
+const getModSliceState = (): Partial<Pick<UIState, "activeModId">> => {
+  const state = useModStore.getState() as ModStoreSliceState;
+  return {
+    activeModId: state.activeModId ?? null,
+  };
+};
+
 export const useUIStoreBridge = create<UIState>(() => ({
   ...getToolSliceState(),
   ...getViewportSliceState(),
   ...getPlaybackSliceState(),
   ...getChromeSliceState(),
   ...getCapabilitySliceState(),
+  ...getModSliceState(),
   setTool: (tool) => useToolStore.getState().setTool(tool),
   setColor: (color) => useToolStore.getState().setColor(color),
   setPenWidth: (width) => useToolStore.getState().setPenWidth(width),
@@ -262,4 +276,7 @@ useChromeStore.subscribe(() => {
 
 useCapabilityStore.subscribe(() => {
   useUIStoreBridge.setState(getCapabilitySliceState());
+});
+useModStore.subscribe(() => {
+  useUIStoreBridge.setState(getModSliceState());
 });
