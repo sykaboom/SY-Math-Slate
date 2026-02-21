@@ -22,11 +22,11 @@ Date: 2026-02-14
 Touched files/directories:
 - `v10/src/core/extensions/registry.ts`
 - `v10/src/core/extensions/manifest.ts` (if slot names/types extended)
-- `v10/src/features/extensions/ui/ExtensionSlot.tsx` (new)
-- `v10/src/features/extensions/ui/registerCoreSlots.ts` (new)
-- `v10/src/features/extensions/ui/ExtensionRuntimeBootstrap.tsx` (new)
-- `v10/src/features/layout/AppLayout.tsx`
-- `v10/src/features/toolbar/FloatingToolbar.tsx`
+- `v10/src/features/platform/extensions/ui/ExtensionSlot.tsx` (new)
+- `v10/src/features/platform/extensions/ui/registerCoreSlots.ts` (new)
+- `v10/src/features/platform/extensions/ui/ExtensionRuntimeBootstrap.tsx` (new)
+- `v10/src/features/chrome/layout/AppLayout.tsx`
+- `v10/src/features/chrome/toolbar/FloatingToolbar.tsx`
 - `v10/src/app/page.tsx` (bootstrap hook)
 
 Out of scope:
@@ -145,11 +145,11 @@ Changed files:
 - `codex_tasks/task_113_ui_extension_slot_registry.md`
 - `v10/src/core/extensions/registry.ts`
 - `v10/src/core/extensions/manifest.ts`
-- `v10/src/features/extensions/ui/ExtensionSlot.tsx`
-- `v10/src/features/extensions/ui/registerCoreSlots.ts`
-- `v10/src/features/extensions/ui/ExtensionRuntimeBootstrap.tsx`
-- `v10/src/features/layout/AppLayout.tsx`
-- `v10/src/features/toolbar/FloatingToolbar.tsx`
+- `v10/src/features/platform/extensions/ui/ExtensionSlot.tsx`
+- `v10/src/features/platform/extensions/ui/registerCoreSlots.ts`
+- `v10/src/features/platform/extensions/ui/ExtensionRuntimeBootstrap.tsx`
+- `v10/src/features/chrome/layout/AppLayout.tsx`
+- `v10/src/features/chrome/toolbar/FloatingToolbar.tsx`
 - `v10/src/app/page.tsx`
 
 Commands run (only if user asked or required by spec):

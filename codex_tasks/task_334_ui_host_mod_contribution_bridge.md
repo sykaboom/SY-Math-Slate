@@ -21,12 +21,12 @@ Date: 2026-02-20
 
 Touched files/directories:
 - `v10/src/core/mod/host/manager.ts`
-- `v10/src/features/ui-host/modContributionBridge.ts` (new facade)
-- `v10/src/features/extensions/ui/ExtensionSlot.tsx`
-- `v10/src/features/extensions/ui/registerCoreSlots.ts`
-- `v10/src/features/layout/windowing/panelAdapters.tsx`
-- `v10/src/features/toolbar/FloatingToolbar.tsx`
-- `v10/src/features/toolbar/catalog/toolbarSurfacePolicy.ts`
+- `v10/src/features/chrome/ui-host/modContributionBridge.ts` (new facade)
+- `v10/src/features/platform/extensions/ui/ExtensionSlot.tsx`
+- `v10/src/features/platform/extensions/ui/registerCoreSlots.ts`
+- `v10/src/features/chrome/layout/windowing/panelAdapters.tsx`
+- `v10/src/features/chrome/toolbar/FloatingToolbar.tsx`
+- `v10/src/features/chrome/toolbar/catalog/toolbarSurfacePolicy.ts`
 - `v10/AI_READ_ME.md`
 - `codex_tasks/task_334_ui_host_mod_contribution_bridge.md`
 
@@ -72,7 +72,7 @@ Out of scope:
   - 7-8
 - Files shared with other PENDING tasks:
   - `v10/src/core/mod/host/manager.ts`
-  - `v10/src/features/toolbar/FloatingToolbar.tsx`
+  - `v10/src/features/chrome/toolbar/FloatingToolbar.tsx`
 - Cross-module dependency:
   - YES
 - Parallelizable sub-units:
@@ -196,9 +196,9 @@ Out of scope:
 Status: COMPLETED
 
 Changed files:
-- `v10/src/features/ui-host/modContributionBridge.ts`
-- `v10/src/features/toolbar/FloatingToolbar.tsx`
-- `v10/src/features/layout/windowing/panelAdapters.tsx`
+- `v10/src/features/chrome/ui-host/modContributionBridge.ts`
+- `v10/src/features/chrome/toolbar/FloatingToolbar.tsx`
+- `v10/src/features/chrome/layout/windowing/panelAdapters.tsx`
 - `codex_tasks/task_334_ui_host_mod_contribution_bridge.md`
 
 Commands run (only if user asked or required by spec):

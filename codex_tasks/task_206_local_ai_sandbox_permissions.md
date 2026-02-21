@@ -22,8 +22,8 @@ Touched files/directories:
 - `codex_tasks/task_206_local_ai_sandbox_permissions.md`
 - `v10/src/core/extensions/localAiSandboxPolicy.ts` (new)
 - `v10/src/core/extensions/connectors.ts` (sandbox preflight hook)
-- `v10/src/features/extensions/ui/ExtensionRuntimeBootstrap.tsx` (sandbox context wiring)
-- `v10/src/features/observability/auditLogger.ts` (sandbox decision event)
+- `v10/src/features/platform/extensions/ui/ExtensionRuntimeBootstrap.tsx` (sandbox context wiring)
+- `v10/src/features/platform/observability/auditLogger.ts` (sandbox decision event)
 
 Out of scope:
 - OS-level sandboxing or process isolation.
@@ -146,8 +146,8 @@ Status: COMPLETED
 Changed files:
 - `v10/src/core/extensions/localAiSandboxPolicy.ts`
 - `v10/src/core/extensions/connectors.ts`
-- `v10/src/features/extensions/ui/ExtensionRuntimeBootstrap.tsx`
-- `v10/src/features/observability/auditLogger.ts`
+- `v10/src/features/platform/extensions/ui/ExtensionRuntimeBootstrap.tsx`
+- `v10/src/features/platform/observability/auditLogger.ts`
 - `v10/AI_READ_ME.md`
 - `v10/AI_READ_ME_MAP.md`
 

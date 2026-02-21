@@ -8,7 +8,7 @@
 Screen-space page guides still clipped at the base viewport bounds when panning/zooming.
 
 ## Scope
-- `v10/src/features/canvas/PageGuides.tsx`
+- `v10/src/features/editor/canvas/PageGuides.tsx`
 - `v10/AI_READ_ME.md`
 
 ## Changes

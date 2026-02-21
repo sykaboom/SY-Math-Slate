@@ -19,9 +19,9 @@ Date: 2026-02-15
 
 Touched files/directories:
 - `codex_tasks/task_171_theme_preset_switcher_and_preview.md`
-- `v10/src/features/store/useModStudioStore.ts`
-- `v10/src/features/mod-studio/theme/ThemeStudioSection.tsx`
-- `v10/src/features/mod-studio/theme/themeIsolation.ts`
+- `v10/src/features/platform/store/useModStudioStore.ts`
+- `v10/src/features/platform/mod-studio/theme/ThemeStudioSection.tsx`
+- `v10/src/features/platform/mod-studio/theme/themeIsolation.ts`
 - `v10/AI_READ_ME.md`
 
 Out of scope:
@@ -144,9 +144,9 @@ Status: COMPLETED
 
 Changed files:
 - `codex_tasks/task_171_theme_preset_switcher_and_preview.md`
-- `v10/src/features/store/useModStudioStore.ts`
-- `v10/src/features/mod-studio/theme/ThemeStudioSection.tsx`
-- `v10/src/features/mod-studio/theme/themeIsolation.ts`
+- `v10/src/features/platform/store/useModStudioStore.ts`
+- `v10/src/features/platform/mod-studio/theme/ThemeStudioSection.tsx`
+- `v10/src/features/platform/mod-studio/theme/themeIsolation.ts`
 - `v10/AI_READ_ME.md`
 
 Commands run (only if user asked or required by spec):

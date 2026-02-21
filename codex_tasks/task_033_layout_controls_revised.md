@@ -46,12 +46,12 @@ This task refactors the layout buttons to insert actual blocks into the `stepBlo
   - Allow delete/drag.
 
 ## Scope (touched files)
-- `v10/src/features/store/useCanvasStore.ts`
-- `v10/src/features/layout/DataInputPanel.tsx`
-- `v10/src/features/toolbar/FloatingToolbar.tsx`
-- `v10/src/features/layout/autoLayout.ts`
+- `v10/src/features/platform/store/useCanvasStore.ts`
+- `v10/src/features/chrome/layout/DataInputPanel.tsx`
+- `v10/src/features/chrome/toolbar/FloatingToolbar.tsx`
+- `v10/src/features/chrome/layout/autoLayout.ts`
 - `v10/src/core/types/canvas.ts`
-- `v10/src/features/canvas/ContentLayer.tsx`
+- `v10/src/features/editor/canvas/ContentLayer.tsx`
 - `v10/src/app/globals.css`
 
 ## Acceptance Criteria
@@ -67,10 +67,10 @@ This task refactors the layout buttons to insert actual blocks into the `stepBlo
 
 ## Closeout
 - **Changed files:**
-  - `v10/src/features/store/useCanvasStore.ts`
-  - `v10/src/features/layout/DataInputPanel.tsx`
-  - `v10/src/features/toolbar/FloatingToolbar.tsx`
-  - `v10/src/features/layout/autoLayout.ts`
+  - `v10/src/features/platform/store/useCanvasStore.ts`
+  - `v10/src/features/chrome/layout/DataInputPanel.tsx`
+  - `v10/src/features/chrome/toolbar/FloatingToolbar.tsx`
+  - `v10/src/features/chrome/layout/autoLayout.ts`
   - `v10/src/app/globals.css`
 - **Commands run:** none
 - **Manual verification:** not run (not requested).

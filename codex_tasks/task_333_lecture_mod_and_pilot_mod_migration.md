@@ -24,8 +24,8 @@ Touched files/directories:
 - `v10/src/core/mod/builtin/draw.mod.ts` or `v10/src/core/mod/builtin/playback.mod.ts` (new)
 - `v10/src/core/mod/builtin/index.ts` (new)
 - `v10/src/core/mod/host/manager.ts`
-- `v10/src/features/toolbar/FloatingToolbar.tsx` (consume contributions)
-- `v10/src/features/toolbar/catalog/toolbarActionSelectors.ts` (bridge window only)
+- `v10/src/features/chrome/toolbar/FloatingToolbar.tsx` (consume contributions)
+- `v10/src/features/chrome/toolbar/catalog/toolbarActionSelectors.ts` (bridge window only)
 - `v10/AI_READ_ME.md`
 - `codex_tasks/task_333_lecture_mod_and_pilot_mod_migration.md`
 
@@ -69,7 +69,7 @@ Out of scope:
   - 7-9
 - Files shared with other PENDING tasks:
   - `v10/src/core/mod/host/manager.ts`
-  - `v10/src/features/toolbar/FloatingToolbar.tsx`
+  - `v10/src/features/chrome/toolbar/FloatingToolbar.tsx`
 - Cross-module dependency:
   - YES
 - Parallelizable sub-units:
@@ -200,8 +200,8 @@ Changed files:
 - `v10/src/core/mod/builtin/canvas.mod.ts`
 - `v10/src/core/mod/builtin/index.ts`
 - `v10/src/core/mod/index.ts`
-- `v10/src/features/toolbar/FloatingToolbar.tsx`
-- `v10/src/features/toolbar/catalog/toolbarActionSelectors.ts`
+- `v10/src/features/chrome/toolbar/FloatingToolbar.tsx`
+- `v10/src/features/chrome/toolbar/catalog/toolbarActionSelectors.ts`
 - `codex_tasks/task_333_lecture_mod_and_pilot_mod_migration.md`
 
 Commands run (only if user asked or required by spec):

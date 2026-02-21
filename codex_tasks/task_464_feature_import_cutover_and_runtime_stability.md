@@ -82,10 +82,10 @@ Out of scope:
 ## Execution Sub-Waves (Required for large scope)
 
 - R4A (hotspot sequential, single-owner):
-  - `v10/src/features/layout/AppLayout.tsx`
-  - `v10/src/features/toolbar/FloatingToolbar.tsx`
-  - `v10/src/features/store/useChromeStore.ts`
-  - `v10/src/features/extensions/ui/registerCoreSlots.ts`
+  - `v10/src/features/chrome/layout/AppLayout.tsx`
+  - `v10/src/features/chrome/toolbar/FloatingToolbar.tsx`
+  - `v10/src/features/platform/store/useChromeStore.ts`
+  - `v10/src/features/platform/extensions/ui/registerCoreSlots.ts`
 - R4B (feature-group parallel, one-file-one-owner):
   - Group-1: `features/editor/**`, `features/canvas/**`, `features/animation/**`
   - Group-2: `features/collaboration/**`, `features/governance/**`
@@ -222,10 +222,10 @@ Status: COMPLETED
 
 Changed files:
 - R4A hotspots:
-  - `v10/src/features/layout/AppLayout.tsx` (import path cutover)
-  - `v10/src/features/toolbar/FloatingToolbar.tsx` (import path cutover)
-  - `v10/src/features/store/useChromeStore.ts` (import path cutover)
-  - `v10/src/features/extensions/ui/registerCoreSlots.ts` (import path cutover)
+  - `v10/src/features/chrome/layout/AppLayout.tsx` (import path cutover)
+  - `v10/src/features/chrome/toolbar/FloatingToolbar.tsx` (import path cutover)
+  - `v10/src/features/platform/store/useChromeStore.ts` (import path cutover)
+  - `v10/src/features/platform/extensions/ui/registerCoreSlots.ts` (import path cutover)
 - R4B wide groups:
   - `v10/src/features/**` (bulk import path cutover to new core namespaces)
   - `v10/src/app/**` (bulk import path cutover where applicable)

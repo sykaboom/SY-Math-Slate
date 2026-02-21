@@ -22,17 +22,17 @@ Date: 2026-02-17
 ## Scope (Base Required)
 
 Touched files/directories:
-- `v10/src/features/extensions/ui/registerCoreSlots.ts` (read/write)
+- `v10/src/features/platform/extensions/ui/registerCoreSlots.ts` (read/write)
   - PENDING_APPROVAL, MODERATION_CONSOLE의 activation을 "layout-slot-cutover"로 변경
   - registerInSlotRuntime을 !LAYOUT_SLOT_CUTOVER_ENABLED로 변경
   - launcher 바인딩 추가 (아이콘, 제목, 설명)
-- `v10/src/features/layout/windowing/panelAdapters.tsx` (read/write)
+- `v10/src/features/chrome/layout/windowing/panelAdapters.tsx` (read/write)
   - PendingApproval, ModerationConsole 어댑터 모듈 추가
   - 각 패널의 사이즈 계산 함수 추가 (resolvePendingApprovalSize, resolveModerationConsoleSize)
   - WindowPanelShell 래핑 렌더 함수 추가
-- `v10/src/features/layout/windowing/panelAdapters.tsx` → 타입
+- `v10/src/features/chrome/layout/windowing/panelAdapters.tsx` → 타입
   - CoreWindowHostPanelAdapterOptions에 isApprovalOpen, isModerationOpen 등 상태 추가
-- `v10/src/features/layout/AppLayout.tsx` (read/write)
+- `v10/src/features/chrome/layout/AppLayout.tsx` (read/write)
   - 새로 추가된 2개 패널의 open/close 상태를 WindowHost에 전달하는 로직 추가
 - `v10/AI_READ_ME.md` (read/write)
   - Layout Shell Runtime Boundaries 설명을 5개 코어 패널 기준으로 동기화
@@ -212,17 +212,17 @@ If NO:
 Status: COMPLETED
 
 Changed files:
-- `v10/src/features/extensions/ui/registerCoreSlots.ts`
-- `v10/src/features/layout/windowing/panelAdapters.tsx`
-- `v10/src/features/layout/AppLayout.tsx`
+- `v10/src/features/platform/extensions/ui/registerCoreSlots.ts`
+- `v10/src/features/chrome/layout/windowing/panelAdapters.tsx`
+- `v10/src/features/chrome/layout/AppLayout.tsx`
 - `v10/AI_READ_ME.md`
 
 Commands run (only if user asked or required by spec):
 - `cd v10 && npm run lint`
 - `cd v10 && npm run build` (escalated run required in sandbox)
 - `VERIFY_STAGE=end bash scripts/run_repo_verifications.sh` (escalated run required in sandbox)
-- `rg -n "core-launcher-panel-pending-approval|core-launcher-panel-moderation-console|activation: \"layout-slot-cutover\"" v10/src/features/extensions/ui/registerCoreSlots.ts`
-- `rg -n "PendingApprovalPanel|ModerationConsolePanel|resolvePendingApprovalSize|resolveModerationConsoleSize|isPendingApprovalOpen|isModerationConsoleOpen" v10/src/features/layout/windowing/panelAdapters.tsx v10/src/features/layout/AppLayout.tsx`
+- `rg -n "core-launcher-panel-pending-approval|core-launcher-panel-moderation-console|activation: \"layout-slot-cutover\"" v10/src/features/platform/extensions/ui/registerCoreSlots.ts`
+- `rg -n "PendingApprovalPanel|ModerationConsolePanel|resolvePendingApprovalSize|resolveModerationConsoleSize|isPendingApprovalOpen|isModerationConsoleOpen" v10/src/features/chrome/layout/windowing/panelAdapters.tsx v10/src/features/chrome/layout/AppLayout.tsx`
 
 ## Gate Results (Codex fills)
 

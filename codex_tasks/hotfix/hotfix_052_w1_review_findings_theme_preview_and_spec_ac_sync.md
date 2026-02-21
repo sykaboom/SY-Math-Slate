@@ -21,8 +21,8 @@ Date: 2026-02-15
 
 Touched files/directories:
 - `codex_tasks/hotfix/hotfix_052_w1_review_findings_theme_preview_and_spec_ac_sync.md`
-- `v10/src/features/mod-studio/theme/themeIsolation.ts`
-- `v10/src/features/store/useModStudioStore.ts`
+- `v10/src/features/platform/mod-studio/theme/themeIsolation.ts`
+- `v10/src/features/platform/store/useModStudioStore.ts`
 - `v10/tests/theme_visual_gate.mjs`
 - `codex_tasks/task_167_theme_token_schema_v2.md`
 - `codex_tasks/task_168_global_theme_variable_mapping_completion.md`
@@ -178,8 +178,8 @@ Status: COMPLETED
 
 Changed files:
 - `codex_tasks/hotfix/hotfix_052_w1_review_findings_theme_preview_and_spec_ac_sync.md`
-- `v10/src/features/mod-studio/theme/themeIsolation.ts`
-- `v10/src/features/store/useModStudioStore.ts`
+- `v10/src/features/platform/mod-studio/theme/themeIsolation.ts`
+- `v10/src/features/platform/store/useModStudioStore.ts`
 - `v10/tests/theme_visual_gate.mjs`
 - `codex_tasks/task_167_theme_token_schema_v2.md`
 - `codex_tasks/task_168_global_theme_variable_mapping_completion.md`

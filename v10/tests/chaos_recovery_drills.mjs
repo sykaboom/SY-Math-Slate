@@ -51,7 +51,7 @@ assertIncludes(
   "community snapshot contract must require safetyEvents."
 );
 
-const backplane = read("src/features/sync/realtime/backplane.ts");
+const backplane = read("src/features/collaboration/sync/realtime/backplane.ts");
 assertIncludes(
   backplane,
   "NEXT_PUBLIC_SYNC_REALTIME_URL",

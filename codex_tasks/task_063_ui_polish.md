@@ -17,13 +17,13 @@ Multiple UI areas feel "debug-like" or cluttered. The user requested specific im
 6.  **Eraser Behavior:** Update standard eraser to delete whole strokes on intersection (stroke eraser).
 
 ## Scope (Files)
-- `v10/src/features/toolbar/PlaybackControls.tsx`
-- `v10/src/features/toolbar/PageNavigator.tsx` (New/Update)
-- `v10/src/features/toolbar/FloatingToolbar.tsx`
-- `v10/src/features/layout/Prompter.tsx`
-- `v10/src/features/layout/DataInputPanel.tsx`
-- `v10/src/features/store/useCanvasStore.ts` (For `isPageEmpty` logic)
-- `v10/src/features/hooks/useCanvas.ts` (Stroke eraser hit-test + deletion)
+- `v10/src/features/chrome/toolbar/PlaybackControls.tsx`
+- `v10/src/features/chrome/toolbar/PageNavigator.tsx` (New/Update)
+- `v10/src/features/chrome/toolbar/FloatingToolbar.tsx`
+- `v10/src/features/chrome/layout/Prompter.tsx`
+- `v10/src/features/chrome/layout/DataInputPanel.tsx`
+- `v10/src/features/platform/store/useCanvasStore.ts` (For `isPageEmpty` logic)
+- `v10/src/features/platform/hooks/useCanvas.ts` (Stroke eraser hit-test + deletion)
 
 ## Detailed Design Specs
 
@@ -78,12 +78,12 @@ Multiple UI areas feel "debug-like" or cluttered. The user requested specific im
 
 ## Closeout Notes
 - Changed files:
-  - `v10/src/features/toolbar/PlaybackControls.tsx`
-  - `v10/src/features/toolbar/PageNavigator.tsx`
-  - `v10/src/features/toolbar/FloatingToolbar.tsx`
-  - `v10/src/features/layout/Prompter.tsx`
-  - `v10/src/features/layout/DataInputPanel.tsx`
-  - `v10/src/features/store/useCanvasStore.ts`
-  - `v10/src/features/hooks/useCanvas.ts`
+  - `v10/src/features/chrome/toolbar/PlaybackControls.tsx`
+  - `v10/src/features/chrome/toolbar/PageNavigator.tsx`
+  - `v10/src/features/chrome/toolbar/FloatingToolbar.tsx`
+  - `v10/src/features/chrome/layout/Prompter.tsx`
+  - `v10/src/features/chrome/layout/DataInputPanel.tsx`
+  - `v10/src/features/platform/store/useCanvasStore.ts`
+  - `v10/src/features/platform/hooks/useCanvas.ts`
 - Commands run: none
 - Manual verification: not run (per user)

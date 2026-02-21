@@ -19,8 +19,8 @@ Line/column/page controls must move the **layout cursor** (reading start) withou
 - No new playback behavior.
 
 ## Scope (touched files)
-- `v10/src/features/store/useCanvasStore.ts`
-- `v10/src/features/layout/DataInputPanel.tsx`
+- `v10/src/features/platform/store/useCanvasStore.ts`
+- `v10/src/features/chrome/layout/DataInputPanel.tsx`
 
 ## Requirements
 1. Store:
@@ -45,9 +45,9 @@ Line/column/page controls must move the **layout cursor** (reading start) withou
 
 ## Closeout
 - **Changed files:**
-  - `v10/src/features/store/useCanvasStore.ts`
-  - `v10/src/features/layout/DataInputPanel.tsx`
-  - `v10/src/features/toolbar/FloatingToolbar.tsx`
+  - `v10/src/features/platform/store/useCanvasStore.ts`
+  - `v10/src/features/chrome/layout/DataInputPanel.tsx`
+  - `v10/src/features/chrome/toolbar/FloatingToolbar.tsx`
 - **Commands run:** none
 - **Manual verification:** not run (not requested).
 - **Notes:** Added insertion mode (auto/panel) so toolbar breaks follow the playback cursor when the data panel is closed, while panel edits still honor explicit insertion markers.

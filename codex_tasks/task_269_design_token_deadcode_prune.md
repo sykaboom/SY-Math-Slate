@@ -189,8 +189,8 @@ Commands run (only if user asked or required by spec):
 
 Manual verification notes:
 - `rg -n "chalk-|sidebar-|chart-" v10/src/app/globals.css` => no matches (exit code 1).
-- `rg -n "chalk-|sidebar-|chart-" v10/src` => `sidebar-`/`chart-` matches 없음; `chalk-` 문자열은 `v10/src/core/themes/chalkTheme.ts`, `v10/src/features/animation/model/builtinProfiles.ts`, `v10/src/features/canvas/AnchorIndicator.tsx`에만 존재.
-- Removed token exact-name recheck: `v10/src/features/canvas/AnchorIndicator.tsx:145` commented block의 `--chalk-wobble-duration` 1건(런타임 비활성, ownership 범위 밖).
+- `rg -n "chalk-|sidebar-|chart-" v10/src` => `sidebar-`/`chart-` matches 없음; `chalk-` 문자열은 `v10/src/core/themes/chalkTheme.ts`, `v10/src/features/editor/animation/model/builtinProfiles.ts`, `v10/src/features/editor/canvas/AnchorIndicator.tsx`에만 존재.
+- Removed token exact-name recheck: `v10/src/features/editor/canvas/AnchorIndicator.tsx:145` commented block의 `--chalk-wobble-duration` 1건(런타임 비활성, ownership 범위 밖).
 
 Notes:
 - task_267를 phase 분할한 1단계 실행 스펙.

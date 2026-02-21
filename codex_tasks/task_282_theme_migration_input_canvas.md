@@ -42,13 +42,13 @@ Date: 2026-02-18
 ## Scope (Base Required)
 
 Touched files/directories (write only):
-- `v10/src/features/input-studio/components/InputStudioActionsSection.tsx`
-- `v10/src/features/input-studio/components/InputStudioBlocksSection.tsx`
-- `v10/src/features/input-studio/components/InputStudioRawSection.tsx`
-- `v10/src/features/input-studio/components/InputStudioHeaderSection.tsx`
-- `v10/src/features/canvas/CanvasStage.tsx`
-- `v10/src/features/canvas/PasteHelperModal.tsx`
-- `v10/src/features/canvas/ContentLayer.tsx`
+- `v10/src/features/editor/input-studio/components/InputStudioActionsSection.tsx`
+- `v10/src/features/editor/input-studio/components/InputStudioBlocksSection.tsx`
+- `v10/src/features/editor/input-studio/components/InputStudioRawSection.tsx`
+- `v10/src/features/editor/input-studio/components/InputStudioHeaderSection.tsx`
+- `v10/src/features/editor/canvas/CanvasStage.tsx`
+- `v10/src/features/editor/canvas/PasteHelperModal.tsx`
+- `v10/src/features/editor/canvas/ContentLayer.tsx`
 
 Out of scope:
 - mod-studio 파일 (task_281)
@@ -180,16 +180,16 @@ bg-slate-app → 유지 (교체 금지)
    - Command:
      ```
      grep -rn "text-white\b\|text-black\|border-white/\|bg-black/\|bg-white/" \
-       v10/src/features/input-studio/components/ \
-       v10/src/features/canvas/CanvasStage.tsx \
-       v10/src/features/canvas/PasteHelperModal.tsx \
-       v10/src/features/canvas/ContentLayer.tsx
+       v10/src/features/editor/input-studio/components/ \
+       v10/src/features/editor/canvas/CanvasStage.tsx \
+       v10/src/features/editor/canvas/PasteHelperModal.tsx \
+       v10/src/features/editor/canvas/ContentLayer.tsx
      ```
    - Expected: 매치 없음
    - Covers: AC-1, AC-2, AC-3
 
 2) Step: bg-slate-app 유지 확인
-   - Command: `grep -n "bg-slate-app" v10/src/features/canvas/CanvasStage.tsx`
+   - Command: `grep -n "bg-slate-app" v10/src/features/editor/canvas/CanvasStage.tsx`
    - Expected: 잔존 (교체하지 않음)
    - Covers: AC-3 예외
 
@@ -234,13 +234,13 @@ bg-slate-app → 유지 (교체 금지)
 Status: COMPLETED
 
 Changed files:
-- `v10/src/features/input-studio/components/InputStudioActionsSection.tsx`
-- `v10/src/features/input-studio/components/InputStudioBlocksSection.tsx`
-- `v10/src/features/input-studio/components/InputStudioRawSection.tsx`
-- `v10/src/features/input-studio/components/InputStudioHeaderSection.tsx`
-- `v10/src/features/canvas/CanvasStage.tsx`
-- `v10/src/features/canvas/PasteHelperModal.tsx`
-- `v10/src/features/canvas/ContentLayer.tsx`
+- `v10/src/features/editor/input-studio/components/InputStudioActionsSection.tsx`
+- `v10/src/features/editor/input-studio/components/InputStudioBlocksSection.tsx`
+- `v10/src/features/editor/input-studio/components/InputStudioRawSection.tsx`
+- `v10/src/features/editor/input-studio/components/InputStudioHeaderSection.tsx`
+- `v10/src/features/editor/canvas/CanvasStage.tsx`
+- `v10/src/features/editor/canvas/PasteHelperModal.tsx`
+- `v10/src/features/editor/canvas/ContentLayer.tsx`
 
 Commands run:
 - `bash scripts/check_layer_rules.sh`

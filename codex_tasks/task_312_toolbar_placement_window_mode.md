@@ -20,9 +20,9 @@ Date: 2026-02-19
 ## Scope (Base Required)
 
 Touched files/directories:
-- `v10/src/features/layout/windowing/windowRuntime.ts`
-- `v10/src/features/layout/windowing/panelAdapters.tsx`
-- `v10/src/features/layout/windowing/WindowHost.tsx`
+- `v10/src/features/chrome/layout/windowing/windowRuntime.ts`
+- `v10/src/features/chrome/layout/windowing/panelAdapters.tsx`
+- `v10/src/features/chrome/layout/windowing/WindowHost.tsx`
 - `design_drafts/layout_toolbar_window_mode_v1.svg` (required artifact before implementation)
 
 Out of scope:
@@ -194,8 +194,8 @@ Numeric redlines:
 Status: COMPLETED
 
 Changed files:
-- `v10/src/features/layout/windowing/windowRuntime.ts`
-- `v10/src/features/layout/windowing/panelAdapters.tsx`
+- `v10/src/features/chrome/layout/windowing/windowRuntime.ts`
+- `v10/src/features/chrome/layout/windowing/panelAdapters.tsx`
 - `design_drafts/layout_toolbar_window_mode_v1.svg`
 
 Commands run (only if user asked or required by spec):

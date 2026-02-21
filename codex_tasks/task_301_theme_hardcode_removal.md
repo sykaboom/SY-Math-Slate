@@ -51,8 +51,8 @@ Date: 2026-02-19
 ## Scope (Base Required)
 
 Touched files/directories (write):
-- `v10/src/features/sharing/PublicToggle.tsx` — isPublic 상태 색상 테마 토큰화
-- `v10/src/features/sharing/ShareButton.tsx` — copied/error 상태 색상 테마 토큰화
+- `v10/src/features/collaboration/sharing/PublicToggle.tsx` — isPublic 상태 색상 테마 토큰화
+- `v10/src/features/collaboration/sharing/ShareButton.tsx` — copied/error 상태 색상 테마 토큰화
 
 Out of scope:
 - useToolStore.ts 펜 기본 색상 변경
@@ -209,8 +209,8 @@ error 상태:
 Status: COMPLETED
 
 Changed files:
-- `v10/src/features/sharing/PublicToggle.tsx`
-- `v10/src/features/sharing/ShareButton.tsx`
+- `v10/src/features/collaboration/sharing/PublicToggle.tsx`
+- `v10/src/features/collaboration/sharing/ShareButton.tsx`
 
 ## Gate Results (Codex fills)
 

@@ -19,8 +19,8 @@ Date: 2026-02-16
 
 Touched files/directories:
 - `codex_tasks/task_196_audio_provider_reference_adapter.md`
-- `v10/src/features/extensions/adapters/audioProviderAdapter.ts` (new)
-- `v10/src/features/extensions/adapters/index.ts`
+- `v10/src/features/platform/extensions/adapters/audioProviderAdapter.ts` (new)
+- `v10/src/features/platform/extensions/adapters/index.ts`
 
 Out of scope:
 - Playback engine integration.
@@ -130,8 +130,8 @@ Out of scope:
 Status: COMPLETED
 
 Changed files:
-- `v10/src/features/extensions/adapters/audioProviderAdapter.ts`
-- `v10/src/features/extensions/adapters/index.ts`
+- `v10/src/features/platform/extensions/adapters/audioProviderAdapter.ts`
+- `v10/src/features/platform/extensions/adapters/index.ts`
 
 Commands run (only if user asked or required by spec):
 - `cd v10 && npm run lint`

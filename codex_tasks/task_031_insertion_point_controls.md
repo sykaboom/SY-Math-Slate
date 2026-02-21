@@ -19,8 +19,8 @@ The line/column/page buttons currently append break blocks to the end of the doc
 - No new persistence schema.
 
 ## Scope (touched files)
-- `v10/src/features/store/useCanvasStore.ts`
-- `v10/src/features/layout/DataInputPanel.tsx`
+- `v10/src/features/platform/store/useCanvasStore.ts`
+- `v10/src/features/chrome/layout/DataInputPanel.tsx`
 
 ## Requirements
 1. Store:
@@ -45,7 +45,7 @@ The line/column/page buttons currently append break blocks to the end of the doc
 
 ## Closeout
 - **Changed files:**
-  - `v10/src/features/store/useCanvasStore.ts`
-  - `v10/src/features/layout/DataInputPanel.tsx`
+  - `v10/src/features/platform/store/useCanvasStore.ts`
+  - `v10/src/features/chrome/layout/DataInputPanel.tsx`
 - **Commands run:** none
 - **Manual verification:** not run (not requested).

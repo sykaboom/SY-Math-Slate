@@ -21,7 +21,7 @@ Date: 2026-02-15
 Touched files/directories:
 - `codex_tasks/task_167_theme_token_schema_v2.md`
 - `v10/src/core/config/themeTokens.ts` (new)
-- `v10/src/features/mod-studio/core/types.ts`
+- `v10/src/features/platform/mod-studio/core/types.ts`
 - `v10/AI_READ_ME.md`
 
 Out of scope:
@@ -150,7 +150,7 @@ Status: COMPLETED
 Changed files:
 - `codex_tasks/task_167_theme_token_schema_v2.md`
 - `v10/src/core/config/themeTokens.ts`
-- `v10/src/features/mod-studio/core/types.ts`
+- `v10/src/features/platform/mod-studio/core/types.ts`
 - `v10/AI_READ_ME.md`
 
 Commands run (only if user asked or required by spec):

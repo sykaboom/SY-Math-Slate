@@ -23,13 +23,13 @@ Date: 2026-02-09
 
 Touched files/directories:
 - `codex_tasks/task_100_tablet_shell_toolchips_refine.md`
-- `v10/src/features/layout/AppLayout.tsx`
-- `v10/src/features/toolbar/FloatingToolbar.tsx`
-- `v10/src/features/toolbar/atoms/ToolButton.tsx`
+- `v10/src/features/chrome/layout/AppLayout.tsx`
+- `v10/src/features/chrome/toolbar/FloatingToolbar.tsx`
+- `v10/src/features/chrome/toolbar/atoms/ToolButton.tsx`
 
 Out of scope:
-- `v10/src/features/hooks/**`
-- `v10/src/features/layout/DataInputPanel.tsx`
+- `v10/src/features/platform/hooks/**`
+- `v10/src/features/chrome/layout/DataInputPanel.tsx`
 - `v10/src/core/**`
 
 ---
@@ -109,12 +109,12 @@ Out of scope:
    - Covers: AC-1, AC-2, AC-3
 
 2) 코드 확인:
-   - Command / click path: `rg -n "fullscreen|h-11|h-12|ToolButton|action_enter_fullscreen_ink" v10/src/features/layout/AppLayout.tsx v10/src/features/toolbar/FloatingToolbar.tsx v10/src/features/toolbar/atoms/ToolButton.tsx`
+   - Command / click path: `rg -n "fullscreen|h-11|h-12|ToolButton|action_enter_fullscreen_ink" v10/src/features/chrome/layout/AppLayout.tsx v10/src/features/chrome/toolbar/FloatingToolbar.tsx v10/src/features/chrome/toolbar/atoms/ToolButton.tsx`
    - Expected result: 타겟/액션 경로 확인
    - Covers: AC-1, AC-2, AC-3
 
 3) 품질/범위 확인:
-   - Command / click path: `cd v10 && npm run lint`, `git status --short -- v10/src/features/layout/AppLayout.tsx v10/src/features/toolbar/FloatingToolbar.tsx v10/src/features/toolbar/atoms/ToolButton.tsx codex_tasks/task_100_tablet_shell_toolchips_refine.md`
+   - Command / click path: `cd v10 && npm run lint`, `git status --short -- v10/src/features/chrome/layout/AppLayout.tsx v10/src/features/chrome/toolbar/FloatingToolbar.tsx v10/src/features/chrome/toolbar/atoms/ToolButton.tsx codex_tasks/task_100_tablet_shell_toolchips_refine.md`
    - Expected result: lint error 0, scope 내 변경
    - Covers: AC-4, AC-5
 
@@ -144,14 +144,14 @@ Status: COMPLETED
 
 Changed files:
 - `codex_tasks/task_100_tablet_shell_toolchips_refine.md`
-- `v10/src/features/layout/AppLayout.tsx`
-- `v10/src/features/toolbar/FloatingToolbar.tsx`
-- `v10/src/features/toolbar/atoms/ToolButton.tsx`
+- `v10/src/features/chrome/layout/AppLayout.tsx`
+- `v10/src/features/chrome/toolbar/FloatingToolbar.tsx`
+- `v10/src/features/chrome/toolbar/atoms/ToolButton.tsx`
 
 Commands run (only if user asked or required by spec):
-- `sed -n '1,360p' v10/src/features/layout/AppLayout.tsx`
-- `sed -n '1,360p' v10/src/features/toolbar/FloatingToolbar.tsx`
-- `sed -n '1,260p' v10/src/features/toolbar/atoms/ToolButton.tsx`
+- `sed -n '1,360p' v10/src/features/chrome/layout/AppLayout.tsx`
+- `sed -n '1,360p' v10/src/features/chrome/toolbar/FloatingToolbar.tsx`
+- `sed -n '1,260p' v10/src/features/chrome/toolbar/atoms/ToolButton.tsx`
 - `ls design_drafts | rg "layout_tablet_ink_fullscreen_768x1024.svg|layout_tablet_landscape_controls_1180x820.svg|layout_web_chrome_resize_guard_1440x1080.svg"`
 - `cd v10 && npm run lint`
 - `cd v10 && npm run build` (sandbox 제한으로 escalated 재실행 1회 포함)

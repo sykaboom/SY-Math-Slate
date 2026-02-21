@@ -21,10 +21,10 @@ Date: 2026-02-15
 
 Touched files/directories:
 - `codex_tasks/task_138_purge_cutover_closeout.md`
-- `v10/src/features/toolbar/FloatingToolbar.tsx` (targeted fallback removals only)
-- `v10/src/features/layout/DataInputPanel.tsx` (targeted fallback removals only)
-- `v10/src/features/layout/PlayerBar.tsx` (targeted fallback removals only)
-- `v10/src/features/hooks/useSequence.ts` (targeted fallback removals only)
+- `v10/src/features/chrome/toolbar/FloatingToolbar.tsx` (targeted fallback removals only)
+- `v10/src/features/chrome/layout/DataInputPanel.tsx` (targeted fallback removals only)
+- `v10/src/features/chrome/layout/PlayerBar.tsx` (targeted fallback removals only)
+- `v10/src/features/platform/hooks/useSequence.ts` (targeted fallback removals only)
 - `v10/AI_READ_ME.md`
 - `v10/AI_READ_ME_MAP.md`
 
@@ -153,8 +153,8 @@ Status: COMPLETED
 
 Changed files:
 - `codex_tasks/task_138_purge_cutover_closeout.md`
-- `v10/src/features/layout/DataInputPanel.tsx`
-- `v10/src/features/toolbar/FloatingToolbar.tsx`
+- `v10/src/features/chrome/layout/DataInputPanel.tsx`
+- `v10/src/features/chrome/toolbar/FloatingToolbar.tsx`
 - `v10/AI_READ_ME.md`
 - `v10/AI_READ_ME_MAP.md`
 

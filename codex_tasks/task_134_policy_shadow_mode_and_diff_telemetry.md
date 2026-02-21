@@ -21,10 +21,10 @@ Date: 2026-02-15
 
 Touched files/directories:
 - `codex_tasks/task_134_policy_shadow_mode_and_diff_telemetry.md`
-- `v10/src/features/policy/policyShadow.ts` (new)
-- `v10/src/features/layout/AppLayout.tsx`
-- `v10/src/features/extensions/commandExecutionPolicy.ts`
-- `v10/src/features/extensions/toolExecutionPolicy.ts`
+- `v10/src/features/governance/policy/policyShadow.ts` (new)
+- `v10/src/features/chrome/layout/AppLayout.tsx`
+- `v10/src/features/platform/extensions/commandExecutionPolicy.ts`
+- `v10/src/features/platform/extensions/toolExecutionPolicy.ts`
 - `v10/AI_READ_ME.md`
 
 Out of scope:
@@ -65,9 +65,9 @@ Out of scope:
     - Implementer-C: Codex
     - Reviewer+Verifier: Codex
   - File ownership lock plan:
-    - Implementer-A: `v10/src/features/policy/policyShadow.ts`
-    - Implementer-B: `v10/src/features/extensions/commandExecutionPolicy.ts`, `v10/src/features/extensions/toolExecutionPolicy.ts`
-    - Implementer-C: `v10/src/features/layout/AppLayout.tsx`, docs
+    - Implementer-A: `v10/src/features/governance/policy/policyShadow.ts`
+    - Implementer-B: `v10/src/features/platform/extensions/commandExecutionPolicy.ts`, `v10/src/features/platform/extensions/toolExecutionPolicy.ts`
+    - Implementer-C: `v10/src/features/chrome/layout/AppLayout.tsx`, docs
   - Parallel slot plan:
     - max 6 active slots
 
@@ -152,10 +152,10 @@ Status: COMPLETED
 
 Changed files:
 - `codex_tasks/task_134_policy_shadow_mode_and_diff_telemetry.md`
-- `v10/src/features/policy/policyShadow.ts`
-- `v10/src/features/extensions/commandExecutionPolicy.ts`
-- `v10/src/features/extensions/toolExecutionPolicy.ts`
-- `v10/src/features/layout/AppLayout.tsx`
+- `v10/src/features/governance/policy/policyShadow.ts`
+- `v10/src/features/platform/extensions/commandExecutionPolicy.ts`
+- `v10/src/features/platform/extensions/toolExecutionPolicy.ts`
+- `v10/src/features/chrome/layout/AppLayout.tsx`
 - `v10/AI_READ_ME.md`
 - `v10/AI_READ_ME_MAP.md`
 

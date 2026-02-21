@@ -8,7 +8,7 @@ Owner: Codex
 Vercel build failed with TypeScript error: type predicate not assignable in `useSnap` filter.
 
 ## Scope
-- v10/src/features/hooks/useSnap.ts
+- v10/src/features/platform/hooks/useSnap.ts
 
 ## Change
 - Replaced predicate filter with explicit push into `AlignmentGuide[]`.

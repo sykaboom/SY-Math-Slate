@@ -22,13 +22,13 @@
 - DataInputPanel 대규모 분해 (Task 069에서 처리)
 
 ## Scope
-- `v10/src/features/canvas/ContentLayer.tsx` (unused cleanup)
-- `v10/src/features/hooks/usePersistence.ts`
-- `v10/src/features/hooks/useFileIO.ts`
+- `v10/src/features/editor/canvas/ContentLayer.tsx` (unused cleanup)
+- `v10/src/features/platform/hooks/usePersistence.ts`
+- `v10/src/features/platform/hooks/useFileIO.ts`
 - `v10/src/core/migrations/migrateToV2.ts`
-- `v10/src/features/layout/DataInputPanel.tsx`
-- `v10/src/features/layout/autoLayout.ts`
-- `v10/src/features/store/useCanvasStore.ts`
+- `v10/src/features/chrome/layout/DataInputPanel.tsx`
+- `v10/src/features/chrome/layout/autoLayout.ts`
+- `v10/src/features/platform/store/useCanvasStore.ts`
 - `v10/src/core/config/typography.ts`
 - `v10/src/core/persistence/buildPersistedDoc.ts` (new)
 - `v10/src/core/sanitize/richTextSanitizer.ts` (new)
@@ -67,11 +67,11 @@ Changed files:
 - `v10/src/core/persistence/buildPersistedDoc.ts`
 - `v10/src/core/sanitize/richTextSanitizer.ts`
 - `v10/src/core/migrations/migrateToV2.ts`
-- `v10/src/features/hooks/usePersistence.ts`
-- `v10/src/features/hooks/useFileIO.ts`
-- `v10/src/features/layout/DataInputPanel.tsx`
-- `v10/src/features/layout/autoLayout.ts`
-- `v10/src/features/canvas/ContentLayer.tsx`
+- `v10/src/features/platform/hooks/usePersistence.ts`
+- `v10/src/features/platform/hooks/useFileIO.ts`
+- `v10/src/features/chrome/layout/DataInputPanel.tsx`
+- `v10/src/features/chrome/layout/autoLayout.ts`
+- `v10/src/features/editor/canvas/ContentLayer.tsx`
 - `v10/AI_READ_ME_MAP.md`
 
 Commands run:

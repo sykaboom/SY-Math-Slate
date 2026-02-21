@@ -10,7 +10,7 @@
 - Slowed highlight pacing and smoothed marker movement for better frame feel.
 
 ## Files
-- `v10/src/features/canvas/animation/AnimatedTextBlock.tsx`
+- `v10/src/features/editor/canvas/animation/AnimatedTextBlock.tsx`
 
 ## Commands Run
 - None.

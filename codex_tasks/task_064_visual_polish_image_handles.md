@@ -25,15 +25,15 @@ The user requested visual refinements to match the "Neon" aesthetic and fix a sp
 - New dependencies
 
 ## Scope (Files)
-- `v10/src/features/canvas/actors/ChalkActor.tsx` (Redesign)
+- `v10/src/features/editor/canvas/actors/ChalkActor.tsx` (Redesign)
 - `v10/src/core/themes/chalkTheme.ts` (Theme updates)
-- `v10/src/features/canvas/AnchorIndicator.tsx` (Size/design + visibility)
-- `v10/src/features/canvas/ContentLayer.tsx` (End-of-step marker behavior)
+- `v10/src/features/editor/canvas/AnchorIndicator.tsx` (Size/design + visibility)
+- `v10/src/features/editor/canvas/ContentLayer.tsx` (End-of-step marker behavior)
 - `v10/src/app/globals.css` (Cursor marker styles)
-- `v10/src/features/toolbar/FloatingToolbar.tsx` (More menu toggle)
-- `v10/src/features/store/useUIStore.ts` (Session-only toggle state)
-- `v10/src/features/canvas/CanvasStage.tsx` (Cursor visibility gating)
-- `v10/src/features/canvas/objects/ImageBlock.tsx` (Image resize handles)
+- `v10/src/features/chrome/toolbar/FloatingToolbar.tsx` (More menu toggle)
+- `v10/src/features/platform/store/useUIStore.ts` (Session-only toggle state)
+- `v10/src/features/editor/canvas/CanvasStage.tsx` (Cursor visibility gating)
+- `v10/src/features/editor/canvas/objects/ImageBlock.tsx` (Image resize handles)
 
 ## Detailed Design Specs
 
@@ -84,13 +84,13 @@ The user requested visual refinements to match the "Neon" aesthetic and fix a sp
 
 ## Completion Notes
 **Changed Files**
-- `v10/src/features/store/useUIStore.ts`
-- `v10/src/features/toolbar/FloatingToolbar.tsx`
-- `v10/src/features/canvas/CanvasStage.tsx`
-- `v10/src/features/canvas/actors/ChalkActor.tsx`
-- `v10/src/features/canvas/AnchorIndicator.tsx`
+- `v10/src/features/platform/store/useUIStore.ts`
+- `v10/src/features/chrome/toolbar/FloatingToolbar.tsx`
+- `v10/src/features/editor/canvas/CanvasStage.tsx`
+- `v10/src/features/editor/canvas/actors/ChalkActor.tsx`
+- `v10/src/features/editor/canvas/AnchorIndicator.tsx`
 - `v10/src/core/themes/chalkTheme.ts`
-- `v10/src/features/canvas/ContentLayer.tsx`
+- `v10/src/features/editor/canvas/ContentLayer.tsx`
 - `v10/src/app/globals.css`
 
 **Commands Run**

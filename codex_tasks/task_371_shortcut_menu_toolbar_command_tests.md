@@ -18,7 +18,7 @@ Date: 2026-02-21
 ## Scope (Base Required)
 
 Touched files/directories:
-- v10/src/features/extensions/commands, v10/src/features/toolbar, scripts
+- v10/src/features/platform/extensions/commands, v10/src/features/chrome/toolbar, scripts
 
 Out of scope:
 - 새 command 추가

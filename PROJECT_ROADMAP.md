@@ -11,6 +11,7 @@ This document is the only roadmap-level execution source.
 ## Active Program — Progressive Refactor to Mod-first Steady State
 Canonical batch plan:
 - codex_tasks/batch_dispatch_plan_2026_02_21_phase0_9.md
+- codex_tasks/batch_dispatch_plan_2026_02_21_relayout_466_471.md
 
 Canonical architecture docs:
 - v10/docs/architecture/ModEngine.md
@@ -27,9 +28,13 @@ Canonical architecture docs:
 - Phase 7: task_389~392 teacher-in-loop AI pipeline v2
 - Phase 8: task_393~396 mod package manager and authoring workflows
 - Phase 9: task_397~400 ops hardening and final closeout
+- Phase 10: task_466~471 topology-v2 convergence (COMPLETED)
+  - core modding namespace convergence (`core/mod` -> `core/runtime/modding`)
+  - features taxonomy relayout (`chrome/editor/collaboration/governance/platform`)
+  - compat purge + guardrail finalize
 
 ### Program Exit Condition
-After task_400 closeout:
+After task_471 closeout:
 1) common extension path is limited to UI, feature, mod package layers,
 2) no direct mod mutation into layout/store internals,
 3) production operations and rollback playbooks are verified.

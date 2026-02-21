@@ -18,7 +18,7 @@ Date: 2026-02-21
 ## Scope (Base Required)
 
 Touched files/directories:
-- v10/src/core/session-policy, v10/src/features/viewer, v10/src/features/store/useSyncStore.ts, v10/src/app/api
+- v10/src/core/session-policy, v10/src/features/chrome/viewer, v10/src/features/platform/store/useSyncStore.ts, v10/src/app/api
 
 Out of scope:
 - No CRDT or distributed conflict engine in this phase.

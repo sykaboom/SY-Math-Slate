@@ -37,7 +37,7 @@ Date: 2026-02-19
 ## Scope (Base Required)
 
 Touched files/directories (write):
-- `v10/src/features/viewer/ViewerShell.tsx` — 오버레이 div className에 `pointer-events-none` 추가
+- `v10/src/features/chrome/viewer/ViewerShell.tsx` — 오버레이 div className에 `pointer-events-none` 추가
 
 Out of scope:
 - 뷰어에서의 캔버스 상호작용 기능 추가 (pinch-zoom 등 별도 스펙)
@@ -183,7 +183,7 @@ Out of scope:
 Status: COMPLETED
 
 Changed files:
-- `v10/src/features/viewer/ViewerShell.tsx`
+- `v10/src/features/chrome/viewer/ViewerShell.tsx`
 
 ## Gate Results (Codex fills)
 

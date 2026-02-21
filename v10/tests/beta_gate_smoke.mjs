@@ -24,7 +24,7 @@ assertIncludes(
   "rolePolicy publish path must exist."
 );
 
-const appLayout = read("src/features/layout/AppLayout.tsx");
+const appLayout = read("src/features/chrome/layout/AppLayout.tsx");
 assertIncludes(
   appLayout,
   "ModStudioShell",
@@ -36,14 +36,14 @@ assertIncludes(
   "AppLayout must mount asymmetric sync hook."
 );
 
-const commandPolicy = read("src/features/extensions/commandExecutionPolicy.ts");
+const commandPolicy = read("src/features/platform/extensions/commandExecutionPolicy.ts");
 assertIncludes(
   commandPolicy,
   "shouldQueueCommandApprovalByPolicyForRole",
   "command policy queue guard must exist."
 );
 
-const toolPolicy = read("src/features/extensions/toolExecutionPolicy.ts");
+const toolPolicy = read("src/features/platform/extensions/toolExecutionPolicy.ts");
 assertIncludes(
   toolPolicy,
   "shouldQueueToolApprovalByPolicyForRole",

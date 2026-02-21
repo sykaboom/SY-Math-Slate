@@ -19,8 +19,8 @@ Date: 2026-02-20
 ## Scope (Base Required)
 
 Touched files/directories:
-- `v10/src/features/mod-studio/modules/moduleDiagnostics.ts`
-- `v10/src/features/mod-studio/modules/ModuleStudioSection.tsx`
+- `v10/src/features/platform/mod-studio/modules/moduleDiagnostics.ts`
+- `v10/src/features/platform/mod-studio/modules/ModuleStudioSection.tsx`
 - `v10/src/core/mod/package/*` (diagnostic selectors only)
 
 Out of scope:
@@ -60,7 +60,7 @@ Out of scope:
 - Touched file count:
   - 3
 - Files shared with other PENDING tasks:
-  - `v10/src/features/mod-studio/modules/moduleDiagnostics.ts`
+  - `v10/src/features/platform/mod-studio/modules/moduleDiagnostics.ts`
 - Cross-module dependency:
   - YES
 - Parallelizable sub-units:
@@ -171,8 +171,8 @@ Status: COMPLETED
 
 Changed files:
 - `v10/src/core/mod/package/selectors.ts`
-- `v10/src/features/mod-studio/modules/moduleDiagnostics.ts`
-- `v10/src/features/mod-studio/modules/ModuleStudioSection.tsx`
+- `v10/src/features/platform/mod-studio/modules/moduleDiagnostics.ts`
+- `v10/src/features/platform/mod-studio/modules/ModuleStudioSection.tsx`
 - `codex_tasks/task_345_mod_studio_package_diagnostics_and_conflicts.md`
 
 Commands run (only if user asked or required by spec):

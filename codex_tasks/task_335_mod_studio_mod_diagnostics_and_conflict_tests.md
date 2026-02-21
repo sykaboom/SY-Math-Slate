@@ -20,8 +20,8 @@ Date: 2026-02-20
 ## Scope (Base Required)
 
 Touched files/directories:
-- `v10/src/features/mod-studio/modules/moduleDiagnostics.ts`
-- `v10/src/features/mod-studio/modules/ModuleStudioSection.tsx`
+- `v10/src/features/platform/mod-studio/modules/moduleDiagnostics.ts`
+- `v10/src/features/platform/mod-studio/modules/ModuleStudioSection.tsx`
 - `v10/src/core/mod/host/manager.ts`
 - `v10/.eslintrc.*` or `v10/eslint.config.*` (mod-boundary `no-restricted-imports` rules)
 - `scripts/check_mod_contract.sh` (new)
@@ -202,8 +202,8 @@ Out of scope:
 Status: COMPLETED
 
 Changed files:
-- `v10/src/features/mod-studio/modules/moduleDiagnostics.ts`
-- `v10/src/features/mod-studio/modules/ModuleStudioSection.tsx`
+- `v10/src/features/platform/mod-studio/modules/moduleDiagnostics.ts`
+- `v10/src/features/platform/mod-studio/modules/ModuleStudioSection.tsx`
 - `v10/eslint.config.mjs`
 - `scripts/check_mod_contract.sh`
 - `scripts/scan_guardrails.sh`

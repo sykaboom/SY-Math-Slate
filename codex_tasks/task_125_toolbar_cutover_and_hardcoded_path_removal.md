@@ -21,13 +21,13 @@ Date: 2026-02-15
 
 Touched files/directories:
 - `codex_tasks/task_125_toolbar_cutover_and_hardcoded_path_removal.md`
-- `v10/src/features/toolbar/FloatingToolbar.tsx`
-- `v10/src/features/toolbar/PenControls.tsx`
-- `v10/src/features/toolbar/LaserControls.tsx`
-- `v10/src/features/toolbar/PlaybackControls.tsx`
-- `v10/src/features/toolbar/PageNavigator.tsx`
-- `v10/src/features/extensions/ui/ExtensionSlot.tsx`
-- `v10/src/features/extensions/ui/registerCoreSlots.ts`
+- `v10/src/features/chrome/toolbar/FloatingToolbar.tsx`
+- `v10/src/features/chrome/toolbar/PenControls.tsx`
+- `v10/src/features/chrome/toolbar/LaserControls.tsx`
+- `v10/src/features/chrome/toolbar/PlaybackControls.tsx`
+- `v10/src/features/chrome/toolbar/PageNavigator.tsx`
+- `v10/src/features/platform/extensions/ui/ExtensionSlot.tsx`
+- `v10/src/features/platform/extensions/ui/registerCoreSlots.ts`
 
 Out of scope:
 - useUIStore deletion

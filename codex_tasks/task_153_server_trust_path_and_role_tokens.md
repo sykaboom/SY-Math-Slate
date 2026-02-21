@@ -21,9 +21,9 @@ Date: 2026-02-15
 Touched files/directories:
 - `v10/src/app/api/**` (new/updated)
 - `v10/src/core/extensions/mcpGateway.ts`
-- `v10/src/features/extensions/commandExecutionPolicy.ts`
-- `v10/src/features/extensions/toolExecutionPolicy.ts`
-- `v10/src/features/store/useLocalStore.ts`
+- `v10/src/features/platform/extensions/commandExecutionPolicy.ts`
+- `v10/src/features/platform/extensions/toolExecutionPolicy.ts`
+- `v10/src/features/platform/store/useLocalStore.ts`
 
 Out of scope:
 - Full auth provider redesign.
@@ -150,10 +150,10 @@ Status: COMPLETED
 Changed files:
 - `v10/src/app/api/trust/role/route.ts`
 - `v10/src/core/extensions/mcpGateway.ts`
-- `v10/src/features/extensions/commandExecutionPolicy.ts`
-- `v10/src/features/extensions/toolExecutionPolicy.ts`
-- `v10/src/features/store/useLocalStore.ts`
-- `v10/src/features/extensions/ui/ExtensionRuntimeBootstrap.tsx`
+- `v10/src/features/platform/extensions/commandExecutionPolicy.ts`
+- `v10/src/features/platform/extensions/toolExecutionPolicy.ts`
+- `v10/src/features/platform/store/useLocalStore.ts`
+- `v10/src/features/platform/extensions/ui/ExtensionRuntimeBootstrap.tsx`
 
 Commands run (only if user asked or required by spec):
 - `scripts/check_layer_rules.sh`

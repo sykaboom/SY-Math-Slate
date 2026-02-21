@@ -17,8 +17,8 @@ Date: 2026-02-19
 
 ## Scope
 Touched files:
-- `v10/src/features/toolbar/FloatingToolbar.tsx`
-- `v10/src/features/toolbar/ThumbZoneDock.tsx`
+- `v10/src/features/chrome/toolbar/FloatingToolbar.tsx`
+- `v10/src/features/chrome/toolbar/ThumbZoneDock.tsx`
 
 Out of scope:
 - Pen/Laser color affordance redesign (task_306)
@@ -55,8 +55,8 @@ Out of scope:
 ## Implementation Log (Codex fills)
 Status: COMPLETED
 Changed files:
-- `v10/src/features/toolbar/FloatingToolbar.tsx`
-- `v10/src/features/toolbar/ThumbZoneDock.tsx`
+- `v10/src/features/chrome/toolbar/FloatingToolbar.tsx`
+- `v10/src/features/chrome/toolbar/ThumbZoneDock.tsx`
 Commands run:
 - `scripts/check_layer_rules.sh`
 - `cd v10 && npm run lint`

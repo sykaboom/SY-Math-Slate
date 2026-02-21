@@ -52,15 +52,15 @@ Date: 2026-02-18
 ## Scope (Base Required)
 
 Touched files/directories (create):
-- `v10/src/features/sharing/ShareScopeSelector.tsx` — 공유 범위 선택 UI
-- `v10/src/features/sharing/LayerPickerModal.tsx` — 레이어(페이지) 선택 모달
+- `v10/src/features/collaboration/sharing/ShareScopeSelector.tsx` — 공유 범위 선택 UI
+- `v10/src/features/collaboration/sharing/LayerPickerModal.tsx` — 레이어(페이지) 선택 모달
 
 Touched files/directories (write):
 - `v10/src/core/types/snapshot.ts` — layerIds: string[], objectIds?: string[] 필드 정확화
-- `v10/src/features/sharing/snapshotSerializer.ts` — scope 필터 직렬화
-- `v10/src/features/sharing/useSnapshotShare.ts` — scope + layerIds 매개변수
-- `v10/src/features/sharing/ShareButton.tsx` — ShareScopeSelector 통합
-- `v10/src/features/viewer/ViewerShell.tsx` — 필터된 scope 렌더링
+- `v10/src/features/collaboration/sharing/snapshotSerializer.ts` — scope 필터 직렬화
+- `v10/src/features/collaboration/sharing/useSnapshotShare.ts` — scope + layerIds 매개변수
+- `v10/src/features/collaboration/sharing/ShareButton.tsx` — ShareScopeSelector 통합
+- `v10/src/features/chrome/viewer/ViewerShell.tsx` — 필터된 scope 렌더링
 
 Out of scope:
 - objectId 기반 필터링 구현 (확장점 예약만)
@@ -228,13 +228,13 @@ scope = "viewport_only"  → 현재 viewport bounds 교차 아이템만 포함
 Status: COMPLETED
 
 Changed files:
-- `v10/src/features/sharing/ShareScopeSelector.tsx` (new)
-- `v10/src/features/sharing/LayerPickerModal.tsx` (new)
+- `v10/src/features/collaboration/sharing/ShareScopeSelector.tsx` (new)
+- `v10/src/features/collaboration/sharing/LayerPickerModal.tsx` (new)
 - `v10/src/core/types/snapshot.ts`
-- `v10/src/features/sharing/snapshotSerializer.ts`
-- `v10/src/features/sharing/useSnapshotShare.ts`
-- `v10/src/features/sharing/ShareButton.tsx`
-- `v10/src/features/viewer/ViewerShell.tsx`
+- `v10/src/features/collaboration/sharing/snapshotSerializer.ts`
+- `v10/src/features/collaboration/sharing/useSnapshotShare.ts`
+- `v10/src/features/collaboration/sharing/ShareButton.tsx`
+- `v10/src/features/chrome/viewer/ViewerShell.tsx`
 
 ## Gate Results (Codex fills)
 

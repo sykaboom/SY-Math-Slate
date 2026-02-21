@@ -9,8 +9,8 @@
 - Avoided redundant actor state updates during move.
 
 ## Files
-- `v10/src/features/hooks/useBoardTransform.ts`
-- `v10/src/features/hooks/useSequence.ts`
+- `v10/src/features/platform/hooks/useBoardTransform.ts`
+- `v10/src/features/platform/hooks/useSequence.ts`
 
 ## Commands Run
 - None.

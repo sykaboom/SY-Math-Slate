@@ -22,8 +22,8 @@ Date: 2026-02-16
 Touched files/directories:
 - `codex_tasks/task_229_experimentation_ab_flag_layer.md`
 - `v10/src/core/config/experiments.ts` (new)
-- `v10/src/features/experiments/abFlags.ts` (new)
-- `v10/src/features/experiments/index.ts` (new)
+- `v10/src/features/platform/experiments/abFlags.ts` (new)
+- `v10/src/features/platform/experiments/index.ts` (new)
 - `codex_tasks/workflow/experiment_registry.env` (new)
 - `codex_tasks/workflow/feature_flag_registry.env`
 - `scripts/check_v10_experiment_registry.sh` (new)
@@ -165,8 +165,8 @@ Status: COMPLETED
 Changed files:
 - `codex_tasks/task_229_experimentation_ab_flag_layer.md`
 - `v10/src/core/config/experiments.ts`
-- `v10/src/features/experiments/abFlags.ts`
-- `v10/src/features/experiments/index.ts`
+- `v10/src/features/platform/experiments/abFlags.ts`
+- `v10/src/features/platform/experiments/index.ts`
 - `codex_tasks/workflow/experiment_registry.env`
 - `codex_tasks/workflow/feature_flag_registry.env`
 - `scripts/check_v10_experiment_registry.sh`

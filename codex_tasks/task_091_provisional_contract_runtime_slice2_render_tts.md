@@ -36,7 +36,7 @@ Touched files/directories:
 Out of scope:
 - MCP 서버 구현
 - `math-pdf-builder-codex` 저장소 변경
-- `v10/src/features/**` 및 `v10/src/features/store/**` 수정
+- `v10/src/features/**` 및 `v10/src/features/platform/store/**` 수정
 - 실제 TTS 호출/합성 엔진 구현
 - 실제 페이지 배치 알고리즘 구현(`autoLayout`) 변경
 

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-import { UpstashSnapshotAdapter } from "@features/sharing/adapters/UpstashSnapshotAdapter";
+import { UpstashSnapshotAdapter } from "@features/collaboration/sharing/adapters/UpstashSnapshotAdapter";
 
 export const dynamic = "force-dynamic";
 

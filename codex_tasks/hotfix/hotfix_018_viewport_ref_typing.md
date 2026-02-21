@@ -8,7 +8,7 @@ Owner: Codex
 Vercel build failed with TypeScript error: `RefObject<HTMLDivElement | null>` not assignable to `RefObject<HTMLDivElement>`.
 
 ## Scope
-- v10/src/features/canvas/viewport/useViewportInteraction.ts
+- v10/src/features/editor/canvas/viewport/useViewportInteraction.ts
 
 ## Change
 - Widened hook parameter type to accept `HTMLDivElement | null`.

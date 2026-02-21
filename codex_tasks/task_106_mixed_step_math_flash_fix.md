@@ -22,12 +22,12 @@ Date: 2026-02-10
 
 Touched files/directories:
 - `codex_tasks/task_106_mixed_step_math_flash_fix.md`
-- `v10/src/features/canvas/animation/RichTextAnimator.tsx`
+- `v10/src/features/editor/canvas/animation/RichTextAnimator.tsx`
 
 Out of scope:
-- `v10/src/features/animation/runtime/playAnimationPlan.ts`
-- `v10/src/features/animation/plan/compileAnimationPlan.ts`
-- `v10/src/features/hooks/useSequence.ts`
+- `v10/src/features/editor/animation/runtime/playAnimationPlan.ts`
+- `v10/src/features/editor/animation/plan/compileAnimationPlan.ts`
+- `v10/src/features/platform/hooks/useSequence.ts`
 - `v10/src/core/**`
 
 ---
@@ -107,14 +107,14 @@ Out of scope:
 
 1) Step:
    - Command / click path:
-     - `rg -n "prime|prepare|visibility|opacity|isActive|revealRuns|compileAnimationPlan" v10/src/features/canvas/animation/RichTextAnimator.tsx`
+     - `rg -n "prime|prepare|visibility|opacity|isActive|revealRuns|compileAnimationPlan" v10/src/features/editor/canvas/animation/RichTextAnimator.tsx`
    - Expected result:
      - active compile 완료 시점에 run 숨김 priming 호출 경로가 보인다.
    - Covers: AC-1, AC-2, AC-3
 
 2) Step:
    - Command / click path:
-     - `rg -n "skip|stop|onDone|setPaused" v10/src/features/canvas/animation/RichTextAnimator.tsx`
+     - `rg -n "skip|stop|onDone|setPaused" v10/src/features/editor/canvas/animation/RichTextAnimator.tsx`
    - Expected result:
      - skip/stop/onDone/pause 관련 기존 제어 경로가 유지된다.
    - Covers: AC-4
@@ -128,7 +128,7 @@ Out of scope:
 
 4) Step:
    - Command / click path:
-     - `git status --short -- v10/src/features/canvas/animation/RichTextAnimator.tsx codex_tasks/task_106_mixed_step_math_flash_fix.md`
+     - `git status --short -- v10/src/features/editor/canvas/animation/RichTextAnimator.tsx codex_tasks/task_106_mixed_step_math_flash_fix.md`
    - Expected result:
      - scope 내 파일만 변경
    - Covers: AC-6
@@ -140,7 +140,7 @@ Out of scope:
 - Risks:
   - 과도한 초기 숨김 처리 시 non-active 상태 가시성까지 영향을 줄 수 있음.
 - Roll-back:
-  - `v10/src/features/canvas/animation/RichTextAnimator.tsx` revert로 즉시 복구.
+  - `v10/src/features/editor/canvas/animation/RichTextAnimator.tsx` revert로 즉시 복구.
 
 ---
 
@@ -158,23 +158,23 @@ Out of scope:
 Status: COMPLETED
 
 Changed files:
-- `v10/src/features/canvas/animation/RichTextAnimator.tsx`
+- `v10/src/features/editor/canvas/animation/RichTextAnimator.tsx`
 - `codex_tasks/task_106_mixed_step_math_flash_fix.md`
 
 Commands run (only if user asked or required by spec):
 - `ls codex_tasks | rg '^task_[0-9]+' | sed -E 's/^task_([0-9]+).*/\1/' | sort -n | tail -n 12`
-- `rg -n "mixed|math|reveal|phase|step|blink|flash|visible|opacity" v10/src/features/animation v10/src/features/canvas/animation v10/src/features/hooks/useSequence.ts`
-- `sed -n '1,240p' v10/src/features/animation/plan/compileAnimationPlan.ts`
-- `sed -n '1,520p' v10/src/features/animation/runtime/playAnimationPlan.ts`
-- `sed -n '1,320p' v10/src/features/canvas/animation/RichTextAnimator.tsx`
-- `rg -n "tw-char|tw-visible|hl-temporary|mjx-container|visibility" v10/src/app/globals.css v10/src/**/*.css v10/src/features/canvas/animation`
+- `rg -n "mixed|math|reveal|phase|step|blink|flash|visible|opacity" v10/src/features/editor/animation v10/src/features/editor/canvas/animation v10/src/features/platform/hooks/useSequence.ts`
+- `sed -n '1,240p' v10/src/features/editor/animation/plan/compileAnimationPlan.ts`
+- `sed -n '1,520p' v10/src/features/editor/animation/runtime/playAnimationPlan.ts`
+- `sed -n '1,320p' v10/src/features/editor/canvas/animation/RichTextAnimator.tsx`
+- `rg -n "tw-char|tw-visible|hl-temporary|mjx-container|visibility" v10/src/app/globals.css v10/src/**/*.css v10/src/features/editor/canvas/animation`
 - `sed -n '270,330p' v10/src/app/globals.css`
 - `sed -n '1,260p' v10/src/core/math/render.ts`
-- `rg -n "primeRunsForActivePlayback|visibility|opacity|isActive|revealRuns|compileAnimationPlan" v10/src/features/canvas/animation/RichTextAnimator.tsx`
-- `rg -n "skip|stop|onDone|setPaused" v10/src/features/canvas/animation/RichTextAnimator.tsx`
+- `rg -n "primeRunsForActivePlayback|visibility|opacity|isActive|revealRuns|compileAnimationPlan" v10/src/features/editor/canvas/animation/RichTextAnimator.tsx`
+- `rg -n "skip|stop|onDone|setPaused" v10/src/features/editor/canvas/animation/RichTextAnimator.tsx`
 - `if [ -x scripts/check_layer_rules.sh ]; then scripts/check_layer_rules.sh; else echo "N/A: scripts/check_layer_rules.sh not found"; fi`
 - `cd v10 && npm run lint`
-- `git status --short -- v10/src/features/canvas/animation/RichTextAnimator.tsx codex_tasks/task_106_mixed_step_math_flash_fix.md`
+- `git status --short -- v10/src/features/editor/canvas/animation/RichTextAnimator.tsx codex_tasks/task_106_mixed_step_math_flash_fix.md`
 - `git status --short --branch`
 
 ## Gate Results (Codex fills)
@@ -190,7 +190,7 @@ Commands run (only if user asked or required by spec):
 
 - Pre-existing failures:
   - ESLint warnings 5건 (scope 외 기존 경고)
-  - 워크트리의 scope 외 변경(`v10/src/features/layout/DataInputPanel.tsx`, `codex_tasks/task_105_datainput_font_edit_ui_refine.md`)은 본 태스크 시작 전부터 존재
+  - 워크트리의 scope 외 변경(`v10/src/features/chrome/layout/DataInputPanel.tsx`, `codex_tasks/task_105_datainput_font_edit_ui_refine.md`)은 본 태스크 시작 전부터 존재
 - Newly introduced failures:
   - 없음
 - Blocking:

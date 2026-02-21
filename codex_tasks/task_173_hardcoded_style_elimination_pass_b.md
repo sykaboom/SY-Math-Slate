@@ -19,9 +19,9 @@ Date: 2026-02-15
 
 Touched files/directories:
 - `codex_tasks/task_173_hardcoded_style_elimination_pass_b.md`
-- `v10/src/features/mod-studio/**`
-- `v10/src/features/canvas/PasteHelperModal.tsx`
-- `v10/src/features/canvas/objects/ImageBlock.tsx`
+- `v10/src/features/platform/mod-studio/**`
+- `v10/src/features/editor/canvas/PasteHelperModal.tsx`
+- `v10/src/features/editor/canvas/objects/ImageBlock.tsx`
 - `codex_tasks/workflow/style_budget.env`
 - `v10/AI_READ_ME.md`
 
@@ -150,12 +150,12 @@ Status: COMPLETED
 
 Changed files:
 - `codex_tasks/task_173_hardcoded_style_elimination_pass_b.md`
-- `v10/src/features/mod-studio/theme/ThemeStudioSection.tsx`
-- `v10/src/features/mod-studio/policy/PolicyStudioSection.tsx`
-- `v10/src/features/mod-studio/publish/PublishStudioSection.tsx`
-- `v10/src/features/mod-studio/modules/ModuleStudioSection.tsx`
-- `v10/src/features/canvas/PasteHelperModal.tsx`
-- `v10/src/features/canvas/objects/ImageBlock.tsx`
+- `v10/src/features/platform/mod-studio/theme/ThemeStudioSection.tsx`
+- `v10/src/features/platform/mod-studio/policy/PolicyStudioSection.tsx`
+- `v10/src/features/platform/mod-studio/publish/PublishStudioSection.tsx`
+- `v10/src/features/platform/mod-studio/modules/ModuleStudioSection.tsx`
+- `v10/src/features/editor/canvas/PasteHelperModal.tsx`
+- `v10/src/features/editor/canvas/objects/ImageBlock.tsx`
 - `codex_tasks/workflow/style_budget.env`
 - `v10/AI_READ_ME.md`
 

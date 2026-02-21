@@ -22,10 +22,10 @@ Date: 2026-02-20
 Touched files/directories:
 - `v10/src/core/mod/host/manager.ts` (new)
 - `v10/src/core/mod/host/index.ts`
-- `v10/src/features/store/useModStore.ts` (new)
-- `v10/src/features/toolbar/FloatingToolbar.tsx` (bridge only)
-- `v10/src/features/toolbar/toolbarModePolicy.ts` (bridge types/mapper only)
-- `v10/src/features/store/useUIStoreBridge.ts` (optional read-only exposure bridge)
+- `v10/src/features/platform/store/useModStore.ts` (new)
+- `v10/src/features/chrome/toolbar/FloatingToolbar.tsx` (bridge only)
+- `v10/src/features/chrome/toolbar/toolbarModePolicy.ts` (bridge types/mapper only)
+- `v10/src/features/platform/store/useUIStoreBridge.ts` (optional read-only exposure bridge)
 - `v10/AI_READ_ME.md`
 - `codex_tasks/task_332_mod_manager_active_mod_store_bridge.md`
 
@@ -70,7 +70,7 @@ Out of scope:
 - Touched file count:
   - 5-7
 - Files shared with other PENDING tasks:
-  - `v10/src/features/toolbar/FloatingToolbar.tsx`
+  - `v10/src/features/chrome/toolbar/FloatingToolbar.tsx`
 - Cross-module dependency:
   - YES
 - Parallelizable sub-units:
@@ -189,10 +189,10 @@ Status: COMPLETED
 Changed files:
 - `v10/src/core/mod/host/manager.ts`
 - `v10/src/core/mod/host/index.ts`
-- `v10/src/features/store/useModStore.ts`
-- `v10/src/features/toolbar/FloatingToolbar.tsx`
-- `v10/src/features/toolbar/toolbarModePolicy.ts`
-- `v10/src/features/store/useUIStoreBridge.ts`
+- `v10/src/features/platform/store/useModStore.ts`
+- `v10/src/features/chrome/toolbar/FloatingToolbar.tsx`
+- `v10/src/features/chrome/toolbar/toolbarModePolicy.ts`
+- `v10/src/features/platform/store/useUIStoreBridge.ts`
 - `codex_tasks/task_332_mod_manager_active_mod_store_bridge.md`
 
 Commands run (only if user asked or required by spec):

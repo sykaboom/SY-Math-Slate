@@ -8,10 +8,10 @@
 Break guide toggle was wired to `editing-breaks` (data input) instead of page guides. Also observed slight visual difference between first render and later steps.
 
 ## Scope
-- `v10/src/features/canvas/ContentLayer.tsx`
-- `v10/src/features/canvas/CanvasStage.tsx`
-- `v10/src/features/canvas/PageGuides.tsx`
-- `v10/src/features/canvas/PageViewport.tsx`
+- `v10/src/features/editor/canvas/ContentLayer.tsx`
+- `v10/src/features/editor/canvas/CanvasStage.tsx`
+- `v10/src/features/editor/canvas/PageGuides.tsx`
+- `v10/src/features/editor/canvas/PageViewport.tsx`
 
 ## Changes
 - Restored `editing-breaks` to only follow Data Input open state.

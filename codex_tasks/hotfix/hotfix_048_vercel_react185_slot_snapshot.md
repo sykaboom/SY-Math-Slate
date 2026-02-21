@@ -5,7 +5,7 @@
 
 ## Scope (User-approved Hotfix)
 - `v10/src/core/extensions/registry.ts`
-- `v10/src/features/extensions/ui/ExtensionSlot.tsx`
+- `v10/src/features/platform/extensions/ui/ExtensionSlot.tsx`
 - `codex_tasks/hotfix/hotfix_048_vercel_react185_slot_snapshot.md`
 
 ## Root Cause
@@ -20,7 +20,7 @@
 
 ## Files
 - `v10/src/core/extensions/registry.ts`
-- `v10/src/features/extensions/ui/ExtensionSlot.tsx`
+- `v10/src/features/platform/extensions/ui/ExtensionSlot.tsx`
 - `codex_tasks/hotfix/hotfix_048_vercel_react185_slot_snapshot.md`
 
 ## Commands Run

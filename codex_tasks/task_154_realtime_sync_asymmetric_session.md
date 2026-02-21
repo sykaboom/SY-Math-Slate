@@ -19,10 +19,10 @@ Date: 2026-02-15
 ## Scope (Base Required)
 
 Touched files/directories:
-- `v10/src/features/sync/**` (new)
-- `v10/src/features/store/useSyncStore.ts`
-- `v10/src/features/canvas/viewport/**`
-- `v10/src/features/layout/**`
+- `v10/src/features/collaboration/sync/**` (new)
+- `v10/src/features/platform/store/useSyncStore.ts`
+- `v10/src/features/editor/canvas/viewport/**`
+- `v10/src/features/chrome/layout/**`
 
 Out of scope:
 - External SaaS infrastructure provisioning.
@@ -152,9 +152,9 @@ If NO:
 Status: COMPLETED
 
 Changed files:
-- `v10/src/features/sync/useAsymmetricSessionSync.ts`
-- `v10/src/features/layout/AppLayout.tsx`
-- `v10/src/features/store/useSyncStore.ts` (existing API reused)
+- `v10/src/features/collaboration/sync/useAsymmetricSessionSync.ts`
+- `v10/src/features/chrome/layout/AppLayout.tsx`
+- `v10/src/features/platform/store/useSyncStore.ts` (existing API reused)
 
 Commands run (only if user asked or required by spec):
 - `scripts/check_layer_rules.sh`

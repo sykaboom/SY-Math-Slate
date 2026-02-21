@@ -56,8 +56,8 @@ Date: 2026-02-19
 ## Scope (Base Required)
 
 Touched files/directories (write):
-- `v10/src/features/mod-studio/modules/moduleDiagnostics.ts` — commandId 검증 추가
-- `v10/src/features/mod-studio/modules/ModuleStudioSection.tsx` — commandId select 드롭다운
+- `v10/src/features/platform/mod-studio/modules/moduleDiagnostics.ts` — commandId 검증 추가
+- `v10/src/features/platform/mod-studio/modules/ModuleStudioSection.tsx` — commandId select 드롭다운
 
 Out of scope:
 - registry.ts 변경
@@ -260,8 +260,8 @@ const diagnostics = useMemo(
 Status: COMPLETED
 
 Changed files:
-- `v10/src/features/mod-studio/modules/moduleDiagnostics.ts`
-- `v10/src/features/mod-studio/modules/ModuleStudioSection.tsx`
+- `v10/src/features/platform/mod-studio/modules/moduleDiagnostics.ts`
+- `v10/src/features/platform/mod-studio/modules/ModuleStudioSection.tsx`
 
 ## Gate Results (Codex fills)
 

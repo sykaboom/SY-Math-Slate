@@ -26,18 +26,18 @@ Touched files/directories:
 - `v10/tailwind.config.ts`
 - `v10/src/core/themes/chalkTheme.ts`
 - `v10/src/core/config/typography.ts`
-- `v10/src/features/toolbar/atoms/ToolButton.tsx`
-- `v10/src/features/toolbar/atoms/ToolbarPanel.tsx`
-- `v10/src/features/toolbar/atoms/ToolbarSeparator.tsx`
-- `v10/src/features/toolbar/PenControls.tsx`
-- `v10/src/features/toolbar/LaserControls.tsx`
-- `v10/src/features/toolbar/PageNavigator.tsx`
-- `v10/src/features/toolbar/PlaybackControls.tsx`
-- `v10/src/features/toolbar/FloatingToolbar.tsx`
+- `v10/src/features/chrome/toolbar/atoms/ToolButton.tsx`
+- `v10/src/features/chrome/toolbar/atoms/ToolbarPanel.tsx`
+- `v10/src/features/chrome/toolbar/atoms/ToolbarSeparator.tsx`
+- `v10/src/features/chrome/toolbar/PenControls.tsx`
+- `v10/src/features/chrome/toolbar/LaserControls.tsx`
+- `v10/src/features/chrome/toolbar/PageNavigator.tsx`
+- `v10/src/features/chrome/toolbar/PlaybackControls.tsx`
+- `v10/src/features/chrome/toolbar/FloatingToolbar.tsx`
 
 Out of scope:
-- `v10/src/features/layout/*` and kiosk/role routing
-- `v10/src/features/store/*` state slicing
+- `v10/src/features/chrome/layout/*` and kiosk/role routing
+- `v10/src/features/platform/store/*` state slicing
 - `v10/src/core/extensions/*` middleware/queue changes
 - Full shadcn `ui/components/*` token migration (handled in later slice)
 
@@ -164,21 +164,21 @@ Changed files:
 - `v10/tailwind.config.ts`
 - `v10/src/core/themes/chalkTheme.ts`
 - `v10/src/core/config/typography.ts`
-- `v10/src/features/toolbar/atoms/ToolButton.tsx`
-- `v10/src/features/toolbar/atoms/ToolbarPanel.tsx`
-- `v10/src/features/toolbar/atoms/ToolbarSeparator.tsx`
-- `v10/src/features/toolbar/PenControls.tsx`
-- `v10/src/features/toolbar/LaserControls.tsx`
-- `v10/src/features/toolbar/PageNavigator.tsx`
-- `v10/src/features/toolbar/PlaybackControls.tsx`
-- `v10/src/features/toolbar/FloatingToolbar.tsx`
+- `v10/src/features/chrome/toolbar/atoms/ToolButton.tsx`
+- `v10/src/features/chrome/toolbar/atoms/ToolbarPanel.tsx`
+- `v10/src/features/chrome/toolbar/atoms/ToolbarSeparator.tsx`
+- `v10/src/features/chrome/toolbar/PenControls.tsx`
+- `v10/src/features/chrome/toolbar/LaserControls.tsx`
+- `v10/src/features/chrome/toolbar/PageNavigator.tsx`
+- `v10/src/features/chrome/toolbar/PlaybackControls.tsx`
+- `v10/src/features/chrome/toolbar/FloatingToolbar.tsx`
 
 Commands run (only if user asked or required by spec):
 - `bash scripts/check_layer_rules.sh` (missing in current repo path; classified below)
 - `cd v10 && npm run lint`
 - `cd v10 && npm run build`
-- `rg -n "style=\\{\\{" v10/src/features/toolbar/PenControls.tsx v10/src/features/toolbar/LaserControls.tsx`
-- `rg -n "text-white/|border-white/|bg-white/|bg-slate-|bg-black/|text-red-300" v10/src/features/toolbar/FloatingToolbar.tsx v10/src/features/toolbar/PageNavigator.tsx v10/src/features/toolbar/PlaybackControls.tsx v10/src/features/toolbar/atoms/ToolButton.tsx v10/src/features/toolbar/atoms/ToolbarPanel.tsx v10/src/features/toolbar/atoms/ToolbarSeparator.tsx`
+- `rg -n "style=\\{\\{" v10/src/features/chrome/toolbar/PenControls.tsx v10/src/features/chrome/toolbar/LaserControls.tsx`
+- `rg -n "text-white/|border-white/|bg-white/|bg-slate-|bg-black/|text-red-300" v10/src/features/chrome/toolbar/FloatingToolbar.tsx v10/src/features/chrome/toolbar/PageNavigator.tsx v10/src/features/chrome/toolbar/PlaybackControls.tsx v10/src/features/chrome/toolbar/atoms/ToolButton.tsx v10/src/features/chrome/toolbar/atoms/ToolbarPanel.tsx v10/src/features/chrome/toolbar/atoms/ToolbarSeparator.tsx`
 
 ## Gate Results (Codex fills)
 

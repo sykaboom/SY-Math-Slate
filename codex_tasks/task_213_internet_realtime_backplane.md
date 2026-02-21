@@ -20,9 +20,9 @@ Date: 2026-02-15
 
 Touched files/directories:
 - `codex_tasks/task_213_internet_realtime_backplane.md`
-- `v10/src/features/sync/useAsymmetricSessionSync.ts`
-- `v10/src/features/sync/realtime/backplane.ts` (new)
-- `v10/src/features/sync/realtime/messageEnvelope.ts` (new)
+- `v10/src/features/collaboration/sync/useAsymmetricSessionSync.ts`
+- `v10/src/features/collaboration/sync/realtime/backplane.ts` (new)
+- `v10/src/features/collaboration/sync/realtime/messageEnvelope.ts` (new)
 
 Out of scope:
 - UI role visibility policy changes (`AppLayout`).
@@ -162,9 +162,9 @@ If NO:
 Status: COMPLETED
 
 Changed files:
-- `v10/src/features/sync/realtime/backplane.ts`
-- `v10/src/features/sync/realtime/messageEnvelope.ts`
-- `v10/src/features/sync/useAsymmetricSessionSync.ts`
+- `v10/src/features/collaboration/sync/realtime/backplane.ts`
+- `v10/src/features/collaboration/sync/realtime/messageEnvelope.ts`
+- `v10/src/features/collaboration/sync/useAsymmetricSessionSync.ts`
 
 Commands run (only if user asked or required by spec):
 - `scripts/check_layer_rules.sh`

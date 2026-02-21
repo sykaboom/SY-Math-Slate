@@ -22,9 +22,9 @@ Date: 2026-02-15
 Touched files/directories:
 - `v10/src/core/config/rolePolicy.ts`
 - `v10/src/core/config/rolePolicyGuards.ts`
-- `v10/src/features/layout/**`
-- `v10/src/features/extensions/commandExecutionPolicy.ts`
-- `v10/src/features/extensions/toolExecutionPolicy.ts`
+- `v10/src/features/chrome/layout/**`
+- `v10/src/features/platform/extensions/commandExecutionPolicy.ts`
+- `v10/src/features/platform/extensions/toolExecutionPolicy.ts`
 - `v10/AI_READ_ME.md`
 
 Out of scope:
@@ -112,7 +112,7 @@ If NO:
 ## Manual Verification Steps (Base Required)
 
 1) Step:
-   - Command / click path: `rg -n "role ===|role !==" v10/src/features/layout v10/src/features/extensions`
+   - Command / click path: `rg -n "role ===|role !==" v10/src/features/chrome/layout v10/src/features/platform/extensions`
    - Expected result: touched decision paths use policy helpers.
    - Covers: AC-1, AC-2
 
@@ -152,13 +152,13 @@ Status: COMPLETED
 
 Changed files:
 - `v10/src/core/config/rolePolicy.ts`
-- `v10/src/features/extensions/commandExecutionPolicy.ts`
-- `v10/src/features/extensions/toolExecutionPolicy.ts`
-- `v10/src/features/layout/AppLayout.tsx`
+- `v10/src/features/platform/extensions/commandExecutionPolicy.ts`
+- `v10/src/features/platform/extensions/toolExecutionPolicy.ts`
+- `v10/src/features/chrome/layout/AppLayout.tsx`
 - `v10/AI_READ_ME.md`
 
 Commands run (only if user asked or required by spec):
-- `rg -n "role ===|role !==" v10/src/features/layout v10/src/features/extensions || true`
+- `rg -n "role ===|role !==" v10/src/features/chrome/layout v10/src/features/platform/extensions || true`
 - `scripts/check_layer_rules.sh`
 - `scripts/check_v10_migration_baseline.sh`
 - `scripts/check_v10_legacy_freeze.sh`

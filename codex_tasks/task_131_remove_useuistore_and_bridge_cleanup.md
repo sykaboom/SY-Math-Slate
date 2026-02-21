@@ -21,8 +21,8 @@ Date: 2026-02-15
 
 Touched files/directories:
 - `codex_tasks/task_131_remove_useuistore_and_bridge_cleanup.md`
-- `v10/src/features/store/useUIStore.ts` (remove or replace with deprecation shim)
-- `v10/src/features/store/useUIStoreBridge.ts`
+- `v10/src/features/platform/store/useUIStore.ts` (remove or replace with deprecation shim)
+- `v10/src/features/platform/store/useUIStoreBridge.ts`
 - all remaining `v10/src/**` references to `useUIStore`
 - `v10/AI_READ_ME.md`
 

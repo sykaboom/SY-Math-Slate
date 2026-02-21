@@ -8,8 +8,8 @@
 User requested expanding column toggle to 1-4 and changing Paste Helper icon. Hotfix approved in chat.
 
 ## Scope
-- `v10/src/features/toolbar/PageNavigator.tsx`
-- `v10/src/features/toolbar/FloatingToolbar.tsx`
+- `v10/src/features/chrome/toolbar/PageNavigator.tsx`
+- `v10/src/features/chrome/toolbar/FloatingToolbar.tsx`
 
 ## Changes
 - Column toggle expanded to 1-4 buttons.

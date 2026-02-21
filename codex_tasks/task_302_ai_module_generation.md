@@ -48,13 +48,13 @@ Date: 2026-02-19
 ## Scope (Base Required)
 
 Touched files/directories (create):
-- `v10/src/features/mod-studio/ai/AIModulePromptBar.tsx`
-- `v10/src/features/mod-studio/ai/AIModuleGenerationPanel.tsx`
-- `v10/src/features/mod-studio/ai/useAIModuleGeneration.ts`
+- `v10/src/features/platform/mod-studio/ai/AIModulePromptBar.tsx`
+- `v10/src/features/platform/mod-studio/ai/AIModuleGenerationPanel.tsx`
+- `v10/src/features/platform/mod-studio/ai/useAIModuleGeneration.ts`
 - `v10/src/app/api/ai/module/route.ts`
 
 Touched files/directories (write):
-- `v10/src/features/mod-studio/io/IoStudioSection.tsx` — AI 생성 패널 진입점 추가
+- `v10/src/features/platform/mod-studio/io/IoStudioSection.tsx` — AI 생성 패널 진입점 추가
 
 Out of scope:
 - 이미지/스크린샷 → 모듈 생성
@@ -290,11 +290,11 @@ const validateModuleArray = (
 Status: COMPLETED
 
 Changed files:
-- `v10/src/features/mod-studio/ai/AIModulePromptBar.tsx`
-- `v10/src/features/mod-studio/ai/AIModuleGenerationPanel.tsx`
-- `v10/src/features/mod-studio/ai/useAIModuleGeneration.ts`
+- `v10/src/features/platform/mod-studio/ai/AIModulePromptBar.tsx`
+- `v10/src/features/platform/mod-studio/ai/AIModuleGenerationPanel.tsx`
+- `v10/src/features/platform/mod-studio/ai/useAIModuleGeneration.ts`
 - `v10/src/app/api/ai/module/route.ts`
-- `v10/src/features/mod-studio/io/IoStudioSection.tsx`
+- `v10/src/features/platform/mod-studio/io/IoStudioSection.tsx`
 
 ## Gate Results (Codex fills)
 

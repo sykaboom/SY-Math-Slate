@@ -18,7 +18,7 @@ Date: 2026-02-21
 ## Scope (Base Required)
 
 Touched files/directories:
-- v10/src/features/theme/ui, v10/src/features/theme/io, v10/src/core/config/themeTokens.ts
+- v10/src/features/chrome/theming-ui/ui, v10/src/features/chrome/theming-ui/io, v10/src/core/config/themeTokens.ts
 
 Out of scope:
 - Mod package runtime logic is excluded.

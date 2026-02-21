@@ -25,7 +25,7 @@ Touched files/directories:
 - `v10/src/core/mod/host/registry.ts` (new)
 - `v10/src/core/mod/host/index.ts` (new)
 - `v10/src/core/mod/index.ts` (new barrel)
-- `v10/src/features/toolbar/toolbarModePolicy.ts` (type alias bridge only)
+- `v10/src/features/chrome/toolbar/toolbarModePolicy.ts` (type alias bridge only)
 - `v10/AI_READ_ME.md`
 - `codex_tasks/task_331_mod_contracts_registry_scaffold.md`
 
@@ -201,7 +201,7 @@ Changed files:
 - `v10/src/core/mod/host/registry.ts`
 - `v10/src/core/mod/host/index.ts`
 - `v10/src/core/mod/index.ts`
-- `v10/src/features/toolbar/toolbarModePolicy.ts`
+- `v10/src/features/chrome/toolbar/toolbarModePolicy.ts`
 - `codex_tasks/task_331_mod_contracts_registry_scaffold.md`
 
 Commands run (only if user asked or required by spec):

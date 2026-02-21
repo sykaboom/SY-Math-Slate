@@ -11,8 +11,8 @@ Extract "Presentation Mode" and "Paste Helper" from the "More" menu and place th
 ## Status: COMPLETED
 
 ## Scope
-- `v10/src/features/layout/AppLayout.tsx` (Top Header)
-- `v10/src/features/toolbar/FloatingToolbar.tsx` (Bottom Toolbar)
+- `v10/src/features/chrome/layout/AppLayout.tsx` (Top Header)
+- `v10/src/features/chrome/toolbar/FloatingToolbar.tsx` (Bottom Toolbar)
 
 ## Requirements
 
@@ -45,11 +45,11 @@ Extract "Presentation Mode" and "Paste Helper" from the "More" menu and place th
 - [ ] The "More" menu no longer contains the "Mode" section or its buttons.
 
 ## Files to Change (by Codex)
-- `v10/src/features/layout/AppLayout.tsx`
-- `v10/src/features/toolbar/FloatingToolbar.tsx`
+- `v10/src/features/chrome/layout/AppLayout.tsx`
+- `v10/src/features/chrome/toolbar/FloatingToolbar.tsx`
 
 ## Closeout Notes
-- Changed files: `v10/src/features/layout/AppLayout.tsx`
-- Changed files: `v10/src/features/toolbar/FloatingToolbar.tsx`
+- Changed files: `v10/src/features/chrome/layout/AppLayout.tsx`
+- Changed files: `v10/src/features/chrome/toolbar/FloatingToolbar.tsx`
 - Commands run: none
 - Manual verification: not run (user reported implemented)

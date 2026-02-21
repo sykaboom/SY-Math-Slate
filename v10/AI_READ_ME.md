@@ -36,7 +36,14 @@ Forbidden:
 
 ## 3) Path Aliases
 - `@core/*` -> `v10/src/core/*`
+- `@core/runtime/modding` -> `v10/src/core/runtime/modding/index` (runtime modding convergence entry)
+- `@core/runtime/modding/*` -> `v10/src/core/runtime/modding/*` (target namespace)
 - `@mod/*` -> `v10/src/mod/*` (optional, layer checker supports mod layer)
+- `@features/chrome/*` -> `v10/src/features/chrome/*`
+- `@features/editor/*` -> `v10/src/features/editor/*`
+- `@features/collaboration/*` -> `v10/src/features/collaboration/*`
+- `@features/governance/*` -> `v10/src/features/governance/*`
+- `@features/platform/*` -> `v10/src/features/platform/*`
 - `@features/*` -> `v10/src/features/*`
 - `@ui/*` -> `v10/src/ui/*`
 - `@/*` -> `v10/src/*`
@@ -49,36 +56,38 @@ Core subsystems:
 - `core/pipelines`: persistence/migrations/export flows.
 - `core/ui/theming`: theme engine + tokens + presets.
 - `core/security/sanitization`: sanitize runtime.
-- `core/mod/contracts`: mod runtime contracts and normalized event/context types.
-- `core/mod/package`: canonical package contracts/registry/selectors/guards and template-pack adapter (`types.ts`, `registry.ts`, `selectors.ts`, `guards.ts`, `templatePackAdapter.ts`).
-- `core/mod/host`: mod runtime manager/registry and normalized routing bridge (`manager.ts`, `registry.ts`, `inputRoutingBridge.ts`).
-- `core/mod/builtin`: builtin mods (`draw`, `playback`, `canvas`, `lecture`) under one contract.
+- Runtime modding namespace (finalized in task_471):
+  - `core/runtime/modding/api`: mod runtime contracts and normalized event/context types.
+  - `core/runtime/modding/package`: package contracts/registry/selectors/guards + template-pack adapter.
+  - `core/runtime/modding/host`: mod runtime manager/registry and normalized routing bridge.
+  - `core/runtime/modding/builtin`: builtin mods (`draw`, `playback`, `canvas`, `lecture`) under one contract.
 - Legacy compat lanes (temporary):
   - `core/{config,contracts,engine,extensions,math,migrations,persistence,sanitize,theme,themes,types}` are shim-only during cutover.
 
 Feature subsystems:
-- `features/extensions`: command registrations and UI slot runtime.
-- `features/layout`: app shell/window host.
+- Topology-v2 taxonomy (finalized in task_471):
+  - Only `features/{chrome,editor,collaboration,governance,platform}` roots remain.
+- `features/chrome/layout`: app shell/window host.
   - `AppLayout` safe-area policy includes top/bottom + horizontal (landscape tablet) chrome padding.
   - bottom `toolbar-bottom` slot is suppressed when window-host panel mode is active (single render path).
-- `features/ui-host`: host-side aggregation bridge for mod toolbar/panel contributions.
-- `features/canvas`: board/cursor/render layers.
-- `features/toolbar`: mode-split floating toolbar, pen/laser/eraser controls, compact IA sections, centralized toolbar feedback/notices.
+- `features/chrome/ui-host`: host-side aggregation bridge for mod toolbar/panel contributions.
+- `features/editor/canvas`: board/cursor/render layers.
+- `features/chrome/toolbar`: mode-split floating toolbar, pen/laser/eraser controls, compact IA sections, centralized toolbar feedback/notices.
   - Toolbar dedup IA rule: mode-lane controls are primary; `More` is settings/secondary only; avoid duplicate action surfaces for the same command in the same mode.
   - Toolbar single-source invariant: base mode actions must be produced only by `FloatingToolbar` mode slices (`DrawModeTools.tsx`, `PlaybackModeTools.tsx`, `CanvasModeTools.tsx`); core declarative/template base injection into `toolbar-inline` remains disabled.
   - Mode surface split: `DrawModeTools.tsx`, `PlaybackModeTools.tsx`, `CanvasModeTools.tsx`, `MorePanel.tsx` are the primary render slices; `FloatingToolbar.tsx` is orchestration shell.
   - Toolbar SSOT/policy files:
-    - `src/features/toolbar/catalog/toolbarActionCatalog.ts`
-    - `src/features/toolbar/catalog/toolbarActionSelectors.ts`
-    - `src/features/toolbar/catalog/toolbarSurfacePolicy.ts`
-    - `src/features/toolbar/catalog/toolbarViewportProfile.ts`
-- `features/sharing`: snapshot share adapters, host live session panel/store wiring, live transport, policy/proposal flow, AI approval queue hook.
-- `features/viewer`: public viewer shell/session/live sync hooks.
-- `features/input-studio`: structured input + LLM draft flows.
-- `features/store`: zustand stores and compatibility bridges.
-- `features/theme`: end-user theme UI (`ThemePickerPanel`, provider wiring).
-- `features/mod-studio/theme`: advanced token editor, JSON IO, AI theme generation panel/hooks.
-- `features/mod-studio/ai`: in-studio AI module generation UI/hooks (`AIModuleGenerationPanel`, `useAIModuleGeneration`).
+    - `src/features/chrome/toolbar/catalog/toolbarActionCatalog.ts`
+    - `src/features/chrome/toolbar/catalog/toolbarActionSelectors.ts`
+    - `src/features/chrome/toolbar/catalog/toolbarSurfacePolicy.ts`
+    - `src/features/chrome/toolbar/catalog/toolbarViewportProfile.ts`
+- `features/collaboration/sharing`: snapshot share adapters, host live session/store wiring, live transport, policy/proposal flow, AI approval queue hook.
+- `features/chrome/viewer`: public viewer shell/session/live sync hooks.
+- `features/editor/input-studio`: structured input + LLM draft flows.
+- `features/platform/store`: zustand stores and compatibility bridges.
+- `features/chrome/theming-ui`: end-user theme UI (`ThemePickerPanel`, provider wiring).
+- `features/platform/mod-studio/theme`: advanced token editor, JSON IO, AI theme generation panel/hooks.
+- `features/platform/mod-studio/ai`: in-studio AI module generation UI/hooks (`AIModuleGenerationPanel`, `useAIModuleGeneration`).
 
 Template pack runtime:
 - `src/mod/packs/*`: folder-based template packs (active path).
@@ -109,14 +118,14 @@ Token naming:
 
 Theme runtime SSOT:
 - `src/core/ui/theming/engine/applyTheme.ts`: CSS variable application (`--theme-*`, `--mod-*`, `--theme-*-rgb`)
-- `src/features/mod-studio/theme/themeIsolation.ts`: draft-preview path using separate applier instance
-- `src/features/theme/ThemeProvider.tsx`: mount-time active theme apply
-- `src/features/theme/ThemePickerPanel.tsx`: end-user preset entry (chalk/parchment/notebook)
-- `src/features/mod-studio/theme/useAIThemeGeneration.ts`: AI-generated token apply/preview path
+- `src/features/platform/mod-studio/theme/themeIsolation.ts`: draft-preview path using separate applier instance
+- `src/features/chrome/theming-ui/ThemeProvider.tsx`: mount-time active theme apply
+- `src/features/chrome/theming-ui/ThemePickerPanel.tsx`: end-user preset entry (chalk/parchment/notebook)
+- `src/features/platform/mod-studio/theme/useAIThemeGeneration.ts`: AI-generated token apply/preview path
 - `src/app/api/ai/theme/route.ts`: server-side AI theme token generation (structured JSON + token validation)
 
 AI call runtime:
-- `src/features/sharing/ai/LLMCallService.ts`: server/client call facade
+- `src/features/collaboration/sharing/ai/LLMCallService.ts`: server/client call facade
 - `src/core/foundation/registries/aiProviderRegistry.ts`: provider resolution and OpenAI/mock execution (no client key exposure)
 - `src/app/api/ai/call/route.ts`: server-side LLM proxy endpoint
 - `src/app/api/ai/module/route.ts`: server-side AI module generation endpoint (mock-first + structured validation)
@@ -124,10 +133,10 @@ AI call runtime:
 Ownership:
 - `src/app/globals.css`: global tokens/resets/minimal app-wide rules only
 - feature-specific CSS lives in:
-  - `src/features/canvas/styles/content-layer.css`
-  - `src/features/canvas/styles/mathjax.css`
-  - `src/features/animation/styles/rich-text-animation.css`
-  - `src/features/layout/styles/prompter.css`
+  - `src/features/editor/canvas/styles/content-layer.css`
+  - `src/features/editor/canvas/styles/mathjax.css`
+  - `src/features/editor/animation/styles/rich-text-animation.css`
+  - `src/features/chrome/layout/styles/prompter.css`
 - feature CSS imports are wired in `src/app/layout.tsx`
 
 ## 7) Error Boundary Policy
@@ -135,10 +144,10 @@ SSOT component:
 - `src/ui/components/ErrorBoundary.tsx`
 
 Required coverage:
-- `src/features/extensions/ui/ExtensionSlot.tsx`
-- `src/features/extensions/ui/ExtensionRuntimeBootstrap.tsx`
-- `src/features/layout/AppLayout.tsx`
-- `src/features/layout/windowing/WindowHost.tsx`
+- `src/features/platform/extensions/ui/ExtensionSlot.tsx`
+- `src/features/platform/extensions/ui/ExtensionRuntimeBootstrap.tsx`
+- `src/features/chrome/layout/AppLayout.tsx`
+- `src/features/chrome/layout/windowing/WindowHost.tsx`
 
 Fallback rule:
 - fallback UI must remain static/pure (no store hook dependency).
@@ -153,10 +162,10 @@ Fallback rule:
 - `setToolbarDock` contract is edge-first only (`top|right|bottom|left` + optional `mode`); legacy `left|center|right` payload path is retired.
 - Migration/guard scripts must scan command directory, not single monolith file assumptions.
 - Toolbar runtime policy:
-  - `src/features/toolbar/toolbarModePolicy.ts` is the single env/cutover resolver for toolbar mode render behavior.
-  - `src/features/toolbar/catalog/toolbarSurfacePolicy.ts` is the single source for mode/viewport/action surface placement.
+  - `src/features/chrome/toolbar/toolbarModePolicy.ts` is the single env/cutover resolver for toolbar mode render behavior.
+  - `src/features/chrome/toolbar/catalog/toolbarSurfacePolicy.ts` is the single source for mode/viewport/action surface placement.
 - Navigation copy policy:
-  - `src/features/toolbar/navigationLabels.ts` is the shared vocabulary source for Page/Outline/Playback step labels.
+  - `src/features/chrome/toolbar/navigationLabels.ts` is the shared vocabulary source for Page/Outline/Playback step labels.
 
 ## 9) Design SSOT and Verification Gates
 Design SSOT docs (read together):

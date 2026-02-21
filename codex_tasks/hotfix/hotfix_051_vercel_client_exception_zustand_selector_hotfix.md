@@ -20,9 +20,9 @@ Date: 2026-02-15
 ## Scope (Base Required)
 
 Touched files/directories:
-- `v10/src/features/mod-studio/core/ModStudioShell.tsx`
-- `v10/src/features/mod-studio/core/ModStudioPanel.tsx`
-- `v10/src/features/mod-studio/publish/PublishStudioSection.tsx`
+- `v10/src/features/platform/mod-studio/core/ModStudioShell.tsx`
+- `v10/src/features/platform/mod-studio/core/ModStudioPanel.tsx`
+- `v10/src/features/platform/mod-studio/publish/PublishStudioSection.tsx`
 - `v10/AI_READ_ME.md`
 
 Out of scope:
@@ -79,9 +79,9 @@ If NO:
   - User-approved hotfix scope:
     - Runtime crash fix for deployed production white-screen.
   - Exact touched files:
-    - `v10/src/features/mod-studio/core/ModStudioShell.tsx`
-    - `v10/src/features/mod-studio/core/ModStudioPanel.tsx`
-    - `v10/src/features/mod-studio/publish/PublishStudioSection.tsx`
+    - `v10/src/features/platform/mod-studio/core/ModStudioShell.tsx`
+    - `v10/src/features/platform/mod-studio/core/ModStudioPanel.tsx`
+    - `v10/src/features/platform/mod-studio/publish/PublishStudioSection.tsx`
 
 ---
 
@@ -115,7 +115,7 @@ If NO:
 ## Manual Verification Steps (Base Required)
 
 1) Step:
-   - Command / click path: `rg -n "useModStudioStore\\(\\(state\\) => \\(\\{" v10/src/features/mod-studio`
+   - Command / click path: `rg -n "useModStudioStore\\(\\(state\\) => \\(\\{" v10/src/features/platform/mod-studio`
    - Expected result: no matches.
    - Covers: AC-1
 
@@ -154,9 +154,9 @@ If NO:
 Status: COMPLETED
 
 Changed files:
-- `v10/src/features/mod-studio/core/ModStudioShell.tsx`
-- `v10/src/features/mod-studio/core/ModStudioPanel.tsx`
-- `v10/src/features/mod-studio/publish/PublishStudioSection.tsx`
+- `v10/src/features/platform/mod-studio/core/ModStudioShell.tsx`
+- `v10/src/features/platform/mod-studio/core/ModStudioPanel.tsx`
+- `v10/src/features/platform/mod-studio/publish/PublishStudioSection.tsx`
 - `v10/AI_READ_ME.md`
 
 Commands run (only if user asked or required by spec):

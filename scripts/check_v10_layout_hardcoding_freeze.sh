@@ -17,10 +17,10 @@ if ! command -v rg >/dev/null 2>&1; then
 fi
 
 shell_paths=(
-  "v10/src/features/layout/AppLayout.tsx"
-  "v10/src/features/layout/windowing/WindowHost.tsx"
-  "v10/src/features/layout/windowing/PanelLauncher.tsx"
-  "v10/src/features/extensions/ui/registerCoreSlots.ts"
+  "v10/src/features/chrome/layout/AppLayout.tsx"
+  "v10/src/features/chrome/layout/windowing/WindowHost.tsx"
+  "v10/src/features/chrome/layout/windowing/PanelLauncher.tsx"
+  "v10/src/features/platform/extensions/ui/registerCoreSlots.ts"
 )
 
 for path in "${shell_paths[@]}"; do
@@ -31,9 +31,9 @@ for path in "${shell_paths[@]}"; do
 done
 
 blocked_patterns=(
-  "@features/layout/DataInputPanel"
-  "@features/layout/Prompter"
-  "@features/toolbar/FloatingToolbar"
+  "@features/chrome/layout/DataInputPanel"
+  "@features/chrome/layout/Prompter"
+  "@features/chrome/toolbar/FloatingToolbar"
   "<DataInputPanel"
   "<Prompter"
   "<FloatingToolbar"

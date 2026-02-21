@@ -22,7 +22,7 @@ for key in "${legacy_keys[@]}"; do
   fi
 done
 
-if ! rg -n --fixed-strings "NEXT_PUBLIC_SYNC_REALTIME_URL" v10/src/features/sync/realtime/backplane.ts >/dev/null; then
+if ! rg -n --fixed-strings "NEXT_PUBLIC_SYNC_REALTIME_URL" v10/src/features/collaboration/sync/realtime/backplane.ts >/dev/null; then
   echo "[check_v10_realtime_env_purge] FAIL: canonical key missing in backplane"
   exit 1
 fi

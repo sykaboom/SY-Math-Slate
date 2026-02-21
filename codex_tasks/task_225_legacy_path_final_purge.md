@@ -21,7 +21,7 @@ Date: 2026-02-16
 
 Touched files/directories:
 - `codex_tasks/task_225_legacy_path_final_purge.md`
-- `v10/src/features/sync/realtime/backplane.ts`
+- `v10/src/features/collaboration/sync/realtime/backplane.ts`
 - `codex_tasks/workflow/feature_flag_registry.env`
 - `scripts/check_v10_realtime_env_purge.sh` (new)
 
@@ -160,7 +160,7 @@ Status: COMPLETED
 
 Changed files:
 - `codex_tasks/task_225_legacy_path_final_purge.md`
-- `v10/src/features/sync/realtime/backplane.ts`
+- `v10/src/features/collaboration/sync/realtime/backplane.ts`
 - `codex_tasks/workflow/feature_flag_registry.env`
 - `scripts/check_v10_realtime_env_purge.sh`
 

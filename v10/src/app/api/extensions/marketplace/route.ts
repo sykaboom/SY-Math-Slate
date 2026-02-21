@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import {
   resolveMarketplaceCatalog,
   type MarketplaceCatalogResolution,
-} from "@features/extensions/marketplace";
+} from "@features/platform/extensions/marketplace";
 
 type MarketplaceCatalogPayload = Extract<
   MarketplaceCatalogResolution,

@@ -18,7 +18,7 @@ Date: 2026-02-21
 ## Scope (Base Required)
 
 Touched files/directories:
-- v10/src/features/mod-studio, v10/src/core/mod/package, v10/src/features/store
+- v10/src/features/platform/mod-studio, v10/src/core/mod/package, v10/src/features/platform/store
 
 Out of scope:
 - Live session runtime mechanics are excluded.

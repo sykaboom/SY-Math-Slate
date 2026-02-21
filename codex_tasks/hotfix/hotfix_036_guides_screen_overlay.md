@@ -8,9 +8,9 @@
 Guide/border lines still varied in sharpness due to subpixel offsets from scaled layout. Required screen-space rendering.
 
 ## Scope
-- `v10/src/features/canvas/PageViewport.tsx`
-- `v10/src/features/canvas/CanvasStage.tsx`
-- `v10/src/features/canvas/PageGuides.tsx`
+- `v10/src/features/editor/canvas/PageViewport.tsx`
+- `v10/src/features/editor/canvas/CanvasStage.tsx`
+- `v10/src/features/editor/canvas/PageGuides.tsx`
 
 ## Changes
 - Added overlay slot in `PageViewport` to render guides outside the board transform.

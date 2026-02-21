@@ -23,9 +23,9 @@ Date: 2026-02-16
 Touched files/directories:
 - `codex_tasks/task_241_panel_policy_state_persistence_and_role_overrides.md`
 - `v10/src/core/config/panel-policy.ts` (new or update)
-- `v10/src/features/layout/windowing/panelPolicy.runtime.ts` (new)
-- `v10/src/features/store/useChromeStore.ts` (policy state persistence fields)
-- `v10/src/features/policy/useResolvedPanelPolicy.ts` (new if needed)
+- `v10/src/features/chrome/layout/windowing/panelPolicy.runtime.ts` (new)
+- `v10/src/features/platform/store/useChromeStore.ts` (policy state persistence fields)
+- `v10/src/features/governance/policy/useResolvedPanelPolicy.ts` (new if needed)
 
 Out of scope:
 - AppLayout cutover
@@ -125,7 +125,7 @@ If NO:
    - Covers: AC-2
 
 3) Step:
-   - Command / click path: `rg -n \"if\\s*\\(.*role\" v10/src/features/layout`
+   - Command / click path: `rg -n \"if\\s*\\(.*role\" v10/src/features/chrome/layout`
    - Expected result: no new hardcoded role branching introduced for panel visibility policy.
    - Covers: AC-4
 
@@ -163,13 +163,13 @@ Status: COMPLETED
 Changed files:
 - `codex_tasks/task_241_panel_policy_state_persistence_and_role_overrides.md`
 - `v10/src/core/config/panel-policy.ts`
-- `v10/src/features/layout/windowing/panelPolicy.runtime.ts`
-- `v10/src/features/store/useChromeStore.ts`
-- `v10/src/features/policy/useResolvedPanelPolicy.ts`
+- `v10/src/features/chrome/layout/windowing/panelPolicy.runtime.ts`
+- `v10/src/features/platform/store/useChromeStore.ts`
+- `v10/src/features/governance/policy/useResolvedPanelPolicy.ts`
 
 Commands run (only if user asked or required by spec):
 - `scripts/check_layer_rules.sh`
-- `rg -n "if\\s*\\(.*role" v10/src/features/layout -S`
+- `rg -n "if\\s*\\(.*role" v10/src/features/chrome/layout -S`
 - `VERIFY_STAGE=mid bash scripts/run_repo_verifications.sh`
 
 ## Gate Results (Codex fills)
@@ -193,10 +193,10 @@ Commands run (only if user asked or required by spec):
   - Not required.
 
 Manual verification notes:
-- AC-1 PASS: `v10/src/features/layout/windowing/panelPolicy.runtime.ts` resolves panel behavior declaratively from `displayMode`, `movable`, and `roleOverride`, with no component-layer branching.
-- AC-2 PASS: `rememberPosition` is enforced both in resolver output (`initialPosition` from persisted layout only when `rememberPosition=true`) and store persistence filters (`v10/src/features/store/useChromeStore.ts` removes persisted layouts when `rememberPosition=false`).
+- AC-1 PASS: `v10/src/features/chrome/layout/windowing/panelPolicy.runtime.ts` resolves panel behavior declaratively from `displayMode`, `movable`, and `roleOverride`, with no component-layer branching.
+- AC-2 PASS: `rememberPosition` is enforced both in resolver output (`initialPosition` from persisted layout only when `rememberPosition=true`) and store persistence filters (`v10/src/features/platform/store/useChromeStore.ts` removes persisted layouts when `rememberPosition=false`).
 - AC-3 PASS: runtime resolver applies safe defaults for invalid/missing policy values and explicitly denies student visibility by default on edit-only panels.
-- AC-4 PASS: `rg -n "if\\s*\\(.*role" v10/src/features/layout -S` confirmed no new layout-component role branch for panel visibility policy.
+- AC-4 PASS: `rg -n "if\\s*\\(.*role" v10/src/features/chrome/layout -S` confirmed no new layout-component role branch for panel visibility policy.
 - AC-5 PASS: `VERIFY_STAGE=mid bash scripts/run_repo_verifications.sh` completed successfully.
 
 Notes:

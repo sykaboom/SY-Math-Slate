@@ -20,9 +20,9 @@ Date: 2026-02-19
 ## Scope (Base Required)
 
 Touched files/directories:
-- `v10/src/features/toolbar/FloatingToolbar.tsx`
-- `v10/src/features/toolbar/ThumbZoneDock.tsx`
-- `v10/src/features/toolbar/compactToolbarSections.ts` (new, section map contract)
+- `v10/src/features/chrome/toolbar/FloatingToolbar.tsx`
+- `v10/src/features/chrome/toolbar/ThumbZoneDock.tsx`
+- `v10/src/features/chrome/toolbar/compactToolbarSections.ts` (new, section map contract)
 - `design_drafts/layout_toolbar_compact_ia_v1.svg` (required artifact before implementation)
 
 Out of scope:
@@ -64,7 +64,7 @@ Out of scope:
 - Touched file count:
   - 3~4
 - Files shared with other PENDING tasks:
-  - `v10/src/features/toolbar/FloatingToolbar.tsx`
+  - `v10/src/features/chrome/toolbar/FloatingToolbar.tsx`
 - Cross-module dependency:
   - YES
 - Parallelizable sub-units:
@@ -194,9 +194,9 @@ Numeric redlines:
 Status: COMPLETED
 
 Changed files:
-- `v10/src/features/toolbar/FloatingToolbar.tsx`
-- `v10/src/features/toolbar/ThumbZoneDock.tsx`
-- `v10/src/features/toolbar/compactToolbarSections.ts`
+- `v10/src/features/chrome/toolbar/FloatingToolbar.tsx`
+- `v10/src/features/chrome/toolbar/ThumbZoneDock.tsx`
+- `v10/src/features/chrome/toolbar/compactToolbarSections.ts`
 - `design_drafts/layout_toolbar_compact_ia_v1.svg`
 
 Commands run (only if user asked or required by spec):

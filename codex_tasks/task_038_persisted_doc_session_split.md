@@ -19,10 +19,10 @@
 
 ## Scope (touched files)
 - `v10/src/core/types/canvas.ts`
-- `v10/src/features/hooks/usePersistence.ts`
-- `v10/src/features/store/useCanvasStore.ts`
+- `v10/src/features/platform/hooks/usePersistence.ts`
+- `v10/src/features/platform/store/useCanvasStore.ts`
 - `v10/src/core/migrations/migrateToV2.ts`
-- `v10/src/features/hooks/useFileIO.ts`
+- `v10/src/features/platform/hooks/useFileIO.ts`
 
 ## Requirements
 1) Define `PersistedSlateDoc` (document-only):

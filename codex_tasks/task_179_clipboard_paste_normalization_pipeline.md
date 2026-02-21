@@ -19,9 +19,9 @@ Date: 2026-02-15
 
 Touched files/directories:
 - `codex_tasks/task_179_clipboard_paste_normalization_pipeline.md`
-- `v10/src/features/canvas/paste/pasteNormalization.ts`
-- `v10/src/features/canvas/CanvasStage.tsx`
-- `v10/src/features/canvas/PasteHelperModal.tsx`
+- `v10/src/features/editor/canvas/paste/pasteNormalization.ts`
+- `v10/src/features/editor/canvas/CanvasStage.tsx`
+- `v10/src/features/editor/canvas/PasteHelperModal.tsx`
 
 Out of scope:
 - OCR/LLM parsing for pasted text and media upload backend.
@@ -114,7 +114,7 @@ If NO:
 ## Manual Verification Steps (Base Required)
 
 1) Step:
-   - Command / click path: `cd v10 && npm run lint -- --max-warnings=0 -- src/features/canvas/paste/pasteNormalization.ts src/features/canvas/CanvasStage.tsx src/features/canvas/PasteHelperModal.tsx`
+   - Command / click path: `cd v10 && npm run lint -- --max-warnings=0 -- src/features/editor/canvas/paste/pasteNormalization.ts src/features/editor/canvas/CanvasStage.tsx src/features/editor/canvas/PasteHelperModal.tsx`
    - Expected result: PASS.
    - Covers: AC-1, AC-2, AC-3
 
@@ -145,12 +145,12 @@ Status: COMPLETED
 
 Changed files:
 - `codex_tasks/task_179_clipboard_paste_normalization_pipeline.md`
-- `v10/src/features/canvas/paste/pasteNormalization.ts`
-- `v10/src/features/canvas/CanvasStage.tsx`
-- `v10/src/features/canvas/PasteHelperModal.tsx`
+- `v10/src/features/editor/canvas/paste/pasteNormalization.ts`
+- `v10/src/features/editor/canvas/CanvasStage.tsx`
+- `v10/src/features/editor/canvas/PasteHelperModal.tsx`
 
 Commands run (only if user asked or required by spec):
-- `cd v10 && npm run lint -- --max-warnings=0 -- src/features/canvas/paste/pasteNormalization.ts src/features/canvas/CanvasStage.tsx src/features/canvas/PasteHelperModal.tsx`
+- `cd v10 && npm run lint -- --max-warnings=0 -- src/features/editor/canvas/paste/pasteNormalization.ts src/features/editor/canvas/CanvasStage.tsx src/features/editor/canvas/PasteHelperModal.tsx`
 - `cd v10 && npm run build`
 
 ## Gate Results (Codex fills)

@@ -26,7 +26,7 @@ Touched files/directories:
 - `v10/src/core/extensions/mcpGateway.ts` (new)
 - `v10/src/core/extensions/connectors.ts`
 - `v10/src/core/engine/commandBus.ts` (only for centralized preflight handoff integration)
-- `v10/src/features/extensions/ui/ExtensionRuntimeBootstrap.tsx`
+- `v10/src/features/platform/extensions/ui/ExtensionRuntimeBootstrap.tsx`
 - `v10/src/core/extensions/pluginLoader.ts`
 - `v10/AI_READ_ME.md` (if runtime flow text changes)
 - `v10/AI_READ_ME_MAP.md` (if file map changes)
@@ -195,7 +195,7 @@ Status: COMPLETED
 Changed files:
 - `codex_tasks/task_116_mcp_compatible_secure_gateway.md`
 - `v10/src/core/extensions/mcpGateway.ts`
-- `v10/src/features/extensions/ui/ExtensionRuntimeBootstrap.tsx`
+- `v10/src/features/platform/extensions/ui/ExtensionRuntimeBootstrap.tsx`
 - `v10/src/core/extensions/connectors.ts`
 - `v10/src/core/extensions/pluginLoader.ts`
 - `v10/src/core/engine/commandBus.ts`

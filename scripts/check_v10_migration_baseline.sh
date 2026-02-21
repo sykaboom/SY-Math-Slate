@@ -13,8 +13,8 @@ required_files=(
   "v10/src/core/runtime/command/commandBus.ts"
   "v10/src/core/runtime/plugin-runtime/pluginLoader.ts"
   "v10/src/core/runtime/plugin-runtime/mcpGateway.ts"
-  "v10/src/features/extensions/commands/registerCoreCommands.ts"
-  "v10/src/features/extensions/ui/ExtensionSlot.tsx"
+  "v10/src/features/platform/extensions/commands/registerCoreCommands.ts"
+  "v10/src/features/platform/extensions/ui/ExtensionSlot.tsx"
 )
 
 for path in "${required_files[@]}"; do
@@ -37,7 +37,7 @@ required_command_ids=(
   "deletePage"
   "setColumnCount"
 )
-commands_root="v10/src/features/extensions/commands"
+commands_root="v10/src/features/platform/extensions/commands"
 for command_id in "${required_command_ids[@]}"; do
   if ! rg -q "id:\\s*\"$command_id\"" "${commands_root}"; then
     echo "[check_v10_migration_baseline] FAIL: command '$command_id' not found in ${commands_root}" >&2

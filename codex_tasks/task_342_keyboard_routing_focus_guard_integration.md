@@ -20,8 +20,8 @@ Date: 2026-02-20
 ## Scope (Base Required)
 
 Touched files/directories:
-- `v10/src/features/canvas/viewport/useViewportInteraction.ts`
-- `v10/src/features/canvas/CanvasStage.tsx` (focus boundary attributes if needed)
+- `v10/src/features/editor/canvas/viewport/useViewportInteraction.ts`
+- `v10/src/features/editor/canvas/CanvasStage.tsx` (focus boundary attributes if needed)
 
 Out of scope:
 - pointer/wheel integration.
@@ -60,7 +60,7 @@ Out of scope:
 - Touched file count:
   - 2
 - Files shared with other PENDING tasks:
-  - `v10/src/features/canvas/viewport/useViewportInteraction.ts`
+  - `v10/src/features/editor/canvas/viewport/useViewportInteraction.ts`
 - Cross-module dependency:
   - YES
 - Parallelizable sub-units:
@@ -170,8 +170,8 @@ If NO:
 Status: COMPLETED
 
 Changed files:
-- `v10/src/features/canvas/viewport/useViewportInteraction.ts`
-- `v10/src/features/canvas/CanvasStage.tsx`
+- `v10/src/features/editor/canvas/viewport/useViewportInteraction.ts`
+- `v10/src/features/editor/canvas/CanvasStage.tsx`
 - `codex_tasks/task_342_keyboard_routing_focus_guard_integration.md`
 
 Commands run (only if user asked or required by spec):

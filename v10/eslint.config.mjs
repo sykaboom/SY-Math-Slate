@@ -6,7 +6,10 @@ const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
   {
-    files: ["src/core/mod/builtin/**/*.{ts,tsx}"],
+    files: [
+      "src/core/mod/builtin/**/*.{ts,tsx}",
+      "src/core/runtime/modding/builtin/**/*.{ts,tsx}",
+    ],
     rules: {
       "no-restricted-imports": [
         "error",
@@ -24,7 +27,10 @@ const eslintConfig = defineConfig([
     },
   },
   {
-    files: ["src/core/mod/host/**/*.{ts,tsx}"],
+    files: [
+      "src/core/mod/host/**/*.{ts,tsx}",
+      "src/core/runtime/modding/host/**/*.{ts,tsx}",
+    ],
     rules: {
       "no-restricted-imports": [
         "error",
@@ -35,7 +41,10 @@ const eslintConfig = defineConfig([
     },
   },
   {
-    files: ["src/core/mod/package/**/*.{ts,tsx}"],
+    files: [
+      "src/core/mod/package/**/*.{ts,tsx}",
+      "src/core/runtime/modding/package/**/*.{ts,tsx}",
+    ],
     rules: {
       "no-restricted-imports": [
         "error",
@@ -43,6 +52,8 @@ const eslintConfig = defineConfig([
           patterns: [
             "@features/*",
             "@features/**",
+            "@core/runtime/modding/host",
+            "@core/runtime/modding/host/*",
             "@core/mod/host",
             "@core/mod/host/*",
           ],
@@ -56,7 +67,10 @@ const eslintConfig = defineConfig([
       "no-restricted-imports": [
         "error",
         {
-          patterns: ["@core/mod/**/internal/*"],
+          patterns: [
+            "@core/runtime/modding/**/internal/*",
+            "@core/mod/**/internal/*",
+          ],
         },
       ],
     },
@@ -73,6 +87,8 @@ const eslintConfig = defineConfig([
         "warn",
         {
           patterns: [
+            "@core/mod",
+            "@core/mod/*",
             "@core/config/*",
             "@core/contracts",
             "@core/contracts/*",

@@ -112,7 +112,7 @@ Out of scope:
 1) Step:
    - Command / click path:
      - `find v10/src -maxdepth 2 -type d | sort`
-     - `find v10/src/features/canvas -maxdepth 2 -type d | sort`
+     - `find v10/src/features/editor/canvas -maxdepth 2 -type d | sort`
    - Expected result:
      - 문서 요약과 실제 디렉터리 간 누락/불일치가 해소됨
    - Covers: AC-1, AC-2
@@ -173,7 +173,7 @@ Commands run (only if user asked or required by spec):
 - `nl -ba codex_tasks/task_107_ai_read_me_md_refresh.md | sed -n '1,280p'`
 - `nl -ba v10/AI_READ_ME.md | sed -n '34,90p'`
 - `find v10/src -maxdepth 2 -type d | sort`
-- `find v10/src/features/canvas -maxdepth 2 -type d | sort`
+- `find v10/src/features/editor/canvas -maxdepth 2 -type d | sort`
 - `node scripts/gen_ai_read_me_map.mjs`
 - `node scripts/gen_ai_read_me_map.mjs --check`
 - `rg -n "Directory Map|core/persistence|core/sanitize|core/utils|features/canvas/objects|features/canvas/viewport|app/layout.tsx|buildPersistedDoc" v10/AI_READ_ME.md`

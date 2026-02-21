@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import {
   executeLLMCallOnServer,
   type LLMCallInput,
-} from "@features/sharing/ai/LLMCallService";
+} from "@features/collaboration/sharing/ai/LLMCallService";
 
 export const dynamic = "force-dynamic";
 

@@ -10,14 +10,14 @@ const assert = (condition, message) => {
   if (!condition) throw new Error(message);
 };
 
-const appLayout = read("src/features/layout/AppLayout.tsx");
+const appLayout = read("src/features/chrome/layout/AppLayout.tsx");
 assert(
   appLayout.includes("aria-label=\"입력 편집실 열기\"") &&
     appLayout.includes("aria-label=\"전체화면 필기 시작\""),
   "critical app layout controls must keep aria labels."
 );
 
-const modStudioPanel = read("src/features/mod-studio/core/ModStudioPanel.tsx");
+const modStudioPanel = read("src/features/platform/mod-studio/core/ModStudioPanel.tsx");
 assert(
   modStudioPanel.includes("aria-label=\"Mod Studio\""),
   "Mod Studio panel must expose aria label."

@@ -41,14 +41,14 @@ assertIncludes(
   "phase5 preflight: rolePolicy must stay deny-by-default"
 );
 
-const commandPolicy = read("src/features/extensions/commandExecutionPolicy.ts");
+const commandPolicy = read("src/features/platform/extensions/commandExecutionPolicy.ts");
 assertIncludes(
   commandPolicy,
   "shouldQueueCommandApprovalByPolicyForRole",
   "phase5 preflight: command approval queue guard missing"
 );
 
-const toolPolicy = read("src/features/extensions/toolExecutionPolicy.ts");
+const toolPolicy = read("src/features/platform/extensions/toolExecutionPolicy.ts");
 assertIncludes(
   toolPolicy,
   "shouldQueueToolApprovalByPolicyForRole",
@@ -62,7 +62,7 @@ if (flags.snapshot) {
 }
 
 if (flags.liveOneWay) {
-  const syncHook = read("src/features/sync/useAsymmetricSessionSync.ts");
+  const syncHook = read("src/features/collaboration/sync/useAsymmetricSessionSync.ts");
   assertIncludes(
     syncHook,
     "createRealtimeBackplane",
@@ -88,8 +88,8 @@ if (flags.liveTwoWay) {
 if (flags.partialSharing) {
   const hasLayerShareScope = [
     "src/core/foundation/types/snapshot.ts",
-    "src/features/sharing/snapshotSerializer.ts",
-    "src/features/sharing/useSnapshotShare.ts",
+    "src/features/collaboration/sharing/snapshotSerializer.ts",
+    "src/features/collaboration/sharing/useSnapshotShare.ts",
   ].some((candidate) => exists(candidate));
 
   if (!hasLayerShareScope) {
@@ -100,7 +100,7 @@ if (flags.partialSharing) {
 }
 
 if (flags.aiApproval) {
-  if (!exists("src/features/toolbar/PendingApprovalPanel.tsx")) {
+  if (!exists("src/features/chrome/toolbar/PendingApprovalPanel.tsx")) {
     throw new Error(
       "phase5 preflight: AI approval flag ON but PendingApprovalPanel is missing"
     );

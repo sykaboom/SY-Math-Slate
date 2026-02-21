@@ -18,7 +18,7 @@ Date: 2026-02-21
 ## Scope (Base Required)
 
 Touched files/directories:
-- v10/src/features/store, v10/src/features/toolbar, v10/src/features/layout
+- v10/src/features/platform/store, v10/src/features/chrome/toolbar, v10/src/features/chrome/layout
 
 Out of scope:
 - AI/공유/테마 기능 변경
@@ -176,7 +176,7 @@ Out of scope:
 
 2) Step:
    - Command / click path:
-     - rg -n left\|center\|right v10/src/features/toolbar v10/src/features/store
+     - rg -n left\|center\|right v10/src/features/chrome/toolbar v10/src/features/platform/store
    - Expected result:
      - AC-3 만족 및 회귀 없음
    - Covers: AC-3

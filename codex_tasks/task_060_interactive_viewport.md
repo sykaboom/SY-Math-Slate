@@ -27,7 +27,7 @@ Normal mode is currently static. This task adds Pan & Zoom to both Edit and Pres
 - Ensure `setTool('hand')` logic exists (currently no-op).
 - Add a transient flag `isViewportInteracting` (or equivalent) to suppress drawing during navigation gestures.
 
-### 2. Viewport Interaction Hook (`v10/src/features/canvas/viewport/useViewportInteraction.ts`)
+### 2. Viewport Interaction Hook (`v10/src/features/editor/canvas/viewport/useViewportInteraction.ts`)
 - **Event Listeners:** Attach to `CanvasStage` container.
 - **Mouse/Pointer Logic:**
   - `Wheel`: Zoom (use `ctrlKey` when available for trackpad pinch; otherwise treat wheel as zoom on canvas).
@@ -74,7 +74,7 @@ Normal mode is currently static. This task adds Pan & Zoom to both Edit and Pres
 - [ ] **No Gesture Clash:** 2-finger pinch never produces ink strokes.
 
 ## Documentation
-- Update `v10/AI_READ_ME_MAP.md` after creating `v10/src/features/canvas/viewport/`.
+- Update `v10/AI_READ_ME_MAP.md` after creating `v10/src/features/editor/canvas/viewport/`.
 - Update `v10/AI_READ_ME.md` store schema if new UI state is added.
 
 ---
@@ -83,12 +83,12 @@ Normal mode is currently static. This task adds Pan & Zoom to both Edit and Pres
 Status: COMPLETED
 
 Changed files:
-- v10/src/features/canvas/viewport/useViewportInteraction.ts
-- v10/src/features/canvas/CanvasStage.tsx
-- v10/src/features/canvas/PageViewport.tsx
-- v10/src/features/hooks/useCanvas.ts
-- v10/src/features/hooks/useOverlayCanvas.ts
-- v10/src/features/toolbar/FloatingToolbar.tsx
+- v10/src/features/editor/canvas/viewport/useViewportInteraction.ts
+- v10/src/features/editor/canvas/CanvasStage.tsx
+- v10/src/features/editor/canvas/PageViewport.tsx
+- v10/src/features/platform/hooks/useCanvas.ts
+- v10/src/features/platform/hooks/useOverlayCanvas.ts
+- v10/src/features/chrome/toolbar/FloatingToolbar.tsx
 - v10/AI_READ_ME.md
 - v10/AI_READ_ME_MAP.md
 - codex_tasks/task_060_interactive_viewport.md

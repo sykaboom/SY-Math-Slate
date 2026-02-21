@@ -19,10 +19,10 @@ Date: 2026-02-15
 
 Touched files/directories:
 - `codex_tasks/task_176_selection_caret_engine_foundation.md`
-- `v10/src/features/editor-core/selection/caretEngine.ts`
-- `v10/src/features/layout/dataInput/types.ts`
-- `v10/src/features/layout/dataInput/segmentCommands.ts`
-- `v10/src/features/layout/DataInputPanel.tsx`
+- `v10/src/features/editor/editor-core/selection/caretEngine.ts`
+- `v10/src/features/chrome/layout/dataInput/types.ts`
+- `v10/src/features/chrome/layout/dataInput/segmentCommands.ts`
+- `v10/src/features/chrome/layout/DataInputPanel.tsx`
 
 Out of scope:
 - Command bus changes and toolbar shortcut bindings.
@@ -115,7 +115,7 @@ If NO:
 ## Manual Verification Steps (Base Required)
 
 1) Step:
-   - Command / click path: `cd v10 && npm run lint -- --max-warnings=0 -- src/features/editor-core/selection/caretEngine.ts src/features/layout/dataInput/segmentCommands.ts src/features/layout/DataInputPanel.tsx`
+   - Command / click path: `cd v10 && npm run lint -- --max-warnings=0 -- src/features/editor/editor-core/selection/caretEngine.ts src/features/chrome/layout/dataInput/segmentCommands.ts src/features/chrome/layout/DataInputPanel.tsx`
    - Expected result: PASS.
    - Covers: AC-1, AC-2, AC-3
 
@@ -146,12 +146,12 @@ Status: COMPLETED
 
 Changed files:
 - `codex_tasks/task_176_selection_caret_engine_foundation.md`
-- `v10/src/features/editor-core/selection/caretEngine.ts`
-- `v10/src/features/layout/dataInput/types.ts`
-- `v10/src/features/layout/dataInput/segmentCommands.ts`
+- `v10/src/features/editor/editor-core/selection/caretEngine.ts`
+- `v10/src/features/chrome/layout/dataInput/types.ts`
+- `v10/src/features/chrome/layout/dataInput/segmentCommands.ts`
 
 Commands run (only if user asked or required by spec):
-- `cd v10 && npm run lint -- --max-warnings=0 -- src/features/editor-core/selection/caretEngine.ts src/features/layout/dataInput/types.ts src/features/layout/dataInput/segmentCommands.ts`
+- `cd v10 && npm run lint -- --max-warnings=0 -- src/features/editor/editor-core/selection/caretEngine.ts src/features/chrome/layout/dataInput/types.ts src/features/chrome/layout/dataInput/segmentCommands.ts`
 - `scripts/check_layer_rules.sh`
 - `cd v10 && npm run build`
 

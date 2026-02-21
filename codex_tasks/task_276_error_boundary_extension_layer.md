@@ -26,8 +26,8 @@ Supersedes: task_273 (scope 축소 분할; 원본은 SUPERSEDED 처리)
 
 Touched files/directories:
 - `v10/src/ui/components/ErrorBoundary.tsx` (create) — React class component ErrorBoundary
-- `v10/src/features/extensions/ui/ExtensionSlot.tsx` (write) — 슬롯 렌더링 ErrorBoundary 래핑
-- `v10/src/features/extensions/ui/ExtensionRuntimeBootstrap.tsx` (write) — 부트스트랩 전체 ErrorBoundary 래핑
+- `v10/src/features/platform/extensions/ui/ExtensionSlot.tsx` (write) — 슬롯 렌더링 ErrorBoundary 래핑
+- `v10/src/features/platform/extensions/ui/ExtensionRuntimeBootstrap.tsx` (write) — 부트스트랩 전체 ErrorBoundary 래핑
 
 Out of scope:
 - AppLayout, WindowHost ErrorBoundary 래핑 → task_277 에서 처리
@@ -176,12 +176,12 @@ Out of scope:
    - Covers: AC-2, AC-3
 
 3) Step: ExtensionSlot 래핑 확인
-   - Command / click path: `grep -n "ErrorBoundary" v10/src/features/extensions/ui/ExtensionSlot.tsx`
+   - Command / click path: `grep -n "ErrorBoundary" v10/src/features/platform/extensions/ui/ExtensionSlot.tsx`
    - Expected result: import + JSX 래핑 확인
    - Covers: AC-4
 
 4) Step: ExtensionRuntimeBootstrap 래핑 확인
-   - Command / click path: `grep -n "ErrorBoundary" v10/src/features/extensions/ui/ExtensionRuntimeBootstrap.tsx`
+   - Command / click path: `grep -n "ErrorBoundary" v10/src/features/platform/extensions/ui/ExtensionRuntimeBootstrap.tsx`
    - Expected result: import + JSX 래핑 확인
    - Covers: AC-5
 
@@ -222,15 +222,15 @@ Status: COMPLETED
 
 Changed files:
 - `v10/src/ui/components/ErrorBoundary.tsx` (new)
-- `v10/src/features/extensions/ui/ExtensionSlot.tsx`
-- `v10/src/features/extensions/ui/ExtensionRuntimeBootstrap.tsx`
+- `v10/src/features/platform/extensions/ui/ExtensionSlot.tsx`
+- `v10/src/features/platform/extensions/ui/ExtensionRuntimeBootstrap.tsx`
 - `codex_tasks/task_276_error_boundary_extension_layer.md`
 
 Commands run:
 - `ls v10/src/ui/components/ErrorBoundary.tsx`
 - `grep -n "getDerivedStateFromError\|componentDidCatch" v10/src/ui/components/ErrorBoundary.tsx`
-- `grep -n "ErrorBoundary" v10/src/features/extensions/ui/ExtensionSlot.tsx`
-- `grep -n "ErrorBoundary" v10/src/features/extensions/ui/ExtensionRuntimeBootstrap.tsx`
+- `grep -n "ErrorBoundary" v10/src/features/platform/extensions/ui/ExtensionSlot.tsx`
+- `grep -n "ErrorBoundary" v10/src/features/platform/extensions/ui/ExtensionRuntimeBootstrap.tsx`
 - `./scripts/check_layer_rules.sh`
 
 ## Gate Results (Codex fills)
@@ -247,8 +247,8 @@ Commands run:
 Manual verification notes:
 - Step 1 (AC-1): `ls v10/src/ui/components/ErrorBoundary.tsx` => file exists.
 - Step 2 (AC-2, AC-3): `grep -n "getDerivedStateFromError\|componentDidCatch" ...` => lines 28, 32 confirmed.
-- Step 3 (AC-4): `grep -n "ErrorBoundary" v10/src/features/extensions/ui/ExtensionSlot.tsx` => import + wrapper usage at lines 18, 58, 73.
-- Step 4 (AC-5): `grep -n "ErrorBoundary" v10/src/features/extensions/ui/ExtensionRuntimeBootstrap.tsx` => import + top-level return wrapper at lines 64, 949.
+- Step 3 (AC-4): `grep -n "ErrorBoundary" v10/src/features/platform/extensions/ui/ExtensionSlot.tsx` => import + wrapper usage at lines 18, 58, 73.
+- Step 4 (AC-5): `grep -n "ErrorBoundary" v10/src/features/platform/extensions/ui/ExtensionRuntimeBootstrap.tsx` => import + top-level return wrapper at lines 64, 949.
 - Step 5 (AC-7, AC-8): lint/build intentionally not executed per user constraint in this turn.
 - Guardrail check: `./scripts/check_layer_rules.sh` => PASS (no layer violations).
 

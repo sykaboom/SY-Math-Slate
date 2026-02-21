@@ -23,10 +23,10 @@ Date: 2026-02-16
 
 Touched files/directories (expected):
 - `codex_tasks/task_237_slate_windowed_panels_preserve_canvas_area.md`
-- `v10/src/features/layout/windowing/panelBehavior.types.ts` (new)
-- `v10/src/features/layout/windowing/panelBehavior.schema.ts` (new/manual validator)
+- `v10/src/features/chrome/layout/windowing/panelBehavior.types.ts` (new)
+- `v10/src/features/chrome/layout/windowing/panelBehavior.schema.ts` (new/manual validator)
 - `v10/src/core/config/panel-policy.ts` (new or update)
-- `v10/src/features/extensions/ui/registerCoreSlots.ts` (contract surface only; no cutover)
+- `v10/src/features/platform/extensions/ui/registerCoreSlots.ts` (contract surface only; no cutover)
 
 Out of scope:
 - Any AppLayout cutover or panel renderer migration.
@@ -156,10 +156,10 @@ Status: COMPLETED
 
 Changed files:
 - `codex_tasks/task_237_slate_windowed_panels_preserve_canvas_area.md`
-- `v10/src/features/layout/windowing/panelBehavior.types.ts`
-- `v10/src/features/layout/windowing/panelBehavior.schema.ts`
+- `v10/src/features/chrome/layout/windowing/panelBehavior.types.ts`
+- `v10/src/features/chrome/layout/windowing/panelBehavior.schema.ts`
 - `v10/src/core/config/panel-policy.ts`
-- `v10/src/features/extensions/ui/registerCoreSlots.ts`
+- `v10/src/features/platform/extensions/ui/registerCoreSlots.ts`
 
 Commands run (only if user asked or required by spec):
 - `cd v10 && npm run lint`

@@ -13,11 +13,11 @@ Date: 2026-02-06
 - `v10/src/core/migrations/migrateToV2.ts`
 - `v10/src/core/sanitize/richTextSanitizer.ts`
 - `v10/src/core/persistence/buildPersistedDoc.ts`
-- `v10/src/features/hooks/usePersistence.ts`
-- `v10/src/features/hooks/useFileIO.ts`
-- `v10/src/features/layout/DataInputPanel.tsx`
-- `v10/src/features/layout/autoLayout.ts`
-- `v10/src/features/canvas/ContentLayer.tsx`
+- `v10/src/features/platform/hooks/usePersistence.ts`
+- `v10/src/features/platform/hooks/useFileIO.ts`
+- `v10/src/features/chrome/layout/DataInputPanel.tsx`
+- `v10/src/features/chrome/layout/autoLayout.ts`
+- `v10/src/features/editor/canvas/ContentLayer.tsx`
 
 ## Findings
 ### 1) Defensive normalization in migration is justified
@@ -37,7 +37,7 @@ Date: 2026-02-06
 
 ### 4) DataInput selection guards are UX safety, not speculative
 - Selection guards prevent invalid range operations and are required for DOM stability.
-- Evidence: `v10/src/features/layout/dataInput/segmentCommands.ts`.
+- Evidence: `v10/src/features/chrome/layout/dataInput/segmentCommands.ts`.
 
 ## Candidate removals
 - None found in reviewed scope that meet “speculative without evidence” criteria.

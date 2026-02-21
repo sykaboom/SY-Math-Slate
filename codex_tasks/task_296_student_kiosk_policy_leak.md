@@ -46,7 +46,7 @@ Date: 2026-02-19
 
 Touched files/directories (write):
 - `v10/src/core/config/panel-policy.ts` — THEME_PICKER student: { visible: false }
-- `v10/src/features/layout/AppLayout.tsx` — showThemePicker에 role 필터 추가
+- `v10/src/features/chrome/layout/AppLayout.tsx` — showThemePicker에 role 필터 추가
 
 Out of scope:
 - ThemePicker 컴포넌트 디자인 변경
@@ -201,7 +201,7 @@ Status: COMPLETED
 
 Changed files:
 - `v10/src/core/config/panel-policy.ts`
-- `v10/src/features/layout/AppLayout.tsx`
+- `v10/src/features/chrome/layout/AppLayout.tsx`
 
 ## Gate Results (Codex fills)
 

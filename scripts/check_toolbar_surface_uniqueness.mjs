@@ -23,31 +23,31 @@ const selfTestDuplicate = cliArgs.includes(SELF_TEST_DUPLICATE_FLAG);
 const files = {
   policy: path.join(
     repoRoot,
-    "v10/src/features/toolbar/catalog/toolbarSurfacePolicy.ts"
+    "v10/src/features/chrome/toolbar/catalog/toolbarSurfacePolicy.ts"
   ),
   selectors: path.join(
     repoRoot,
-    "v10/src/features/toolbar/catalog/toolbarActionSelectors.ts"
+    "v10/src/features/chrome/toolbar/catalog/toolbarActionSelectors.ts"
   ),
   floatingToolbar: path.join(
     repoRoot,
-    "v10/src/features/toolbar/FloatingToolbar.tsx"
+    "v10/src/features/chrome/toolbar/FloatingToolbar.tsx"
   ),
   coreTemplates: path.join(
     repoRoot,
-    "v10/src/features/extensions/ui/coreTemplates.ts"
+    "v10/src/features/platform/extensions/ui/coreTemplates.ts"
   ),
   coreDeclarativeManifest: path.join(
     repoRoot,
-    "v10/src/features/extensions/ui/registerCoreDeclarativeManifest.ts"
+    "v10/src/features/platform/extensions/ui/registerCoreDeclarativeManifest.ts"
   ),
   registerCoreSlots: path.join(
     repoRoot,
-    "v10/src/features/extensions/ui/registerCoreSlots.ts"
+    "v10/src/features/platform/extensions/ui/registerCoreSlots.ts"
   ),
   runtimeBootstrap: path.join(
     repoRoot,
-    "v10/src/features/extensions/ui/ExtensionRuntimeBootstrap.tsx"
+    "v10/src/features/platform/extensions/ui/ExtensionRuntimeBootstrap.tsx"
   ),
 };
 

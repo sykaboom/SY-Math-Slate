@@ -23,9 +23,9 @@
 - MathJax 자체 렌더링 규칙 변경
 
 ## Scope (Files)
-- `v10/src/features/canvas/animation/MixedRevealBlock.tsx` (신규)
-- `v10/src/features/canvas/ContentLayer.tsx` (혼합 블록 감지 + MixedRevealBlock 사용)
-- (필요 시) `v10/src/features/canvas/animation/AnimatedTextBlock.tsx` (유틸 재사용/조정)
+- `v10/src/features/editor/canvas/animation/MixedRevealBlock.tsx` (신규)
+- `v10/src/features/editor/canvas/ContentLayer.tsx` (혼합 블록 감지 + MixedRevealBlock 사용)
+- (필요 시) `v10/src/features/editor/canvas/animation/AnimatedTextBlock.tsx` (유틸 재사용/조정)
 
 ## Detailed Design
 - `MixedRevealBlock`는 **MathJax typeset 이후 DOM**을 기반으로 텍스트 런 / 수식 런을 분해한다.
@@ -63,8 +63,8 @@
 
 ## Completion Notes
 **Changed Files**
-- `v10/src/features/canvas/animation/MixedRevealBlock.tsx`
-- `v10/src/features/canvas/ContentLayer.tsx`
+- `v10/src/features/editor/canvas/animation/MixedRevealBlock.tsx`
+- `v10/src/features/editor/canvas/ContentLayer.tsx`
 
 **Commands Run**
 - None.

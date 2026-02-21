@@ -22,7 +22,7 @@ Date: 2026-02-20
 ## Scope (Base Required)
 
 Touched files/directories:
-- `v10/src/features/toolbar/FloatingToolbar.tsx`
+- `v10/src/features/chrome/toolbar/FloatingToolbar.tsx`
 - `v10/AI_READ_ME.md`
 - `v10/AI_READ_ME_MAP.md` (regenerate)
 
@@ -217,7 +217,7 @@ Out of scope:
 Status: COMPLETED
 
 Changed files:
-- `v10/src/features/toolbar/FloatingToolbar.tsx`
+- `v10/src/features/chrome/toolbar/FloatingToolbar.tsx`
 - `v10/AI_READ_ME.md`
 - `codex_tasks/task_319_floating_toolbar_dedup_cleanup.md`
 

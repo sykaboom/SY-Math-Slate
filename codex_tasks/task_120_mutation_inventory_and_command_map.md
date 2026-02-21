@@ -21,7 +21,7 @@ Date: 2026-02-15
 
 Touched files/directories:
 - `codex_tasks/task_120_mutation_inventory_and_command_map.md`
-- `v10/src/features/extensions/commands/registerCoreCommands.ts`
+- `v10/src/features/platform/extensions/commands/registerCoreCommands.ts`
 - `v10/AI_READ_ME.md`
 
 Out of scope:

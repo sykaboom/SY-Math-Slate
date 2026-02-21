@@ -17,16 +17,16 @@ Date: 2026-02-07
 
 ## Scope (Codex must touch ONLY these)
 Touched files/directories:
-- `v10/src/features/layout/dataInput/blockDraft.ts`
-- `v10/src/features/layout/dataInput/types.ts`
-- `v10/src/features/layout/dataInput/segmentCommands.ts` (only if needed for compatibility)
-- `v10/src/features/layout/DataInputPanel.tsx`
+- `v10/src/features/chrome/layout/dataInput/blockDraft.ts`
+- `v10/src/features/chrome/layout/dataInput/types.ts`
+- `v10/src/features/chrome/layout/dataInput/segmentCommands.ts` (only if needed for compatibility)
+- `v10/src/features/chrome/layout/DataInputPanel.tsx`
 - `codex_tasks/task_083_datainput_non_destructive_sync_engine.md`
 
 Out of scope:
-- `v10/src/features/layout/AppLayout.tsx`
-- `v10/src/features/layout/PlayerBar.tsx`
-- `v10/src/features/layout/Prompter.tsx`
+- `v10/src/features/chrome/layout/AppLayout.tsx`
+- `v10/src/features/chrome/layout/PlayerBar.tsx`
+- `v10/src/features/chrome/layout/Prompter.tsx`
 - Any cross-app exchange contract/versioning updates
 
 ## Design Artifacts (required for layout/structure changes)
@@ -92,9 +92,9 @@ Out of scope:
 ## Implementation Log (Codex fills)
 Status: COMPLETED
 Changed files:
-- `v10/src/features/layout/dataInput/types.ts`
-- `v10/src/features/layout/dataInput/blockDraft.ts`
-- `v10/src/features/layout/DataInputPanel.tsx`
+- `v10/src/features/chrome/layout/dataInput/types.ts`
+- `v10/src/features/chrome/layout/dataInput/blockDraft.ts`
+- `v10/src/features/chrome/layout/DataInputPanel.tsx`
 - `codex_tasks/task_083_datainput_non_destructive_sync_engine.md`
 
 Commands run (only if user asked):

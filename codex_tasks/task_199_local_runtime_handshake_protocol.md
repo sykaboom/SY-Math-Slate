@@ -22,7 +22,7 @@ Touched files/directories:
 - `codex_tasks/task_199_local_runtime_handshake_protocol.md`
 - `v10/src/core/extensions/localRuntimeHandshake.ts` (new)
 - `v10/src/core/extensions/index.ts` (if export update is required)
-- `v10/src/features/extensions/ui/ExtensionRuntimeBootstrap.tsx` (handshake runtime bootstrap hook)
+- `v10/src/features/platform/extensions/ui/ExtensionRuntimeBootstrap.tsx` (handshake runtime bootstrap hook)
 
 Out of scope:
 - Provider-specific adapter invocation logic (task_200~202).
@@ -162,7 +162,7 @@ Status: COMPLETED
 
 Changed files:
 - `v10/src/core/extensions/localRuntimeHandshake.ts`
-- `v10/src/features/extensions/ui/ExtensionRuntimeBootstrap.tsx`
+- `v10/src/features/platform/extensions/ui/ExtensionRuntimeBootstrap.tsx`
 
 Commands run (only if user asked or required by spec):
 - `cd v10 && npm run lint`

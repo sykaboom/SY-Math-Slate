@@ -65,9 +65,9 @@ Touched files/directories:
 - `v10/src/app/globals.css` — `--theme-text-rgb`, `--theme-surface-rgb`, `--theme-border-rgb`, `--theme-accent-rgb` CSS var 추가 (dark/light 양쪽)
 - `v10/tailwind.config.ts` — `theme-text`, `theme-surface`, `theme-border`, `theme-accent`, `theme-text-muted`, `theme-surface-soft` Tailwind color 유틸리티 추가
 - `v10/src/core/theme/applyTheme.ts` — rgb var 주입 확장 (task_278에서 생성된 파일 소수정)
-- `v10/src/features/layout/AppLayout.tsx` — 셸 헤더 하드코딩 교체 (~13회)
-- `v10/src/features/layout/windowing/panelAdapters.tsx` — 패널 프레임 하드코딩 교체 (~4회)
-- `v10/src/features/layout/windowing/PanelLauncher.tsx` — 런처 하드코딩 교체 (~9회)
+- `v10/src/features/chrome/layout/AppLayout.tsx` — 셸 헤더 하드코딩 교체 (~13회)
+- `v10/src/features/chrome/layout/windowing/panelAdapters.tsx` — 패널 프레임 하드코딩 교체 (~4회)
+- `v10/src/features/chrome/layout/windowing/PanelLauncher.tsx` — 런처 하드코딩 교체 (~9회)
 
 Out of scope:
 - `toolbar-*` 클래스 마이그레이션 (별도 태스크)
@@ -295,9 +295,9 @@ bg-white/10          → bg-theme-surface-soft
 4) Step: 셸 레이어 하드코딩 제거 확인
    - Command / click path:
      ```
-     grep -n "text-white\b\|bg-black/\|border-white/" v10/src/features/layout/AppLayout.tsx
-     grep -n "text-white\b\|bg-black/\|border-white/" v10/src/features/layout/windowing/panelAdapters.tsx
-     grep -n "text-white\b\|bg-black/\|border-white/" v10/src/features/layout/windowing/PanelLauncher.tsx
+     grep -n "text-white\b\|bg-black/\|border-white/" v10/src/features/chrome/layout/AppLayout.tsx
+     grep -n "text-white\b\|bg-black/\|border-white/" v10/src/features/chrome/layout/windowing/panelAdapters.tsx
+     grep -n "text-white\b\|bg-black/\|border-white/" v10/src/features/chrome/layout/windowing/PanelLauncher.tsx
      ```
    - Expected result: 매치 없음 (모두 theme-* 유틸리티로 교체)
    - Covers: AC-4, AC-5, AC-6
@@ -364,9 +364,9 @@ Changed files:
 - `v10/src/app/globals.css`
 - `v10/tailwind.config.ts`
 - `v10/src/core/theme/applyTheme.ts`
-- `v10/src/features/layout/AppLayout.tsx`
-- `v10/src/features/layout/windowing/panelAdapters.tsx`
-- `v10/src/features/layout/windowing/PanelLauncher.tsx`
+- `v10/src/features/chrome/layout/AppLayout.tsx`
+- `v10/src/features/chrome/layout/windowing/panelAdapters.tsx`
+- `v10/src/features/chrome/layout/windowing/PanelLauncher.tsx`
 
 Commands run:
 - `bash scripts/check_layer_rules.sh`

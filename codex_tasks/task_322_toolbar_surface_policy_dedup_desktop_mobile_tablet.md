@@ -19,14 +19,14 @@ Date: 2026-02-20
 ## Scope (Base Required)
 
 Touched files/directories:
-- `v10/src/features/toolbar/catalog/toolbarSurfacePolicy.ts` (new)
-- `v10/src/features/toolbar/catalog/toolbarViewportProfile.ts` (new)
-- `v10/src/features/toolbar/FloatingToolbar.tsx`
-- `v10/src/features/toolbar/DrawModeTools.tsx`
-- `v10/src/features/toolbar/PlaybackModeTools.tsx`
-- `v10/src/features/toolbar/CanvasModeTools.tsx`
-- `v10/src/features/toolbar/MorePanel.tsx`
-- `v10/src/features/toolbar/ThumbZoneDock.tsx`
+- `v10/src/features/chrome/toolbar/catalog/toolbarSurfacePolicy.ts` (new)
+- `v10/src/features/chrome/toolbar/catalog/toolbarViewportProfile.ts` (new)
+- `v10/src/features/chrome/toolbar/FloatingToolbar.tsx`
+- `v10/src/features/chrome/toolbar/DrawModeTools.tsx`
+- `v10/src/features/chrome/toolbar/PlaybackModeTools.tsx`
+- `v10/src/features/chrome/toolbar/CanvasModeTools.tsx`
+- `v10/src/features/chrome/toolbar/MorePanel.tsx`
+- `v10/src/features/chrome/toolbar/ThumbZoneDock.tsx`
 
 Out of scope:
 - New actions.
@@ -68,11 +68,11 @@ Out of scope:
 - Touched file count:
   - 8
 - Files shared with other PENDING tasks:
-  - `v10/src/features/toolbar/FloatingToolbar.tsx`
-  - `v10/src/features/toolbar/DrawModeTools.tsx`
-  - `v10/src/features/toolbar/PlaybackModeTools.tsx`
-  - `v10/src/features/toolbar/CanvasModeTools.tsx`
-  - `v10/src/features/toolbar/MorePanel.tsx`
+  - `v10/src/features/chrome/toolbar/FloatingToolbar.tsx`
+  - `v10/src/features/chrome/toolbar/DrawModeTools.tsx`
+  - `v10/src/features/chrome/toolbar/PlaybackModeTools.tsx`
+  - `v10/src/features/chrome/toolbar/CanvasModeTools.tsx`
+  - `v10/src/features/chrome/toolbar/MorePanel.tsx`
 - Cross-module dependency:
   - YES
 - Parallelizable sub-units:
@@ -218,13 +218,13 @@ Out of scope:
 Status: COMPLETED
 
 Changed files:
-- `v10/src/features/toolbar/catalog/toolbarSurfacePolicy.ts`
-- `v10/src/features/toolbar/catalog/toolbarViewportProfile.ts`
-- `v10/src/features/toolbar/FloatingToolbar.tsx`
-- `v10/src/features/toolbar/DrawModeTools.tsx`
-- `v10/src/features/toolbar/PlaybackModeTools.tsx`
-- `v10/src/features/toolbar/CanvasModeTools.tsx`
-- `v10/src/features/toolbar/MorePanel.tsx`
+- `v10/src/features/chrome/toolbar/catalog/toolbarSurfacePolicy.ts`
+- `v10/src/features/chrome/toolbar/catalog/toolbarViewportProfile.ts`
+- `v10/src/features/chrome/toolbar/FloatingToolbar.tsx`
+- `v10/src/features/chrome/toolbar/DrawModeTools.tsx`
+- `v10/src/features/chrome/toolbar/PlaybackModeTools.tsx`
+- `v10/src/features/chrome/toolbar/CanvasModeTools.tsx`
+- `v10/src/features/chrome/toolbar/MorePanel.tsx`
 
 Commands run (only if user asked or required by spec):
 - cd v10 && npm run lint

@@ -22,7 +22,7 @@ Touched files/directories:
 - `codex_tasks/task_204_ai_output_asset_pipeline.md`
 - `v10/src/core/extensions/aiOutputAssetPipeline.ts` (new)
 - `v10/src/core/contracts/multimodalAsset.ts` (integration helpers only if required)
-- `v10/src/features/extensions/adapters/providerAbi.ts` (pipeline wiring only if required)
+- `v10/src/features/platform/extensions/adapters/providerAbi.ts` (pipeline wiring only if required)
 
 Out of scope:
 - Binary storage backend integration.

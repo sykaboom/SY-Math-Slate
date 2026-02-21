@@ -8,7 +8,7 @@
 Initial screen guide/border lines still appeared softer due to subpixel offsets from centered layout.
 
 ## Scope
-- `v10/src/features/canvas/PageGuides.tsx`
+- `v10/src/features/editor/canvas/PageGuides.tsx`
 
 ## Changes
 - Added board screen-offset tracking to snap guide coordinates with layout offset.

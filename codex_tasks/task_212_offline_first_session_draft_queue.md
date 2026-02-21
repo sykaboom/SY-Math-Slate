@@ -20,8 +20,8 @@ Date: 2026-02-16
 
 Touched files/directories:
 - `codex_tasks/task_212_offline_first_session_draft_queue.md`
-- `v10/src/features/input-studio/offlineDraftQueue.ts` (new)
-- `v10/src/features/input-studio/llm/useInputStudioLlmDraft.ts`
+- `v10/src/features/editor/input-studio/offlineDraftQueue.ts` (new)
+- `v10/src/features/editor/input-studio/llm/useInputStudioLlmDraft.ts`
 
 Out of scope:
 - Network transport/backoff service worker integration.
@@ -142,8 +142,8 @@ Out of scope:
 Status: COMPLETED
 
 Changed files:
-- `v10/src/features/input-studio/offlineDraftQueue.ts`
-- `v10/src/features/input-studio/llm/useInputStudioLlmDraft.ts`
+- `v10/src/features/editor/input-studio/offlineDraftQueue.ts`
+- `v10/src/features/editor/input-studio/llm/useInputStudioLlmDraft.ts`
 - `v10/AI_READ_ME_MAP.md`
 
 Commands run (only if user asked or required by spec):

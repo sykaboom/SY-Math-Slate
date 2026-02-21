@@ -19,10 +19,10 @@ Date: 2026-02-15
 ## Scope (Base Required)
 
 Touched files/directories:
-- `v10/src/features/mod-studio/policy/**` (new)
+- `v10/src/features/platform/mod-studio/policy/**` (new)
 - `v10/src/core/config/rolePolicy.ts`
 - `v10/src/core/config/rolePolicyGuards.ts`
-- `v10/src/features/policy/**`
+- `v10/src/features/governance/policy/**`
 
 Out of scope:
 - Layout slot composition editor.
@@ -147,7 +147,7 @@ If NO:
 Status: COMPLETED
 
 Changed files:
-- `v10/src/features/mod-studio/policy/PolicyStudioSection.tsx`
+- `v10/src/features/platform/mod-studio/policy/PolicyStudioSection.tsx`
 - `v10/src/core/config/rolePolicy.ts`
 - `v10/src/core/config/rolePolicyGuards.ts` (validation path reused)
 

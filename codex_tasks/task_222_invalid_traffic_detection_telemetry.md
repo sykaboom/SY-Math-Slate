@@ -21,11 +21,11 @@ Date: 2026-02-15
 Touched files/directories:
 - `codex_tasks/task_222_invalid_traffic_detection_telemetry.md`
 - `v10/src/core/contracts/community.ts`
-- `v10/src/features/community/traffic/invalidTraffic.ts` (new)
+- `v10/src/features/governance/community/traffic/invalidTraffic.ts` (new)
 - `v10/src/app/api/community/route.ts`
-- `v10/src/features/community/store/useCommunityStore.ts`
-- `v10/src/features/moderation/useModerationConsole.ts`
-- `v10/src/features/moderation/ModerationConsolePanel.tsx`
+- `v10/src/features/governance/community/store/useCommunityStore.ts`
+- `v10/src/features/governance/moderation/useModerationConsole.ts`
+- `v10/src/features/governance/moderation/ModerationConsolePanel.tsx`
 
 Out of scope:
 - Ad policy rule content.
@@ -142,12 +142,12 @@ Out of scope:
 Status: COMPLETED
 
 Changed files:
-- `v10/src/features/community/traffic/invalidTraffic.ts`
+- `v10/src/features/governance/community/traffic/invalidTraffic.ts`
 - `v10/src/core/contracts/community.ts`
 - `v10/src/app/api/community/route.ts`
-- `v10/src/features/community/store/useCommunityStore.ts`
-- `v10/src/features/moderation/useModerationConsole.ts`
-- `v10/src/features/moderation/ModerationConsolePanel.tsx`
+- `v10/src/features/governance/community/store/useCommunityStore.ts`
+- `v10/src/features/governance/moderation/useModerationConsole.ts`
+- `v10/src/features/governance/moderation/ModerationConsolePanel.tsx`
 - `codex_tasks/task_222_invalid_traffic_detection_telemetry.md`
 
 Commands run (only if user asked or required by spec):

@@ -42,8 +42,8 @@ Date: 2026-02-19
 ## Scope (Base Required)
 
 Touched files/directories (write):
-- `v10/src/features/sharing/useSnapshotShare.ts` — async createSnapshotShare, 반환 타입에 serverSaved: boolean 추가
-- `v10/src/features/sharing/ShareButton.tsx` — serverSaved:false 시 "(local only)" 경고 표시
+- `v10/src/features/collaboration/sharing/useSnapshotShare.ts` — async createSnapshotShare, 반환 타입에 serverSaved: boolean 추가
+- `v10/src/features/collaboration/sharing/ShareButton.tsx` — serverSaved:false 시 "(local only)" 경고 표시
 
 Out of scope:
 - 서버 저장 재시도 로직
@@ -201,8 +201,8 @@ handleShare를 이미 async임 — result.serverSaved 여부에 따라 feedback 
 Status: COMPLETED
 
 Changed files:
-- `v10/src/features/sharing/useSnapshotShare.ts`
-- `v10/src/features/sharing/ShareButton.tsx`
+- `v10/src/features/collaboration/sharing/useSnapshotShare.ts`
+- `v10/src/features/collaboration/sharing/ShareButton.tsx`
 
 ## Gate Results (Codex fills)
 

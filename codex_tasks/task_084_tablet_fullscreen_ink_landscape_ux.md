@@ -23,17 +23,17 @@ Touched files/directories:
 - `design_drafts/layout_tablet_ink_fullscreen_1024x768.svg`
 - `design_drafts/layout_tablet_landscape_controls_1180x820.svg`
 - `design_drafts/layout_web_chrome_resize_guard_1440x1080.svg`
-- `v10/src/features/layout/AppLayout.tsx`
-- `v10/src/features/layout/PlayerBar.tsx`
-- `v10/src/features/layout/Prompter.tsx`
-- `v10/src/features/store/useUIStore.ts`
+- `v10/src/features/chrome/layout/AppLayout.tsx`
+- `v10/src/features/chrome/layout/PlayerBar.tsx`
+- `v10/src/features/chrome/layout/Prompter.tsx`
+- `v10/src/features/platform/store/useUIStore.ts`
 
 Optional implementation file (only if action placement requires):
-- `v10/src/features/layout/DataInputPanel.tsx`
+- `v10/src/features/chrome/layout/DataInputPanel.tsx`
 
 Out of scope:
-- `v10/src/features/layout/dataInput/blockDraft.ts`
-- `v10/src/features/layout/dataInput/segmentCommands.ts`
+- `v10/src/features/chrome/layout/dataInput/blockDraft.ts`
+- `v10/src/features/chrome/layout/dataInput/segmentCommands.ts`
 - Any `core/**` contract/type migration changes
 - Any dependency/package changes
 
@@ -238,8 +238,8 @@ Changed files:
 - `design_drafts/layout_tablet_ink_fullscreen_1024x768.svg`
 - `design_drafts/layout_tablet_landscape_controls_1180x820.svg`
 - `design_drafts/layout_web_chrome_resize_guard_1440x1080.svg`
-- `v10/src/features/layout/AppLayout.tsx`
-- `v10/src/features/store/useUIStore.ts`
+- `v10/src/features/chrome/layout/AppLayout.tsx`
+- `v10/src/features/platform/store/useUIStore.ts`
 
 Commands run (only if user asked):
 - `git status --short`

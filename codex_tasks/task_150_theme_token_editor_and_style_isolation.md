@@ -19,7 +19,7 @@ Date: 2026-02-15
 ## Scope (Base Required)
 
 Touched files/directories:
-- `v10/src/features/mod-studio/theme/**` (new)
+- `v10/src/features/platform/mod-studio/theme/**` (new)
 - `v10/src/app/globals.css`
 - `v10/src/core/themes/**`
 - `v10/src/ui/components/**` (token wiring only)
@@ -148,9 +148,9 @@ If NO:
 Status: COMPLETED
 
 Changed files:
-- `v10/src/features/mod-studio/theme/ThemeStudioSection.tsx`
-- `v10/src/features/mod-studio/theme/themeIsolation.ts`
-- `v10/src/features/store/useModStudioStore.ts`
+- `v10/src/features/platform/mod-studio/theme/ThemeStudioSection.tsx`
+- `v10/src/features/platform/mod-studio/theme/themeIsolation.ts`
+- `v10/src/features/platform/store/useModStudioStore.ts`
 - `v10/src/app/globals.css` (runtime CSS variable path reused)
 
 Commands run (only if user asked or required by spec):

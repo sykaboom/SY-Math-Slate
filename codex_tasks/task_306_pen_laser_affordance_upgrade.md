@@ -15,10 +15,10 @@ Date: 2026-02-19
 
 ## Scope
 Touched files:
-- `v10/src/features/toolbar/atoms/ToolButton.tsx`
-- `v10/src/features/toolbar/PenControls.tsx`
-- `v10/src/features/toolbar/LaserControls.tsx`
-- `v10/src/features/toolbar/FloatingToolbar.tsx`
+- `v10/src/features/chrome/toolbar/atoms/ToolButton.tsx`
+- `v10/src/features/chrome/toolbar/PenControls.tsx`
+- `v10/src/features/chrome/toolbar/LaserControls.tsx`
+- `v10/src/features/chrome/toolbar/FloatingToolbar.tsx`
 
 Out of scope:
 - Eraser width state/command pipeline (task_307)
@@ -50,10 +50,10 @@ Out of scope:
 ## Implementation Log (Codex fills)
 Status: COMPLETED
 Changed files:
-- `v10/src/features/toolbar/atoms/ToolButton.tsx`
-- `v10/src/features/toolbar/PenControls.tsx`
-- `v10/src/features/toolbar/LaserControls.tsx`
-- `v10/src/features/toolbar/FloatingToolbar.tsx`
+- `v10/src/features/chrome/toolbar/atoms/ToolButton.tsx`
+- `v10/src/features/chrome/toolbar/PenControls.tsx`
+- `v10/src/features/chrome/toolbar/LaserControls.tsx`
+- `v10/src/features/chrome/toolbar/FloatingToolbar.tsx`
 Commands run:
 - `scripts/check_layer_rules.sh`
 - `cd v10 && npm run lint`

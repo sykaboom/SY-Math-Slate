@@ -8,7 +8,7 @@ Owner: Codex
 Vercel build failed with TypeScript error: `webkitClipPath` does not exist on `CSSStyleDeclaration`.
 
 ## Scope
-- v10/src/features/canvas/animation/MathRevealBlock.tsx
+- v10/src/features/editor/canvas/animation/MathRevealBlock.tsx
 
 ## Change
 - Replaced direct `webkitClipPath` assignment with `style.setProperty("-webkit-clip-path", value)`.

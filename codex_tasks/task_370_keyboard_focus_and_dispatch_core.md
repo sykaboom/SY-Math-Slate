@@ -18,7 +18,7 @@ Date: 2026-02-21
 ## Scope (Base Required)
 
 Touched files/directories:
-- v10/src/core/mod/host, v10/src/features/input, v10/src/features/extensions/commands
+- v10/src/core/mod/host, v10/src/features/input, v10/src/features/platform/extensions/commands
 
 Out of scope:
 - 테마/뷰어 변경

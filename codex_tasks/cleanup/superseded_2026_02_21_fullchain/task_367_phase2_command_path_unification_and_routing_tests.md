@@ -18,7 +18,7 @@ Date: 2026-02-21
 ## Scope (Base Required)
 
 Touched files/directories:
-- v10/src/features/extensions/commands, v10/src/core/mod, scripts, codex_tasks docs
+- v10/src/features/platform/extensions/commands, v10/src/core/mod, scripts, codex_tasks docs
 
 Out of scope:
 - Theme and viewer sharing logic changes are excluded.

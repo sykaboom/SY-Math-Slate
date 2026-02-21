@@ -21,15 +21,15 @@ Date: 2026-02-15
 
 Touched files/directories:
 - `codex_tasks/task_128_ui_read_path_migration.md`
-- `v10/src/features/layout/AppLayout.tsx`
-- `v10/src/features/toolbar/FloatingToolbar.tsx`
-- `v10/src/features/layout/PlayerBar.tsx`
-- `v10/src/features/layout/Prompter.tsx`
-- `v10/src/features/canvas/CanvasStage.tsx`
-- `v10/src/features/canvas/PageViewport.tsx`
-- `v10/src/features/canvas/PageGuides.tsx`
-- `v10/src/features/canvas/CanvasGuides.tsx`
-- `v10/src/features/hooks/useBoardTransform.ts`
+- `v10/src/features/chrome/layout/AppLayout.tsx`
+- `v10/src/features/chrome/toolbar/FloatingToolbar.tsx`
+- `v10/src/features/chrome/layout/PlayerBar.tsx`
+- `v10/src/features/chrome/layout/Prompter.tsx`
+- `v10/src/features/editor/canvas/CanvasStage.tsx`
+- `v10/src/features/editor/canvas/PageViewport.tsx`
+- `v10/src/features/editor/canvas/PageGuides.tsx`
+- `v10/src/features/editor/canvas/CanvasGuides.tsx`
+- `v10/src/features/platform/hooks/useBoardTransform.ts`
 
 Out of scope:
 - write-path mutation rewiring

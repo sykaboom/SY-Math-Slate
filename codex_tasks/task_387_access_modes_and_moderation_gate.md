@@ -18,7 +18,7 @@ Date: 2026-02-21
 ## Scope (Base Required)
 
 Touched files/directories:
-- v10/src/app/api, v10/src/core/trust, v10/src/features/viewer
+- v10/src/app/api, v10/src/core/trust, v10/src/features/chrome/viewer
 
 Out of scope:
 - 계정플랫폼 전체 구축

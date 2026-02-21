@@ -21,10 +21,10 @@ Date: 2026-02-20
 ## Scope (Base Required)
 
 Touched files/directories:
-- `v10/src/features/extensions/ui/ExtensionRuntimeBootstrap.tsx`
-- `v10/src/features/extensions/ui/registerCoreDeclarativeManifest.ts`
-- `v10/src/features/extensions/ui/coreTemplates.ts`
-- `v10/src/features/extensions/ui/registerCoreSlots.ts`
+- `v10/src/features/platform/extensions/ui/ExtensionRuntimeBootstrap.tsx`
+- `v10/src/features/platform/extensions/ui/registerCoreDeclarativeManifest.ts`
+- `v10/src/features/platform/extensions/ui/coreTemplates.ts`
+- `v10/src/features/platform/extensions/ui/registerCoreSlots.ts`
 - `scripts/check_toolbar_surface_uniqueness.mjs`
 - `scripts/scan_guardrails.sh`
 - `v10/AI_READ_ME.md`
@@ -78,8 +78,8 @@ Out of scope:
 - Touched file count:
   - 6-7
 - Files shared with other PENDING tasks:
-  - `v10/src/features/extensions/ui/ExtensionRuntimeBootstrap.tsx`
-  - `v10/src/features/extensions/ui/registerCoreSlots.ts`
+  - `v10/src/features/platform/extensions/ui/ExtensionRuntimeBootstrap.tsx`
+  - `v10/src/features/platform/extensions/ui/registerCoreSlots.ts`
 - Cross-module dependency:
   - YES
 - Parallelizable sub-units:
@@ -217,10 +217,10 @@ Out of scope:
 Status: COMPLETED
 
 Changed files:
-- `v10/src/features/extensions/ui/ExtensionRuntimeBootstrap.tsx`
-- `v10/src/features/extensions/ui/registerCoreSlots.ts`
-- `v10/src/features/extensions/ui/coreTemplates.ts`
-- `v10/src/features/extensions/ui/registerCoreDeclarativeManifest.ts`
+- `v10/src/features/platform/extensions/ui/ExtensionRuntimeBootstrap.tsx`
+- `v10/src/features/platform/extensions/ui/registerCoreSlots.ts`
+- `v10/src/features/platform/extensions/ui/coreTemplates.ts`
+- `v10/src/features/platform/extensions/ui/registerCoreDeclarativeManifest.ts`
 - `scripts/check_toolbar_surface_uniqueness.mjs`
 - `v10/AI_READ_ME.md`
 - `codex_tasks/task_328_toolbar_single_source_render_path.md`
@@ -231,8 +231,8 @@ Commands run (only if user asked or required by spec):
 - NEXT_PUBLIC_CORE_TOOLBAR_CUTOVER=1 NEXT_PUBLIC_CORE_MANIFEST_SHADOW=0 node scripts/check_toolbar_surface_uniqueness.mjs
 - NEXT_PUBLIC_CORE_TOOLBAR_CUTOVER=1 NEXT_PUBLIC_CORE_MANIFEST_SHADOW=1 node scripts/check_toolbar_surface_uniqueness.mjs
 - node scripts/check_toolbar_surface_uniqueness.mjs --self-test-duplicate
-- rg -n "registerGatewayPlugin|registerDeclarativePluginManifest\\(plugin\\)" v10/src/features/extensions/ui/ExtensionRuntimeBootstrap.tsx
-- rg -n "listUISlotComponents|listDeclarativeSlotContributions|rendered = \\[\\.\\.\\.renderedComponents, \\.\\.\\.renderedDeclarative\\]" v10/src/features/extensions/ui/ExtensionSlot.tsx
+- rg -n "registerGatewayPlugin|registerDeclarativePluginManifest\\(plugin\\)" v10/src/features/platform/extensions/ui/ExtensionRuntimeBootstrap.tsx
+- rg -n "listUISlotComponents|listDeclarativeSlotContributions|rendered = \\[\\.\\.\\.renderedComponents, \\.\\.\\.renderedDeclarative\\]" v10/src/features/platform/extensions/ui/ExtensionSlot.tsx
 - cd v10 && npm run lint
 - cd v10 && npm run build
 - bash scripts/check_layer_rules.sh

@@ -45,14 +45,14 @@ Date: 2026-02-18
 ## Scope (Base Required)
 
 Touched files/directories (write only):
-- `v10/src/features/mod-studio/theme/ThemeStudioSection.tsx`
-- `v10/src/features/mod-studio/policy/PolicyStudioSection.tsx`
-- `v10/src/features/mod-studio/modules/ModuleStudioSection.tsx`
-- `v10/src/features/mod-studio/publish/PublishStudioSection.tsx`
-- `v10/src/features/mod-studio/core/ModStudioPanel.tsx`
-- `v10/src/features/mod-studio/core/ModStudioShell.tsx`
-- `v10/src/features/mod-studio/io/IoStudioSection.tsx`
-- `v10/src/features/mod-studio/layout/LayoutStudioSection.tsx`
+- `v10/src/features/platform/mod-studio/theme/ThemeStudioSection.tsx`
+- `v10/src/features/platform/mod-studio/policy/PolicyStudioSection.tsx`
+- `v10/src/features/platform/mod-studio/modules/ModuleStudioSection.tsx`
+- `v10/src/features/platform/mod-studio/publish/PublishStudioSection.tsx`
+- `v10/src/features/platform/mod-studio/core/ModStudioPanel.tsx`
+- `v10/src/features/platform/mod-studio/core/ModStudioShell.tsx`
+- `v10/src/features/platform/mod-studio/io/IoStudioSection.tsx`
+- `v10/src/features/platform/mod-studio/layout/LayoutStudioSection.tsx`
 
 Out of scope:
 - input-studio, canvas, layout 파일 (task_282, task_283)
@@ -194,9 +194,9 @@ bg-black             → bg-theme-surface
    - Command:
      ```
      grep -n "text-white\b\|text-black\|text-gray\|border-white/\|border-gray\|bg-black/\|bg-white/\|bg-gray\|bg-slate" \
-       v10/src/features/mod-studio/theme/ThemeStudioSection.tsx \
-       v10/src/features/mod-studio/core/ModStudioPanel.tsx \
-       v10/src/features/mod-studio/core/ModStudioShell.tsx
+       v10/src/features/platform/mod-studio/theme/ThemeStudioSection.tsx \
+       v10/src/features/platform/mod-studio/core/ModStudioPanel.tsx \
+       v10/src/features/platform/mod-studio/core/ModStudioShell.tsx
      ```
    - Expected: 매치 없음
    - Covers: AC-1, AC-2, AC-3
@@ -246,14 +246,14 @@ bg-black             → bg-theme-surface
 Status: COMPLETED
 
 Changed files:
-- `v10/src/features/mod-studio/theme/ThemeStudioSection.tsx`
-- `v10/src/features/mod-studio/policy/PolicyStudioSection.tsx`
-- `v10/src/features/mod-studio/modules/ModuleStudioSection.tsx`
-- `v10/src/features/mod-studio/publish/PublishStudioSection.tsx`
-- `v10/src/features/mod-studio/core/ModStudioPanel.tsx`
-- `v10/src/features/mod-studio/core/ModStudioShell.tsx`
-- `v10/src/features/mod-studio/io/IoStudioSection.tsx`
-- `v10/src/features/mod-studio/layout/LayoutStudioSection.tsx`
+- `v10/src/features/platform/mod-studio/theme/ThemeStudioSection.tsx`
+- `v10/src/features/platform/mod-studio/policy/PolicyStudioSection.tsx`
+- `v10/src/features/platform/mod-studio/modules/ModuleStudioSection.tsx`
+- `v10/src/features/platform/mod-studio/publish/PublishStudioSection.tsx`
+- `v10/src/features/platform/mod-studio/core/ModStudioPanel.tsx`
+- `v10/src/features/platform/mod-studio/core/ModStudioShell.tsx`
+- `v10/src/features/platform/mod-studio/io/IoStudioSection.tsx`
+- `v10/src/features/platform/mod-studio/layout/LayoutStudioSection.tsx`
 
 Commands run:
 - `bash scripts/check_layer_rules.sh`

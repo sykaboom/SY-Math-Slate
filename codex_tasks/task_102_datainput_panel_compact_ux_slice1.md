@@ -23,12 +23,12 @@ Date: 2026-02-09
 
 Touched files/directories:
 - `codex_tasks/task_102_datainput_panel_compact_ux_slice1.md`
-- `v10/src/features/layout/DataInputPanel.tsx`
+- `v10/src/features/chrome/layout/DataInputPanel.tsx`
 
 Out of scope:
-- `v10/src/features/layout/dataInput/blockDraft.ts`
-- `v10/src/features/layout/dataInput/segmentCommands.ts`
-- `v10/src/features/toolbar/**`
+- `v10/src/features/chrome/layout/dataInput/blockDraft.ts`
+- `v10/src/features/chrome/layout/dataInput/segmentCommands.ts`
+- `v10/src/features/chrome/toolbar/**`
 - `v10/src/core/**`
 
 ---
@@ -108,12 +108,12 @@ Out of scope:
    - Covers: AC-1, AC-2, AC-3
 
 2) 코드 경로 확인:
-   - Command / click path: `rg -n "compact|advanced|h-9|h-10|h-11|unmatched|handleApply|handleAutoLayout" v10/src/features/layout/DataInputPanel.tsx`
+   - Command / click path: `rg -n "compact|advanced|h-9|h-10|h-11|unmatched|handleApply|handleAutoLayout" v10/src/features/chrome/layout/DataInputPanel.tsx`
    - Expected result: compact 토글/터치 타겟/핵심 동작 경로 존재
    - Covers: AC-1, AC-2, AC-3, AC-4
 
 3) 품질/범위 확인:
-   - Command / click path: `cd v10 && npm run lint`, `git status --short -- v10/src/features/layout/DataInputPanel.tsx codex_tasks/task_102_datainput_panel_compact_ux_slice1.md`
+   - Command / click path: `cd v10 && npm run lint`, `git status --short -- v10/src/features/chrome/layout/DataInputPanel.tsx codex_tasks/task_102_datainput_panel_compact_ux_slice1.md`
    - Expected result: lint error 0, scope 내 변경
    - Covers: AC-5, AC-6
 
@@ -143,12 +143,12 @@ Status: COMPLETED
 
 Changed files:
 - `codex_tasks/task_102_datainput_panel_compact_ux_slice1.md`
-- `v10/src/features/layout/DataInputPanel.tsx`
+- `v10/src/features/chrome/layout/DataInputPanel.tsx`
 
 Commands run (only if user asked or required by spec):
-- `sed -n '1,1260p' v10/src/features/layout/DataInputPanel.tsx`
+- `sed -n '1,1260p' v10/src/features/chrome/layout/DataInputPanel.tsx`
 - `ls design_drafts | rg "layout_drafting_room_768x1024.svg|layout_drafting_room_1024x768.svg|layout_datainput_1440x1080.svg"`
-- `rg -n "compact|advanced|h-9|h-10|h-11|unmatched|handleApply|handleAutoLayout" v10/src/features/layout/DataInputPanel.tsx`
+- `rg -n "compact|advanced|h-9|h-10|h-11|unmatched|handleApply|handleAutoLayout" v10/src/features/chrome/layout/DataInputPanel.tsx`
 - `cd v10 && npm run lint`
 - `cd v10 && npm run build` (escalated)
 - `./scripts/run_repo_verifications.sh`

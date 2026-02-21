@@ -19,10 +19,10 @@ Date: 2026-02-15
 ## Scope (Base Required)
 
 Touched files/directories:
-- `v10/src/features/toolbar/**`
-- `v10/src/features/layout/**`
-- `v10/src/features/hooks/useSequence.ts`
-- `v10/src/features/extensions/commands/registerCoreCommands.ts`
+- `v10/src/features/chrome/toolbar/**`
+- `v10/src/features/chrome/layout/**`
+- `v10/src/features/platform/hooks/useSequence.ts`
+- `v10/src/features/platform/extensions/commands/registerCoreCommands.ts`
 - `scripts/check_v10_migration_baseline.sh`
 - `scripts/check_v10_legacy_freeze.sh`
 
@@ -111,7 +111,7 @@ If NO:
 ## Manual Verification Steps (Base Required)
 
 1) Step:
-   - Command / click path: `rg -n "useCanvasStore\(\).*\.|dispatchCommand\(" v10/src/features/toolbar v10/src/features/layout v10/src/features/hooks`
+   - Command / click path: `rg -n "useCanvasStore\(\).*\.|dispatchCommand\(" v10/src/features/chrome/toolbar v10/src/features/chrome/layout v10/src/features/platform/hooks`
    - Expected result: command usage dominates touched mutation paths.
    - Covers: AC-1, AC-3
 
@@ -150,12 +150,12 @@ If NO:
 Status: COMPLETED
 
 Changed files:
-- `v10/src/features/toolbar/FloatingToolbar.tsx`
-- `v10/src/features/layout/AppLayout.tsx`
-- `v10/src/features/extensions/ui/registerCoreDeclarativeManifest.ts`
+- `v10/src/features/chrome/toolbar/FloatingToolbar.tsx`
+- `v10/src/features/chrome/layout/AppLayout.tsx`
+- `v10/src/features/platform/extensions/ui/registerCoreDeclarativeManifest.ts`
 
 Commands run (only if user asked or required by spec):
-- `rg -n "useCanvasStore\\(\\).*\\.|dispatchCommand\\(" v10/src/features/toolbar v10/src/features/layout v10/src/features/hooks`
+- `rg -n "useCanvasStore\\(\\).*\\.|dispatchCommand\\(" v10/src/features/chrome/toolbar v10/src/features/chrome/layout v10/src/features/platform/hooks`
 - `scripts/check_v10_migration_baseline.sh`
 - `scripts/check_v10_legacy_freeze.sh`
 - `cd v10 && npm run lint && npm run build`

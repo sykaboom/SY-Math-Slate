@@ -24,13 +24,13 @@ Date: 2026-02-15
 
 Touched files/directories:
 - `codex_tasks/task_136_layout_slot_cutover_top_bottom_side.md`
-- `v10/src/features/layout/AppLayout.tsx`
-- `v10/src/features/extensions/ui/registerCoreSlots.ts`
-- `v10/src/features/extensions/ui/ExtensionRuntimeBootstrap.tsx`
-- `v10/src/features/extensions/ui/registerCoreDeclarativeManifest.ts`
-- `v10/src/features/extensions/ui/ExtensionSlot.tsx`
-- `v10/src/features/toolbar/FloatingToolbar.tsx`
-- `v10/src/features/layout/DataInputPanel.tsx`
+- `v10/src/features/chrome/layout/AppLayout.tsx`
+- `v10/src/features/platform/extensions/ui/registerCoreSlots.ts`
+- `v10/src/features/platform/extensions/ui/ExtensionRuntimeBootstrap.tsx`
+- `v10/src/features/platform/extensions/ui/registerCoreDeclarativeManifest.ts`
+- `v10/src/features/platform/extensions/ui/ExtensionSlot.tsx`
+- `v10/src/features/chrome/toolbar/FloatingToolbar.tsx`
+- `v10/src/features/chrome/layout/DataInputPanel.tsx`
 - `v10/AI_READ_ME.md`
 
 Out of scope:
@@ -174,9 +174,9 @@ Status: COMPLETED
 
 Changed files:
 - `codex_tasks/task_136_layout_slot_cutover_top_bottom_side.md`
-- `v10/src/features/layout/AppLayout.tsx`
-- `v10/src/features/extensions/ui/registerCoreSlots.ts`
-- `v10/src/features/extensions/ui/CoreSlotComponents.tsx`
+- `v10/src/features/chrome/layout/AppLayout.tsx`
+- `v10/src/features/platform/extensions/ui/registerCoreSlots.ts`
+- `v10/src/features/platform/extensions/ui/CoreSlotComponents.tsx`
 - `v10/AI_READ_ME.md`
 - `v10/AI_READ_ME_MAP.md`
 

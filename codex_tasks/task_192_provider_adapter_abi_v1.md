@@ -19,10 +19,10 @@ Date: 2026-02-16
 
 Touched files/directories:
 - `codex_tasks/task_192_provider_adapter_abi_v1.md`
-- `v10/src/features/extensions/adapters/types.ts`
-- `v10/src/features/extensions/adapters/registry.ts`
-- `v10/src/features/extensions/adapters/providerAbi.ts` (new)
-- `v10/src/features/extensions/adapters/index.ts`
+- `v10/src/features/platform/extensions/adapters/types.ts`
+- `v10/src/features/platform/extensions/adapters/registry.ts`
+- `v10/src/features/platform/extensions/adapters/providerAbi.ts` (new)
+- `v10/src/features/platform/extensions/adapters/index.ts`
 
 Out of scope:
 - Category-specific reference adapters (Task 193~196).
@@ -150,10 +150,10 @@ If NO:
 Status: COMPLETED
 
 Changed files:
-- `v10/src/features/extensions/adapters/providerAbi.ts`
-- `v10/src/features/extensions/adapters/types.ts`
-- `v10/src/features/extensions/adapters/registry.ts`
-- `v10/src/features/extensions/adapters/index.ts`
+- `v10/src/features/platform/extensions/adapters/providerAbi.ts`
+- `v10/src/features/platform/extensions/adapters/types.ts`
+- `v10/src/features/platform/extensions/adapters/registry.ts`
+- `v10/src/features/platform/extensions/adapters/index.ts`
 
 Commands run (only if user asked or required by spec):
 - `cd v10 && npm run lint`

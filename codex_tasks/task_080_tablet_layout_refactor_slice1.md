@@ -17,14 +17,14 @@ Date: 2026-02-07
 
 ## Scope (Codex must touch ONLY these)
 Touched files/directories:
-- `v10/src/features/layout/AppLayout.tsx`
-- `v10/src/features/layout/DataInputPanel.tsx`
+- `v10/src/features/chrome/layout/AppLayout.tsx`
+- `v10/src/features/chrome/layout/DataInputPanel.tsx`
 - `codex_tasks/task_080_tablet_layout_refactor_slice1.md`
 
 Out of scope:
-- `v10/src/features/layout/Prompter.tsx`
-- `v10/src/features/layout/PlayerBar.tsx`
-- `v10/src/features/toolbar/FloatingToolbar.tsx`
+- `v10/src/features/chrome/layout/Prompter.tsx`
+- `v10/src/features/chrome/layout/PlayerBar.tsx`
+- `v10/src/features/chrome/toolbar/FloatingToolbar.tsx`
 - Store/model/data contracts (`core/types`, migrations, persistence)
 
 ## Design Artifacts (required for layout/structure changes)
@@ -85,16 +85,16 @@ Implementation and manual checks must explicitly cover:
 ## Implementation Log (Codex fills)
 Status: COMPLETED
 Changed files:
-- `v10/src/features/layout/AppLayout.tsx`
-- `v10/src/features/layout/DataInputPanel.tsx`
+- `v10/src/features/chrome/layout/AppLayout.tsx`
+- `v10/src/features/chrome/layout/DataInputPanel.tsx`
 - `codex_tasks/task_080_tablet_layout_refactor_slice1.md`
 
 Commands run (only if user asked):
 - `sed -n ... AGENTS.md / GEMINI_CODEX_PROTOCOL.md / PROJECT_BLUEPRINT.md / PROJECT_CONTEXT.md`
 - `sed -n ... codex_tasks/task_080_tablet_layout_refactor_slice1.md`
 - `sed -n ... v10/AI_READ_ME.md / v10/AI_READ_ME_MAP.md`
-- `sed -n ... v10/src/features/layout/AppLayout.tsx`
-- `sed -n ... v10/src/features/layout/DataInputPanel.tsx`
+- `sed -n ... v10/src/features/chrome/layout/AppLayout.tsx`
+- `sed -n ... v10/src/features/chrome/layout/DataInputPanel.tsx`
 - `apply_patch` (AppLayout/DataInputPanel/task_080 updates)
 
 Notes:

@@ -19,8 +19,8 @@ Date: 2026-02-15
 ## Scope (Base Required)
 
 Touched files/directories:
-- `v10/src/features/mod-studio/layout/**` (new)
-- `v10/src/features/extensions/ui/**`
+- `v10/src/features/platform/mod-studio/layout/**` (new)
+- `v10/src/features/platform/extensions/ui/**`
 - `v10/src/core/extensions/pluginLoader.ts`
 
 Out of scope:
@@ -158,9 +158,9 @@ If NO:
 Status: COMPLETED
 
 Changed files:
-- `v10/src/features/mod-studio/layout/LayoutStudioSection.tsx`
-- `v10/src/features/store/useModStudioStore.ts`
-- `v10/src/features/mod-studio/core/types.ts`
+- `v10/src/features/platform/mod-studio/layout/LayoutStudioSection.tsx`
+- `v10/src/features/platform/store/useModStudioStore.ts`
+- `v10/src/features/platform/mod-studio/core/types.ts`
 
 Commands run (only if user asked or required by spec):
 - `scripts/check_layer_rules.sh`

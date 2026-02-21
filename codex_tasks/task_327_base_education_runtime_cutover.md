@@ -19,14 +19,14 @@ Date: 2026-02-20
 ## Scope (Base Required)
 
 Touched files/directories:
-- `v10/src/features/extensions/ui/coreTemplates.ts`
-- `v10/src/features/extensions/ui/registerCoreSlots.ts`
-- `v10/src/features/toolbar/FloatingToolbar.tsx`
-- `v10/src/features/toolbar/DrawModeTools.tsx`
-- `v10/src/features/toolbar/PlaybackModeTools.tsx`
-- `v10/src/features/toolbar/CanvasModeTools.tsx`
-- `v10/src/features/toolbar/MorePanel.tsx`
-- `v10/src/features/store/useModStudioStore.ts`
+- `v10/src/features/platform/extensions/ui/coreTemplates.ts`
+- `v10/src/features/platform/extensions/ui/registerCoreSlots.ts`
+- `v10/src/features/chrome/toolbar/FloatingToolbar.tsx`
+- `v10/src/features/chrome/toolbar/DrawModeTools.tsx`
+- `v10/src/features/chrome/toolbar/PlaybackModeTools.tsx`
+- `v10/src/features/chrome/toolbar/CanvasModeTools.tsx`
+- `v10/src/features/chrome/toolbar/MorePanel.tsx`
+- `v10/src/features/platform/store/useModStudioStore.ts`
 
 Out of scope:
 - New actions or UX redesign.
@@ -68,8 +68,8 @@ Out of scope:
 - Touched file count:
   - 8
 - Files shared with other PENDING tasks:
-  - `v10/src/features/store/useModStudioStore.ts`
-  - `v10/src/features/extensions/ui/coreTemplates.ts`
+  - `v10/src/features/platform/store/useModStudioStore.ts`
+  - `v10/src/features/platform/extensions/ui/coreTemplates.ts`
 - Cross-module dependency:
   - YES
 - Parallelizable sub-units:
@@ -214,13 +214,13 @@ Out of scope:
 Status: COMPLETED
 
 Changed files:
-- `v10/src/features/extensions/ui/coreTemplates.ts`
-- `v10/src/features/extensions/ui/registerCoreSlots.ts`
-- `v10/src/features/toolbar/FloatingToolbar.tsx`
-- `v10/src/features/toolbar/DrawModeTools.tsx`
-- `v10/src/features/toolbar/PlaybackModeTools.tsx`
-- `v10/src/features/toolbar/CanvasModeTools.tsx`
-- `v10/src/features/toolbar/MorePanel.tsx`
+- `v10/src/features/platform/extensions/ui/coreTemplates.ts`
+- `v10/src/features/platform/extensions/ui/registerCoreSlots.ts`
+- `v10/src/features/chrome/toolbar/FloatingToolbar.tsx`
+- `v10/src/features/chrome/toolbar/DrawModeTools.tsx`
+- `v10/src/features/chrome/toolbar/PlaybackModeTools.tsx`
+- `v10/src/features/chrome/toolbar/CanvasModeTools.tsx`
+- `v10/src/features/chrome/toolbar/MorePanel.tsx`
 
 Commands run (only if user asked or required by spec):
 - cd v10 && npm run lint

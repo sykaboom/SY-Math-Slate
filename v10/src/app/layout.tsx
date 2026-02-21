@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import "../features/canvas/styles/content-layer.css";
-import "../features/canvas/styles/mathjax.css";
-import "../features/animation/styles/rich-text-animation.css";
-import "../features/layout/styles/prompter.css";
-import { ThemeProvider } from "@features/theme/ThemeProvider";
+import "../features/editor/canvas/styles/content-layer.css";
+import "../features/editor/canvas/styles/mathjax.css";
+import "../features/editor/animation/styles/rich-text-animation.css";
+import "../features/chrome/layout/styles/prompter.css";
+import { ThemeProvider } from "@features/chrome/theming-ui/ThemeProvider";
 
 export const metadata: Metadata = {
   title: "SY Math Slate (v10)",

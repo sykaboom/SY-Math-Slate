@@ -19,8 +19,8 @@ Date: 2026-02-15
 
 Touched files/directories:
 - `codex_tasks/task_172_hardcoded_style_elimination_pass_a.md`
-- `v10/src/features/layout/DataInputPanel.tsx`
-- `v10/src/features/layout/PlayerBar.tsx`
+- `v10/src/features/chrome/layout/DataInputPanel.tsx`
+- `v10/src/features/chrome/layout/PlayerBar.tsx`
 - `v10/src/app/globals.css`
 - `codex_tasks/workflow/style_budget.env`
 - `v10/AI_READ_ME.md`
@@ -150,8 +150,8 @@ Status: COMPLETED
 
 Changed files:
 - `codex_tasks/task_172_hardcoded_style_elimination_pass_a.md`
-- `v10/src/features/layout/DataInputPanel.tsx`
-- `v10/src/features/layout/PlayerBar.tsx`
+- `v10/src/features/chrome/layout/DataInputPanel.tsx`
+- `v10/src/features/chrome/layout/PlayerBar.tsx`
 - `v10/src/app/globals.css`
 - `codex_tasks/workflow/style_budget.env`
 - `v10/AI_READ_ME.md`

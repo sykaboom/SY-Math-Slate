@@ -54,16 +54,16 @@ Date: 2026-02-18
 
 Touched files/directories (create):
 - `v10/src/core/types/snapshot.ts` — CanvasSnapshot 타입 + ShareSessionMeta 타입
-- `v10/src/features/sharing/snapshotSerializer.ts` — serialize/deserialize 유틸리티
-- `v10/src/features/sharing/useSnapshotShare.ts` — 스냅샷 생성 + localStorage 저장 + URL 생성 hook
-- `v10/src/features/sharing/ShareButton.tsx` — Share UI 버튼 (URL 복사 포함)
-- `v10/src/features/sharing/PublicToggle.tsx` — 공개/비공개 세션 토글
-- `v10/src/features/viewer/ViewerShell.tsx` — 읽기 전용 캔버스 뷰어 컨테이너
-- `v10/src/features/viewer/useViewerSession.ts` — shareId로 localStorage에서 스냅샷 로드
+- `v10/src/features/collaboration/sharing/snapshotSerializer.ts` — serialize/deserialize 유틸리티
+- `v10/src/features/collaboration/sharing/useSnapshotShare.ts` — 스냅샷 생성 + localStorage 저장 + URL 생성 hook
+- `v10/src/features/collaboration/sharing/ShareButton.tsx` — Share UI 버튼 (URL 복사 포함)
+- `v10/src/features/collaboration/sharing/PublicToggle.tsx` — 공개/비공개 세션 토글
+- `v10/src/features/chrome/viewer/ViewerShell.tsx` — 읽기 전용 캔버스 뷰어 컨테이너
+- `v10/src/features/chrome/viewer/useViewerSession.ts` — shareId로 localStorage에서 스냅샷 로드
 - `v10/src/app/view/[shareId]/page.tsx` — Next.js 뷰어 라우트
 
 Touched files/directories (write):
-- `v10/src/features/layout/PlayerBar.tsx` — Share 버튼 + PublicToggle 추가 (모드 조건부)
+- `v10/src/features/chrome/layout/PlayerBar.tsx` — Share 버튼 + PublicToggle 추가 (모드 조건부)
 
 Out of scope:
 - 서버 persistence (Phase 5.2)
@@ -283,14 +283,14 @@ Status: COMPLETED
 
 Changed files:
 - `v10/src/core/types/snapshot.ts` (new)
-- `v10/src/features/sharing/snapshotSerializer.ts` (new)
-- `v10/src/features/sharing/useSnapshotShare.ts` (new)
-- `v10/src/features/sharing/ShareButton.tsx` (new)
-- `v10/src/features/sharing/PublicToggle.tsx` (new)
-- `v10/src/features/viewer/ViewerShell.tsx` (new)
-- `v10/src/features/viewer/useViewerSession.ts` (new)
+- `v10/src/features/collaboration/sharing/snapshotSerializer.ts` (new)
+- `v10/src/features/collaboration/sharing/useSnapshotShare.ts` (new)
+- `v10/src/features/collaboration/sharing/ShareButton.tsx` (new)
+- `v10/src/features/collaboration/sharing/PublicToggle.tsx` (new)
+- `v10/src/features/chrome/viewer/ViewerShell.tsx` (new)
+- `v10/src/features/chrome/viewer/useViewerSession.ts` (new)
 - `v10/src/app/view/[shareId]/page.tsx` (new)
-- `v10/src/features/layout/PlayerBar.tsx` (edit)
+- `v10/src/features/chrome/layout/PlayerBar.tsx` (edit)
 - `codex_tasks/task_285_phase5_1_snapshot_viewer.md` (closeout)
 
 Commands run:

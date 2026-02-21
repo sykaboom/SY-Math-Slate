@@ -24,15 +24,15 @@ Date: 2026-02-08
 Touched files/directories:
 - `codex_tasks/task_089_lint_debt_cleanup_batch1.md`
 - `v10/src/core/math/rules.ts`
-- `v10/src/features/canvas/AnchorIndicator.tsx`
-- `v10/src/features/canvas/ContentLayer.tsx`
-- `v10/src/features/canvas/PasteHelperModal.tsx`
-- `v10/src/features/canvas/animation/RichTextAnimator.tsx`
-- `v10/src/features/hooks/useSequence.ts`
+- `v10/src/features/editor/canvas/AnchorIndicator.tsx`
+- `v10/src/features/editor/canvas/ContentLayer.tsx`
+- `v10/src/features/editor/canvas/PasteHelperModal.tsx`
+- `v10/src/features/editor/canvas/animation/RichTextAnimator.tsx`
+- `v10/src/features/platform/hooks/useSequence.ts`
 
 Out of scope:
 - warning-only 파일 수정
-- `v10/src/features/layout/**` 수정
+- `v10/src/features/chrome/layout/**` 수정
 - UI 스타일/레이아웃 변경
 - 로직 리팩터링 확장
 
@@ -78,11 +78,11 @@ Lint baseline (2026-02-09, before implementation):
 - `cd v10 && npm run lint` 결과: `7 errors`, `10 warnings`
 - `error` 파일 분포:
   - `v10/src/core/math/rules.ts`
-  - `v10/src/features/canvas/AnchorIndicator.tsx`
-  - `v10/src/features/canvas/ContentLayer.tsx`
-  - `v10/src/features/canvas/PasteHelperModal.tsx`
-  - `v10/src/features/canvas/animation/RichTextAnimator.tsx`
-  - `v10/src/features/hooks/useSequence.ts`
+  - `v10/src/features/editor/canvas/AnchorIndicator.tsx`
+  - `v10/src/features/editor/canvas/ContentLayer.tsx`
+  - `v10/src/features/editor/canvas/PasteHelperModal.tsx`
+  - `v10/src/features/editor/canvas/animation/RichTextAnimator.tsx`
+  - `v10/src/features/platform/hooks/useSequence.ts`
 
 ---
 
@@ -128,11 +128,11 @@ Status: COMPLETED
 Changed files:
 - `codex_tasks/task_089_lint_debt_cleanup_batch1.md`
 - `v10/src/core/math/rules.ts`
-- `v10/src/features/canvas/AnchorIndicator.tsx`
-- `v10/src/features/canvas/ContentLayer.tsx`
-- `v10/src/features/canvas/PasteHelperModal.tsx`
-- `v10/src/features/canvas/animation/RichTextAnimator.tsx`
-- `v10/src/features/hooks/useSequence.ts`
+- `v10/src/features/editor/canvas/AnchorIndicator.tsx`
+- `v10/src/features/editor/canvas/ContentLayer.tsx`
+- `v10/src/features/editor/canvas/PasteHelperModal.tsx`
+- `v10/src/features/editor/canvas/animation/RichTextAnimator.tsx`
+- `v10/src/features/platform/hooks/useSequence.ts`
 
 Commands run:
 - `cd v10 && npm run lint` (spec baseline 확인)

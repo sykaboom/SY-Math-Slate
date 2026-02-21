@@ -8,7 +8,7 @@ Owner: Codex
 Vercel build failed with TypeScript error: `CanvasItem` not assignable to `{ stepIndex?: number }` in `ContentLayer`.
 
 ## Scope
-- v10/src/features/canvas/ContentLayer.tsx
+- v10/src/features/editor/canvas/ContentLayer.tsx
 
 ## Change
 - Widened `getStepIndex` to accept `CanvasItem` and safely read `stepIndex` using an `in` check.

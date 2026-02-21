@@ -21,10 +21,10 @@ Date: 2026-02-15
 
 Touched files/directories:
 - `codex_tasks/task_123_command_migration_data_input_domain.md`
-- `v10/src/features/extensions/commands/registerCoreCommands.ts`
-- `v10/src/features/layout/DataInputPanel.tsx`
-- `v10/src/features/hooks/useCanvas.ts`
-- `v10/src/features/hooks/usePersistence.ts`
+- `v10/src/features/platform/extensions/commands/registerCoreCommands.ts`
+- `v10/src/features/chrome/layout/DataInputPanel.tsx`
+- `v10/src/features/platform/hooks/useCanvas.ts`
+- `v10/src/features/platform/hooks/usePersistence.ts`
 
 Out of scope:
 - Playback/page controls

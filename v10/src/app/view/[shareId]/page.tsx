@@ -1,4 +1,4 @@
-import { ViewerShell } from "@features/viewer/ViewerShell";
+import { ViewerShell } from "@features/chrome/viewer/ViewerShell";
 
 type SharedSnapshotPageProps = {
   params: Promise<{

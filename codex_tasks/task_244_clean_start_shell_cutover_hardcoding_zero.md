@@ -23,11 +23,11 @@ Date: 2026-02-16
 
 Touched files/directories:
 - `codex_tasks/task_244_clean_start_shell_cutover_hardcoding_zero.md`
-- `v10/src/features/layout/AppLayout.tsx`
-- `v10/src/features/layout/windowing/WindowHost.tsx`
-- `v10/src/features/layout/windowing/PanelLauncher.tsx` (new or update)
-- `v10/src/features/extensions/ui/registerCoreSlots.ts`
-- `v10/src/features/store/useChromeStore.ts` (default open/closed state)
+- `v10/src/features/chrome/layout/AppLayout.tsx`
+- `v10/src/features/chrome/layout/windowing/WindowHost.tsx`
+- `v10/src/features/chrome/layout/windowing/PanelLauncher.tsx` (new or update)
+- `v10/src/features/platform/extensions/ui/registerCoreSlots.ts`
+- `v10/src/features/platform/store/useChromeStore.ts` (default open/closed state)
 
 Out of scope:
 - New module feature development
@@ -193,10 +193,10 @@ Status: COMPLETED
 
 Changed files:
 - `codex_tasks/task_244_clean_start_shell_cutover_hardcoding_zero.md`
-- `v10/src/features/layout/AppLayout.tsx`
-- `v10/src/features/layout/windowing/PanelLauncher.tsx` (new)
-- `v10/src/features/extensions/ui/registerCoreSlots.ts`
-- `v10/src/features/store/useChromeStore.ts`
+- `v10/src/features/chrome/layout/AppLayout.tsx`
+- `v10/src/features/chrome/layout/windowing/PanelLauncher.tsx` (new)
+- `v10/src/features/platform/extensions/ui/registerCoreSlots.ts`
+- `v10/src/features/platform/store/useChromeStore.ts`
 
 Commands run (only if user asked or required by spec):
 - `bash scripts/check_layer_rules.sh` (PASS)

@@ -19,9 +19,9 @@ Date: 2026-02-15
 
 Touched files/directories:
 - `codex_tasks/task_181_document_outline_navigation_map.md`
-- `v10/src/features/editor-core/outline/documentOutline.ts`
-- `v10/src/features/hooks/useDocumentOutline.ts`
-- `v10/src/features/toolbar/PageNavigator.tsx`
+- `v10/src/features/editor/editor-core/outline/documentOutline.ts`
+- `v10/src/features/platform/hooks/useDocumentOutline.ts`
+- `v10/src/features/chrome/toolbar/PageNavigator.tsx`
 
 Out of scope:
 - Full-text search engine and server indexing.
@@ -114,7 +114,7 @@ If NO:
 ## Manual Verification Steps (Base Required)
 
 1) Step:
-   - Command / click path: `cd v10 && npm run lint -- --max-warnings=0 -- src/features/editor-core/outline/documentOutline.ts src/features/hooks/useDocumentOutline.ts src/features/toolbar/PageNavigator.tsx`
+   - Command / click path: `cd v10 && npm run lint -- --max-warnings=0 -- src/features/editor/editor-core/outline/documentOutline.ts src/features/platform/hooks/useDocumentOutline.ts src/features/chrome/toolbar/PageNavigator.tsx`
    - Expected result: PASS.
    - Covers: AC-1, AC-2, AC-3
 
@@ -145,12 +145,12 @@ Status: COMPLETED
 
 Changed files:
 - `codex_tasks/task_181_document_outline_navigation_map.md`
-- `v10/src/features/editor-core/outline/documentOutline.ts`
-- `v10/src/features/hooks/useDocumentOutline.ts`
-- `v10/src/features/toolbar/PageNavigator.tsx`
+- `v10/src/features/editor/editor-core/outline/documentOutline.ts`
+- `v10/src/features/platform/hooks/useDocumentOutline.ts`
+- `v10/src/features/chrome/toolbar/PageNavigator.tsx`
 
 Commands run (only if user asked or required by spec):
-- `cd v10 && npm run lint -- --max-warnings=0 -- src/features/editor-core/outline/documentOutline.ts src/features/hooks/useDocumentOutline.ts src/features/toolbar/PageNavigator.tsx`
+- `cd v10 && npm run lint -- --max-warnings=0 -- src/features/editor/editor-core/outline/documentOutline.ts src/features/platform/hooks/useDocumentOutline.ts src/features/chrome/toolbar/PageNavigator.tsx`
 - `cd v10 && npm run build`
 
 ## Gate Results (Codex fills)

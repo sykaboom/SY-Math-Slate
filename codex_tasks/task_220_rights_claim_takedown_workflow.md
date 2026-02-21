@@ -23,10 +23,10 @@ Touched files/directories:
 - `codex_tasks/task_220_rights_claim_takedown_workflow.md`
 - `v10/src/core/contracts/community.ts`
 - `v10/src/app/api/community/route.ts`
-- `v10/src/features/community/store/useCommunityStore.ts`
-- `v10/src/features/community/useCommunityActions.ts`
-- `v10/src/features/moderation/useModerationConsole.ts`
-- `v10/src/features/moderation/ModerationConsolePanel.tsx`
+- `v10/src/features/governance/community/store/useCommunityStore.ts`
+- `v10/src/features/governance/community/useCommunityActions.ts`
+- `v10/src/features/governance/moderation/useModerationConsole.ts`
+- `v10/src/features/governance/moderation/ModerationConsolePanel.tsx`
 
 Out of scope:
 - Ads policy gating rules.
@@ -170,10 +170,10 @@ Status: COMPLETED
 Changed files:
 - `v10/src/core/contracts/community.ts`
 - `v10/src/app/api/community/route.ts`
-- `v10/src/features/community/store/useCommunityStore.ts`
-- `v10/src/features/community/useCommunityActions.ts`
-- `v10/src/features/moderation/useModerationConsole.ts`
-- `v10/src/features/moderation/ModerationConsolePanel.tsx`
+- `v10/src/features/governance/community/store/useCommunityStore.ts`
+- `v10/src/features/governance/community/useCommunityActions.ts`
+- `v10/src/features/governance/moderation/useModerationConsole.ts`
+- `v10/src/features/governance/moderation/ModerationConsolePanel.tsx`
 - `codex_tasks/task_220_rights_claim_takedown_workflow.md`
 
 Commands run (only if user asked or required by spec):

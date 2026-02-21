@@ -21,13 +21,13 @@ Date: 2026-02-15
 
 Touched files/directories:
 - `codex_tasks/task_127_ui_state_domain_split_scaffold.md`
-- `v10/src/features/store/useToolStore.ts` (new)
-- `v10/src/features/store/useViewportStore.ts` (new)
-- `v10/src/features/store/usePlaybackStore.ts` (new)
-- `v10/src/features/store/useChromeStore.ts` (new)
-- `v10/src/features/store/useCapabilityStore.ts` (new)
-- `v10/src/features/store/useUIStoreBridge.ts` (new)
-- `v10/src/features/store/useUIStore.ts` (compat wrapper only)
+- `v10/src/features/platform/store/useToolStore.ts` (new)
+- `v10/src/features/platform/store/useViewportStore.ts` (new)
+- `v10/src/features/platform/store/usePlaybackStore.ts` (new)
+- `v10/src/features/platform/store/useChromeStore.ts` (new)
+- `v10/src/features/platform/store/useCapabilityStore.ts` (new)
+- `v10/src/features/platform/store/useUIStoreBridge.ts` (new)
+- `v10/src/features/platform/store/useUIStore.ts` (compat wrapper only)
 
 Out of scope:
 - Full read-path migration

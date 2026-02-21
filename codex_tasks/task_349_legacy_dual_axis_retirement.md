@@ -21,7 +21,7 @@ Date: 2026-02-20
 
 Touched files/directories:
 - `v10/src/mod/runtime/templatePackRegistry.ts`
-- `v10/src/features/toolbar/toolbarModePolicy.ts`
+- `v10/src/features/chrome/toolbar/toolbarModePolicy.ts`
 - `v10/src/core/mod/package/*`
 - `v10/docs/architecture/ModEngine.md`
 
@@ -63,7 +63,7 @@ Out of scope:
   - 4
 - Files shared with other PENDING tasks:
   - `v10/src/mod/runtime/templatePackRegistry.ts`
-  - `v10/src/features/toolbar/toolbarModePolicy.ts`
+  - `v10/src/features/chrome/toolbar/toolbarModePolicy.ts`
 - Cross-module dependency:
   - YES
 - Parallelizable sub-units:
@@ -189,7 +189,7 @@ Status: COMPLETED
 
 Changed files:
 - `v10/src/mod/runtime/templatePackRegistry.ts`
-- `v10/src/features/toolbar/toolbarModePolicy.ts`
+- `v10/src/features/chrome/toolbar/toolbarModePolicy.ts`
 - `v10/src/core/mod/package/selectors.ts`
 - `v10/docs/architecture/ModEngine.md`
 - `codex_tasks/task_349_legacy_dual_axis_retirement.md`
@@ -199,7 +199,7 @@ Commands run (only if user asked or required by spec):
 - `bash scripts/check_mod_contract.sh`
 - `cd v10 && npm run lint`
 - `cd v10 && npm run build`
-- `rg -n "fallback|legacy|template.*runtime" v10/src/mod/runtime/templatePackRegistry.ts v10/src/features/toolbar/toolbarModePolicy.ts v10/src/core/mod/package v10/docs/architecture/ModEngine.md`
+- `rg -n "fallback|legacy|template.*runtime" v10/src/mod/runtime/templatePackRegistry.ts v10/src/features/chrome/toolbar/toolbarModePolicy.ts v10/src/core/mod/package v10/docs/architecture/ModEngine.md`
 - `rg -n "ModeEngine\\.md" v10 PROJECT_ROADMAP.md codex_tasks`
 
 ## Gate Results (Codex fills)

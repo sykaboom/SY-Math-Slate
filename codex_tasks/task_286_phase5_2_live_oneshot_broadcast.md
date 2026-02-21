@@ -62,19 +62,19 @@ Date: 2026-02-18
 ## Scope (Base Required)
 
 Touched files/directories (create):
-- `v10/src/features/sharing/adapters/LocalSnapshotAdapter.ts` — Phase 5.1 localStorage 로직 추출
-- `v10/src/features/sharing/adapters/ServerSnapshotAdapter.ts` — API 기반 저장/로드
-- `v10/src/features/sharing/adapters/UpstashSnapshotAdapter.ts` — Upstash Redis 저장/로드 구현
-- `v10/src/features/sharing/adapters/SnapshotAdapterInterface.ts` — adapter 인터페이스
-- `v10/src/features/sharing/transport/LiveBroadcastTransport.ts` — WebSocket 추상화
-- `v10/src/features/sharing/useHostSession.ts` — host 캔버스 변경 → broadcast
-- `v10/src/features/viewer/useViewerLiveSession.ts` — 실시간 뷰어 구독
+- `v10/src/features/collaboration/sharing/adapters/LocalSnapshotAdapter.ts` — Phase 5.1 localStorage 로직 추출
+- `v10/src/features/collaboration/sharing/adapters/ServerSnapshotAdapter.ts` — API 기반 저장/로드
+- `v10/src/features/collaboration/sharing/adapters/UpstashSnapshotAdapter.ts` — Upstash Redis 저장/로드 구현
+- `v10/src/features/collaboration/sharing/adapters/SnapshotAdapterInterface.ts` — adapter 인터페이스
+- `v10/src/features/collaboration/sharing/transport/LiveBroadcastTransport.ts` — WebSocket 추상화
+- `v10/src/features/collaboration/sharing/useHostSession.ts` — host 캔버스 변경 → broadcast
+- `v10/src/features/chrome/viewer/useViewerLiveSession.ts` — 실시간 뷰어 구독
 - `v10/src/app/api/share/route.ts` — POST (저장) / GET (조회) API route
 - `v10/src/app/api/share/[shareId]/route.ts` — GET (단일 조회) API route
 
 Touched files/directories (write):
-- `v10/src/features/sharing/useSnapshotShare.ts` — adapter 패턴으로 리팩토링
-- `v10/src/features/viewer/useViewerSession.ts` — live vs snapshot 분기
+- `v10/src/features/collaboration/sharing/useSnapshotShare.ts` — adapter 패턴으로 리팩토링
+- `v10/src/features/chrome/viewer/useViewerSession.ts` — live vs snapshot 분기
 - `v10/src/app/view/[shareId]/page.tsx` — live session 지원 추가
 - `v10/src/core/types/snapshot.ts` — `LiveSessionMeta` 타입 추가
 
@@ -275,17 +275,17 @@ token: HMAC-SHA256(shareId + secret, 24h TTL)
 Status: COMPLETED
 
 Changed files:
-- `v10/src/features/sharing/adapters/SnapshotAdapterInterface.ts`
-- `v10/src/features/sharing/adapters/LocalSnapshotAdapter.ts`
-- `v10/src/features/sharing/adapters/UpstashSnapshotAdapter.ts`
-- `v10/src/features/sharing/adapters/ServerSnapshotAdapter.ts`
-- `v10/src/features/sharing/transport/LiveBroadcastTransport.ts`
-- `v10/src/features/sharing/useHostSession.ts`
-- `v10/src/features/viewer/useViewerLiveSession.ts`
+- `v10/src/features/collaboration/sharing/adapters/SnapshotAdapterInterface.ts`
+- `v10/src/features/collaboration/sharing/adapters/LocalSnapshotAdapter.ts`
+- `v10/src/features/collaboration/sharing/adapters/UpstashSnapshotAdapter.ts`
+- `v10/src/features/collaboration/sharing/adapters/ServerSnapshotAdapter.ts`
+- `v10/src/features/collaboration/sharing/transport/LiveBroadcastTransport.ts`
+- `v10/src/features/collaboration/sharing/useHostSession.ts`
+- `v10/src/features/chrome/viewer/useViewerLiveSession.ts`
 - `v10/src/app/api/share/route.ts`
 - `v10/src/app/api/share/[shareId]/route.ts`
-- `v10/src/features/sharing/useSnapshotShare.ts`
-- `v10/src/features/viewer/useViewerSession.ts`
+- `v10/src/features/collaboration/sharing/useSnapshotShare.ts`
+- `v10/src/features/chrome/viewer/useViewerSession.ts`
 - `v10/src/app/view/[shareId]/page.tsx`
 - `v10/src/core/types/snapshot.ts`
 - `codex_tasks/task_286_phase5_2_live_oneshot_broadcast.md`

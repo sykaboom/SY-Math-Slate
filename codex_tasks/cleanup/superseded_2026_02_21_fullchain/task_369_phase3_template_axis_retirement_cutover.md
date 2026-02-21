@@ -18,7 +18,7 @@ Date: 2026-02-21
 ## Scope (Base Required)
 
 Touched files/directories:
-- v10/src/mod/templates, v10/src/mod/packages, v10/src/core/mod, v10/src/features/toolbar
+- v10/src/mod/templates, v10/src/mod/packages, v10/src/core/mod, v10/src/features/chrome/toolbar
 
 Out of scope:
 - New viewer live features are excluded.

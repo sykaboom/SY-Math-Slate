@@ -14,7 +14,7 @@ const contractSource = read("v10/src/core/foundation/schemas/extensionMarketplac
 const catalogSource = read("v10/src/core/runtime/plugin-runtime/marketplaceCatalog.ts");
 const routeSource = read("v10/src/app/api/extensions/marketplace/route.ts");
 const hookSource = read(
-  "v10/src/features/extensions/marketplace/useMarketplaceCatalog.ts"
+  "v10/src/features/platform/extensions/marketplace/useMarketplaceCatalog.ts"
 );
 
 assert(

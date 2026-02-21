@@ -19,8 +19,8 @@ Date: 2026-02-15
 
 Touched files/directories:
 - `codex_tasks/task_184_datainput_headless_logic_hooks.md`
-- `v10/src/features/input-studio/hooks/*`
-- `v10/src/features/layout/DataInputPanel.tsx`
+- `v10/src/features/editor/input-studio/hooks/*`
+- `v10/src/features/chrome/layout/DataInputPanel.tsx`
 
 Out of scope:
 - LLM/approval/publish workflows (handled in task_186~190).
@@ -148,12 +148,12 @@ If NO:
 Status: COMPLETED
 
 Changed files:
-- `v10/src/features/input-studio/hooks/useInputStudioHeadless.ts`
-- `v10/src/features/input-studio/hooks/types.ts`
-- `v10/src/features/layout/DataInputPanel.tsx`
+- `v10/src/features/editor/input-studio/hooks/useInputStudioHeadless.ts`
+- `v10/src/features/editor/input-studio/hooks/types.ts`
+- `v10/src/features/chrome/layout/DataInputPanel.tsx`
 
 Commands run (only if user asked or required by spec):
-- `cd v10 && npm run lint -- --max-warnings=0 -- src/features/layout/DataInputPanel.tsx src/features/input-studio`
+- `cd v10 && npm run lint -- --max-warnings=0 -- src/features/chrome/layout/DataInputPanel.tsx src/features/editor/input-studio`
 - `cd v10 && npm run lint`
 - `cd v10 && npm run build`
 - `VERIFY_STAGE=end bash scripts/run_repo_verifications.sh`

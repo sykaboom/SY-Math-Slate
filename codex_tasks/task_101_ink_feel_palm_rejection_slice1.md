@@ -23,12 +23,12 @@ Date: 2026-02-09
 
 Touched files/directories:
 - `codex_tasks/task_101_ink_feel_palm_rejection_slice1.md`
-- `v10/src/features/hooks/useCanvas.ts`
-- `v10/src/features/hooks/useOverlayCanvas.ts`
+- `v10/src/features/platform/hooks/useCanvas.ts`
+- `v10/src/features/platform/hooks/useOverlayCanvas.ts`
 
 Out of scope:
-- `v10/src/features/layout/**`
-- `v10/src/features/toolbar/**`
+- `v10/src/features/chrome/layout/**`
+- `v10/src/features/chrome/toolbar/**`
 - `v10/src/core/**`
 
 ---
@@ -99,12 +99,12 @@ Out of scope:
 ## Manual Verification Steps (since no automated tests)
 
 1) 코드 경로 확인:
-   - Command / click path: `rg -n "pointerType|touch|pen|palm|minDistance|smoothing" v10/src/features/hooks/useCanvas.ts v10/src/features/hooks/useOverlayCanvas.ts`
+   - Command / click path: `rg -n "pointerType|touch|pen|palm|minDistance|smoothing" v10/src/features/platform/hooks/useCanvas.ts v10/src/features/platform/hooks/useOverlayCanvas.ts`
    - Expected result: touch 차단 + smoothing 기준 코드 존재
    - Covers: AC-1, AC-2, AC-3
 
 2) 품질/범위 확인:
-   - Command / click path: `cd v10 && npm run lint`, `git status --short -- v10/src/features/hooks/useCanvas.ts v10/src/features/hooks/useOverlayCanvas.ts codex_tasks/task_101_ink_feel_palm_rejection_slice1.md`
+   - Command / click path: `cd v10 && npm run lint`, `git status --short -- v10/src/features/platform/hooks/useCanvas.ts v10/src/features/platform/hooks/useOverlayCanvas.ts codex_tasks/task_101_ink_feel_palm_rejection_slice1.md`
    - Expected result: lint error 0, scope 내 변경
    - Covers: AC-4, AC-5
 
@@ -134,13 +134,13 @@ Status: COMPLETED
 
 Changed files:
 - `codex_tasks/task_101_ink_feel_palm_rejection_slice1.md`
-- `v10/src/features/hooks/useCanvas.ts`
-- `v10/src/features/hooks/useOverlayCanvas.ts`
+- `v10/src/features/platform/hooks/useCanvas.ts`
+- `v10/src/features/platform/hooks/useOverlayCanvas.ts`
 
 Commands run (only if user asked or required by spec):
-- `sed -n '1,420p' v10/src/features/hooks/useCanvas.ts`
-- `sed -n '1,420p' v10/src/features/hooks/useOverlayCanvas.ts`
-- `rg -n "pointerType|touch|pen|palm|minDistance|smoothing" v10/src/features/hooks/useCanvas.ts v10/src/features/hooks/useOverlayCanvas.ts`
+- `sed -n '1,420p' v10/src/features/platform/hooks/useCanvas.ts`
+- `sed -n '1,420p' v10/src/features/platform/hooks/useOverlayCanvas.ts`
+- `rg -n "pointerType|touch|pen|palm|minDistance|smoothing" v10/src/features/platform/hooks/useCanvas.ts v10/src/features/platform/hooks/useOverlayCanvas.ts`
 - `cd v10 && npm run lint`
 - `cd v10 && npm run build` (escalated)
 - `./scripts/run_repo_verifications.sh`

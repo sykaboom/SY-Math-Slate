@@ -23,7 +23,7 @@ Date: 2026-02-16
 
 Touched files/directories:
 - `codex_tasks/task_236_pointer_offset_hotfix_live_canvas_rect.md`
-- `v10/src/features/hooks/useCanvas.ts`
+- `v10/src/features/platform/hooks/useCanvas.ts`
 
 Out of scope:
 - `useOverlayCanvas.ts` refactor (unless blocker discovered).
@@ -106,12 +106,12 @@ If NO:
 ## Manual Verification Steps (Base Required)
 
 1) Step:
-   - Command / click path: `rg -n "toBoardPoint|useBoardTransform|getCanvasPoint" v10/src/features/hooks/useCanvas.ts`
+   - Command / click path: `rg -n "toBoardPoint|useBoardTransform|getCanvasPoint" v10/src/features/platform/hooks/useCanvas.ts`
    - Expected result: `useCanvas` no longer relies on stale transform cache for pointer mapping; live rect-based mapping code present.
    - Covers: AC-1, AC-2
 
 2) Step:
-   - Command / click path: `rg -n "TOUCH_PALM|acquireGestureLock|releaseGestureLock|shouldSuppressTouch" v10/src/features/hooks/useCanvas.ts`
+   - Command / click path: `rg -n "TOUCH_PALM|acquireGestureLock|releaseGestureLock|shouldSuppressTouch" v10/src/features/platform/hooks/useCanvas.ts`
    - Expected result: gesture lock/palm rejection paths still present.
    - Covers: AC-3
 
@@ -127,7 +127,7 @@ If NO:
 
 5) Step:
    - Command / click path: `git diff --name-only`
-   - Expected result: changes are limited to `v10/src/features/hooks/useCanvas.ts` and this spec file.
+   - Expected result: changes are limited to `v10/src/features/platform/hooks/useCanvas.ts` and this spec file.
    - Covers: AC-4
 
 ---
@@ -137,7 +137,7 @@ If NO:
 - Risks:
   - If rect mapping is mis-scaled, stroke coordinates could drift under zoom.
 - Roll-back:
-  - Revert `v10/src/features/hooks/useCanvas.ts` to prior commit.
+  - Revert `v10/src/features/platform/hooks/useCanvas.ts` to prior commit.
 
 ---
 
@@ -155,24 +155,24 @@ If NO:
 Status: COMPLETED
 
 Changed files:
-- `v10/src/features/hooks/useCanvas.ts`
+- `v10/src/features/platform/hooks/useCanvas.ts`
 - `codex_tasks/task_236_pointer_offset_hotfix_live_canvas_rect.md`
 
 Commands run (only if user asked or required by spec):
 - `rg --files codex_tasks | rg 'task_236'`
 - `sed -n '1,260p' codex_tasks/task_236_pointer_offset_hotfix_live_canvas_rect.md`
-- `sed -n '1,1100p' v10/src/features/hooks/useCanvas.ts`
-- `sed -n '1,280p' v10/src/features/hooks/useBoardTransform.ts`
-- `rg -n "useBoardTransform|toBoardPoint|getCanvasPoint|makePoint" v10/src/features/hooks/useCanvas.ts`
+- `sed -n '1,1100p' v10/src/features/platform/hooks/useCanvas.ts`
+- `sed -n '1,280p' v10/src/features/platform/hooks/useBoardTransform.ts`
+- `rg -n "useBoardTransform|toBoardPoint|getCanvasPoint|makePoint" v10/src/features/platform/hooks/useCanvas.ts`
 - `VERIFY_STAGE=mid bash scripts/run_repo_verifications.sh`
-- `rg -n "toBoardPoint|useBoardTransform|getCanvasPoint" v10/src/features/hooks/useCanvas.ts`
-- `rg -n "TOUCH_PALM|acquireGestureLock|releaseGestureLock|shouldSuppressTouch" v10/src/features/hooks/useCanvas.ts`
-- `git diff --name-only -- codex_tasks/task_236_pointer_offset_hotfix_live_canvas_rect.md v10/src/features/hooks/useCanvas.ts`
+- `rg -n "toBoardPoint|useBoardTransform|getCanvasPoint" v10/src/features/platform/hooks/useCanvas.ts`
+- `rg -n "TOUCH_PALM|acquireGestureLock|releaseGestureLock|shouldSuppressTouch" v10/src/features/platform/hooks/useCanvas.ts`
+- `git diff --name-only -- codex_tasks/task_236_pointer_offset_hotfix_live_canvas_rect.md v10/src/features/platform/hooks/useCanvas.ts`
 
 ## Gate Results (Codex fills)
 
 - Lint:
-  - PASS (via `scripts/check_v10_changed_lint.sh` in `VERIFY_STAGE=mid` run; linted changed file `src/features/hooks/useCanvas.ts`)
+  - PASS (via `scripts/check_v10_changed_lint.sh` in `VERIFY_STAGE=mid` run; linted changed file `src/features/platform/hooks/useCanvas.ts`)
 - Build:
   - N/A
 - Script checks:
@@ -191,9 +191,9 @@ Commands run (only if user asked or required by spec):
   - N/A
 
 Manual verification notes:
-- Mapping path check PASS: `rg -n "toBoardPoint|useBoardTransform|getCanvasPoint" v10/src/features/hooks/useCanvas.ts` confirms stale `useBoardTransform`/`toBoardPoint` dependency removed; `getCanvasPoint` remains as live mapping path.
-- Gesture/palm guard check PASS: `rg -n "TOUCH_PALM|acquireGestureLock|releaseGestureLock|shouldSuppressTouch" v10/src/features/hooks/useCanvas.ts` confirms gesture lock/palm rejection logic remains present.
-- Scoped file diff check PASS: `git diff --name-only -- codex_tasks/task_236_pointer_offset_hotfix_live_canvas_rect.md v10/src/features/hooks/useCanvas.ts` returns only Task 236 spec + `useCanvas.ts`.
+- Mapping path check PASS: `rg -n "toBoardPoint|useBoardTransform|getCanvasPoint" v10/src/features/platform/hooks/useCanvas.ts` confirms stale `useBoardTransform`/`toBoardPoint` dependency removed; `getCanvasPoint` remains as live mapping path.
+- Gesture/palm guard check PASS: `rg -n "TOUCH_PALM|acquireGestureLock|releaseGestureLock|shouldSuppressTouch" v10/src/features/platform/hooks/useCanvas.ts` confirms gesture lock/palm rejection logic remains present.
+- Scoped file diff check PASS: `git diff --name-only -- codex_tasks/task_236_pointer_offset_hotfix_live_canvas_rect.md v10/src/features/platform/hooks/useCanvas.ts` returns only Task 236 spec + `useCanvas.ts`.
 - App-level manual tablet/desktop interaction check not executed in this CLI session (runtime UI not launched here); required command/script verifications passed.
 
 Notes:

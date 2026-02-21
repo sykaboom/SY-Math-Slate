@@ -21,8 +21,8 @@ Date: 2026-02-20
 Touched files/directories:
 - `v10/src/core/config/coreModBoundary.ts` (new)
 - `v10/src/core/config/coreModBoundary.guards.ts` (new)
-- `v10/src/features/extensions/ui/registerCoreSlots.ts`
-- `v10/src/features/extensions/ui/coreTemplates.ts`
+- `v10/src/features/platform/extensions/ui/registerCoreSlots.ts`
+- `v10/src/features/platform/extensions/ui/coreTemplates.ts`
 - `v10/AI_READ_ME.md`
 
 Out of scope:
@@ -65,8 +65,8 @@ Out of scope:
 - Touched file count:
   - 5
 - Files shared with other PENDING tasks:
-  - `v10/src/features/extensions/ui/registerCoreSlots.ts`
-  - `v10/src/features/extensions/ui/coreTemplates.ts`
+  - `v10/src/features/platform/extensions/ui/registerCoreSlots.ts`
+  - `v10/src/features/platform/extensions/ui/coreTemplates.ts`
 - Cross-module dependency:
   - YES
 - Parallelizable sub-units:
@@ -186,8 +186,8 @@ Status: COMPLETED
 Changed files:
 - `v10/src/core/config/coreModBoundary.ts`
 - `v10/src/core/config/coreModBoundary.guards.ts`
-- `v10/src/features/extensions/ui/coreTemplates.ts`
-- `v10/src/features/extensions/ui/registerCoreSlots.ts`
+- `v10/src/features/platform/extensions/ui/coreTemplates.ts`
+- `v10/src/features/platform/extensions/ui/registerCoreSlots.ts`
 
 Commands run (only if user asked or required by spec):
 - cd v10 && npm run lint

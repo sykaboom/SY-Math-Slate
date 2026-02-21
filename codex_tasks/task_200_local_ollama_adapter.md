@@ -20,9 +20,9 @@ Date: 2026-02-15
 
 Touched files/directories:
 - `codex_tasks/task_200_local_ollama_adapter.md`
-- `v10/src/features/extensions/adapters/ollamaLocalAdapter.ts` (new)
-- `v10/src/features/extensions/adapters/index.ts`
-- `v10/src/features/extensions/adapters/registry.ts` (if metadata wiring requires)
+- `v10/src/features/platform/extensions/adapters/ollamaLocalAdapter.ts` (new)
+- `v10/src/features/platform/extensions/adapters/index.ts`
+- `v10/src/features/platform/extensions/adapters/registry.ts` (if metadata wiring requires)
 
 Out of scope:
 - Local-cloud fallback chain orchestration (task_205).
@@ -132,8 +132,8 @@ Out of scope:
 Status: COMPLETED
 
 Changed files:
-- `v10/src/features/extensions/adapters/ollamaLocalAdapter.ts`
-- `v10/src/features/extensions/adapters/index.ts`
+- `v10/src/features/platform/extensions/adapters/ollamaLocalAdapter.ts`
+- `v10/src/features/platform/extensions/adapters/index.ts`
 
 Commands run (only if user asked or required by spec):
 - `cd v10 && npm run lint`

@@ -19,9 +19,9 @@ Date: 2026-02-15
 
 Touched files/directories:
 - `codex_tasks/task_180_undo_redo_command_unification.md`
-- `v10/src/features/store/useCanvasStore.ts`
-- `v10/src/features/extensions/commands/registerCoreCommands.ts`
-- `v10/src/features/toolbar/FloatingToolbar.tsx`
+- `v10/src/features/platform/store/useCanvasStore.ts`
+- `v10/src/features/platform/extensions/commands/registerCoreCommands.ts`
+- `v10/src/features/chrome/toolbar/FloatingToolbar.tsx`
 
 Out of scope:
 - Full multi-operation transactional history across all mutation types.
@@ -114,7 +114,7 @@ If NO:
 ## Manual Verification Steps (Base Required)
 
 1) Step:
-   - Command / click path: `cd v10 && npm run lint -- --max-warnings=0 -- src/features/store/useCanvasStore.ts src/features/extensions/commands/registerCoreCommands.ts src/features/toolbar/FloatingToolbar.tsx`
+   - Command / click path: `cd v10 && npm run lint -- --max-warnings=0 -- src/features/platform/store/useCanvasStore.ts src/features/platform/extensions/commands/registerCoreCommands.ts src/features/chrome/toolbar/FloatingToolbar.tsx`
    - Expected result: PASS.
    - Covers: AC-1, AC-2, AC-3
 
@@ -145,12 +145,12 @@ Status: COMPLETED
 
 Changed files:
 - `codex_tasks/task_180_undo_redo_command_unification.md`
-- `v10/src/features/store/useCanvasStore.ts`
-- `v10/src/features/extensions/commands/registerCoreCommands.ts`
-- `v10/src/features/toolbar/FloatingToolbar.tsx`
+- `v10/src/features/platform/store/useCanvasStore.ts`
+- `v10/src/features/platform/extensions/commands/registerCoreCommands.ts`
+- `v10/src/features/chrome/toolbar/FloatingToolbar.tsx`
 
 Commands run (only if user asked or required by spec):
-- `cd v10 && npm run lint -- --max-warnings=0 -- src/features/store/useCanvasStore.ts src/features/extensions/commands/registerCoreCommands.ts src/features/toolbar/FloatingToolbar.tsx`
+- `cd v10 && npm run lint -- --max-warnings=0 -- src/features/platform/store/useCanvasStore.ts src/features/platform/extensions/commands/registerCoreCommands.ts src/features/chrome/toolbar/FloatingToolbar.tsx`
 - `cd v10 && npm run build`
 - `scripts/check_v10_legacy_freeze.sh`
 

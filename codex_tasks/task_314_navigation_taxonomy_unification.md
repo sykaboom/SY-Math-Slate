@@ -19,10 +19,10 @@ Date: 2026-02-19
 ## Scope (Base Required)
 
 Touched files/directories:
-- `v10/src/features/toolbar/FloatingToolbar.tsx`
-- `v10/src/features/toolbar/PageNavigator.tsx`
-- `v10/src/features/toolbar/PlaybackControls.tsx`
-- `v10/src/features/toolbar/navigationLabels.ts` (new shared copy map)
+- `v10/src/features/chrome/toolbar/FloatingToolbar.tsx`
+- `v10/src/features/chrome/toolbar/PageNavigator.tsx`
+- `v10/src/features/chrome/toolbar/PlaybackControls.tsx`
+- `v10/src/features/chrome/toolbar/navigationLabels.ts` (new shared copy map)
 
 Out of scope:
 - New navigation backend logic
@@ -62,7 +62,7 @@ Out of scope:
 - Touched file count:
   - 4
 - Files shared with other PENDING tasks:
-  - `v10/src/features/toolbar/FloatingToolbar.tsx`
+  - `v10/src/features/chrome/toolbar/FloatingToolbar.tsx`
 - Cross-module dependency:
   - NO
 - Parallelizable sub-units:
@@ -171,9 +171,9 @@ Out of scope:
 Status: COMPLETED
 
 Changed files:
-- `v10/src/features/toolbar/navigationLabels.ts`
-- `v10/src/features/toolbar/PageNavigator.tsx`
-- `v10/src/features/toolbar/PlaybackControls.tsx`
+- `v10/src/features/chrome/toolbar/navigationLabels.ts`
+- `v10/src/features/chrome/toolbar/PageNavigator.tsx`
+- `v10/src/features/chrome/toolbar/PlaybackControls.tsx`
 
 Commands run (only if user asked or required by spec):
 - `scripts/check_layer_rules.sh`

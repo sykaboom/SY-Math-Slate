@@ -24,8 +24,8 @@ Touched files/directories:
 - `v10/src/core/contracts/extensionMarketplace.ts` (new)
 - `v10/src/core/extensions/marketplaceCatalog.ts` (new)
 - `v10/src/app/api/extensions/marketplace/route.ts` (new)
-- `v10/src/features/extensions/marketplace/useMarketplaceCatalog.ts` (new)
-- `v10/src/features/extensions/marketplace/index.ts` (new)
+- `v10/src/features/platform/extensions/marketplace/useMarketplaceCatalog.ts` (new)
+- `v10/src/features/platform/extensions/marketplace/index.ts` (new)
 - `scripts/check_v10_marketplace_readiness.sh` (new)
 - `v10/tests/marketplace_readiness.mjs` (new)
 - `codex_tasks/workflow/roadmap_70spec_local_ai_mesh_task_matrix.csv`
@@ -174,9 +174,9 @@ Changed files:
 - `v10/src/core/contracts/extensionMarketplace.ts`
 - `v10/src/core/extensions/marketplaceCatalog.ts`
 - `v10/src/app/api/extensions/marketplace/route.ts`
-- `v10/src/features/extensions/marketplace/useMarketplaceCatalog.ts`
-- `v10/src/features/extensions/marketplace/resolveMarketplaceCatalog.ts`
-- `v10/src/features/extensions/marketplace/index.ts`
+- `v10/src/features/platform/extensions/marketplace/useMarketplaceCatalog.ts`
+- `v10/src/features/platform/extensions/marketplace/resolveMarketplaceCatalog.ts`
+- `v10/src/features/platform/extensions/marketplace/index.ts`
 - `scripts/check_v10_marketplace_readiness.sh`
 - `v10/tests/marketplace_readiness.mjs`
 - `codex_tasks/workflow/roadmap_70spec_local_ai_mesh_task_matrix.csv`

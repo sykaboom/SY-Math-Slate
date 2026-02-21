@@ -21,10 +21,10 @@ Date: 2026-02-15
 
 Touched files/directories:
 - `codex_tasks/task_121_command_migration_tooling_domain.md`
-- `v10/src/features/extensions/commands/registerCoreCommands.ts`
-- `v10/src/features/toolbar/PenControls.tsx`
-- `v10/src/features/toolbar/LaserControls.tsx`
-- `v10/src/features/toolbar/FloatingToolbar.tsx`
+- `v10/src/features/platform/extensions/commands/registerCoreCommands.ts`
+- `v10/src/features/chrome/toolbar/PenControls.tsx`
+- `v10/src/features/chrome/toolbar/LaserControls.tsx`
+- `v10/src/features/chrome/toolbar/FloatingToolbar.tsx`
 
 Out of scope:
 - Playback/page commands

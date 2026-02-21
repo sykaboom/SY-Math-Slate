@@ -175,10 +175,10 @@ Status: COMPLETED
 Changed files:
 - `v10/src/app/globals.css`
 - `v10/src/app/layout.tsx`
-- `v10/src/features/canvas/styles/content-layer.css` (new)
-- `v10/src/features/canvas/styles/mathjax.css` (new)
-- `v10/src/features/animation/styles/rich-text-animation.css` (new)
-- `v10/src/features/layout/styles/prompter.css` (new)
+- `v10/src/features/editor/canvas/styles/content-layer.css` (new)
+- `v10/src/features/editor/canvas/styles/mathjax.css` (new)
+- `v10/src/features/editor/animation/styles/rich-text-animation.css` (new)
+- `v10/src/features/chrome/layout/styles/prompter.css` (new)
 - `v10/AI_READ_ME_MAP.md` (generated)
 - `codex_tasks/task_271_feature_css_scope_split_and_docs.md`
 
@@ -187,10 +187,10 @@ Commands run (only if user asked or required by spec):
   - result: no matches (feature selectors removed from globals)
 - `rg --files v10/src/features | rg "\\.css$" | sort`
   - result:
-    - `v10/src/features/animation/styles/rich-text-animation.css`
-    - `v10/src/features/canvas/styles/content-layer.css`
-    - `v10/src/features/canvas/styles/mathjax.css`
-    - `v10/src/features/layout/styles/prompter.css`
+    - `v10/src/features/editor/animation/styles/rich-text-animation.css`
+    - `v10/src/features/editor/canvas/styles/content-layer.css`
+    - `v10/src/features/editor/canvas/styles/mathjax.css`
+    - `v10/src/features/chrome/layout/styles/prompter.css`
 - `rg -n "features/.+\\.css" v10/src/app/layout.tsx`
   - result: 4 imports added (content-layer, mathjax, rich-text-animation, prompter)
 - `node scripts/gen_ai_read_me_map.mjs`

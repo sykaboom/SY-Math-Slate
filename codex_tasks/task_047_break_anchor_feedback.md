@@ -14,10 +14,10 @@ Currently, line breaks, column breaks, and page breaks are treated as "transpare
 3) Ensure breaks are measured correctly in the `anchorMap` for visual continuity.
 
 ## Scope (touched files)
-- `v10/src/features/layout/autoLayout.ts`: Measurement and anchor generation for break blocks.
-- `v10/src/features/store/useCanvasStore.ts`: Align step indexing to a 1:1 block-to-step relationship.
-- `v10/src/features/canvas/AnchorIndicator.tsx`: Enhance to render distinct visuals for break anchors.
-- `v10/src/features/toolbar/PlaybackControls.tsx`: Update total step calculation logic.
+- `v10/src/features/chrome/layout/autoLayout.ts`: Measurement and anchor generation for break blocks.
+- `v10/src/features/platform/store/useCanvasStore.ts`: Align step indexing to a 1:1 block-to-step relationship.
+- `v10/src/features/editor/canvas/AnchorIndicator.tsx`: Enhance to render distinct visuals for break anchors.
+- `v10/src/features/chrome/toolbar/PlaybackControls.tsx`: Update total step calculation logic.
 - `v10/src/core/migrations/migrateToV2.ts`: Add logic to trigger re-layout for legacy (content-only step) documents.
 
 ## Requirements
@@ -59,10 +59,10 @@ Currently, line breaks, column breaks, and page breaks are treated as "transpare
 
 ## Closeout Notes
 - Changed files:
-  - `v10/src/features/layout/autoLayout.ts`
-  - `v10/src/features/store/useCanvasStore.ts`
-  - `v10/src/features/canvas/AnchorIndicator.tsx`
-  - `v10/src/features/toolbar/PlaybackControls.tsx`
+  - `v10/src/features/chrome/layout/autoLayout.ts`
+  - `v10/src/features/platform/store/useCanvasStore.ts`
+  - `v10/src/features/editor/canvas/AnchorIndicator.tsx`
+  - `v10/src/features/chrome/toolbar/PlaybackControls.tsx`
   - `v10/src/core/migrations/migrateToV2.ts`
 - Commands run: none
 - Manual verification: not run (needs manual steps in spec)

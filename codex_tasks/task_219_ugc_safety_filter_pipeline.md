@@ -21,12 +21,12 @@ Date: 2026-02-16
 
 Touched files/directories:
 - `codex_tasks/task_219_ugc_safety_filter_pipeline.md`
-- `v10/src/features/community/safety/ugcSafetyFilter.ts` (new)
+- `v10/src/features/governance/community/safety/ugcSafetyFilter.ts` (new)
 - `v10/src/core/contracts/community.ts`
 - `v10/src/app/api/community/route.ts`
-- `v10/src/features/community/store/useCommunityStore.ts`
-- `v10/src/features/moderation/useModerationConsole.ts`
-- `v10/src/features/moderation/ModerationConsolePanel.tsx`
+- `v10/src/features/governance/community/store/useCommunityStore.ts`
+- `v10/src/features/governance/moderation/useModerationConsole.ts`
+- `v10/src/features/governance/moderation/ModerationConsolePanel.tsx`
 
 Out of scope:
 - Realtime transport protocol changes
@@ -170,12 +170,12 @@ Status: COMPLETED
 
 Changed files:
 - `codex_tasks/task_219_ugc_safety_filter_pipeline.md`
-- `v10/src/features/community/safety/ugcSafetyFilter.ts`
+- `v10/src/features/governance/community/safety/ugcSafetyFilter.ts`
 - `v10/src/core/contracts/community.ts`
 - `v10/src/app/api/community/route.ts`
-- `v10/src/features/community/store/useCommunityStore.ts`
-- `v10/src/features/moderation/useModerationConsole.ts`
-- `v10/src/features/moderation/ModerationConsolePanel.tsx`
+- `v10/src/features/governance/community/store/useCommunityStore.ts`
+- `v10/src/features/governance/moderation/useModerationConsole.ts`
+- `v10/src/features/governance/moderation/ModerationConsolePanel.tsx`
 
 Commands run (only if user asked or required by spec):
 - `cd v10 && npm run lint`

@@ -14,8 +14,8 @@ After the previous cleanup, a few hardcoded RGBA values for Neon Pink and Neon C
 
 ## Scope (touched files)
 - `v10/src/app/globals.css`
-- `v10/src/features/canvas/CanvasStage.tsx`
-- `v10/src/features/canvas/objects/ImageBlock.tsx` (if applicable)
+- `v10/src/features/editor/canvas/CanvasStage.tsx`
+- `v10/src/features/editor/canvas/objects/ImageBlock.tsx` (if applicable)
 
 ## Requirements
 1) **Define RGB Tokens:** In `v10/src/app/globals.css` (inside `:root`):
@@ -42,8 +42,8 @@ After the previous cleanup, a few hardcoded RGBA values for Neon Pink and Neon C
 ## Closeout Notes
 - Changed files:
   - `v10/src/app/globals.css`
-  - `v10/src/features/canvas/CanvasStage.tsx`
-  - `v10/src/features/canvas/objects/ImageBlock.tsx`
+  - `v10/src/features/editor/canvas/CanvasStage.tsx`
+  - `v10/src/features/editor/canvas/objects/ImageBlock.tsx`
 - Commands run: none
 - Manual verification: not run (needs manual steps in spec)
-- Acceptance caveat: `v10/src/features/layout/OverviewStage.tsx` still contains `rgba(0,255,255,0.08)` but is outside the scope list.
+- Acceptance caveat: `v10/src/features/chrome/layout/OverviewStage.tsx` still contains `rgba(0,255,255,0.08)` but is outside the scope list.

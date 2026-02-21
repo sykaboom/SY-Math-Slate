@@ -56,13 +56,13 @@ LLM에게 structured output (JSON) 강제:
 ## Scope (Base Required)
 
 Touched files/directories (create):
-- `v10/src/features/mod-studio/theme/AIThemePromptBar.tsx`
-- `v10/src/features/mod-studio/theme/AIThemeGenerationPanel.tsx`
-- `v10/src/features/mod-studio/theme/useAIThemeGeneration.ts`
+- `v10/src/features/platform/mod-studio/theme/AIThemePromptBar.tsx`
+- `v10/src/features/platform/mod-studio/theme/AIThemeGenerationPanel.tsx`
+- `v10/src/features/platform/mod-studio/theme/useAIThemeGeneration.ts`
 - `v10/src/app/api/ai/theme/route.ts` — AI 테마 생성 API route
 
 Touched files/directories (write):
-- `v10/src/features/mod-studio/theme/ThemeStudioSection.tsx` — AI 생성 탭 추가
+- `v10/src/features/platform/mod-studio/theme/ThemeStudioSection.tsx` — AI 생성 탭 추가
 
 Out of scope:
 - 이미지/무드보드 → 테마 생성 (텍스트 입력만)
@@ -271,11 +271,11 @@ expected output:
 Status: COMPLETED
 
 Changed files:
-- `v10/src/features/mod-studio/theme/AIThemePromptBar.tsx`
-- `v10/src/features/mod-studio/theme/AIThemeGenerationPanel.tsx`
-- `v10/src/features/mod-studio/theme/useAIThemeGeneration.ts`
+- `v10/src/features/platform/mod-studio/theme/AIThemePromptBar.tsx`
+- `v10/src/features/platform/mod-studio/theme/AIThemeGenerationPanel.tsx`
+- `v10/src/features/platform/mod-studio/theme/useAIThemeGeneration.ts`
 - `v10/src/app/api/ai/theme/route.ts`
-- `v10/src/features/mod-studio/theme/ThemeStudioSection.tsx`
+- `v10/src/features/platform/mod-studio/theme/ThemeStudioSection.tsx`
 
 Commands run:
 - `cd v10 && npm run lint`

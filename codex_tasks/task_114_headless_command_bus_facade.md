@@ -24,10 +24,10 @@ Date: 2026-02-14
 Touched files/directories:
 - `codex_tasks/task_114_headless_command_bus_facade.md`
 - `v10/src/core/engine/commandBus.ts` (new)
-- `v10/src/features/extensions/commandExecutionPolicy.ts` (new)
-- `v10/src/features/extensions/commands/registerCoreCommands.ts` (new)
-- `v10/src/features/toolbar/useApprovalLogic.ts`
-- `v10/src/features/extensions/ui/ExtensionRuntimeBootstrap.tsx`
+- `v10/src/features/platform/extensions/commandExecutionPolicy.ts` (new)
+- `v10/src/features/platform/extensions/commands/registerCoreCommands.ts` (new)
+- `v10/src/features/chrome/toolbar/useApprovalLogic.ts`
+- `v10/src/features/platform/extensions/ui/ExtensionRuntimeBootstrap.tsx`
 - `v10/AI_READ_ME.md` (if runtime flow text changes)
 - `v10/AI_READ_ME_MAP.md` (if file map changes)
 
@@ -186,10 +186,10 @@ Status: COMPLETED
 Changed files:
 - `codex_tasks/task_114_headless_command_bus_facade.md`
 - `v10/src/core/engine/commandBus.ts`
-- `v10/src/features/extensions/commandExecutionPolicy.ts`
-- `v10/src/features/extensions/commands/registerCoreCommands.ts`
-- `v10/src/features/toolbar/useApprovalLogic.ts`
-- `v10/src/features/extensions/ui/ExtensionRuntimeBootstrap.tsx`
+- `v10/src/features/platform/extensions/commandExecutionPolicy.ts`
+- `v10/src/features/platform/extensions/commands/registerCoreCommands.ts`
+- `v10/src/features/chrome/toolbar/useApprovalLogic.ts`
+- `v10/src/features/platform/extensions/ui/ExtensionRuntimeBootstrap.tsx`
 - `v10/AI_READ_ME.md`
 - `v10/AI_READ_ME_MAP.md`
 

@@ -54,17 +54,17 @@ The ultimate goal is to integrate **Local Model TTS** and **Voice Recording**. T
     3. Trigger `nextStep()`.
 
 ## Deliverables
-- `v10/src/features/hooks/useAudioPlayer.ts` (New hook).
-- `v10/src/features/hooks/useSequence.ts` (Audio-aware sequencing).
+- `v10/src/features/platform/hooks/useAudioPlayer.ts` (New hook).
+- `v10/src/features/platform/hooks/useSequence.ts` (Audio-aware sequencing).
 - `v10/src/core/types/canvas.ts` (Audio metadata definitions).
-- `v10/src/features/store/useCanvasStore.ts` (audioByStep + actions).
+- `v10/src/features/platform/store/useCanvasStore.ts` (audioByStep + actions).
 
 ## Scope (touched files)
-- `v10/src/features/store/useCanvasStore.ts`
+- `v10/src/features/platform/store/useCanvasStore.ts`
 - `v10/src/core/types/canvas.ts`
-- `v10/src/features/hooks/useAudioPlayer.ts`
-- `v10/src/features/hooks/useSequence.ts`
-- `v10/src/features/store/useUIStore.ts` (only if playback state needs audio flags)
+- `v10/src/features/platform/hooks/useAudioPlayer.ts`
+- `v10/src/features/platform/hooks/useSequence.ts`
+- `v10/src/features/platform/store/useUIStore.ts` (only if playback state needs audio flags)
 
 ## Acceptance Criteria
 1) Steps can reference an audio clip (by step index) without export/import.  

@@ -19,10 +19,10 @@ Date: 2026-02-15
 
 Touched files/directories:
 - `codex_tasks/task_188_approval_queue_integration_for_drafts.md`
-- `v10/src/features/input-studio/approval/*`
-- `v10/src/features/store/useSyncStore.ts`
-- `v10/src/features/toolbar/useApprovalLogic.ts`
-- `v10/src/features/layout/DataInputPanel.tsx`
+- `v10/src/features/editor/input-studio/approval/*`
+- `v10/src/features/platform/store/useSyncStore.ts`
+- `v10/src/features/chrome/toolbar/useApprovalLogic.ts`
+- `v10/src/features/chrome/layout/DataInputPanel.tsx`
 
 Out of scope:
 - Role policy redesign.
@@ -132,12 +132,12 @@ Out of scope:
 Status: COMPLETED
 
 Changed files:
-- `v10/src/features/input-studio/approval/inputStudioApproval.ts`
-- `v10/src/features/toolbar/useApprovalLogic.ts`
-- `v10/src/features/layout/DataInputPanel.tsx`
+- `v10/src/features/editor/input-studio/approval/inputStudioApproval.ts`
+- `v10/src/features/chrome/toolbar/useApprovalLogic.ts`
+- `v10/src/features/chrome/layout/DataInputPanel.tsx`
 
 Commands run (only if user asked or required by spec):
-- `cd v10 && npm run lint -- --max-warnings=0 -- src/features/layout/DataInputPanel.tsx src/features/input-studio`
+- `cd v10 && npm run lint -- --max-warnings=0 -- src/features/chrome/layout/DataInputPanel.tsx src/features/editor/input-studio`
 - `cd v10 && npm run lint`
 - `cd v10 && npm run build`
 - `VERIFY_STAGE=end bash scripts/run_repo_verifications.sh`

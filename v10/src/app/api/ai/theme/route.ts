@@ -3,11 +3,11 @@ import { NextResponse } from "next/server";
 import {
   executeLLMCallOnServer,
   type LLMCallInput,
-} from "@features/sharing/ai/LLMCallService";
+} from "@features/collaboration/sharing/ai/LLMCallService";
 import {
   THEME_JSON_SCHEMA_MARKER,
   validateThemeJson,
-} from "@features/mod-studio/theme/themeJsonIO";
+} from "@features/platform/mod-studio/theme/themeJsonIO";
 
 export const dynamic = "force-dynamic";
 

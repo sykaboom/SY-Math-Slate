@@ -4,7 +4,7 @@ set -euo pipefail
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$repo_root"
 
-isolation_file="v10/src/features/mod-studio/theme/themeIsolation.ts"
+isolation_file="v10/src/features/platform/mod-studio/theme/themeIsolation.ts"
 apply_file="v10/src/core/ui/theming/engine/applyTheme.ts"
 config_file="v10/src/core/ui/theming/tokens/themeTokens.ts"
 

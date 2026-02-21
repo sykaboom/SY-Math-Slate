@@ -23,11 +23,11 @@ Date: 2026-02-16
 
 Touched files/directories:
 - `codex_tasks/task_243_core_template_manifest_dogfooding_controls.md`
-- `v10/src/features/extensions/ui/registerCoreSlots.ts`
-- `v10/src/features/extensions/ui/coreTemplates.ts` (new)
+- `v10/src/features/platform/extensions/ui/registerCoreSlots.ts`
+- `v10/src/features/platform/extensions/ui/coreTemplates.ts` (new)
 - `v10/src/core/extensions/pluginLoader.ts` (mapping updates if needed)
-- `v10/src/features/layout/windowing/panelLauncher.registry.ts` (new/updated)
-- `v10/src/features/toolbar/FloatingToolbar.tsx` (remove direct control mount hooks as needed)
+- `v10/src/features/chrome/layout/windowing/panelLauncher.registry.ts` (new/updated)
+- `v10/src/features/chrome/toolbar/FloatingToolbar.tsx` (remove direct control mount hooks as needed)
 
 Out of scope:
 - Final clean shell cutover (handled in `task_244`)
@@ -123,7 +123,7 @@ If NO:
    - Covers: AC-1
 
 2) Step:
-   - Command / click path: `rg -n \"PenControls|LaserControls|PlaybackControls\" v10/src/features/layout v10/src/features/toolbar`
+   - Command / click path: `rg -n \"PenControls|LaserControls|PlaybackControls\" v10/src/features/chrome/layout v10/src/features/chrome/toolbar`
    - Expected result: no direct hardcoded mounts remain in shell path.
    - Covers: AC-2
 
@@ -170,15 +170,15 @@ Status: COMPLETED
 
 Changed files:
 - `codex_tasks/task_243_core_template_manifest_dogfooding_controls.md`
-- `v10/src/features/extensions/ui/registerCoreSlots.ts`
-- `v10/src/features/extensions/ui/coreTemplates.ts` (new)
-- `v10/src/features/layout/windowing/panelLauncher.registry.ts` (new)
-- `v10/src/features/toolbar/FloatingToolbar.tsx`
+- `v10/src/features/platform/extensions/ui/registerCoreSlots.ts`
+- `v10/src/features/platform/extensions/ui/coreTemplates.ts` (new)
+- `v10/src/features/chrome/layout/windowing/panelLauncher.registry.ts` (new)
+- `v10/src/features/chrome/toolbar/FloatingToolbar.tsx`
 
 Commands run (only if user asked or required by spec):
 - `VERIFY_STAGE=mid bash scripts/run_repo_verifications.sh`
-- `rg -n "PenControls|LaserControls|PlaybackControls" v10/src/features/layout v10/src/features/toolbar`
-- `rg -n "core\\.template\\.toolbar|core\\.toolbar\\.templates|listCoreTemplateManifests|listActiveCoreTemplateManifests" v10/src/features/extensions/ui/coreTemplates.ts v10/src/features/extensions/ui/registerCoreSlots.ts`
+- `rg -n "PenControls|LaserControls|PlaybackControls" v10/src/features/chrome/layout v10/src/features/chrome/toolbar`
+- `rg -n "core\\.template\\.toolbar|core\\.toolbar\\.templates|listCoreTemplateManifests|listActiveCoreTemplateManifests" v10/src/features/platform/extensions/ui/coreTemplates.ts v10/src/features/platform/extensions/ui/registerCoreSlots.ts`
 
 ## Gate Results (Codex fills)
 

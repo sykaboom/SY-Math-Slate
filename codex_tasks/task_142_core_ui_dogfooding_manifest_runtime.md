@@ -19,10 +19,10 @@ Date: 2026-02-15
 ## Scope (Base Required)
 
 Touched files/directories:
-- `v10/src/features/extensions/ui/registerCoreDeclarativeManifest.ts`
+- `v10/src/features/platform/extensions/ui/registerCoreDeclarativeManifest.ts`
 - `v10/src/core/extensions/pluginLoader.ts`
-- `v10/src/features/layout/**`
-- `v10/src/features/toolbar/**`
+- `v10/src/features/chrome/layout/**`
+- `v10/src/features/chrome/toolbar/**`
 
 Out of scope:
 - Mod Studio GUI.
@@ -148,12 +148,12 @@ If NO:
 Status: COMPLETED
 
 Changed files:
-- `v10/src/features/extensions/ui/registerCoreDeclarativeManifest.ts`
-- `v10/src/features/extensions/ui/ExtensionRuntimeBootstrap.tsx`
-- `v10/src/features/toolbar/FloatingToolbar.tsx`
+- `v10/src/features/platform/extensions/ui/registerCoreDeclarativeManifest.ts`
+- `v10/src/features/platform/extensions/ui/ExtensionRuntimeBootstrap.tsx`
+- `v10/src/features/chrome/toolbar/FloatingToolbar.tsx`
 
 Commands run (only if user asked or required by spec):
-- `rg -n "commandId:\\s*\\\"insertBreak\\\"|payload:\\s*\\{\\s*breakType" v10/src/features/extensions/ui/registerCoreDeclarativeManifest.ts`
+- `rg -n "commandId:\\s*\\\"insertBreak\\\"|payload:\\s*\\{\\s*breakType" v10/src/features/platform/extensions/ui/registerCoreDeclarativeManifest.ts`
 - `scripts/check_v10_migration_baseline.sh`
 - `cd v10 && npm run lint && npm run build`
 

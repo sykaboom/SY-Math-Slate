@@ -13,8 +13,8 @@ The color `#ff10f0` (Neon Pink) is used both as a CSS variable and a hardcoded v
 2) Include gradients that use this color.
 
 ## Scope (touched files)
-- `v10/src/features/canvas/AnchorIndicator.tsx`
-- `v10/src/features/layout/OverviewStage.tsx` (if applicable)
+- `v10/src/features/editor/canvas/AnchorIndicator.tsx`
+- `v10/src/features/chrome/layout/OverviewStage.tsx` (if applicable)
 - `v10/src/app/globals.css`
 
 ## Requirements
@@ -40,7 +40,7 @@ The color `#ff10f0` (Neon Pink) is used both as a CSS variable and a hardcoded v
 ## Closeout Notes
 - Changed files:
   - `v10/src/app/globals.css`
-  - `v10/src/features/canvas/AnchorIndicator.tsx`
-  - `v10/src/features/layout/OverviewStage.tsx`
+  - `v10/src/features/editor/canvas/AnchorIndicator.tsx`
+  - `v10/src/features/chrome/layout/OverviewStage.tsx`
 - Commands run: none
 - Manual verification: not run (needs manual steps in spec)

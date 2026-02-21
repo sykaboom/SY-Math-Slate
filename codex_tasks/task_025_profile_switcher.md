@@ -19,8 +19,8 @@ We added capability profiles (basic/advanced/pro) but there is no UI to switch p
 - No changes to capability logic.
 
 ## Scope (touched files)
-- `v10/src/features/toolbar/FloatingToolbar.tsx`
-- `v10/src/features/store/useUIStore.ts` (only if needed for labels/derivations)
+- `v10/src/features/chrome/toolbar/FloatingToolbar.tsx`
+- `v10/src/features/platform/store/useUIStore.ts` (only if needed for labels/derivations)
 
 ## Requirements
 1) Add a profile chip (e.g., "Mode: Basic") in the toolbar.  
@@ -43,7 +43,7 @@ We added capability profiles (basic/advanced/pro) but there is no UI to switch p
 ## Implementation Log (Codex)
 **Status:** COMPLETED  
 **Changed files:**
-- `v10/src/features/toolbar/FloatingToolbar.tsx`
+- `v10/src/features/chrome/toolbar/FloatingToolbar.tsx`
 
 **Commands run:** None  
 **Notes:** Manual verification not run (per instructions).

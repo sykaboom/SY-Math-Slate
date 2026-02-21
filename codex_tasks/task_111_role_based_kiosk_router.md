@@ -19,10 +19,10 @@ Date: 2026-02-14
 ## Scope (Base Required)
 
 Touched files/directories:
-- `v10/src/features/layout/AppLayout.tsx`
-- `v10/src/features/canvas/viewport/useViewportInteraction.ts`
-- `v10/src/features/canvas/CanvasLayer.tsx`
-- `v10/src/features/layout/PlayerBar.tsx` (read-only mode)
+- `v10/src/features/chrome/layout/AppLayout.tsx`
+- `v10/src/features/editor/canvas/viewport/useViewportInteraction.ts`
+- `v10/src/features/editor/canvas/CanvasLayer.tsx`
+- `v10/src/features/chrome/layout/PlayerBar.tsx` (read-only mode)
 
 Out of scope:
 - connector approval middleware (Task 112)
@@ -143,10 +143,10 @@ Status: COMPLETED
 
 Changed files:
 - `codex_tasks/task_111_role_based_kiosk_router.md`
-- `v10/src/features/layout/AppLayout.tsx`
-- `v10/src/features/canvas/viewport/useViewportInteraction.ts`
-- `v10/src/features/canvas/CanvasLayer.tsx`
-- `v10/src/features/layout/PlayerBar.tsx`
+- `v10/src/features/chrome/layout/AppLayout.tsx`
+- `v10/src/features/editor/canvas/viewport/useViewportInteraction.ts`
+- `v10/src/features/editor/canvas/CanvasLayer.tsx`
+- `v10/src/features/chrome/layout/PlayerBar.tsx`
 
 Commands run (only if user asked or required by spec):
 - `cd v10 && npm run lint`

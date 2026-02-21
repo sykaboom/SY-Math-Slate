@@ -19,10 +19,10 @@ Date: 2026-02-16
 
 Touched files/directories:
 - `codex_tasks/task_198_multimodal_registry_observability.md`
-- `v10/src/features/observability/auditLogger.ts`
-- `v10/src/features/extensions/adapters/registry.ts`
-- `v10/src/features/extensions/routing/capabilityRouter.ts`
-- `v10/src/features/extensions/ui/ExtensionRuntimeBootstrap.tsx`
+- `v10/src/features/platform/observability/auditLogger.ts`
+- `v10/src/features/platform/extensions/adapters/registry.ts`
+- `v10/src/features/platform/extensions/routing/capabilityRouter.ts`
+- `v10/src/features/platform/extensions/ui/ExtensionRuntimeBootstrap.tsx`
 - `v10/AI_READ_ME.md`
 - `v10/AI_READ_ME_MAP.md`
 
@@ -145,10 +145,10 @@ Out of scope:
 Status: COMPLETED
 
 Changed files:
-- `v10/src/features/observability/auditLogger.ts`
-- `v10/src/features/extensions/ui/ExtensionRuntimeBootstrap.tsx`
-- `v10/src/features/extensions/adapters/registry.ts`
-- `v10/src/features/extensions/routing/capabilityRouter.ts`
+- `v10/src/features/platform/observability/auditLogger.ts`
+- `v10/src/features/platform/extensions/ui/ExtensionRuntimeBootstrap.tsx`
+- `v10/src/features/platform/extensions/adapters/registry.ts`
+- `v10/src/features/platform/extensions/routing/capabilityRouter.ts`
 - `v10/AI_READ_ME.md`
 - `v10/AI_READ_ME_MAP.md`
 

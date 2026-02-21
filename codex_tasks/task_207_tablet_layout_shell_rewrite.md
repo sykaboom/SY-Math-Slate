@@ -20,8 +20,8 @@ Date: 2026-02-16
 
 Touched files/directories:
 - `codex_tasks/task_207_tablet_layout_shell_rewrite.md`
-- `v10/src/features/layout/AppLayout.tsx`
-- `v10/src/features/layout/useTabletShellProfile.ts` (new)
+- `v10/src/features/chrome/layout/AppLayout.tsx`
+- `v10/src/features/chrome/layout/useTabletShellProfile.ts` (new)
 
 Out of scope:
 - Toolbar interaction logic changes (task_208).
@@ -175,8 +175,8 @@ If NO:
 Status: COMPLETED
 
 Changed files:
-- `v10/src/features/layout/AppLayout.tsx`
-- `v10/src/features/layout/useTabletShellProfile.ts`
+- `v10/src/features/chrome/layout/AppLayout.tsx`
+- `v10/src/features/chrome/layout/useTabletShellProfile.ts`
 
 Commands run (only if user asked or required by spec):
 - `cd v10 && npm run lint`

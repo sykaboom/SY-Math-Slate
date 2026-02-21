@@ -23,8 +23,8 @@ Touched files/directories:
 - `v10/src/mod/templates/_contracts/templatePack.guards.ts` (new)
 - `v10/src/mod/templates/index.ts` (new)
 - `v10/src/mod/runtime/templatePackRegistry.ts` (new)
-- `v10/src/features/extensions/ui/coreTemplates.ts`
-- `v10/src/features/extensions/ui/registerCoreSlots.ts`
+- `v10/src/features/platform/extensions/ui/coreTemplates.ts`
+- `v10/src/features/platform/extensions/ui/registerCoreSlots.ts`
 - `v10/AI_READ_ME.md`
 - `v10/AI_READ_ME_MAP.md` (if structure update generated)
 
@@ -68,8 +68,8 @@ Out of scope:
 - Touched file count:
   - 8
 - Files shared with other PENDING tasks:
-  - `v10/src/features/extensions/ui/coreTemplates.ts`
-  - `v10/src/features/extensions/ui/registerCoreSlots.ts`
+  - `v10/src/features/platform/extensions/ui/coreTemplates.ts`
+  - `v10/src/features/platform/extensions/ui/registerCoreSlots.ts`
 - Cross-module dependency:
   - YES
 - Parallelizable sub-units:
@@ -221,8 +221,8 @@ Changed files:
 - `v10/src/mod/templates/_contracts/templatePack.guards.ts`
 - `v10/src/mod/templates/index.ts`
 - `v10/src/mod/runtime/templatePackRegistry.ts`
-- `v10/src/features/extensions/ui/coreTemplates.ts`
-- `v10/src/features/extensions/ui/registerCoreSlots.ts`
+- `v10/src/features/platform/extensions/ui/coreTemplates.ts`
+- `v10/src/features/platform/extensions/ui/registerCoreSlots.ts`
 - `v10/AI_READ_ME_MAP.md`
 
 Commands run (only if user asked or required by spec):

@@ -25,15 +25,15 @@ Date: 2026-02-21
 
 Touched files/directories:
 - `design_drafts/task_329_toolbar_edge_snap_docking.svg` (기존 레드라인 기준 재사용)
-- `v10/src/features/store/useChromeStore.ts`
-- `v10/src/features/store/useUIStoreBridge.ts`
-- `v10/src/features/layout/AppLayout.tsx`
-- `v10/src/features/layout/windowing/windowRuntime.types.ts`
-- `v10/src/features/layout/windowing/windowRuntime.ts`
-- `v10/src/features/layout/windowing/useWindowRuntime.ts`
-- `v10/src/features/toolbar/FloatingToolbar.tsx`
-- `v10/src/features/extensions/commands/commands.tool.ts`
-- `v10/src/features/toolbar/catalog/toolbarActionCatalog.ts`
+- `v10/src/features/platform/store/useChromeStore.ts`
+- `v10/src/features/platform/store/useUIStoreBridge.ts`
+- `v10/src/features/chrome/layout/AppLayout.tsx`
+- `v10/src/features/chrome/layout/windowing/windowRuntime.types.ts`
+- `v10/src/features/chrome/layout/windowing/windowRuntime.ts`
+- `v10/src/features/chrome/layout/windowing/useWindowRuntime.ts`
+- `v10/src/features/chrome/toolbar/FloatingToolbar.tsx`
+- `v10/src/features/platform/extensions/commands/commands.tool.ts`
+- `v10/src/features/chrome/toolbar/catalog/toolbarActionCatalog.ts`
 - `scripts/check_toolbar_contract.sh`
 - `v10/AI_READ_ME.md`
 
@@ -229,17 +229,17 @@ Status: COMPLETED
 Changed files:
 - `scripts/check_toolbar_contract.sh`
 - `v10/AI_READ_ME.md`
-- `v10/src/features/extensions/commands/commands.tool.ts`
-- `v10/src/features/layout/AppLayout.tsx`
-- `v10/src/features/layout/windowing/windowRuntime.ts`
-- `v10/src/features/layout/windowing/windowRuntime.types.ts`
-- `v10/src/features/store/useChromeStore.ts`
-- `v10/src/features/store/useUIStoreBridge.ts`
-- `v10/src/features/toolbar/CanvasModeTools.tsx`
-- `v10/src/features/toolbar/FloatingToolbar.tsx`
-- `v10/src/features/toolbar/MorePanel.tsx`
-- `v10/src/features/toolbar/catalog/toolbarActionCatalog.ts`
-- `v10/src/features/toolbar/catalog/toolbarSurfacePolicy.ts`
+- `v10/src/features/platform/extensions/commands/commands.tool.ts`
+- `v10/src/features/chrome/layout/AppLayout.tsx`
+- `v10/src/features/chrome/layout/windowing/windowRuntime.ts`
+- `v10/src/features/chrome/layout/windowing/windowRuntime.types.ts`
+- `v10/src/features/platform/store/useChromeStore.ts`
+- `v10/src/features/platform/store/useUIStoreBridge.ts`
+- `v10/src/features/chrome/toolbar/CanvasModeTools.tsx`
+- `v10/src/features/chrome/toolbar/FloatingToolbar.tsx`
+- `v10/src/features/chrome/toolbar/MorePanel.tsx`
+- `v10/src/features/chrome/toolbar/catalog/toolbarActionCatalog.ts`
+- `v10/src/features/chrome/toolbar/catalog/toolbarSurfacePolicy.ts`
 
 Commands run (only if user asked or required by spec):
 - `bash scripts/check_toolbar_contract.sh`

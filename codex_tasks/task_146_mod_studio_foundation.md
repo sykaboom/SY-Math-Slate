@@ -19,9 +19,9 @@ Date: 2026-02-15
 ## Scope (Base Required)
 
 Touched files/directories:
-- `v10/src/features/mod-studio/**` (new)
-- `v10/src/features/layout/AppLayout.tsx` (entry point mount only)
-- `v10/src/features/store/**` (only if local studio state slice is needed)
+- `v10/src/features/platform/mod-studio/**` (new)
+- `v10/src/features/chrome/layout/AppLayout.tsx` (entry point mount only)
+- `v10/src/features/platform/store/**` (only if local studio state slice is needed)
 
 Out of scope:
 - Full policy editor features.
@@ -158,12 +158,12 @@ If NO:
 Status: COMPLETED
 
 Changed files:
-- `v10/src/features/mod-studio/core/ModStudioShell.tsx`
-- `v10/src/features/mod-studio/core/ModStudioPanel.tsx`
-- `v10/src/features/mod-studio/core/types.ts`
-- `v10/src/features/mod-studio/index.ts`
-- `v10/src/features/store/useModStudioStore.ts`
-- `v10/src/features/layout/AppLayout.tsx`
+- `v10/src/features/platform/mod-studio/core/ModStudioShell.tsx`
+- `v10/src/features/platform/mod-studio/core/ModStudioPanel.tsx`
+- `v10/src/features/platform/mod-studio/core/types.ts`
+- `v10/src/features/platform/mod-studio/index.ts`
+- `v10/src/features/platform/store/useModStudioStore.ts`
+- `v10/src/features/chrome/layout/AppLayout.tsx`
 
 Commands run (only if user asked or required by spec):
 - `scripts/check_layer_rules.sh`

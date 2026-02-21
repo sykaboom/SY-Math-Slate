@@ -44,7 +44,7 @@ Date: 2026-02-19
 ## Scope (Base Required)
 
 Touched files/directories (write):
-- `v10/src/features/layout/PlayerBar.tsx` — 반응형 레이아웃 수정
+- `v10/src/features/chrome/layout/PlayerBar.tsx` — 반응형 레이아웃 수정
 
 Out of scope:
 - PlayerBar 기능 추가/제거
@@ -201,7 +201,7 @@ Out of scope:
 Status: COMPLETED
 
 Changed files:
-- `v10/src/features/layout/PlayerBar.tsx`
+- `v10/src/features/chrome/layout/PlayerBar.tsx`
 
 ## Gate Results (Codex fills)
 

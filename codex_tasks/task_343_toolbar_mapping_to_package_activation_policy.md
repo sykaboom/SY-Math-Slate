@@ -19,8 +19,8 @@ Date: 2026-02-20
 ## Scope (Base Required)
 
 Touched files/directories:
-- `v10/src/features/toolbar/toolbarModePolicy.ts`
-- `v10/src/features/toolbar/FloatingToolbar.tsx`
+- `v10/src/features/chrome/toolbar/toolbarModePolicy.ts`
+- `v10/src/features/chrome/toolbar/FloatingToolbar.tsx`
 - `v10/src/core/mod/package/*` (activation selector)
 
 Out of scope:
@@ -61,7 +61,7 @@ Out of scope:
 - Touched file count:
   - 3
 - Files shared with other PENDING tasks:
-  - `v10/src/features/toolbar/FloatingToolbar.tsx`
+  - `v10/src/features/chrome/toolbar/FloatingToolbar.tsx`
 - Cross-module dependency:
   - YES
 - Parallelizable sub-units:
@@ -172,8 +172,8 @@ Status: COMPLETED
 
 Changed files:
 - `v10/src/core/mod/package/selectors.ts`
-- `v10/src/features/toolbar/toolbarModePolicy.ts`
-- `v10/src/features/toolbar/FloatingToolbar.tsx`
+- `v10/src/features/chrome/toolbar/toolbarModePolicy.ts`
+- `v10/src/features/chrome/toolbar/FloatingToolbar.tsx`
 - `codex_tasks/task_343_toolbar_mapping_to_package_activation_policy.md`
 
 Commands run (only if user asked or required by spec):

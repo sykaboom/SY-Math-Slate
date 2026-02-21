@@ -61,7 +61,7 @@ Previous version: 이전 스펙(2026-02-17)의 globalStep/sharedViewport 중복 
 ## Scope (Base Required)
 
 Touched files/directories:
-- `v10/src/features/store/useLocalStore.ts` (write) — 데드 스테이트 7개 항목 제거
+- `v10/src/features/platform/store/useLocalStore.ts` (write) — 데드 스테이트 7개 항목 제거
 
 Out of scope:
 - useSyncStore, useViewportStore, useChromeStore, useUIStoreBridge 변경 없음
@@ -193,12 +193,12 @@ Out of scope:
 ## Manual Verification Steps (Base Required)
 
 1) Step: 제거 대상 필드 부재 확인
-   - Command / click path: `grep -n "isPanelOpen\|localViewport\|setPanelOpen\|setLocalViewport\|INITIAL_VIEWPORT" v10/src/features/store/useLocalStore.ts`
+   - Command / click path: `grep -n "isPanelOpen\|localViewport\|setPanelOpen\|setLocalViewport\|INITIAL_VIEWPORT" v10/src/features/platform/store/useLocalStore.ts`
    - Expected result: 매치 없음 (0 lines)
    - Covers: AC-1, AC-2, AC-3
 
 2) Step: 남은 인터페이스 확인
-   - Command / click path: `cat v10/src/features/store/useLocalStore.ts` (전체 확인)
+   - Command / click path: `cat v10/src/features/platform/store/useLocalStore.ts` (전체 확인)
    - Expected result: role, trustedRoleClaim 관련 5개 항목만 존재
    - Covers: AC-5
 
@@ -242,17 +242,17 @@ Out of scope:
 Status: COMPLETED
 
 Changed files:
-- `v10/src/features/store/useLocalStore.ts`
+- `v10/src/features/platform/store/useLocalStore.ts`
 - `codex_tasks/task_275_state_duplication_consolidation.md`
 
 Commands run:
 - `sed -n '1,260p' codex_tasks/task_275_state_duplication_consolidation.md`
-- `sed -n '1,320p' v10/src/features/store/useLocalStore.ts`
+- `sed -n '1,320p' v10/src/features/platform/store/useLocalStore.ts`
 - `rg -n "setPanelOpen|setLocalViewport|localViewport|isPanelOpen" v10/src -g '*.ts' -g '*.tsx' -g '!features/store/useLocalStore.ts'`
 - `rg -n "useLocalStore" v10/src -g '*.ts' -g '*.tsx'`
 - `for f in $(rg -l "useLocalStore" v10/src -g '*.ts' -g '*.tsx'); do rg -n "isPanelOpen|localViewport|setPanelOpen|setLocalViewport" "$f" && echo "-- $f"; done` (구현 전/후 각 1회)
-- `grep -n "isPanelOpen\\|localViewport\\|setPanelOpen\\|setLocalViewport\\|INITIAL_VIEWPORT" v10/src/features/store/useLocalStore.ts`
-- `sed -n '1,220p' v10/src/features/store/useLocalStore.ts`
+- `grep -n "isPanelOpen\\|localViewport\\|setPanelOpen\\|setLocalViewport\\|INITIAL_VIEWPORT" v10/src/features/platform/store/useLocalStore.ts`
+- `sed -n '1,220p' v10/src/features/platform/store/useLocalStore.ts`
 
 ## Gate Results (Codex fills)
 
@@ -267,12 +267,12 @@ Commands run:
 Manual verification notes:
 - 구현 전 외부 참조 검증:
   - `useLocalStore`를 import하는 파일만 대상으로 제거 대상 심볼 검색 수행.
-  - 결과: 매치 파일은 `v10/src/features/store/useLocalStore.ts` 1개뿐 (외부 호출자 없음 확인).
+  - 결과: 매치 파일은 `v10/src/features/platform/store/useLocalStore.ts` 1개뿐 (외부 호출자 없음 확인).
 - 구현 후 부재 검증:
-  - `grep -n "isPanelOpen\\|localViewport\\|setPanelOpen\\|setLocalViewport\\|INITIAL_VIEWPORT" v10/src/features/store/useLocalStore.ts`
+  - `grep -n "isPanelOpen\\|localViewport\\|setPanelOpen\\|setLocalViewport\\|INITIAL_VIEWPORT" v10/src/features/platform/store/useLocalStore.ts`
   - 결과: 출력 0줄 (AC-1/2/3 충족).
 - 구현 후 인터페이스 검증:
-  - `sed -n '1,220p' v10/src/features/store/useLocalStore.ts`
+  - `sed -n '1,220p' v10/src/features/platform/store/useLocalStore.ts`
   - 결과: `role`, `trustedRoleClaim`, `setRole`, `setTrustedRoleClaim`, `clearTrustedRoleClaim`만 존재 (AC-5 충족).
 - role/trustedRoleClaim 동작 보존:
   - 초기값/세터 로직 변경 없이 유지됨을 코드 diff로 확인.

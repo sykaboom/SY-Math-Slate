@@ -21,10 +21,10 @@ Date: 2026-02-15
 
 Touched files/directories:
 - `codex_tasks/task_124_core_manifest_shadow_injection.md`
-- `v10/src/features/extensions/ui/registerCoreSlots.ts`
+- `v10/src/features/platform/extensions/ui/registerCoreSlots.ts`
 - `v10/src/core/extensions/pluginLoader.ts`
-- `v10/src/features/extensions/ui/ExtensionRuntimeBootstrap.tsx`
-- `v10/src/features/toolbar/FloatingToolbar.tsx`
+- `v10/src/features/platform/extensions/ui/ExtensionRuntimeBootstrap.tsx`
+- `v10/src/features/chrome/toolbar/FloatingToolbar.tsx`
 
 Out of scope:
 - Hardcoded toolbar removal

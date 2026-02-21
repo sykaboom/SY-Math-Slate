@@ -47,14 +47,14 @@ Phase 3-B = 각 --theme-* 토큰을 직접 편집 (전문가 모드)
 ## Scope (Base Required)
 
 Touched files/directories (create):
-- `v10/src/features/mod-studio/theme/TokenEditorPanel.tsx`
-- `v10/src/features/mod-studio/theme/TokenColorPicker.tsx`
-- `v10/src/features/store/useTokenDraftStore.ts`
+- `v10/src/features/platform/mod-studio/theme/TokenEditorPanel.tsx`
+- `v10/src/features/platform/mod-studio/theme/TokenColorPicker.tsx`
+- `v10/src/features/platform/store/useTokenDraftStore.ts`
 
 Touched files/directories (write):
-- `v10/src/features/mod-studio/theme/ThemeStudioSection.tsx` — TokenEditorPanel 통합 (고급 모드 탭)
+- `v10/src/features/platform/mod-studio/theme/ThemeStudioSection.tsx` — TokenEditorPanel 통합 (고급 모드 탭)
 - `v10/src/core/themes/presets.ts` — custom preset 로드 지원
-- `v10/src/features/theme/ThemePickerPanel.tsx` — custom preset 목록 표시 (actual path)
+- `v10/src/features/chrome/theming-ui/ThemePickerPanel.tsx` — custom preset 목록 표시 (actual path)
 
 Out of scope:
 - 모듈 스코프 토큰 편집 (core-toolbar, mod-studio 모듈별 토큰) — 별도 태스크
@@ -221,12 +221,12 @@ Advanced 탭:
 Status: COMPLETED
 
 Changed files:
-- `v10/src/features/mod-studio/theme/TokenEditorPanel.tsx` (new)
-- `v10/src/features/mod-studio/theme/TokenColorPicker.tsx` (new)
-- `v10/src/features/store/useTokenDraftStore.ts` (new)
-- `v10/src/features/mod-studio/theme/ThemeStudioSection.tsx`
+- `v10/src/features/platform/mod-studio/theme/TokenEditorPanel.tsx` (new)
+- `v10/src/features/platform/mod-studio/theme/TokenColorPicker.tsx` (new)
+- `v10/src/features/platform/store/useTokenDraftStore.ts` (new)
+- `v10/src/features/platform/mod-studio/theme/ThemeStudioSection.tsx`
 - `v10/src/core/themes/presets.ts`
-- `v10/src/features/theme/ThemePickerPanel.tsx`
+- `v10/src/features/chrome/theming-ui/ThemePickerPanel.tsx`
 - `codex_tasks/task_290_phase3b_advanced_token_editor.md`
 
 Commands run:
@@ -240,5 +240,5 @@ Commands run:
 Manual verification notes:
 - Implemented Advanced tab with 18 global token editors (color input + raw rgba/hex input) and 100ms debounced live preview via existing `applyThemeDraftPreview`.
 - Added custom preset persistence in localStorage key `sy_custom_presets`, plus immutable guard that blocks overwrite/delete for default presets (`chalk`, `parchment`, `notebook`).
-- Updated ThemePickerPanel (actual path: `v10/src/features/theme/ThemePickerPanel.tsx`) to show/apply/delete custom presets and refresh on custom preset storage update events.
+- Updated ThemePickerPanel (actual path: `v10/src/features/chrome/theming-ui/ThemePickerPanel.tsx`) to show/apply/delete custom presets and refresh on custom preset storage update events.
 - Validation rerun (`cd v10 && npm run lint && npm run build`) completed successfully.

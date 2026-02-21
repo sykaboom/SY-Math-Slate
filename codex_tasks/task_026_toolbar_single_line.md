@@ -21,9 +21,9 @@ Tablet UX suffers when the toolbar wraps into multiple rows. For a lecture tool,
 - No redesign of Pen/Laser panels.
 
 ## Scope (touched files)
-- `v10/src/features/toolbar/FloatingToolbar.tsx`
-- `v10/src/features/toolbar/atoms/ToolButton.tsx` (optional tooltip refinement)
-- `v10/src/features/toolbar/atoms/ToolbarPanel.tsx` (if menu layout needs reuse)
+- `v10/src/features/chrome/toolbar/FloatingToolbar.tsx`
+- `v10/src/features/chrome/toolbar/atoms/ToolButton.tsx` (optional tooltip refinement)
+- `v10/src/features/chrome/toolbar/atoms/ToolbarPanel.tsx` (if menu layout needs reuse)
 - `v10/src/ui/components/popover.tsx` (no logic change; only if necessary for menu layout)
 
 ## Requirements
@@ -73,7 +73,7 @@ Overflow menu items must have visible text labels.
 ## Implementation Log (Codex)
 **Status:** COMPLETED  
 **Changed files:**
-- `v10/src/features/toolbar/FloatingToolbar.tsx`
+- `v10/src/features/chrome/toolbar/FloatingToolbar.tsx`
 
 **Commands run:** None  
 **Notes:** Manual verification not run (per instructions).

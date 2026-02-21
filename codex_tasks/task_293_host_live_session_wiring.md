@@ -43,15 +43,15 @@ Date: 2026-02-19
 ## Scope (Base Required)
 
 Touched files/directories (create):
-- `v10/src/features/store/useHostShareStore.ts` — activeSession: { shareId, hostActorId, liveSession } | null
-- `v10/src/features/sharing/HostLiveSessionPanel.tsx` — 호스트 세션 상태 + 보류 제안 승인/거부 UI
+- `v10/src/features/platform/store/useHostShareStore.ts` — activeSession: { shareId, hostActorId, liveSession } | null
+- `v10/src/features/collaboration/sharing/HostLiveSessionPanel.tsx` — 호스트 세션 상태 + 보류 제안 승인/거부 UI
 
 Touched files/directories (write):
-- `v10/src/features/sharing/ShareButton.tsx` — 공유 성공 후 useHostShareStore.setActiveSession(meta) 호출
+- `v10/src/features/collaboration/sharing/ShareButton.tsx` — 공유 성공 후 useHostShareStore.setActiveSession(meta) 호출
 - `v10/src/core/config/panel-policy.ts` — HOST_LIVE_SESSION 패널 정책/ID 추가
-- `v10/src/features/extensions/ui/registerCoreSlots.ts` — HOST_LIVE_SESSION launcher/slot contract 추가
-- `v10/src/features/layout/windowing/panelAdapters.tsx` — HostLiveSessionPanel window module 추가
-- `v10/src/features/layout/AppLayout.tsx` — 신규 패널 open/close 상태 연결
+- `v10/src/features/platform/extensions/ui/registerCoreSlots.ts` — HOST_LIVE_SESSION launcher/slot contract 추가
+- `v10/src/features/chrome/layout/windowing/panelAdapters.tsx` — HostLiveSessionPanel window module 추가
+- `v10/src/features/chrome/layout/AppLayout.tsx` — 신규 패널 open/close 상태 연결
 
 Out of scope:
 - SessionPolicyPanel 단독 신규 패널화 (이번 task는 HostLiveSessionPanel 내부 사용 또는 기존 경로 유지)
@@ -260,13 +260,13 @@ store: { activeSession: ActiveHostSession | null; setActiveSession / clearActive
 Status: COMPLETED
 
 Changed files:
-- `v10/src/features/store/useHostShareStore.ts`
-- `v10/src/features/sharing/HostLiveSessionPanel.tsx`
-- `v10/src/features/sharing/ShareButton.tsx`
+- `v10/src/features/platform/store/useHostShareStore.ts`
+- `v10/src/features/collaboration/sharing/HostLiveSessionPanel.tsx`
+- `v10/src/features/collaboration/sharing/ShareButton.tsx`
 - `v10/src/core/config/panel-policy.ts`
-- `v10/src/features/extensions/ui/registerCoreSlots.ts`
-- `v10/src/features/layout/windowing/panelAdapters.tsx`
-- `v10/src/features/layout/AppLayout.tsx`
+- `v10/src/features/platform/extensions/ui/registerCoreSlots.ts`
+- `v10/src/features/chrome/layout/windowing/panelAdapters.tsx`
+- `v10/src/features/chrome/layout/AppLayout.tsx`
 - `design_drafts/layout_host_live_session_panel_420x520.svg`
 
 Commands run:

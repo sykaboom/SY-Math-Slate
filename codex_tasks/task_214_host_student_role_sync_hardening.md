@@ -20,9 +20,9 @@ Date: 2026-02-15
 
 Touched files/directories:
 - `codex_tasks/task_214_host_student_role_sync_hardening.md`
-- `v10/src/features/sync/useAsymmetricSessionSync.ts`
-- `v10/src/features/sync/realtime/roleSyncGuard.ts` (new)
-- `v10/src/features/store/useSyncStore.ts`
+- `v10/src/features/collaboration/sync/useAsymmetricSessionSync.ts`
+- `v10/src/features/collaboration/sync/realtime/roleSyncGuard.ts` (new)
+- `v10/src/features/platform/store/useSyncStore.ts`
 
 Out of scope:
 - Presence/laser stream rendering (`task_215`).
@@ -138,9 +138,9 @@ Out of scope:
 Status: COMPLETED
 
 Changed files:
-- `v10/src/features/sync/realtime/roleSyncGuard.ts`
-- `v10/src/features/sync/useAsymmetricSessionSync.ts`
-- `v10/src/features/store/useSyncStore.ts`
+- `v10/src/features/collaboration/sync/realtime/roleSyncGuard.ts`
+- `v10/src/features/collaboration/sync/useAsymmetricSessionSync.ts`
+- `v10/src/features/platform/store/useSyncStore.ts`
 
 Commands run (only if user asked or required by spec):
 - `scripts/check_layer_rules.sh`

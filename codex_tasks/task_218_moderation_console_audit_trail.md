@@ -20,11 +20,11 @@ Date: 2026-02-15
 
 Touched files/directories:
 - `codex_tasks/task_218_moderation_console_audit_trail.md`
-- `v10/src/features/moderation/useModerationConsole.ts` (new)
-- `v10/src/features/moderation/ModerationConsolePanel.tsx` (new)
-- `v10/src/features/extensions/ui/registerCoreSlots.ts`
-- `v10/src/features/observability/auditLogger.ts`
-- `v10/src/features/community/store/useCommunityStore.ts`
+- `v10/src/features/governance/moderation/useModerationConsole.ts` (new)
+- `v10/src/features/governance/moderation/ModerationConsolePanel.tsx` (new)
+- `v10/src/features/platform/extensions/ui/registerCoreSlots.ts`
+- `v10/src/features/platform/observability/auditLogger.ts`
+- `v10/src/features/governance/community/store/useCommunityStore.ts`
 
 Out of scope:
 - Global layout geometry refactors.
@@ -145,11 +145,11 @@ Out of scope:
 Status: COMPLETED
 
 Changed files:
-- `v10/src/features/moderation/useModerationConsole.ts`
-- `v10/src/features/moderation/ModerationConsolePanel.tsx`
-- `v10/src/features/extensions/ui/registerCoreSlots.ts`
-- `v10/src/features/observability/auditLogger.ts`
-- `v10/src/features/community/useCommunityActions.ts`
+- `v10/src/features/governance/moderation/useModerationConsole.ts`
+- `v10/src/features/governance/moderation/ModerationConsolePanel.tsx`
+- `v10/src/features/platform/extensions/ui/registerCoreSlots.ts`
+- `v10/src/features/platform/observability/auditLogger.ts`
+- `v10/src/features/governance/community/useCommunityActions.ts`
 - `v10/src/app/api/community/route.ts`
 
 Commands run (only if user asked or required by spec):

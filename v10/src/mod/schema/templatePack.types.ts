@@ -7,7 +7,7 @@ import type {
   TemplatePackAdapterThemeDraft,
   TemplatePackAdapterToolbarMode,
   TemplatePackAdapterViewportProfile,
-} from "@core/mod/package";
+} from "@core/runtime/modding/package";
 
 export const TEMPLATE_PACK_MANIFEST_VERSION = 1 as const;
 

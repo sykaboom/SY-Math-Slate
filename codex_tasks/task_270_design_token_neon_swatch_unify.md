@@ -165,11 +165,11 @@ Status: COMPLETED
 Changed files:
 - `v10/src/app/globals.css`
 - `v10/tailwind.config.ts`
-- `v10/src/features/toolbar/PenControls.tsx`
-- `v10/src/features/toolbar/LaserControls.tsx`
+- `v10/src/features/chrome/toolbar/PenControls.tsx`
+- `v10/src/features/chrome/toolbar/LaserControls.tsx`
 - `v10/src/core/config/typography.ts`
-- `v10/src/features/canvas/CanvasStage.tsx`
-- `v10/src/features/canvas/AnchorIndicator.tsx`
+- `v10/src/features/editor/canvas/CanvasStage.tsx`
+- `v10/src/features/editor/canvas/AnchorIndicator.tsx`
 - `v10/AI_READ_ME.md`
 - `codex_tasks/task_270_design_token_neon_swatch_unify.md`
 

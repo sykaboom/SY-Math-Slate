@@ -24,10 +24,10 @@ Date: 2026-02-09
 
 Touched files/directories:
 - `codex_tasks/task_093_mcp_adapter_boundary_slice1.md`
-- `v10/src/features/extensions/adapters/types.ts` (new)
-- `v10/src/features/extensions/adapters/registry.ts` (new)
-- `v10/src/features/extensions/adapters/mockAdapter.ts` (new, local deterministic adapter)
-- `v10/src/features/extensions/adapters/index.ts` (new)
+- `v10/src/features/platform/extensions/adapters/types.ts` (new)
+- `v10/src/features/platform/extensions/adapters/registry.ts` (new)
+- `v10/src/features/platform/extensions/adapters/mockAdapter.ts` (new, local deterministic adapter)
+- `v10/src/features/platform/extensions/adapters/index.ts` (new)
 - `v10/src/core/extensions/connectors.ts`
 - `v10/src/core/extensions/registry.ts` (if lookup integration needed)
 - `v10/src/core/contracts/toolResult.ts` (if adapter response typing refinement needed)
@@ -37,7 +37,7 @@ Touched files/directories:
 Out of scope:
 - 실운영 LLM/TTS/MCP 네트워크 연결
 - API key/secret 저장 및 인증 정책 구현
-- `v10/src/features/layout/**` 및 UI 컴포넌트 수정
+- `v10/src/features/chrome/layout/**` 및 UI 컴포넌트 수정
 - cross-repo(`math-pdf-builder-codex`) 수정
 
 ---
@@ -116,7 +116,7 @@ Mock adapter role:
 
 ## Manual Verification Steps
 1) Adapter 파일 생성 확인
-   - Command / path: `rg --files v10/src/features/extensions/adapters`
+   - Command / path: `rg --files v10/src/features/platform/extensions/adapters`
    - Expected result: `types.ts`, `registry.ts`, `mockAdapter.ts`, `index.ts` 존재
    - Covers: AC-1
 
@@ -165,10 +165,10 @@ Status: COMPLETED
 
 Changed files:
 - `codex_tasks/task_093_mcp_adapter_boundary_slice1.md`
-- `v10/src/features/extensions/adapters/types.ts` (new)
-- `v10/src/features/extensions/adapters/registry.ts` (new)
-- `v10/src/features/extensions/adapters/mockAdapter.ts` (new)
-- `v10/src/features/extensions/adapters/index.ts` (new)
+- `v10/src/features/platform/extensions/adapters/types.ts` (new)
+- `v10/src/features/platform/extensions/adapters/registry.ts` (new)
+- `v10/src/features/platform/extensions/adapters/mockAdapter.ts` (new)
+- `v10/src/features/platform/extensions/adapters/index.ts` (new)
 - `v10/src/core/extensions/connectors.ts`
 - `v10/src/core/extensions/registry.ts`
 - `v10/AI_READ_ME.md`
@@ -181,10 +181,10 @@ Commands run:
 - `node scripts/gen_ai_read_me_map.mjs`
 - `npm run lint` (in `v10/`)
 - `npm run build` (in `v10/`, escalated due sandbox Turbopack process 제한)
-- `rg --files v10/src/features/extensions/adapters`
+- `rg --files v10/src/features/platform/extensions/adapters`
 - `rg -n "adapter|registry|invoke|validateToolResult|unknown-adapter|adapter-invoke-failed" v10/src/core/extensions/connectors.ts`
-- `rg -n "openai|anthropic|ollama|gemini" v10/src/core v10/src/features/extensions/adapters`
-- `git status --short -- codex_tasks/task_093_mcp_adapter_boundary_slice1.md v10/src/features/extensions/adapters/types.ts v10/src/features/extensions/adapters/registry.ts v10/src/features/extensions/adapters/mockAdapter.ts v10/src/features/extensions/adapters/index.ts v10/src/core/extensions/connectors.ts v10/src/core/extensions/registry.ts v10/src/core/contracts/toolResult.ts v10/AI_READ_ME.md v10/AI_READ_ME_MAP.md`
+- `rg -n "openai|anthropic|ollama|gemini" v10/src/core v10/src/features/platform/extensions/adapters`
+- `git status --short -- codex_tasks/task_093_mcp_adapter_boundary_slice1.md v10/src/features/platform/extensions/adapters/types.ts v10/src/features/platform/extensions/adapters/registry.ts v10/src/features/platform/extensions/adapters/mockAdapter.ts v10/src/features/platform/extensions/adapters/index.ts v10/src/core/extensions/connectors.ts v10/src/core/extensions/registry.ts v10/src/core/contracts/toolResult.ts v10/AI_READ_ME.md v10/AI_READ_ME_MAP.md`
 
 Manual verification notes:
 - AC-1: `features/extensions/adapters/**` 4개 파일 생성 확인.

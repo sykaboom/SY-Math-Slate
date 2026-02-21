@@ -65,12 +65,12 @@ Phase 3-C: 현재 테마 설정을 JSON으로 내보내고, JSON을 가져와서
 ## Scope (Base Required)
 
 Touched files/directories (create):
-- `v10/src/features/mod-studio/theme/themeJsonIO.ts` — export/import/validate 유틸
-- `v10/src/features/mod-studio/theme/ThemeExportButton.tsx`
-- `v10/src/features/mod-studio/theme/ThemeImportButton.tsx`
+- `v10/src/features/platform/mod-studio/theme/themeJsonIO.ts` — export/import/validate 유틸
+- `v10/src/features/platform/mod-studio/theme/ThemeExportButton.tsx`
+- `v10/src/features/platform/mod-studio/theme/ThemeImportButton.tsx`
 
 Touched files/directories (write):
-- `v10/src/features/mod-studio/theme/ThemeStudioSection.tsx` — 버튼 통합 (또는 IoStudioSection)
+- `v10/src/features/platform/mod-studio/theme/ThemeStudioSection.tsx` — 버튼 통합 (또는 IoStudioSection)
 
 Out of scope:
 - 서버 업로드 (파일 다운로드/업로드만)
@@ -208,10 +208,10 @@ Out of scope:
 Status: COMPLETED
 
 Changed files:
-- `v10/src/features/mod-studio/theme/themeJsonIO.ts` (new)
-- `v10/src/features/mod-studio/theme/ThemeExportButton.tsx` (new)
-- `v10/src/features/mod-studio/theme/ThemeImportButton.tsx` (new)
-- `v10/src/features/mod-studio/theme/ThemeStudioSection.tsx`
+- `v10/src/features/platform/mod-studio/theme/themeJsonIO.ts` (new)
+- `v10/src/features/platform/mod-studio/theme/ThemeExportButton.tsx` (new)
+- `v10/src/features/platform/mod-studio/theme/ThemeImportButton.tsx` (new)
+- `v10/src/features/platform/mod-studio/theme/ThemeStudioSection.tsx`
 - `codex_tasks/task_291_phase3c_theme_json_io.md`
 
 Commands run:

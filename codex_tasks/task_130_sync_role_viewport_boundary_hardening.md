@@ -21,13 +21,13 @@ Date: 2026-02-15
 
 Touched files/directories:
 - `codex_tasks/task_130_sync_role_viewport_boundary_hardening.md`
-- `v10/src/features/canvas/viewport/useViewportInteraction.ts`
-- `v10/src/features/layout/AppLayout.tsx`
-- `v10/src/features/store/useSyncStore.ts`
-- `v10/src/features/store/useLocalStore.ts`
+- `v10/src/features/editor/canvas/viewport/useViewportInteraction.ts`
+- `v10/src/features/chrome/layout/AppLayout.tsx`
+- `v10/src/features/platform/store/useSyncStore.ts`
+- `v10/src/features/platform/store/useLocalStore.ts`
 - `v10/src/core/engine/commandBus.ts` (if context metadata hardening needed)
-- `v10/src/features/extensions/commandExecutionPolicy.ts`
-- `v10/src/features/extensions/toolExecutionPolicy.ts`
+- `v10/src/features/platform/extensions/commandExecutionPolicy.ts`
+- `v10/src/features/platform/extensions/toolExecutionPolicy.ts`
 
 Out of scope:
 - useUIStore deletion

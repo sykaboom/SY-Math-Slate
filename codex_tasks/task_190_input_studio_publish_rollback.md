@@ -19,10 +19,10 @@ Date: 2026-02-15
 
 Touched files/directories:
 - `codex_tasks/task_190_input_studio_publish_rollback.md`
-- `v10/src/features/input-studio/publish/*`
-- `v10/src/features/layout/DataInputPanel.tsx`
-- `v10/src/features/input-studio/llm/*`
-- `v10/src/features/input-studio/validation/*`
+- `v10/src/features/editor/input-studio/publish/*`
+- `v10/src/features/chrome/layout/DataInputPanel.tsx`
+- `v10/src/features/editor/input-studio/llm/*`
+- `v10/src/features/editor/input-studio/validation/*`
 
 Out of scope:
 - Multi-user distributed conflict resolution.
@@ -132,14 +132,14 @@ Out of scope:
 Status: COMPLETED
 
 Changed files:
-- `v10/src/features/input-studio/publish/types.ts`
-- `v10/src/features/input-studio/publish/useInputStudioPublishRollback.ts`
-- `v10/src/features/layout/DataInputPanel.tsx`
+- `v10/src/features/editor/input-studio/publish/types.ts`
+- `v10/src/features/editor/input-studio/publish/useInputStudioPublishRollback.ts`
+- `v10/src/features/chrome/layout/DataInputPanel.tsx`
 - `v10/AI_READ_ME.md`
 - `v10/AI_READ_ME_MAP.md`
 
 Commands run (only if user asked or required by spec):
-- `cd v10 && npm run lint -- --max-warnings=0 -- src/features/layout/DataInputPanel.tsx src/features/input-studio`
+- `cd v10 && npm run lint -- --max-warnings=0 -- src/features/chrome/layout/DataInputPanel.tsx src/features/editor/input-studio`
 - `cd v10 && npm run lint`
 - `cd v10 && npm run build`
 - `VERIFY_STAGE=end bash scripts/run_repo_verifications.sh`

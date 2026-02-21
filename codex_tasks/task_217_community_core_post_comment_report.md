@@ -21,8 +21,8 @@ Date: 2026-02-15
 Touched files/directories:
 - `codex_tasks/task_217_community_core_post_comment_report.md`
 - `v10/src/core/contracts/community.ts` (new)
-- `v10/src/features/community/store/useCommunityStore.ts` (new)
-- `v10/src/features/community/useCommunityActions.ts` (new)
+- `v10/src/features/governance/community/store/useCommunityStore.ts` (new)
+- `v10/src/features/governance/community/useCommunityActions.ts` (new)
 - `v10/src/app/api/community/route.ts` (new)
 
 Out of scope:
@@ -139,8 +139,8 @@ Status: COMPLETED
 
 Changed files:
 - `v10/src/core/contracts/community.ts`
-- `v10/src/features/community/store/useCommunityStore.ts`
-- `v10/src/features/community/useCommunityActions.ts`
+- `v10/src/features/governance/community/store/useCommunityStore.ts`
+- `v10/src/features/governance/community/useCommunityActions.ts`
 - `v10/src/app/api/community/route.ts`
 
 Commands run (only if user asked or required by spec):

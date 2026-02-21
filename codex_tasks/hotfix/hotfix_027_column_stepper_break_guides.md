@@ -8,10 +8,10 @@
 User requested a compact column stepper UI (`- 3단 +`) and a More menu toggle for break guides.
 
 ## Scope
-- `v10/src/features/toolbar/PageNavigator.tsx`
-- `v10/src/features/toolbar/FloatingToolbar.tsx`
-- `v10/src/features/store/useUIStore.ts`
-- `v10/src/features/canvas/ContentLayer.tsx`
+- `v10/src/features/chrome/toolbar/PageNavigator.tsx`
+- `v10/src/features/chrome/toolbar/FloatingToolbar.tsx`
+- `v10/src/features/platform/store/useUIStore.ts`
+- `v10/src/features/editor/canvas/ContentLayer.tsx`
 
 ## Changes
 - Column UI replaced with stepper; display uses `단` and clamps to 1-4.

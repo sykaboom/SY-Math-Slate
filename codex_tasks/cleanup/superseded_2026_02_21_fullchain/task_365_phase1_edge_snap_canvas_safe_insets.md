@@ -18,7 +18,7 @@ Date: 2026-02-21
 ## Scope (Base Required)
 
 Touched files/directories:
-- v10/src/features/layout, v10/src/features/toolbar, design_drafts
+- v10/src/features/chrome/layout, v10/src/features/chrome/toolbar, design_drafts
 
 Out of scope:
 - Command catalog and AI pipeline changes are excluded.

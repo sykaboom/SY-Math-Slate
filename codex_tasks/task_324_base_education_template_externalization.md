@@ -25,7 +25,7 @@ Touched files/directories:
 - `v10/src/mod/templates/base-education/layout.ts` (new)
 - `v10/src/mod/templates/base-education/theme.ts` (new, optional defaults only)
 - `v10/src/mod/templates/index.ts`
-- `v10/src/features/extensions/ui/coreTemplates.ts`
+- `v10/src/features/platform/extensions/ui/coreTemplates.ts`
 
 Out of scope:
 - Runtime cutover wiring in toolbar/store/runtime shell (`task_327`).
@@ -69,7 +69,7 @@ Out of scope:
   - 6
 - Files shared with other PENDING tasks:
   - `v10/src/mod/templates/index.ts`
-  - `v10/src/features/extensions/ui/coreTemplates.ts`
+  - `v10/src/features/platform/extensions/ui/coreTemplates.ts`
 - Cross-module dependency:
   - YES
 - Parallelizable sub-units:

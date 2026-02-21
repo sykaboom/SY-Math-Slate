@@ -18,7 +18,7 @@ Date: 2026-02-21
 ## Scope (Base Required)
 
 Touched files/directories:
-- v10/src/features/store, v10/src/core/mod/package, v10/src/features/toolbar
+- v10/src/features/platform/store, v10/src/core/mod/package, v10/src/features/chrome/toolbar
 
 Out of scope:
 - 새 모드 기능 추가

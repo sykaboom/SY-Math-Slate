@@ -20,9 +20,9 @@ Date: 2026-02-15
 
 Touched files/directories:
 - `codex_tasks/task_203_async_job_orchestrator_v1.md`
-- `v10/src/features/extensions/jobs/types.ts` (new)
-- `v10/src/features/extensions/jobs/asyncJobOrchestrator.ts` (new)
-- `v10/src/features/extensions/jobs/index.ts` (new)
+- `v10/src/features/platform/extensions/jobs/types.ts` (new)
+- `v10/src/features/platform/extensions/jobs/asyncJobOrchestrator.ts` (new)
+- `v10/src/features/platform/extensions/jobs/index.ts` (new)
 
 Out of scope:
 - Persisting jobs to storage/DB.
@@ -132,9 +132,9 @@ Out of scope:
 Status: COMPLETED
 
 Changed files:
-- `v10/src/features/extensions/jobs/types.ts`
-- `v10/src/features/extensions/jobs/asyncJobOrchestrator.ts`
-- `v10/src/features/extensions/jobs/index.ts`
+- `v10/src/features/platform/extensions/jobs/types.ts`
+- `v10/src/features/platform/extensions/jobs/asyncJobOrchestrator.ts`
+- `v10/src/features/platform/extensions/jobs/index.ts`
 
 Commands run (only if user asked or required by spec):
 - `cd v10 && npm run lint`

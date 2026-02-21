@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
 
-import type { ModuleDraft } from "@features/mod-studio/core/types";
+import type { ModuleDraft } from "@features/platform/mod-studio/core/types";
 import {
   executeLLMCallOnServer,
   type LLMCallInput,
-} from "@features/sharing/ai/LLMCallService";
+} from "@features/collaboration/sharing/ai/LLMCallService";
 
 export const dynamic = "force-dynamic";
 

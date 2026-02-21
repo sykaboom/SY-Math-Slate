@@ -34,13 +34,13 @@ We want “초1류급 깔끔함” in structure: clear separation between **core
 - `v10/src/components/ui/` → `v10/src/ui/components/`
 - `v10/src/components/layout/` → split:
   - if **pure view only** → `v10/src/ui/layout/`
-  - if **store/hook connected** → `v10/src/features/layout/`
+  - if **store/hook connected** → `v10/src/features/chrome/layout/`
 
 **Features Migration (Step 3)**
-- `v10/src/store/` → `v10/src/features/store/`
-- `v10/src/hooks/` → `v10/src/features/hooks/`
-- `v10/src/components/canvas/` → `v10/src/features/canvas/`
-- `v10/src/components/toolbar/` → `v10/src/features/toolbar/`
+- `v10/src/store/` → `v10/src/features/platform/store/`
+- `v10/src/hooks/` → `v10/src/features/platform/hooks/`
+- `v10/src/components/canvas/` → `v10/src/features/editor/canvas/`
+- `v10/src/components/toolbar/` → `v10/src/features/chrome/toolbar/`
 
 **Infrastructure (Step 0 / Step 4)**
 - `v10/tsconfig.json` (add `@core/*`, `@ui/*`, `@features/*` aliases)

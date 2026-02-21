@@ -14,14 +14,14 @@ Date: 2026-02-19
 
 ## Scope
 Touched files:
-- `v10/src/features/store/useToolStore.ts`
-- `v10/src/features/store/useUIStoreBridge.ts`
-- `v10/src/features/store/useChromeStore.ts`
-- `v10/src/features/extensions/commands/commands.tool.ts`
-- `v10/src/features/extensions/commands/registerCoreCommands.ts`
-- `v10/src/features/hooks/useCanvas.ts`
-- `v10/src/features/toolbar/EraserControls.tsx` (new)
-- `v10/src/features/toolbar/FloatingToolbar.tsx`
+- `v10/src/features/platform/store/useToolStore.ts`
+- `v10/src/features/platform/store/useUIStoreBridge.ts`
+- `v10/src/features/platform/store/useChromeStore.ts`
+- `v10/src/features/platform/extensions/commands/commands.tool.ts`
+- `v10/src/features/platform/extensions/commands/registerCoreCommands.ts`
+- `v10/src/features/platform/hooks/useCanvas.ts`
+- `v10/src/features/chrome/toolbar/EraserControls.tsx` (new)
+- `v10/src/features/chrome/toolbar/FloatingToolbar.tsx`
 
 Out of scope:
 - Dock position system (task_308)
@@ -52,14 +52,14 @@ Out of scope:
 ## Implementation Log (Codex fills)
 Status: COMPLETED
 Changed files:
-- `v10/src/features/store/useToolStore.ts`
-- `v10/src/features/store/useUIStoreBridge.ts`
-- `v10/src/features/store/useChromeStore.ts`
-- `v10/src/features/extensions/commands/commands.tool.ts`
-- `v10/src/features/extensions/commands/registerCoreCommands.ts`
-- `v10/src/features/hooks/useCanvas.ts`
-- `v10/src/features/toolbar/EraserControls.tsx`
-- `v10/src/features/toolbar/FloatingToolbar.tsx`
+- `v10/src/features/platform/store/useToolStore.ts`
+- `v10/src/features/platform/store/useUIStoreBridge.ts`
+- `v10/src/features/platform/store/useChromeStore.ts`
+- `v10/src/features/platform/extensions/commands/commands.tool.ts`
+- `v10/src/features/platform/extensions/commands/registerCoreCommands.ts`
+- `v10/src/features/platform/hooks/useCanvas.ts`
+- `v10/src/features/chrome/toolbar/EraserControls.tsx`
+- `v10/src/features/chrome/toolbar/FloatingToolbar.tsx`
 Commands run:
 - `scripts/check_layer_rules.sh`
 - `cd v10 && npm run lint`

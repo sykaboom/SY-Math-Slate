@@ -19,14 +19,14 @@ Date: 2026-02-20
 ## Scope (Base Required)
 
 Touched files/directories:
-- `v10/src/features/mod-studio/core/types.ts`
-- `v10/src/features/store/useModStudioStore.ts`
-- `v10/src/features/mod-studio/modules/ModuleStudioSection.tsx`
-- `v10/src/features/mod-studio/layout/LayoutStudioSection.tsx`
-- `v10/src/features/mod-studio/publish/publishStudioDraft.ts`
-- `v10/src/features/mod-studio/publish/PublishStudioSection.tsx`
-- `v10/src/features/mod-studio/io/ioStudio.ts`
-- `v10/src/features/mod-studio/io/__fixtures__/studioDraftBundle.v1.json` (new)
+- `v10/src/features/platform/mod-studio/core/types.ts`
+- `v10/src/features/platform/store/useModStudioStore.ts`
+- `v10/src/features/platform/mod-studio/modules/ModuleStudioSection.tsx`
+- `v10/src/features/platform/mod-studio/layout/LayoutStudioSection.tsx`
+- `v10/src/features/platform/mod-studio/publish/publishStudioDraft.ts`
+- `v10/src/features/platform/mod-studio/publish/PublishStudioSection.tsx`
+- `v10/src/features/platform/mod-studio/io/ioStudio.ts`
+- `v10/src/features/platform/mod-studio/io/__fixtures__/studioDraftBundle.v1.json` (new)
 - `v10/src/mod/templates/_contracts/templatePack.types.ts`
 
 Out of scope:
@@ -69,8 +69,8 @@ Out of scope:
 - Touched file count:
   - 8
 - Files shared with other PENDING tasks:
-  - `v10/src/features/store/useModStudioStore.ts`
-  - `v10/src/features/mod-studio/publish/publishStudioDraft.ts`
+  - `v10/src/features/platform/store/useModStudioStore.ts`
+  - `v10/src/features/platform/mod-studio/publish/publishStudioDraft.ts`
 - Cross-module dependency:
   - YES
 - Parallelizable sub-units:
@@ -191,7 +191,7 @@ Out of scope:
 
 4) Step:
    - Command / click path:
-     - Mod Studio IO: import `v10/src/features/mod-studio/io/__fixtures__/studioDraftBundle.v1.json`
+     - Mod Studio IO: import `v10/src/features/platform/mod-studio/io/__fixtures__/studioDraftBundle.v1.json`
    - Expected result:
      - Import succeeds and migrated draft remains publishable.
    - Covers: AC-4
@@ -221,14 +221,14 @@ Out of scope:
 Status: COMPLETED
 
 Changed files:
-- `v10/src/features/mod-studio/core/types.ts`
-- `v10/src/features/store/useModStudioStore.ts`
-- `v10/src/features/mod-studio/modules/ModuleStudioSection.tsx`
-- `v10/src/features/mod-studio/layout/LayoutStudioSection.tsx`
-- `v10/src/features/mod-studio/publish/publishStudioDraft.ts`
-- `v10/src/features/mod-studio/publish/PublishStudioSection.tsx`
-- `v10/src/features/mod-studio/io/ioStudio.ts`
-- `v10/src/features/mod-studio/io/__fixtures__/studioDraftBundle.v1.json`
+- `v10/src/features/platform/mod-studio/core/types.ts`
+- `v10/src/features/platform/store/useModStudioStore.ts`
+- `v10/src/features/platform/mod-studio/modules/ModuleStudioSection.tsx`
+- `v10/src/features/platform/mod-studio/layout/LayoutStudioSection.tsx`
+- `v10/src/features/platform/mod-studio/publish/publishStudioDraft.ts`
+- `v10/src/features/platform/mod-studio/publish/PublishStudioSection.tsx`
+- `v10/src/features/platform/mod-studio/io/ioStudio.ts`
+- `v10/src/features/platform/mod-studio/io/__fixtures__/studioDraftBundle.v1.json`
 
 Commands run (only if user asked or required by spec):
 - cd v10 && npm run lint

@@ -49,7 +49,7 @@ Date: 2026-02-19
 ## Scope (Base Required)
 
 Touched files/directories (write):
-- `v10/src/features/layout/AppLayout.tsx` — top chrome header에 safe-area padding 조건부 추가
+- `v10/src/features/chrome/layout/AppLayout.tsx` — top chrome header에 safe-area padding 조건부 추가
 
 Out of scope:
 - useTabletShellProfile 변경
@@ -203,7 +203,7 @@ const topChromeClassName = tabletShellProfile.shouldPadTopChromeWithSafeArea
 Status: COMPLETED
 
 Changed files:
-- `v10/src/features/layout/AppLayout.tsx`
+- `v10/src/features/chrome/layout/AppLayout.tsx`
 
 ## Gate Results (Codex fills)
 

@@ -46,11 +46,11 @@ Date: 2026-02-18
 ## Scope (Base Required)
 
 Touched files/directories (write only):
-- `v10/src/features/layout/DataInputPanel.tsx`
-- `v10/src/features/layout/PlayerBar.tsx`
-- `v10/src/features/layout/Prompter.tsx`
-- `v10/src/features/layout/OverviewStage.tsx`
-- `v10/src/features/canvas/objects/ImageBlock.tsx`
+- `v10/src/features/chrome/layout/DataInputPanel.tsx`
+- `v10/src/features/chrome/layout/PlayerBar.tsx`
+- `v10/src/features/chrome/layout/Prompter.tsx`
+- `v10/src/features/chrome/layout/OverviewStage.tsx`
+- `v10/src/features/editor/canvas/objects/ImageBlock.tsx`
 - `v10/src/ui/components/dialog.tsx`
 
 Out of scope:
@@ -184,11 +184,11 @@ bg-white       → bg-theme-surface
    - Command:
      ```
      grep -n "text-white\b\|text-black\|border-white/\|bg-black/\|bg-white/\|bg-gray\|bg-slate\b" \
-       v10/src/features/layout/DataInputPanel.tsx \
-       v10/src/features/layout/PlayerBar.tsx \
-       v10/src/features/layout/Prompter.tsx \
-       v10/src/features/layout/OverviewStage.tsx \
-       v10/src/features/canvas/objects/ImageBlock.tsx \
+       v10/src/features/chrome/layout/DataInputPanel.tsx \
+       v10/src/features/chrome/layout/PlayerBar.tsx \
+       v10/src/features/chrome/layout/Prompter.tsx \
+       v10/src/features/chrome/layout/OverviewStage.tsx \
+       v10/src/features/editor/canvas/objects/ImageBlock.tsx \
        v10/src/ui/components/dialog.tsx
      ```
    - Expected: 매치 없음
@@ -236,11 +236,11 @@ bg-white       → bg-theme-surface
 Status: COMPLETED
 
 Changed files:
-- `v10/src/features/layout/DataInputPanel.tsx`
-- `v10/src/features/layout/PlayerBar.tsx`
-- `v10/src/features/layout/Prompter.tsx`
-- `v10/src/features/layout/OverviewStage.tsx`
-- `v10/src/features/canvas/objects/ImageBlock.tsx`
+- `v10/src/features/chrome/layout/DataInputPanel.tsx`
+- `v10/src/features/chrome/layout/PlayerBar.tsx`
+- `v10/src/features/chrome/layout/Prompter.tsx`
+- `v10/src/features/chrome/layout/OverviewStage.tsx`
+- `v10/src/features/editor/canvas/objects/ImageBlock.tsx`
 - `v10/src/ui/components/dialog.tsx`
 
 Commands run:

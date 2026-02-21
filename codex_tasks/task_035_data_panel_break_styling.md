@@ -27,7 +27,7 @@ The Data Input panel lists both content blocks and break blocks. The current lab
 3. **Layout:** break blocks should take less vertical space than content blocks.
 
 ## Scope (touched files)
-- `v10/src/features/layout/DataInputPanel.tsx`
+- `v10/src/features/chrome/layout/DataInputPanel.tsx`
 - `v10/src/app/globals.css`
 
 ## Acceptance Criteria

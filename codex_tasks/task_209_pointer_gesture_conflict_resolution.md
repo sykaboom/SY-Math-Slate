@@ -20,11 +20,11 @@ Date: 2026-02-16
 
 Touched files/directories:
 - `codex_tasks/task_209_pointer_gesture_conflict_resolution.md`
-- `v10/src/features/store/useViewportStore.ts`
-- `v10/src/features/store/useUIStoreBridge.ts`
-- `v10/src/features/hooks/useCanvas.ts`
-- `v10/src/features/hooks/useOverlayCanvas.ts`
-- `v10/src/features/canvas/viewport/useViewportInteraction.ts`
+- `v10/src/features/platform/store/useViewportStore.ts`
+- `v10/src/features/platform/store/useUIStoreBridge.ts`
+- `v10/src/features/platform/hooks/useCanvas.ts`
+- `v10/src/features/platform/hooks/useOverlayCanvas.ts`
+- `v10/src/features/editor/canvas/viewport/useViewportInteraction.ts`
 
 Out of scope:
 - Toolbar layout changes.
@@ -151,11 +151,11 @@ Out of scope:
 Status: COMPLETED
 
 Changed files:
-- `v10/src/features/store/useViewportStore.ts`
-- `v10/src/features/store/useUIStoreBridge.ts`
-- `v10/src/features/canvas/viewport/useViewportInteraction.ts`
-- `v10/src/features/hooks/useCanvas.ts`
-- `v10/src/features/hooks/useOverlayCanvas.ts`
+- `v10/src/features/platform/store/useViewportStore.ts`
+- `v10/src/features/platform/store/useUIStoreBridge.ts`
+- `v10/src/features/editor/canvas/viewport/useViewportInteraction.ts`
+- `v10/src/features/platform/hooks/useCanvas.ts`
+- `v10/src/features/platform/hooks/useOverlayCanvas.ts`
 
 Commands run (only if user asked or required by spec):
 - `scripts/check_v10_command_write_path.sh`

@@ -20,10 +20,10 @@ Date: 2026-02-15
 
 Touched files/directories:
 - `codex_tasks/task_205_local_cloud_fallback_chain.md`
-- `v10/src/features/extensions/routing/localCloudFallback.ts` (new)
-- `v10/src/features/extensions/routing/types.ts`
-- `v10/src/features/extensions/routing/index.ts`
-- `v10/src/features/extensions/ui/ExtensionRuntimeBootstrap.tsx`
+- `v10/src/features/platform/extensions/routing/localCloudFallback.ts` (new)
+- `v10/src/features/platform/extensions/routing/types.ts`
+- `v10/src/features/platform/extensions/routing/index.ts`
+- `v10/src/features/platform/extensions/ui/ExtensionRuntimeBootstrap.tsx`
 - `v10/src/core/extensions/connectors.ts` (route hook integration if required)
 
 Out of scope:
@@ -139,10 +139,10 @@ Out of scope:
 Status: COMPLETED
 
 Changed files:
-- `v10/src/features/extensions/routing/localCloudFallback.ts`
-- `v10/src/features/extensions/routing/types.ts`
-- `v10/src/features/extensions/routing/index.ts`
-- `v10/src/features/extensions/ui/ExtensionRuntimeBootstrap.tsx`
+- `v10/src/features/platform/extensions/routing/localCloudFallback.ts`
+- `v10/src/features/platform/extensions/routing/types.ts`
+- `v10/src/features/platform/extensions/routing/index.ts`
+- `v10/src/features/platform/extensions/ui/ExtensionRuntimeBootstrap.tsx`
 
 Commands run (only if user asked or required by spec):
 - `cd v10 && npm run lint`

@@ -18,7 +18,7 @@ Date: 2026-02-21
 ## Scope (Base Required)
 
 Touched files/directories:
-- v10/src/features/toolbar, v10/src/features/ui-host/toolbar
+- v10/src/features/chrome/toolbar, v10/src/features/chrome/ui-host/toolbar
 
 Out of scope:
 - 입력 라우팅 변경

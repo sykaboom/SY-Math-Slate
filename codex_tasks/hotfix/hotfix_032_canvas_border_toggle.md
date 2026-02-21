@@ -8,10 +8,10 @@
 User requested an independent toggle for the canvas boundary line in the Layout menu.
 
 ## Scope
-- `v10/src/features/store/useUIStore.ts`
-- `v10/src/features/canvas/CanvasStage.tsx`
-- `v10/src/features/canvas/PageGuides.tsx`
-- `v10/src/features/toolbar/FloatingToolbar.tsx`
+- `v10/src/features/platform/store/useUIStore.ts`
+- `v10/src/features/editor/canvas/CanvasStage.tsx`
+- `v10/src/features/editor/canvas/PageGuides.tsx`
+- `v10/src/features/chrome/toolbar/FloatingToolbar.tsx`
 
 ## Changes
 - Added `showCanvasBorder` state + toggle in UI store.

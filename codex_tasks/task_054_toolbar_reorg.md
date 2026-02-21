@@ -14,8 +14,8 @@ The user wants to improve accessibility for two features currently buried in the
 Extract "Presentation Mode" and "Paste Helper" from the "More" menu and place them as dedicated icons in the primary UI.
 
 ## Scope
-- `v10/src/features/layout/AppLayout.tsx` (Top Header)
-- `v10/src/features/toolbar/FloatingToolbar.tsx` (Bottom Toolbar)
+- `v10/src/features/chrome/layout/AppLayout.tsx` (Top Header)
+- `v10/src/features/chrome/toolbar/FloatingToolbar.tsx` (Bottom Toolbar)
 
 ## Requirements
 
@@ -55,7 +55,7 @@ Extract "Presentation Mode" and "Paste Helper" from the "More" menu and place th
 
 ## Closeout Notes
 - Changed files:
-  - `v10/src/features/layout/AppLayout.tsx`
-  - `v10/src/features/toolbar/FloatingToolbar.tsx`
+  - `v10/src/features/chrome/layout/AppLayout.tsx`
+  - `v10/src/features/chrome/toolbar/FloatingToolbar.tsx`
 - Commands run: none
 - Manual verification: not run (use acceptance criteria)

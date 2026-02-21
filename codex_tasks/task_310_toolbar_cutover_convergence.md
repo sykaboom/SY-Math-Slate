@@ -20,9 +20,9 @@ Date: 2026-02-19
 ## Scope (Base Required)
 
 Touched files/directories:
-- `v10/src/features/toolbar/FloatingToolbar.tsx`
-- `v10/src/features/toolbar/toolbarModePolicy.ts` (new)
-- `v10/src/features/extensions/ui/registerCoreSlots.ts` (only if needed for policy binding consistency)
+- `v10/src/features/chrome/toolbar/FloatingToolbar.tsx`
+- `v10/src/features/chrome/toolbar/toolbarModePolicy.ts` (new)
+- `v10/src/features/platform/extensions/ui/registerCoreSlots.ts` (only if needed for policy binding consistency)
 
 Out of scope:
 - New toolbar features (no new controls)
@@ -63,7 +63,7 @@ Out of scope:
 - Touched file count:
   - 2~3
 - Files shared with other PENDING tasks:
-  - `v10/src/features/toolbar/FloatingToolbar.tsx`
+  - `v10/src/features/chrome/toolbar/FloatingToolbar.tsx`
 - Cross-module dependency:
   - YES
 - Parallelizable sub-units:
@@ -142,7 +142,7 @@ Out of scope:
    - Covers: AC-3
 
 3) Step:
-   - Command / click path: `rg -n "NEXT_PUBLIC_CORE_TOOLBAR_CUTOVER|showLegacy" v10/src/features/toolbar/FloatingToolbar.tsx`
+   - Command / click path: `rg -n "NEXT_PUBLIC_CORE_TOOLBAR_CUTOVER|showLegacy" v10/src/features/chrome/toolbar/FloatingToolbar.tsx`
    - Expected result: 정책 분기 중복 제거(핵심 분기 단일화)
    - Covers: AC-1, AC-2
 
@@ -171,8 +171,8 @@ Out of scope:
 Status: COMPLETED
 
 Changed files:
-- `v10/src/features/toolbar/FloatingToolbar.tsx`
-- `v10/src/features/toolbar/toolbarModePolicy.ts`
+- `v10/src/features/chrome/toolbar/FloatingToolbar.tsx`
+- `v10/src/features/chrome/toolbar/toolbarModePolicy.ts`
 
 Commands run (only if user asked or required by spec):
 - `scripts/check_layer_rules.sh`

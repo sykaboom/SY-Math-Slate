@@ -89,9 +89,9 @@ flowchart TD
 ```mermaid
 flowchart TD
     T[mod/packs/*] --> A[templatePackAdapter]
-    A --> PR[core/mod/package registry]
+    A --> PR[core/runtime/modding/package registry]
     PR --> Sel[package selectors]
-    Sel --> UH[features/ui-host bridge]
+    Sel --> UH[features/chrome/ui-host bridge]
     UH --> Slot[ExtensionSlot/WindowHost]
     Slot --> UI[Visible UI]
 ```
@@ -104,12 +104,12 @@ flowchart TD
 
 대표 파일:
 - `core/foundation/schemas/community.ts` (1604)
-- `features/layout/DataInputPanel.tsx` (1264)
-- `features/hooks/useCanvas.ts` (1046)
-- `features/store/useCanvasStore.ts` (1033)
+- `features/chrome/layout/DataInputPanel.tsx` (1264)
+- `features/platform/hooks/useCanvas.ts` (1046)
+- `features/platform/store/useCanvasStore.ts` (1033)
 - `core/runtime/plugin-runtime/mcpGateway.ts` (1005)
 - `app/api/community/route.ts` (977)
-- `features/extensions/ui/ExtensionRuntimeBootstrap.tsx` (942)
+- `features/platform/extensions/ui/ExtensionRuntimeBootstrap.tsx` (942)
 
 해석:
 - 기능은 동작하나, 수정 단위가 커서 회귀 확률 증가.
@@ -132,17 +132,17 @@ flowchart TD
 ```mermaid
 flowchart LR
     subgraph Core
-      C1[core/mod/contracts]
-      C2[core/mod/package]
-      C3[core/mod/host]
+      C1[core/runtime/modding/api]
+      C2[core/runtime/modding/package]
+      C3[core/runtime/modding/host]
       C4[core/runtime/command + core/foundation/policies]
     end
 
     subgraph FeatureHost
-      F1[features/ui-host]
-      F2[features/layout/windowing]
-      F3[features/toolbar]
-      F4[features/store]
+      F1[features/chrome/ui-host]
+      F2[features/chrome/layout/windowing]
+      F3[features/chrome/toolbar]
+      F4[features/platform/store]
     end
 
     subgraph TemplateInput

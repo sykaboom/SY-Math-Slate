@@ -20,11 +20,11 @@ Date: 2026-02-14
 ## Scope (Base Required)
 
 Touched files/directories:
-- `v10/src/features/store/useDocStore.ts` (new)
-- `v10/src/features/store/useSyncStore.ts` (new)
-- `v10/src/features/store/useLocalStore.ts` (new)
-- `v10/src/features/hooks/usePersistence.ts`
-- `v10/src/features/hooks/useFileIO.ts`
+- `v10/src/features/platform/store/useDocStore.ts` (new)
+- `v10/src/features/platform/store/useSyncStore.ts` (new)
+- `v10/src/features/platform/store/useLocalStore.ts` (new)
+- `v10/src/features/platform/hooks/usePersistence.ts`
+- `v10/src/features/platform/hooks/useFileIO.ts`
 
 Out of scope:
 - Kiosk routing/render branching (Task 111)
@@ -146,11 +146,11 @@ Status: COMPLETED
 
 Changed files:
 - `codex_tasks/task_110_three_tier_state_segmentation.md`
-- `v10/src/features/store/useDocStore.ts`
-- `v10/src/features/store/useSyncStore.ts`
-- `v10/src/features/store/useLocalStore.ts`
-- `v10/src/features/hooks/usePersistence.ts`
-- `v10/src/features/hooks/useFileIO.ts`
+- `v10/src/features/platform/store/useDocStore.ts`
+- `v10/src/features/platform/store/useSyncStore.ts`
+- `v10/src/features/platform/store/useLocalStore.ts`
+- `v10/src/features/platform/hooks/usePersistence.ts`
+- `v10/src/features/platform/hooks/useFileIO.ts`
 
 Commands run (only if user asked or required by spec):
 - `cd v10 && npm run lint`

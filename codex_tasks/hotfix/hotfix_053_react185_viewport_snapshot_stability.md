@@ -8,7 +8,7 @@ Date: 2026-02-15
 - Recent hotfix history already showed the same class of issue: unstable external-store snapshots.
 
 ## Scope
-- `v10/src/features/layout/useTabletShellProfile.ts`
+- `v10/src/features/chrome/layout/useTabletShellProfile.ts`
 
 ## Root Cause
 - `useSyncExternalStore` `getSnapshot` returned a new object each call, even when viewport dimensions were unchanged.

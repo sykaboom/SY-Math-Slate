@@ -19,9 +19,9 @@ Date: 2026-02-16
 
 Touched files/directories:
 - `codex_tasks/task_193_llm_provider_reference_adapter.md`
-- `v10/src/features/extensions/adapters/llmProviderAdapter.ts` (new)
-- `v10/src/features/extensions/adapters/index.ts`
-- `v10/src/features/extensions/adapters/mockAdapter.ts` (compat update only if required)
+- `v10/src/features/platform/extensions/adapters/llmProviderAdapter.ts` (new)
+- `v10/src/features/platform/extensions/adapters/index.ts`
+- `v10/src/features/platform/extensions/adapters/mockAdapter.ts` (compat update only if required)
 
 Out of scope:
 - Image/video/audio adapters.
@@ -131,8 +131,8 @@ Out of scope:
 Status: COMPLETED
 
 Changed files:
-- `v10/src/features/extensions/adapters/llmProviderAdapter.ts`
-- `v10/src/features/extensions/adapters/index.ts`
+- `v10/src/features/platform/extensions/adapters/llmProviderAdapter.ts`
+- `v10/src/features/platform/extensions/adapters/index.ts`
 
 Commands run (only if user asked or required by spec):
 - `cd v10 && npm run lint`

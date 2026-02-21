@@ -7,7 +7,7 @@ const read = (relativePath) =>
   fs.readFileSync(path.join(root, relativePath), "utf8");
 
 const experimentsSource = read("v10/src/core/foundation/policies/experiments.ts");
-const abFlagsSource = read("v10/src/features/experiments/abFlags.ts");
+const abFlagsSource = read("v10/src/features/platform/experiments/abFlags.ts");
 const registryEnv = read("codex_tasks/workflow/experiment_registry.env");
 const featureFlags = read("codex_tasks/workflow/feature_flag_registry.env");
 

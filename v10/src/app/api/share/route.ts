@@ -2,8 +2,8 @@ import { NextResponse } from "next/server";
 import {
   isRecordValue,
   toCanvasSnapshot,
-} from "@features/sharing/adapters/SnapshotAdapterInterface";
-import { UpstashSnapshotAdapter } from "@features/sharing/adapters/UpstashSnapshotAdapter";
+} from "@features/collaboration/sharing/adapters/SnapshotAdapterInterface";
+import { UpstashSnapshotAdapter } from "@features/collaboration/sharing/adapters/UpstashSnapshotAdapter";
 
 export const dynamic = "force-dynamic";
 

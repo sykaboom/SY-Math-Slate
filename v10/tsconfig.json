@@ -30,6 +30,8 @@
       "@core/contracts/*": ["./src/core/foundation/schemas/*"],
       "@core/engine/*": ["./src/core/runtime/command/*"],
       "@core/extensions/*": ["./src/core/runtime/plugin-runtime/*"],
+      "@core/runtime/modding": ["./src/core/runtime/modding/index"],
+      "@core/runtime/modding/*": ["./src/core/runtime/modding/*"],
       "@core/math/*": ["./src/core/domain/math/*"],
       "@core/migrations/*": ["./src/core/pipelines/migrations/*"],
       "@core/persistence/*": ["./src/core/pipelines/persistence/*"],
@@ -40,6 +42,11 @@
       "@core/types/*": ["./src/core/foundation/types/*"],
       "@core/*": ["./src/core/*"],
       "@ui/*": ["./src/ui/*"],
+      "@features/chrome/*": ["./src/features/chrome/*"],
+      "@features/editor/*": ["./src/features/editor/*"],
+      "@features/collaboration/*": ["./src/features/collaboration/*"],
+      "@features/governance/*": ["./src/features/governance/*"],
+      "@features/platform/*": ["./src/features/platform/*"],
       "@features/*": ["./src/features/*"]
     }
   },

@@ -24,10 +24,10 @@ Touched files/directories:
 - `codex_tasks/task_133_policy_as_data_trust_boundary.md`
 - `v10/src/core/config/rolePolicy.ts` (new)
 - `v10/src/core/config/rolePolicyGuards.ts` (new)
-- `v10/src/features/layout/AppLayout.tsx`
-- `v10/src/features/extensions/commandExecutionPolicy.ts`
-- `v10/src/features/extensions/toolExecutionPolicy.ts`
-- `v10/src/features/store/useLocalStore.ts` (only if role type widening is required)
+- `v10/src/features/chrome/layout/AppLayout.tsx`
+- `v10/src/features/platform/extensions/commandExecutionPolicy.ts`
+- `v10/src/features/platform/extensions/toolExecutionPolicy.ts`
+- `v10/src/features/platform/store/useLocalStore.ts` (only if role type widening is required)
 - `v10/AI_READ_ME.md`
 
 Out of scope:
@@ -70,8 +70,8 @@ Out of scope:
     - Reviewer+Verifier: Codex
   - File ownership lock plan:
     - Implementer-A: `v10/src/core/config/rolePolicy.ts`, `v10/src/core/config/rolePolicyGuards.ts`
-    - Implementer-B: `v10/src/features/extensions/commandExecutionPolicy.ts`, `v10/src/features/extensions/toolExecutionPolicy.ts`
-    - Implementer-C: `v10/src/features/layout/AppLayout.tsx`, `v10/AI_READ_ME.md`
+    - Implementer-B: `v10/src/features/platform/extensions/commandExecutionPolicy.ts`, `v10/src/features/platform/extensions/toolExecutionPolicy.ts`
+    - Implementer-C: `v10/src/features/chrome/layout/AppLayout.tsx`, `v10/AI_READ_ME.md`
   - Parallel slot plan:
     - max 6 active slots
 
@@ -116,12 +116,12 @@ If NO:
 ## Manual Verification Steps (Base Required)
 
 1) Step:
-   - Command / click path: `rg -n "role ===|role !==" v10/src/features/layout/AppLayout.tsx`
+   - Command / click path: `rg -n "role ===|role !==" v10/src/features/chrome/layout/AppLayout.tsx`
    - Expected result: direct role literals are no longer used as primary decision logic in touched regions.
    - Covers: AC-3
 
 2) Step:
-   - Command / click path: `rg -n "configureCommandExecutionPolicyHooks|configureToolExecutionPolicyHooks" v10/src/features/extensions`
+   - Command / click path: `rg -n "configureCommandExecutionPolicyHooks|configureToolExecutionPolicyHooks" v10/src/features/platform/extensions`
    - Expected result: hooks route through policy helpers.
    - Covers: AC-2
 
@@ -158,9 +158,9 @@ Changed files:
 - `codex_tasks/task_133_policy_as_data_trust_boundary.md`
 - `v10/src/core/config/rolePolicy.ts`
 - `v10/src/core/config/rolePolicyGuards.ts`
-- `v10/src/features/extensions/commandExecutionPolicy.ts`
-- `v10/src/features/extensions/toolExecutionPolicy.ts`
-- `v10/src/features/layout/AppLayout.tsx`
+- `v10/src/features/platform/extensions/commandExecutionPolicy.ts`
+- `v10/src/features/platform/extensions/toolExecutionPolicy.ts`
+- `v10/src/features/chrome/layout/AppLayout.tsx`
 - `v10/AI_READ_ME.md`
 - `v10/AI_READ_ME_MAP.md`
 

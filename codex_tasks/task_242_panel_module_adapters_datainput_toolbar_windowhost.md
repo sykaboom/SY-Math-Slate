@@ -23,12 +23,12 @@ Date: 2026-02-16
 
 Touched files/directories:
 - `codex_tasks/task_242_panel_module_adapters_datainput_toolbar_windowhost.md`
-- `v10/src/features/layout/AppLayout.tsx` (host mount path only)
-- `v10/src/features/layout/DataInputPanel.tsx` (adapter boundary only)
-- `v10/src/features/toolbar/FloatingToolbar.tsx` (adapter boundary only)
-- `v10/src/features/layout/windowing/WindowHost.tsx`
-- `v10/src/features/extensions/ui/registerCoreSlots.ts`
-- `v10/src/features/layout/windowing/panelAdapters.tsx` (new)
+- `v10/src/features/chrome/layout/AppLayout.tsx` (host mount path only)
+- `v10/src/features/chrome/layout/DataInputPanel.tsx` (adapter boundary only)
+- `v10/src/features/chrome/toolbar/FloatingToolbar.tsx` (adapter boundary only)
+- `v10/src/features/chrome/layout/windowing/WindowHost.tsx`
+- `v10/src/features/platform/extensions/ui/registerCoreSlots.ts`
+- `v10/src/features/chrome/layout/windowing/panelAdapters.tsx` (new)
 
 Out of scope:
 - Core controls manifest dogfooding (handled in `task_243`)
@@ -184,12 +184,12 @@ Status: COMPLETED
 
 Changed files:
 - `codex_tasks/task_242_panel_module_adapters_datainput_toolbar_windowhost.md`
-- `v10/src/features/layout/AppLayout.tsx`
-- `v10/src/features/layout/DataInputPanel.tsx`
-- `v10/src/features/toolbar/FloatingToolbar.tsx`
-- `v10/src/features/layout/windowing/WindowHost.tsx`
-- `v10/src/features/extensions/ui/registerCoreSlots.ts`
-- `v10/src/features/layout/windowing/panelAdapters.tsx`
+- `v10/src/features/chrome/layout/AppLayout.tsx`
+- `v10/src/features/chrome/layout/DataInputPanel.tsx`
+- `v10/src/features/chrome/toolbar/FloatingToolbar.tsx`
+- `v10/src/features/chrome/layout/windowing/WindowHost.tsx`
+- `v10/src/features/platform/extensions/ui/registerCoreSlots.ts`
+- `v10/src/features/chrome/layout/windowing/panelAdapters.tsx`
 
 Commands run (only if user asked or required by spec):
 - `VERIFY_STAGE=mid bash scripts/run_repo_verifications.sh`

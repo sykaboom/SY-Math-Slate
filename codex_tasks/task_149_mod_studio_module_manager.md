@@ -19,7 +19,7 @@ Date: 2026-02-15
 ## Scope (Base Required)
 
 Touched files/directories:
-- `v10/src/features/mod-studio/modules/**` (new)
+- `v10/src/features/platform/mod-studio/modules/**` (new)
 - `v10/src/core/extensions/registry.ts`
 - `v10/src/core/extensions/pluginLoader.ts`
 
@@ -147,8 +147,8 @@ If NO:
 Status: COMPLETED
 
 Changed files:
-- `v10/src/features/mod-studio/modules/ModuleStudioSection.tsx`
-- `v10/src/features/mod-studio/modules/moduleDiagnostics.ts`
+- `v10/src/features/platform/mod-studio/modules/ModuleStudioSection.tsx`
+- `v10/src/features/platform/mod-studio/modules/moduleDiagnostics.ts`
 - `v10/src/core/extensions/pluginLoader.ts`
 - `v10/src/core/extensions/registry.ts` (known slot contract reused)
 

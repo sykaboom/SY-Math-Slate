@@ -19,11 +19,11 @@ Date: 2026-02-21
 ## Scope (Base Required)
 
 Touched files/directories:
-- v10/src/features/layout/windowing/panelAdapters.tsx
-- v10/src/features/extensions/ui/registerCoreSlots.ts
+- v10/src/features/chrome/layout/windowing/panelAdapters.tsx
+- v10/src/features/platform/extensions/ui/registerCoreSlots.ts
 
 Out of scope:
-- v10/src/features/layout/AppLayout.tsx
+- v10/src/features/chrome/layout/AppLayout.tsx
 - Toolbar IA/content changes
 - New dependencies
 
@@ -158,8 +158,8 @@ Out of scope:
 Status: COMPLETED
 
 Changed files:
-- v10/src/features/extensions/ui/registerCoreSlots.ts
-- v10/src/features/layout/windowing/panelAdapters.tsx
+- v10/src/features/platform/extensions/ui/registerCoreSlots.ts
+- v10/src/features/chrome/layout/windowing/panelAdapters.tsx
 
 Commands run (only if user asked or required by spec):
 - cd v10 && npm run lint

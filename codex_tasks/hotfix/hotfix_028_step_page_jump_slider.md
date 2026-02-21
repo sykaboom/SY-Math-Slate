@@ -8,8 +8,8 @@
 User requested restoring step slider jump and adding the same slider behavior to page navigator for long documents.
 
 ## Scope
-- `v10/src/features/toolbar/PlaybackControls.tsx`
-- `v10/src/features/toolbar/PageNavigator.tsx`
+- `v10/src/features/chrome/toolbar/PlaybackControls.tsx`
+- `v10/src/features/chrome/toolbar/PageNavigator.tsx`
 
 ## Changes
 - Step label now opens a popover slider to jump steps (immediate updates).

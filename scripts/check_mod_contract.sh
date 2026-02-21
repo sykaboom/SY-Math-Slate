@@ -5,6 +5,7 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT_DIR"
 
 FAIL=0
+WARN_COUNT=0
 RUNTIME_MATRIX_FILE="codex_tasks/workflow/mod_package_runtime_regression_matrix.csv"
 RUNTIME_MATRIX_THRESHOLD_FILE="codex_tasks/workflow/mod_package_runtime_thresholds.env"
 
@@ -218,71 +219,91 @@ echo "[check_mod_contract] validating mod runtime contract boundaries"
 echo "[check_mod_contract] section=import-boundary"
 
 check_forbidden_imports \
-  "core/mod/builtin must not import feature layout/store/windowing" \
-  "v10/src/core/mod/builtin" \
+  "core/runtime/modding builtin lanes must not import feature layout/store/windowing" \
+  "v10/src/core/runtime/modding/builtin" \
   "@features/(layout|store|layout/windowing)"
 
 check_forbidden_imports \
-  "core/mod/host must not import features" \
-  "v10/src/core/mod/host" \
+  "core/runtime/modding host lanes must not import features" \
+  "v10/src/core/runtime/modding/host" \
   "@features/"
 
 check_forbidden_imports \
-  "features/ui-host must not import core/mod internal paths" \
-  "v10/src/features/ui-host" \
-  "@core/mod/.*/internal/"
+  "features/ui-host must not import runtime modding internal paths" \
+  "v10/src/features/chrome/ui-host" \
+  "@core/runtime/modding/.*/internal/"
 
 check_forbidden_imports \
-  "core/mod/package must not import features" \
-  "v10/src/core/mod/package" \
+  "core/runtime/modding package lanes must not import features" \
+  "v10/src/core/runtime/modding/package" \
   "@features/"
 
 check_forbidden_imports \
-  "core/mod/package must not import host layer" \
-  "v10/src/core/mod/package" \
-  "@core/mod/host"
+  "core/runtime/modding package lanes must not import host layer" \
+  "v10/src/core/runtime/modding/package" \
+  "@core/runtime/modding/host"
 
 check_forbidden_imports \
-  "features must not deep-import core/mod/package internals" \
+  "features must not deep-import runtime modding package internals" \
   "v10/src/features" \
-  "@core/mod/package/"
+  "@core/runtime/modding/package/"
 
 check_forbidden_imports \
-  "features must not deep-import core/mod/host input routing bridge path" \
+  "features must not deep-import runtime modding host input routing bridge path" \
   "v10/src/features" \
-  "@core/mod/host/inputRoutingBridge"
+  "@core/runtime/modding/host/inputRoutingBridge"
 
 echo "[check_mod_contract] section=required-symbol"
 
 check_required_symbol \
   "ModManager class exists" \
-  "v10/src/core/mod/host/manager.ts" \
+  "v10/src/core/runtime/modding/host/manager.ts" \
   "export class ModManager"
 
 check_required_symbol \
   "Runtime mod registration API exists" \
-  "v10/src/core/mod/host/manager.ts" \
+  "v10/src/core/runtime/modding/host/manager.ts" \
   "export const registerRuntimeMod"
 
 check_required_symbol \
   "UI host bridge resolver exists" \
-  "v10/src/features/ui-host/modContributionBridge.ts" \
+  "v10/src/features/chrome/ui-host/modContributionBridge.ts" \
   "export const listResolvedModToolbarContributions"
 
 check_required_symbol \
   "Runtime mod package registration API exists" \
-  "v10/src/core/mod/package/registry.ts" \
+  "v10/src/core/runtime/modding/package/registry.ts" \
   "export const registerRuntimeModPackage"
 
 check_required_symbol \
   "Mod package public registry export exists" \
-  "v10/src/core/mod/package/index.ts" \
+  "v10/src/core/runtime/modding/package/index.ts" \
   "export \\* from \"./registry\""
 
 check_required_symbol \
   "Host public input routing bridge export exists" \
-  "v10/src/core/mod/host/index.ts" \
+  "v10/src/core/runtime/modding/host/index.ts" \
   "export \\* from \"./inputRoutingBridge\""
+
+check_required_symbol \
+  "Runtime modding API public export exists" \
+  "v10/src/core/runtime/modding/api/index.ts" \
+  "export \\* from \"./types\""
+
+check_required_symbol \
+  "Runtime modding host public export exists" \
+  "v10/src/core/runtime/modding/host/index.ts" \
+  "export \\* from \"./manager\""
+
+check_required_symbol \
+  "Runtime modding package public export exists" \
+  "v10/src/core/runtime/modding/package/index.ts" \
+  "export \\* from \"./registry\""
+
+check_required_symbol \
+  "Runtime modding builtin public API exists" \
+  "v10/src/core/runtime/modding/builtin/index.ts" \
+  "export const registerBuiltinMods"
 
 echo "[check_mod_contract] section=runtime-regression-matrix"
 load_runtime_matrix_thresholds
@@ -291,6 +312,10 @@ check_runtime_regression_matrix
 if [[ "$FAIL" -eq 1 ]]; then
   echo "[check_mod_contract] FAIL"
   exit 1
+fi
+
+if [[ "$WARN_COUNT" -gt 0 ]]; then
+  echo "[check_mod_contract] WARN deprecated-imports=$WARN_COUNT"
 fi
 
 echo "[check_mod_contract] PASS"

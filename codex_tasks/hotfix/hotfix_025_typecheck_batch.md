@@ -8,10 +8,10 @@ Owner: Codex
 `npx tsc --noEmit` reported multiple type errors that block Vercel build.
 
 ## Scope
-- v10/src/features/layout/DataInputPanel.tsx
+- v10/src/features/chrome/layout/DataInputPanel.tsx
 - v10/src/core/types/canvas.ts
-- v10/src/features/toolbar/FloatingToolbar.tsx
-- v10/src/features/toolbar/atoms/ToolButton.tsx
+- v10/src/features/chrome/toolbar/FloatingToolbar.tsx
+- v10/src/features/chrome/toolbar/atoms/ToolButton.tsx
 
 ## Change
 - Restored safe `Selection` handling in DataInputPanel highlight/math wrappers.

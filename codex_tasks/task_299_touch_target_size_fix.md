@@ -42,8 +42,8 @@ Date: 2026-02-19
 ## Scope (Base Required)
 
 Touched files/directories (write):
-- `v10/src/features/layout/windowing/panelAdapters.tsx` — PANEL_HOST_ACTION_BUTTON_CLASS h-7 → h-9
-- `v10/src/features/moderation/ModerationConsolePanel.tsx` — Refresh Button h-7 → h-9
+- `v10/src/features/chrome/layout/windowing/panelAdapters.tsx` — PANEL_HOST_ACTION_BUTTON_CLASS h-7 → h-9
+- `v10/src/features/governance/moderation/ModerationConsolePanel.tsx` — Refresh Button h-7 → h-9
 
 Out of scope:
 - 다른 소형 버튼 일괄 수정 (별도 감사 필요)
@@ -192,8 +192,8 @@ After:
 Status: COMPLETED
 
 Changed files:
-- `v10/src/features/layout/windowing/panelAdapters.tsx`
-- `v10/src/features/moderation/ModerationConsolePanel.tsx`
+- `v10/src/features/chrome/layout/windowing/panelAdapters.tsx`
+- `v10/src/features/governance/moderation/ModerationConsolePanel.tsx`
 
 ## Gate Results (Codex fills)
 

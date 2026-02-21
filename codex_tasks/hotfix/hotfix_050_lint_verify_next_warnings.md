@@ -11,8 +11,8 @@
   - "좋아 3 개 한 번에 핫픽스해."
 
 ## Scope (Exact Files)
-- `v10/src/features/animation/plan/compileAnimationPlan.ts`
-- `v10/src/features/canvas/actors/ChalkActor.tsx`
+- `v10/src/features/editor/animation/plan/compileAnimationPlan.ts`
+- `v10/src/features/editor/canvas/actors/ChalkActor.tsx`
 - `scripts/check_v10_changed_lint.sh` (new)
 - `v10/next.config.ts`
 - `v10/package.json`

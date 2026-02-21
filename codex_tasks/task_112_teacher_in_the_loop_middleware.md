@@ -20,11 +20,11 @@ Date: 2026-02-14
 
 Touched files/directories:
 - `v10/src/core/extensions/connectors.ts`
-- `v10/src/features/toolbar/useApprovalLogic.ts` (new)
-- `v10/src/features/toolbar/PendingApprovalPanel.tsx` (new)
-- `v10/src/features/extensions/toolExecutionPolicy.ts` (new)
-- `v10/src/features/store/useSyncStore.ts` (queue actions)
-- `v10/src/features/store/useDocStore.ts` (approval merge helpers)
+- `v10/src/features/chrome/toolbar/useApprovalLogic.ts` (new)
+- `v10/src/features/chrome/toolbar/PendingApprovalPanel.tsx` (new)
+- `v10/src/features/platform/extensions/toolExecutionPolicy.ts` (new)
+- `v10/src/features/platform/store/useSyncStore.ts` (queue actions)
+- `v10/src/features/platform/store/useDocStore.ts` (approval merge helpers)
 
 Out of scope:
 - Full network transport/WebRTC integration
@@ -146,11 +146,11 @@ Status: COMPLETED
 Changed files:
 - `codex_tasks/task_112_teacher_in_the_loop_middleware.md`
 - `v10/src/core/extensions/connectors.ts`
-- `v10/src/features/extensions/toolExecutionPolicy.ts`
-- `v10/src/features/store/useSyncStore.ts`
-- `v10/src/features/store/useDocStore.ts`
-- `v10/src/features/toolbar/useApprovalLogic.ts`
-- `v10/src/features/toolbar/PendingApprovalPanel.tsx`
+- `v10/src/features/platform/extensions/toolExecutionPolicy.ts`
+- `v10/src/features/platform/store/useSyncStore.ts`
+- `v10/src/features/platform/store/useDocStore.ts`
+- `v10/src/features/chrome/toolbar/useApprovalLogic.ts`
+- `v10/src/features/chrome/toolbar/PendingApprovalPanel.tsx`
 
 Commands run (only if user asked or required by spec):
 - `cd v10 && npm run lint`

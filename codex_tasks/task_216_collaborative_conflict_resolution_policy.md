@@ -20,9 +20,9 @@ Date: 2026-02-15
 
 Touched files/directories:
 - `codex_tasks/task_216_collaborative_conflict_resolution_policy.md`
-- `v10/src/features/sync/realtime/conflictPolicy.ts` (new)
-- `v10/src/features/sync/useAsymmetricSessionSync.ts`
-- `v10/src/features/store/useSyncStore.ts`
+- `v10/src/features/collaboration/sync/realtime/conflictPolicy.ts` (new)
+- `v10/src/features/collaboration/sync/useAsymmetricSessionSync.ts`
+- `v10/src/features/platform/store/useSyncStore.ts`
 
 Out of scope:
 - New moderation/community API surfaces.
@@ -137,9 +137,9 @@ Out of scope:
 Status: COMPLETED
 
 Changed files:
-- `v10/src/features/sync/realtime/conflictPolicy.ts`
-- `v10/src/features/sync/useAsymmetricSessionSync.ts`
-- `v10/src/features/store/useSyncStore.ts`
+- `v10/src/features/collaboration/sync/realtime/conflictPolicy.ts`
+- `v10/src/features/collaboration/sync/useAsymmetricSessionSync.ts`
+- `v10/src/features/platform/store/useSyncStore.ts`
 
 Commands run (only if user asked or required by spec):
 - `scripts/check_layer_rules.sh`

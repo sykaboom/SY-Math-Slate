@@ -30,15 +30,15 @@ Date: 2026-02-20
 
 Touched files/directories:
 - `design_drafts/task_329_toolbar_edge_snap_docking.svg`
-- `v10/src/features/layout/AppLayout.tsx`
-- `v10/src/features/layout/windowing/WindowHost.tsx`
-- `v10/src/features/layout/windowing/panelAdapters.tsx`
-- `v10/src/features/layout/windowing/windowRuntime.types.ts`
-- `v10/src/features/store/useChromeStore.ts`
-- `v10/src/features/toolbar/FloatingToolbar.tsx`
-- `v10/src/features/extensions/commands/commands.tool.ts`
-- `v10/src/features/toolbar/catalog/toolbarActionCatalog.ts`
-- `v10/src/features/toolbar/catalog/toolbarSurfacePolicy.ts`
+- `v10/src/features/chrome/layout/AppLayout.tsx`
+- `v10/src/features/chrome/layout/windowing/WindowHost.tsx`
+- `v10/src/features/chrome/layout/windowing/panelAdapters.tsx`
+- `v10/src/features/chrome/layout/windowing/windowRuntime.types.ts`
+- `v10/src/features/platform/store/useChromeStore.ts`
+- `v10/src/features/chrome/toolbar/FloatingToolbar.tsx`
+- `v10/src/features/platform/extensions/commands/commands.tool.ts`
+- `v10/src/features/chrome/toolbar/catalog/toolbarActionCatalog.ts`
+- `v10/src/features/chrome/toolbar/catalog/toolbarSurfacePolicy.ts`
 - `scripts/check_toolbar_contract.sh`
 - `v10/AI_READ_ME.md`
 

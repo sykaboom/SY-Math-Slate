@@ -20,8 +20,8 @@ Date: 2026-02-16
 
 Touched files/directories:
 - `codex_tasks/task_210_stylus_palm_rejection_heuristics.md`
-- `v10/src/features/hooks/useCanvas.ts`
-- `v10/src/features/hooks/useOverlayCanvas.ts`
+- `v10/src/features/platform/hooks/useCanvas.ts`
+- `v10/src/features/platform/hooks/useOverlayCanvas.ts`
 
 Out of scope:
 - Viewport pan/zoom lock protocol (task_209).
@@ -148,8 +148,8 @@ Out of scope:
 Status: COMPLETED
 
 Changed files:
-- `v10/src/features/hooks/useCanvas.ts`
-- `v10/src/features/hooks/useOverlayCanvas.ts`
+- `v10/src/features/platform/hooks/useCanvas.ts`
+- `v10/src/features/platform/hooks/useOverlayCanvas.ts`
 
 Commands run (only if user asked or required by spec):
 - `cd v10 && npm run lint`

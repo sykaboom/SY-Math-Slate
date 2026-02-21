@@ -20,7 +20,7 @@ Date: 2026-02-20
 ## Scope (Base Required)
 
 Touched files/directories:
-- `v10/src/features/canvas/viewport/useViewportInteraction.ts`
+- `v10/src/features/editor/canvas/viewport/useViewportInteraction.ts`
 - `v10/src/core/mod/host/inputRoutingBridge.ts` (integration calls only)
 
 Out of scope:
@@ -61,7 +61,7 @@ Out of scope:
 - Touched file count:
   - 2
 - Files shared with other PENDING tasks:
-  - `v10/src/features/canvas/viewport/useViewportInteraction.ts`
+  - `v10/src/features/editor/canvas/viewport/useViewportInteraction.ts`
 - Cross-module dependency:
   - YES
 - Parallelizable sub-units:
@@ -178,7 +178,7 @@ If NO:
 Status: COMPLETED
 
 Changed files:
-- `v10/src/features/canvas/viewport/useViewportInteraction.ts`
+- `v10/src/features/editor/canvas/viewport/useViewportInteraction.ts`
 - `v10/src/core/mod/host/inputRoutingBridge.ts`
 - `codex_tasks/task_341_pointer_wheel_routing_integration.md`
 

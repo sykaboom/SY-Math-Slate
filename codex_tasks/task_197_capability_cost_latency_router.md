@@ -19,11 +19,11 @@ Date: 2026-02-16
 
 Touched files/directories:
 - `codex_tasks/task_197_capability_cost_latency_router.md`
-- `v10/src/features/extensions/routing/capabilityRouter.ts` (new)
-- `v10/src/features/extensions/routing/types.ts` (new)
-- `v10/src/features/extensions/routing/index.ts` (new)
+- `v10/src/features/platform/extensions/routing/capabilityRouter.ts` (new)
+- `v10/src/features/platform/extensions/routing/types.ts` (new)
+- `v10/src/features/platform/extensions/routing/index.ts` (new)
 - `v10/src/core/extensions/connectors.ts` (add optional router hook)
-- `v10/src/features/extensions/ui/ExtensionRuntimeBootstrap.tsx`
+- `v10/src/features/platform/extensions/ui/ExtensionRuntimeBootstrap.tsx`
 
 Out of scope:
 - Cloud/local fallback chain (W5).
@@ -138,11 +138,11 @@ Out of scope:
 Status: COMPLETED
 
 Changed files:
-- `v10/src/features/extensions/routing/types.ts`
-- `v10/src/features/extensions/routing/capabilityRouter.ts`
-- `v10/src/features/extensions/routing/index.ts`
+- `v10/src/features/platform/extensions/routing/types.ts`
+- `v10/src/features/platform/extensions/routing/capabilityRouter.ts`
+- `v10/src/features/platform/extensions/routing/index.ts`
 - `v10/src/core/extensions/connectors.ts`
-- `v10/src/features/extensions/ui/ExtensionRuntimeBootstrap.tsx`
+- `v10/src/features/platform/extensions/ui/ExtensionRuntimeBootstrap.tsx`
 
 Commands run (only if user asked or required by spec):
 - `cd v10 && npm run lint`

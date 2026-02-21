@@ -18,7 +18,7 @@ Date: 2026-02-21
 ## Scope (Base Required)
 
 Touched files/directories:
-- v10/src/features/layout, v10/src/features/toolbar, task_365~367 docs
+- v10/src/features/chrome/layout, v10/src/features/chrome/toolbar, task_365~367 docs
 
 Out of scope:
 - 새 기능 추가

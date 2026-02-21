@@ -18,7 +18,7 @@ Date: 2026-02-21
 ## Scope (Base Required)
 
 Touched files/directories:
-- v10/src/features/ui-host, v10/src/features/toolbar, v10/src/features/layout/windowing
+- v10/src/features/chrome/ui-host, v10/src/features/chrome/toolbar, v10/src/features/chrome/layout/windowing
 
 Out of scope:
 - 새 제품 기능

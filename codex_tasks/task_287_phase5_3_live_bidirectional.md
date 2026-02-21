@@ -53,16 +53,16 @@ Date: 2026-02-18
 Touched files/directories (create):
 - `v10/src/core/types/sessionPolicy.ts` — SessionPolicy + ProposalEnvelope 타입
 - `v10/src/core/config/sessionPolicyTemplates.ts` — 3개 MVP 정책 JSON
-- `v10/src/features/sharing/useParticipantSession.ts` — 참가자 측 proposal 전송
-- `v10/src/features/sharing/useHostPolicyEngine.ts` — host policy check + 승인/거부
-- `v10/src/features/sharing/ProposalCommandBus.ts` — proposal 중계 서비스
-- `v10/src/features/store/useSessionPolicyStore.ts` — 세션 정책 Zustand store
-- `v10/src/features/layout/SessionPolicyPanel.tsx` — 모더용 정책 설정 UI
+- `v10/src/features/collaboration/sharing/useParticipantSession.ts` — 참가자 측 proposal 전송
+- `v10/src/features/collaboration/sharing/useHostPolicyEngine.ts` — host policy check + 승인/거부
+- `v10/src/features/collaboration/sharing/ProposalCommandBus.ts` — proposal 중계 서비스
+- `v10/src/features/platform/store/useSessionPolicyStore.ts` — 세션 정책 Zustand store
+- `v10/src/features/chrome/layout/SessionPolicyPanel.tsx` — 모더용 정책 설정 UI
 
 Touched files/directories (write):
-- `v10/src/features/sharing/transport/LiveBroadcastTransport.ts` — 양방향 채널 지원 추가
+- `v10/src/features/collaboration/sharing/transport/LiveBroadcastTransport.ts` — 양방향 채널 지원 추가
 - `v10/src/core/types/snapshot.ts` — `SessionPolicy` 필드 추가 (optional)
-- `v10/src/features/viewer/ViewerShell.tsx` — proposal UI 조건부 렌더링
+- `v10/src/features/chrome/viewer/ViewerShell.tsx` — proposal UI 조건부 렌더링
 
 Out of scope:
 - AI 질문 승인 파이프라인 (Phase 5.5에서 완성)
@@ -298,14 +298,14 @@ Status: COMPLETED
 Changed files:
 - `v10/src/core/types/sessionPolicy.ts` (new)
 - `v10/src/core/config/sessionPolicyTemplates.ts` (new)
-- `v10/src/features/sharing/useParticipantSession.ts` (new)
-- `v10/src/features/sharing/useHostPolicyEngine.ts` (new)
-- `v10/src/features/sharing/ProposalCommandBus.ts` (new)
-- `v10/src/features/store/useSessionPolicyStore.ts` (new)
-- `v10/src/features/layout/SessionPolicyPanel.tsx` (new)
-- `v10/src/features/sharing/transport/LiveBroadcastTransport.ts` (edit)
+- `v10/src/features/collaboration/sharing/useParticipantSession.ts` (new)
+- `v10/src/features/collaboration/sharing/useHostPolicyEngine.ts` (new)
+- `v10/src/features/collaboration/sharing/ProposalCommandBus.ts` (new)
+- `v10/src/features/platform/store/useSessionPolicyStore.ts` (new)
+- `v10/src/features/chrome/layout/SessionPolicyPanel.tsx` (new)
+- `v10/src/features/collaboration/sharing/transport/LiveBroadcastTransport.ts` (edit)
 - `v10/src/core/types/snapshot.ts` (edit)
-- `v10/src/features/viewer/ViewerShell.tsx` (edit)
+- `v10/src/features/chrome/viewer/ViewerShell.tsx` (edit)
 
 ## Gate Results (Codex fills)
 

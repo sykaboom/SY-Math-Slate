@@ -24,8 +24,8 @@ Date: 2026-02-16
 
 Touched files/directories:
 - `codex_tasks/task_262_window_shell_cutover_fallback_and_policy_sync_fix.md`
-- `v10/src/features/extensions/ui/registerCoreSlots.ts`
-- `v10/src/features/layout/AppLayout.tsx`
+- `v10/src/features/platform/extensions/ui/registerCoreSlots.ts`
+- `v10/src/features/chrome/layout/AppLayout.tsx`
 - `v10/src/core/config/panel-policy.ts`
 - `codex_tasks/task_246_tablet_pointer_panel_regression_signoff_pack.md`
 - `codex_tasks/workflow/tablet_pointer_panel_signoff.csv`
@@ -188,8 +188,8 @@ Status: COMPLETED
 
 Changed files:
 - `codex_tasks/task_262_window_shell_cutover_fallback_and_policy_sync_fix.md`
-- `v10/src/features/extensions/ui/registerCoreSlots.ts`
-- `v10/src/features/layout/AppLayout.tsx`
+- `v10/src/features/platform/extensions/ui/registerCoreSlots.ts`
+- `v10/src/features/chrome/layout/AppLayout.tsx`
 - `v10/src/core/config/panel-policy.ts`
 - `codex_tasks/task_246_tablet_pointer_panel_regression_signoff_pack.md`
 - `codex_tasks/workflow/tablet_pointer_panel_signoff.csv`

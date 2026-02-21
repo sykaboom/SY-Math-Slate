@@ -19,8 +19,8 @@ Date: 2026-02-20
 ## Scope (Base Required)
 
 Touched files/directories:
-- `v10/src/features/store/useModStore.ts`
-- `v10/src/features/store/useUIStoreBridge.ts`
+- `v10/src/features/platform/store/useModStore.ts`
+- `v10/src/features/platform/store/useUIStoreBridge.ts`
 - `v10/src/core/mod/package/*` (selectors only)
 
 Out of scope:
@@ -62,7 +62,7 @@ Out of scope:
 - Touched file count:
   - 3
 - Files shared with other PENDING tasks:
-  - `v10/src/features/store/useModStore.ts`
+  - `v10/src/features/platform/store/useModStore.ts`
 - Cross-module dependency:
   - YES
 - Parallelizable sub-units:
@@ -172,8 +172,8 @@ If NO:
 Status: COMPLETED
 
 Changed files:
-- `v10/src/features/store/useModStore.ts`
-- `v10/src/features/store/useUIStoreBridge.ts`
+- `v10/src/features/platform/store/useModStore.ts`
+- `v10/src/features/platform/store/useUIStoreBridge.ts`
 - `codex_tasks/task_339_active_mod_package_store_and_runtime_bridge.md`
 
 Commands run (only if user asked or required by spec):

@@ -25,10 +25,10 @@ Standardize the application profile system to just **Basic** and **Advanced**.
 - **basic**: Includes all creation tools (autoplay, timing, overview, math, highlight).
 - **advanced**: Includes everything in `basic` + `export.advanced`.
 
-### 2. Store Defaults (`v10/src/features/store/useUIStore.ts`)
+### 2. Store Defaults (`v10/src/features/platform/store/useUIStore.ts`)
 - Change `capabilityProfile` default value to `"advanced"`.
 
-### 3. Toolbar UI (`v10/src/features/toolbar/FloatingToolbar.tsx`)
+### 3. Toolbar UI (`v10/src/features/chrome/toolbar/FloatingToolbar.tsx`)
 - **Icons**: Ensure Hand, Pen, Eraser, Laser, Text, Image, Playback, and the Break button group are always visible (remove any profile-based gating for these icons).
 - **Profile Switcher**: Update to show only "Basic" and "Advanced".
 - **Export Button**: 
@@ -44,13 +44,13 @@ Standardize the application profile system to just **Basic** and **Advanced**.
 
 ## Files to Change (by Codex)
 - `v10/src/core/config/capabilities.ts`
-- `v10/src/features/store/useUIStore.ts`
-- `v10/src/features/toolbar/FloatingToolbar.tsx`
+- `v10/src/features/platform/store/useUIStore.ts`
+- `v10/src/features/chrome/toolbar/FloatingToolbar.tsx`
 
 ## Closeout Notes
 - Changed files:
   - `v10/src/core/config/capabilities.ts`
-  - `v10/src/features/store/useUIStore.ts`
-  - `v10/src/features/toolbar/FloatingToolbar.tsx`
+  - `v10/src/features/platform/store/useUIStore.ts`
+  - `v10/src/features/chrome/toolbar/FloatingToolbar.tsx`
 - Commands run: none
 - Manual verification: not run (use acceptance criteria)

@@ -24,13 +24,13 @@ Date: 2026-02-10
 
 Touched files/directories:
 - `codex_tasks/task_104_datainput_panel_compromise_ux_slice2.md`
-- `v10/src/features/layout/DataInputPanel.tsx`
+- `v10/src/features/chrome/layout/DataInputPanel.tsx`
 
 Out of scope:
-- `v10/src/features/layout/dataInput/blockDraft.ts`
-- `v10/src/features/layout/dataInput/segmentCommands.ts`
-- `v10/src/features/hooks/**`
-- `v10/src/features/toolbar/**`
+- `v10/src/features/chrome/layout/dataInput/blockDraft.ts`
+- `v10/src/features/chrome/layout/dataInput/segmentCommands.ts`
+- `v10/src/features/platform/hooks/**`
+- `v10/src/features/chrome/toolbar/**`
 - `v10/src/core/**`
 
 ---
@@ -113,7 +113,7 @@ Redline notes (numeric):
 
 2) Step:
    - Command / click path:
-     - `rg -n "expandedBlock|preview|action_mode_compact|action_mode_advanced|xl:hidden|unmatched|캔버스에 적용|border-dashed" v10/src/features/layout/DataInputPanel.tsx`
+     - `rg -n "expandedBlock|preview|action_mode_compact|action_mode_advanced|xl:hidden|unmatched|캔버스에 적용|border-dashed" v10/src/features/chrome/layout/DataInputPanel.tsx`
    - Expected result: 접힘/프리뷰/토글/푸터 위계/Break 구분/기존 가드 경로 확인
    - Covers: AC-1, AC-2, AC-3, AC-4, AC-5, AC-6
 
@@ -125,7 +125,7 @@ Redline notes (numeric):
 
 4) Step:
    - Command / click path:
-     - `git status --short -- v10/src/features/layout/DataInputPanel.tsx codex_tasks/task_104_datainput_panel_compromise_ux_slice2.md`
+     - `git status --short -- v10/src/features/chrome/layout/DataInputPanel.tsx codex_tasks/task_104_datainput_panel_compromise_ux_slice2.md`
    - Expected result: scope 내 변경만 존재
    - Covers: AC-8
 
@@ -137,7 +137,7 @@ Redline notes (numeric):
   - 기본 접힘으로 인해 초기 1회 탭 수가 증가할 수 있음.
   - 기존 사용자가 익숙한 즉시 전체 노출 패턴과 체감 차이가 생길 수 있음.
 - Roll-back:
-  - `v10/src/features/layout/DataInputPanel.tsx` 단일 파일 revert로 즉시 복구 가능.
+  - `v10/src/features/chrome/layout/DataInputPanel.tsx` 단일 파일 revert로 즉시 복구 가능.
 
 ---
 
@@ -155,7 +155,7 @@ Redline notes (numeric):
 Status: COMPLETED
 
 Changed files:
-- `v10/src/features/layout/DataInputPanel.tsx`
+- `v10/src/features/chrome/layout/DataInputPanel.tsx`
 - `codex_tasks/task_104_datainput_panel_compromise_ux_slice2.md`
 
 Commands run (only if user asked or required by spec):
@@ -165,12 +165,12 @@ Commands run (only if user asked or required by spec):
 - `sed -n '1,260p' design_drafts/layout_drafting_room_1024x768.svg`
 - `sed -n '1,80p' design_drafts/layout_writer_shell_820x1180.svg`
 - `sed -n '1,80p' design_drafts/layout_writer_shell_1180x820.svg`
-- `nl -ba v10/src/features/layout/DataInputPanel.tsx | sed -n '1,480p'`
-- `nl -ba v10/src/features/layout/DataInputPanel.tsx | sed -n '480,1120p'`
-- `rg -n "expandedBlockId|blockPreview|action_mode_compact|action_mode_advanced|xl:hidden|unmatched|캔버스에 적용|border-dashed" v10/src/features/layout/DataInputPanel.tsx`
+- `nl -ba v10/src/features/chrome/layout/DataInputPanel.tsx | sed -n '1,480p'`
+- `nl -ba v10/src/features/chrome/layout/DataInputPanel.tsx | sed -n '480,1120p'`
+- `rg -n "expandedBlockId|blockPreview|action_mode_compact|action_mode_advanced|xl:hidden|unmatched|캔버스에 적용|border-dashed" v10/src/features/chrome/layout/DataInputPanel.tsx`
 - `cd v10 && npm run lint`
 - `ls design_drafts | rg "layout_datainput_1440x1080.svg|layout_drafting_room_768x1024.svg|layout_drafting_room_1024x768.svg|layout_writer_shell_820x1180.svg|layout_writer_shell_1180x820.svg"`
-- `git status --short -- v10/src/features/layout/DataInputPanel.tsx codex_tasks/task_104_datainput_panel_compromise_ux_slice2.md`
+- `git status --short -- v10/src/features/chrome/layout/DataInputPanel.tsx codex_tasks/task_104_datainput_panel_compromise_ux_slice2.md`
 
 Manual verification notes:
 - AC-1: Passed. `expandedBlockId` 기반 단일 블록 접힘/확장 토글 경로 확인.

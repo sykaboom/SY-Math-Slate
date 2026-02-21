@@ -37,7 +37,7 @@ Out of scope:
 - MCP 서버 구현
 - `RenderPlan` / `TTSScript` runtime 구현
 - UI/layout 변경
-- `v10/src/features/**` 및 `v10/src/features/store/**` 수정
+- `v10/src/features/**` 및 `v10/src/features/platform/store/**` 수정
 
 ---
 

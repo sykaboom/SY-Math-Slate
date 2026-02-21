@@ -52,15 +52,15 @@ Revised: 2026-02-18 (보정: Block A YES, 닫기 동작, 아이콘, 정책 주�
 Touched files/directories:
 
 **신규 (create):**
-- `v10/src/features/theme/ThemePickerPanel.tsx` — 프리셋 선택 UI
+- `v10/src/features/chrome/theming-ui/ThemePickerPanel.tsx` — 프리셋 선택 UI
 - `design_drafts/layout_theme_picker_panel_280x210.svg` — 레이아웃 레드라인 SVG (Block A)
 
 **수정 (write):**
 - `v10/src/core/config/panel-policy.ts` — THEME_PICKER ID + 정책 추가
-- `v10/src/features/extensions/ui/registerCoreSlots.ts` — CORE_SLOT_BINDINGS에 바인딩 추가
-- `v10/src/features/layout/windowing/panelAdapters.tsx` — 옵션 타입 + 빌더 엔트리 추가
-- `v10/src/features/layout/windowing/PanelLauncher.tsx` — Palette 아이콘 추가
-- `v10/src/features/layout/AppLayout.tsx` — showThemePicker + closeThemePicker 전달
+- `v10/src/features/platform/extensions/ui/registerCoreSlots.ts` — CORE_SLOT_BINDINGS에 바인딩 추가
+- `v10/src/features/chrome/layout/windowing/panelAdapters.tsx` — 옵션 타입 + 빌더 엔트리 추가
+- `v10/src/features/chrome/layout/windowing/PanelLauncher.tsx` — Palette 아이콘 추가
+- `v10/src/features/chrome/layout/AppLayout.tsx` — showThemePicker + closeThemePicker 전달
 
 Out of scope:
 - 고급 토큰 편집 UI (Phase 3-B)
@@ -360,7 +360,7 @@ export function ThemePickerPanel() {
 ## Manual Verification Steps (Base Required)
 
 1) Step: 정책 + 바인딩 확인
-   - Command: `grep -n "THEME_PICKER\|theme-picker\|Palette\|registerInSlotRuntime" v10/src/core/config/panel-policy.ts v10/src/features/extensions/ui/registerCoreSlots.ts v10/src/features/layout/windowing/PanelLauncher.tsx`
+   - Command: `grep -n "THEME_PICKER\|theme-picker\|Palette\|registerInSlotRuntime" v10/src/core/config/panel-policy.ts v10/src/features/platform/extensions/ui/registerCoreSlots.ts v10/src/features/chrome/layout/windowing/PanelLauncher.tsx`
    - Expected: 각 파일에 추가 확인
    - Covers: AC-1, AC-2, AC-2-1, AC-3
 
@@ -384,7 +384,7 @@ export function ThemePickerPanel() {
    - Covers: AC-9
 
 6) Step: Mod Studio 분리
-   - Command: `grep -n "useModStudioStore" v10/src/features/theme/ThemePickerPanel.tsx`
+   - Command: `grep -n "useModStudioStore" v10/src/features/chrome/theming-ui/ThemePickerPanel.tsx`
    - Expected: 매치 없음
    - Covers: AC-10
 
@@ -425,13 +425,13 @@ export function ThemePickerPanel() {
 Status: COMPLETED
 
 Changed files:
-- `v10/src/features/theme/ThemePickerPanel.tsx` (create)
+- `v10/src/features/chrome/theming-ui/ThemePickerPanel.tsx` (create)
 - `design_drafts/layout_theme_picker_panel_280x210.svg` (create)
 - `v10/src/core/config/panel-policy.ts`
-- `v10/src/features/extensions/ui/registerCoreSlots.ts`
-- `v10/src/features/layout/windowing/panelAdapters.tsx`
-- `v10/src/features/layout/windowing/PanelLauncher.tsx`
-- `v10/src/features/layout/AppLayout.tsx`
+- `v10/src/features/platform/extensions/ui/registerCoreSlots.ts`
+- `v10/src/features/chrome/layout/windowing/panelAdapters.tsx`
+- `v10/src/features/chrome/layout/windowing/PanelLauncher.tsx`
+- `v10/src/features/chrome/layout/AppLayout.tsx`
 
 Commands run:
 - `bash scripts/check_layer_rules.sh`

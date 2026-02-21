@@ -60,7 +60,7 @@ Changed files:
 Commands run (only if user asked):
 - `cat > codex_tasks/task_079_tablet_ink_layout_governance_docs.md`
 - `sed -n ... AGENTS.md / GEMINI_CODEX_PROTOCOL.md / PROJECT_BLUEPRINT.md`
-- `rg -n ... v10/src/features/layout ...` (tablet UX risk scan)
+- `rg -n ... v10/src/features/chrome/layout ...` (tablet UX risk scan)
 - `apply_patch` (docs updates)
 
 Notes:

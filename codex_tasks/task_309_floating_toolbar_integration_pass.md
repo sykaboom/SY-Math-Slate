@@ -14,9 +14,9 @@ Date: 2026-02-19
 
 ## Scope
 Touched files:
-- `v10/src/features/toolbar/FloatingToolbar.tsx`
-- `v10/src/features/toolbar/ThumbZoneDock.tsx` (if final tuning needed)
-- `v10/src/features/layout/AppLayout.tsx` (only if dock class reconciliation needed)
+- `v10/src/features/chrome/toolbar/FloatingToolbar.tsx`
+- `v10/src/features/chrome/toolbar/ThumbZoneDock.tsx` (if final tuning needed)
+- `v10/src/features/chrome/layout/AppLayout.tsx` (only if dock class reconciliation needed)
 
 Out of scope:
 - New feature additions beyond 305~308 contracts
@@ -46,9 +46,9 @@ Out of scope:
 ## Implementation Log (Codex fills)
 Status: COMPLETED
 Changed files:
-- `v10/src/features/toolbar/FloatingToolbar.tsx`
-- `v10/src/features/toolbar/ThumbZoneDock.tsx`
-- `v10/src/features/layout/AppLayout.tsx`
+- `v10/src/features/chrome/toolbar/FloatingToolbar.tsx`
+- `v10/src/features/chrome/toolbar/ThumbZoneDock.tsx`
+- `v10/src/features/chrome/layout/AppLayout.tsx`
 Commands run:
 - `scripts/check_layer_rules.sh`
 - `cd v10 && npm run lint`

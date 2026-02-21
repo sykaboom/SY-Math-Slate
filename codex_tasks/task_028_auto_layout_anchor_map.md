@@ -66,17 +66,17 @@ Auto playback should work from raw input without manual layout, while still allo
 
 ## Scope (touched files)
 - `v10/src/core/types/canvas.ts` (StepBlock + AnchorMap types)
-- `v10/src/features/store/useCanvasStore.ts` (store StepBlocks + anchorMap)
-- `v10/src/features/layout/DataInputPanel.tsx` (segment list, order UI, auto layout trigger)
-- `v10/src/features/layout/autoLayout.ts` (overflow measurement + layout engine)
-- `v10/src/features/layout/AppLayout.tsx` (if new controls are mounted)
-- `v10/src/features/canvas/ContentLayer.tsx` (render using AnchorMap)
-- `v10/src/features/canvas/AnchorIndicator.tsx` (next anchor UI)
-- `v10/src/features/canvas/animation/AnimatedTextBlock.tsx` (typing + highlight timing)
-- `v10/src/features/canvas/actors/ChalkActor.tsx` (cursor continuity)
-- `v10/src/features/canvas/CanvasStage.tsx` (anchor indicator overlay)
-- `v10/src/features/hooks/useSequence.ts` (auto playback uses AnchorMap order)
-- `v10/src/features/toolbar/FloatingToolbar.tsx` (optional shortcut to Auto Layout)
+- `v10/src/features/platform/store/useCanvasStore.ts` (store StepBlocks + anchorMap)
+- `v10/src/features/chrome/layout/DataInputPanel.tsx` (segment list, order UI, auto layout trigger)
+- `v10/src/features/chrome/layout/autoLayout.ts` (overflow measurement + layout engine)
+- `v10/src/features/chrome/layout/AppLayout.tsx` (if new controls are mounted)
+- `v10/src/features/editor/canvas/ContentLayer.tsx` (render using AnchorMap)
+- `v10/src/features/editor/canvas/AnchorIndicator.tsx` (next anchor UI)
+- `v10/src/features/editor/canvas/animation/AnimatedTextBlock.tsx` (typing + highlight timing)
+- `v10/src/features/editor/canvas/actors/ChalkActor.tsx` (cursor continuity)
+- `v10/src/features/editor/canvas/CanvasStage.tsx` (anchor indicator overlay)
+- `v10/src/features/platform/hooks/useSequence.ts` (auto playback uses AnchorMap order)
+- `v10/src/features/chrome/toolbar/FloatingToolbar.tsx` (optional shortcut to Auto Layout)
 - `v10/src/app/globals.css` (highlight + break helpers)
 
 ## Acceptance Criteria
@@ -96,16 +96,16 @@ Auto playback should work from raw input without manual layout, while still allo
 ## Closeout
 - **Changed files:**
   - `v10/src/core/types/canvas.ts`
-  - `v10/src/features/store/useCanvasStore.ts`
-  - `v10/src/features/layout/autoLayout.ts`
-  - `v10/src/features/layout/DataInputPanel.tsx`
-  - `v10/src/features/canvas/ContentLayer.tsx`
-  - `v10/src/features/canvas/AnchorIndicator.tsx`
-  - `v10/src/features/canvas/animation/AnimatedTextBlock.tsx`
-  - `v10/src/features/canvas/animation/MathRevealBlock.tsx`
-  - `v10/src/features/canvas/actors/ChalkActor.tsx`
-  - `v10/src/features/hooks/useSequence.ts`
-  - `v10/src/features/toolbar/FloatingToolbar.tsx`
+  - `v10/src/features/platform/store/useCanvasStore.ts`
+  - `v10/src/features/chrome/layout/autoLayout.ts`
+  - `v10/src/features/chrome/layout/DataInputPanel.tsx`
+  - `v10/src/features/editor/canvas/ContentLayer.tsx`
+  - `v10/src/features/editor/canvas/AnchorIndicator.tsx`
+  - `v10/src/features/editor/canvas/animation/AnimatedTextBlock.tsx`
+  - `v10/src/features/editor/canvas/animation/MathRevealBlock.tsx`
+  - `v10/src/features/editor/canvas/actors/ChalkActor.tsx`
+  - `v10/src/features/platform/hooks/useSequence.ts`
+  - `v10/src/features/chrome/toolbar/FloatingToolbar.tsx`
   - `v10/src/app/globals.css`
 - **Commands run:** none
 - **Manual verification:** not run (not requested).

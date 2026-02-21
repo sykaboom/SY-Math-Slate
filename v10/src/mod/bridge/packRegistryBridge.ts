@@ -7,7 +7,7 @@ import {
   selectTemplatePackManifestByModPackageIdTyped,
   validateTemplatePackAdapterManifest,
   type ModPackageDefinition,
-} from "@core/mod/package";
+} from "@core/runtime/modding/package";
 import {
   isTemplatePackManifest,
   validateTemplatePackManifest,

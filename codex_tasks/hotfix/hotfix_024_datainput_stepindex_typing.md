@@ -8,7 +8,7 @@ Owner: Codex
 Vercel build failed with a TypeScript error in `DataInputPanel` (accessing `stepIndex` on a union type).
 
 ## Scope
-- v10/src/features/layout/DataInputPanel.tsx
+- v10/src/features/chrome/layout/DataInputPanel.tsx
 
 ## Change
 - Narrowed `flowItems` via a type predicate to `TextItem | ImageItem` so `stepIndex` access is type-safe.

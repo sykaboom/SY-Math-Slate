@@ -8,7 +8,7 @@
 - Applied a stronger initial clip to fully hide text before reveal begins.
 
 ## Files
-- `v10/src/features/canvas/animation/AnimatedTextBlock.tsx`
+- `v10/src/features/editor/canvas/animation/AnimatedTextBlock.tsx`
 
 ## Commands Run
 - None.

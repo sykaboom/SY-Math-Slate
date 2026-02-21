@@ -18,7 +18,7 @@ Date: 2026-02-21
 ## Scope (Base Required)
 
 Touched files/directories:
-- v10/src/features/approval, v10/src/core/extensions/providers, v10/src/core/trust, v10/src/features/store/useSyncStore.ts
+- v10/src/features/approval, v10/src/core/extensions/providers, v10/src/core/trust, v10/src/features/platform/store/useSyncStore.ts
 
 Out of scope:
 - No student direct model mutation path in this phase.

@@ -19,8 +19,8 @@ Date: 2026-02-15
 
 Touched files/directories:
 - `codex_tasks/task_182_desktop_authoring_shortcuts_layer.md`
-- `v10/src/features/shortcuts/useAuthoringShortcuts.ts`
-- `v10/src/features/layout/AppLayout.tsx`
+- `v10/src/features/chrome/shortcuts/useAuthoringShortcuts.ts`
+- `v10/src/features/chrome/layout/AppLayout.tsx`
 
 Out of scope:
 - Mobile/tablet gesture shortcuts and user-custom shortcut editor.
@@ -113,7 +113,7 @@ If NO:
 ## Manual Verification Steps (Base Required)
 
 1) Step:
-   - Command / click path: `cd v10 && npm run lint -- --max-warnings=0 -- src/features/shortcuts/useAuthoringShortcuts.ts src/features/layout/AppLayout.tsx`
+   - Command / click path: `cd v10 && npm run lint -- --max-warnings=0 -- src/features/chrome/shortcuts/useAuthoringShortcuts.ts src/features/chrome/layout/AppLayout.tsx`
    - Expected result: PASS.
    - Covers: AC-1, AC-2
 
@@ -149,11 +149,11 @@ Status: COMPLETED
 
 Changed files:
 - `codex_tasks/task_182_desktop_authoring_shortcuts_layer.md`
-- `v10/src/features/shortcuts/useAuthoringShortcuts.ts`
-- `v10/src/features/layout/AppLayout.tsx`
+- `v10/src/features/chrome/shortcuts/useAuthoringShortcuts.ts`
+- `v10/src/features/chrome/layout/AppLayout.tsx`
 
 Commands run (only if user asked or required by spec):
-- `cd v10 && npm run lint -- --max-warnings=0 -- src/features/shortcuts/useAuthoringShortcuts.ts src/features/layout/AppLayout.tsx`
+- `cd v10 && npm run lint -- --max-warnings=0 -- src/features/chrome/shortcuts/useAuthoringShortcuts.ts src/features/chrome/layout/AppLayout.tsx`
 - `cd v10 && npm run build`
 - `VERIFY_STAGE=end bash scripts/run_repo_verifications.sh`
 

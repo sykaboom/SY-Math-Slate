@@ -20,14 +20,14 @@ Date: 2026-02-15
 
 Touched files/directories:
 - `codex_tasks/task_129_ui_write_path_migration.md`
-- `v10/src/features/toolbar/FloatingToolbar.tsx`
-- `v10/src/features/toolbar/PenControls.tsx`
-- `v10/src/features/toolbar/LaserControls.tsx`
-- `v10/src/features/toolbar/PlaybackControls.tsx`
-- `v10/src/features/layout/AppLayout.tsx`
-- `v10/src/features/layout/DataInputPanel.tsx`
-- `v10/src/features/hooks/useViewportInteraction.ts` (if write path touched here)
-- `v10/src/features/store/useUIStoreBridge.ts`
+- `v10/src/features/chrome/toolbar/FloatingToolbar.tsx`
+- `v10/src/features/chrome/toolbar/PenControls.tsx`
+- `v10/src/features/chrome/toolbar/LaserControls.tsx`
+- `v10/src/features/chrome/toolbar/PlaybackControls.tsx`
+- `v10/src/features/chrome/layout/AppLayout.tsx`
+- `v10/src/features/chrome/layout/DataInputPanel.tsx`
+- `v10/src/features/platform/hooks/useViewportInteraction.ts` (if write path touched here)
+- `v10/src/features/platform/store/useUIStoreBridge.ts`
 
 Out of scope:
 - removing compat wrapper

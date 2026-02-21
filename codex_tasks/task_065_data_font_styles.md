@@ -37,23 +37,23 @@
 - `v10/src/core/types/canvas.ts`
 - `v10/src/core/migrations/migrateToV2.ts`
 - `v10/src/core/config/typography.ts` (new)
-- `v10/src/features/layout/DataInputPanel.tsx`
-- `v10/src/features/layout/autoLayout.ts`
-- `v10/src/features/store/useCanvasStore.ts`
-- `v10/src/features/canvas/ContentLayer.tsx`
-- `v10/src/features/hooks/usePersistence.ts`
-- `v10/src/features/hooks/useFileIO.ts`
-- `v10/src/features/animation/model/animationProfile.ts`
-- `v10/src/features/animation/model/builtinProfiles.ts`
-- `v10/src/features/animation/modding/modContract.ts`
-- `v10/src/features/animation/modding/normalizeModProfile.ts`
-- `v10/src/features/animation/plan/compileAnimationPlan.ts`
-- `v10/src/features/animation/plan/measureAnimationPlan.ts`
-- `v10/src/features/animation/runtime/types.ts`
-- `v10/src/features/animation/runtime/playAnimationPlan.ts`
-- `v10/src/features/canvas/animation/RichTextAnimator.tsx`
-- `v10/src/features/canvas/animation/AnimatedTextBlock.tsx` (legacy wrapper/deprecation only)
-- `v10/src/features/canvas/animation/MathRevealBlock.tsx` (legacy wrapper/deprecation only)
+- `v10/src/features/chrome/layout/DataInputPanel.tsx`
+- `v10/src/features/chrome/layout/autoLayout.ts`
+- `v10/src/features/platform/store/useCanvasStore.ts`
+- `v10/src/features/editor/canvas/ContentLayer.tsx`
+- `v10/src/features/platform/hooks/usePersistence.ts`
+- `v10/src/features/platform/hooks/useFileIO.ts`
+- `v10/src/features/editor/animation/model/animationProfile.ts`
+- `v10/src/features/editor/animation/model/builtinProfiles.ts`
+- `v10/src/features/editor/animation/modding/modContract.ts`
+- `v10/src/features/editor/animation/modding/normalizeModProfile.ts`
+- `v10/src/features/editor/animation/plan/compileAnimationPlan.ts`
+- `v10/src/features/editor/animation/plan/measureAnimationPlan.ts`
+- `v10/src/features/editor/animation/runtime/types.ts`
+- `v10/src/features/editor/animation/runtime/playAnimationPlan.ts`
+- `v10/src/features/editor/canvas/animation/RichTextAnimator.tsx`
+- `v10/src/features/editor/canvas/animation/AnimatedTextBlock.tsx` (legacy wrapper/deprecation only)
+- `v10/src/features/editor/canvas/animation/MathRevealBlock.tsx` (legacy wrapper/deprecation only)
 - `v10/AI_READ_ME.md` (규칙/플로우 변경 시)
 - `v10/AI_READ_ME_MAP.md` (구조 변경 시)
 
@@ -149,17 +149,17 @@
 - `v10/src/core/types/canvas.ts`
 - `v10/src/core/config/typography.ts`
 - `v10/src/core/migrations/migrateToV2.ts`
-- `v10/src/features/layout/DataInputPanel.tsx`
-- `v10/src/features/layout/autoLayout.ts`
-- `v10/src/features/store/useCanvasStore.ts`
-- `v10/src/features/hooks/usePersistence.ts`
-- `v10/src/features/hooks/useFileIO.ts`
-- `v10/src/features/canvas/ContentLayer.tsx`
-- `v10/src/features/canvas/animation/RichTextAnimator.tsx`
-- `v10/src/features/canvas/animation/AnimatedTextBlock.tsx`
-- `v10/src/features/canvas/animation/MathRevealBlock.tsx`
-- `v10/src/features/animation/plan/compileAnimationPlan.ts`
-- `v10/src/features/animation/modding/modContract.ts`
+- `v10/src/features/chrome/layout/DataInputPanel.tsx`
+- `v10/src/features/chrome/layout/autoLayout.ts`
+- `v10/src/features/platform/store/useCanvasStore.ts`
+- `v10/src/features/platform/hooks/usePersistence.ts`
+- `v10/src/features/platform/hooks/useFileIO.ts`
+- `v10/src/features/editor/canvas/ContentLayer.tsx`
+- `v10/src/features/editor/canvas/animation/RichTextAnimator.tsx`
+- `v10/src/features/editor/canvas/animation/AnimatedTextBlock.tsx`
+- `v10/src/features/editor/canvas/animation/MathRevealBlock.tsx`
+- `v10/src/features/editor/animation/plan/compileAnimationPlan.ts`
+- `v10/src/features/editor/animation/modding/modContract.ts`
 - `v10/AI_READ_ME.md`
 - `v10/AI_READ_ME_MAP.md`
 

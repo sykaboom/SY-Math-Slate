@@ -19,10 +19,10 @@ Date: 2026-02-15
 ## Scope (Base Required)
 
 Touched files/directories:
-- `v10/src/features/observability/**` (new)
+- `v10/src/features/platform/observability/**` (new)
 - `v10/src/core/engine/commandBus.ts`
-- `v10/src/features/extensions/**`
-- `v10/src/features/mod-studio/publish/**`
+- `v10/src/features/platform/extensions/**`
+- `v10/src/features/platform/mod-studio/publish/**`
 
 Out of scope:
 - Third-party SIEM integration.
@@ -147,12 +147,12 @@ If NO:
 Status: COMPLETED
 
 Changed files:
-- `v10/src/features/observability/auditLogger.ts`
+- `v10/src/features/platform/observability/auditLogger.ts`
 - `v10/src/core/engine/commandBus.ts`
-- `v10/src/features/extensions/commandExecutionPolicy.ts`
-- `v10/src/features/extensions/toolExecutionPolicy.ts`
-- `v10/src/features/mod-studio/publish/PublishStudioSection.tsx`
-- `v10/src/features/extensions/ui/ExtensionRuntimeBootstrap.tsx`
+- `v10/src/features/platform/extensions/commandExecutionPolicy.ts`
+- `v10/src/features/platform/extensions/toolExecutionPolicy.ts`
+- `v10/src/features/platform/mod-studio/publish/PublishStudioSection.tsx`
+- `v10/src/features/platform/extensions/ui/ExtensionRuntimeBootstrap.tsx`
 
 Commands run (only if user asked or required by spec):
 - `scripts/check_layer_rules.sh`

@@ -8,7 +8,7 @@
 - Preserve cursor baseline using glyph bottom while expanding overlay container height to line box.
 
 ## Files
-- `v10/src/features/canvas/animation/MixedRevealBlock.tsx`
+- `v10/src/features/editor/canvas/animation/MixedRevealBlock.tsx`
 
 ## Commands Run
 - None.

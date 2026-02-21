@@ -19,11 +19,11 @@ Date: 2026-02-15
 ## Scope (Base Required)
 
 Touched files/directories:
-- `v10/src/features/layout/AppLayout.tsx`
-- `v10/src/features/extensions/ui/ExtensionSlot.tsx`
-- `v10/src/features/extensions/ui/registerCoreSlots.ts`
-- `v10/src/features/extensions/ui/CoreSlotComponents.tsx`
-- `v10/src/features/extensions/ui/ExtensionRuntimeBootstrap.tsx`
+- `v10/src/features/chrome/layout/AppLayout.tsx`
+- `v10/src/features/platform/extensions/ui/ExtensionSlot.tsx`
+- `v10/src/features/platform/extensions/ui/registerCoreSlots.ts`
+- `v10/src/features/platform/extensions/ui/CoreSlotComponents.tsx`
+- `v10/src/features/platform/extensions/ui/ExtensionRuntimeBootstrap.tsx`
 
 Out of scope:
 - Visual redesign.
@@ -160,8 +160,8 @@ If NO:
 Status: COMPLETED
 
 Changed files:
-- `v10/src/features/layout/AppLayout.tsx`
-- `v10/src/features/extensions/ui/registerCoreSlots.ts`
+- `v10/src/features/chrome/layout/AppLayout.tsx`
+- `v10/src/features/platform/extensions/ui/registerCoreSlots.ts`
 
 Commands run (only if user asked or required by spec):
 - `find design_drafts -maxdepth 2 -type f | sort`

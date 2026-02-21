@@ -69,19 +69,19 @@ Date: 2026-02-18
 Touched files/directories (create):
 - `v10/src/core/types/aiApproval.ts` — QuestionQueueEntry, PromptProfile, QuestionState 타입
 - `v10/src/core/config/aiProviderRegistry.ts` — LLM provider 등록
-- `v10/src/features/sharing/ai/LLMCallService.ts` — LLM 호출 (provider 경유)
-- `v10/src/features/sharing/ai/resolvePromptProfile.ts` — 4단계 프로필 병합
-- `v10/src/features/sharing/useTeacherApprovalQueue.ts` — 교사 검토 큐 훅
-- `v10/src/features/sharing/useStudentAISession.ts` — 학생 질문 훅
-- `v10/src/features/sharing/ai/StudentAIPromptBar.tsx` — 학생 질문 입력 UI
-- `v10/src/features/sharing/ai/TeacherApprovalPanel.tsx` — 교사 검토 패널
-- `v10/src/features/sharing/ai/ReAskPresetBar.tsx` — one-click re-ask 프리셋
+- `v10/src/features/collaboration/sharing/ai/LLMCallService.ts` — LLM 호출 (provider 경유)
+- `v10/src/features/collaboration/sharing/ai/resolvePromptProfile.ts` — 4단계 프로필 병합
+- `v10/src/features/collaboration/sharing/useTeacherApprovalQueue.ts` — 교사 검토 큐 훅
+- `v10/src/features/collaboration/sharing/useStudentAISession.ts` — 학생 질문 훅
+- `v10/src/features/collaboration/sharing/ai/StudentAIPromptBar.tsx` — 학생 질문 입력 UI
+- `v10/src/features/collaboration/sharing/ai/TeacherApprovalPanel.tsx` — 교사 검토 패널
+- `v10/src/features/collaboration/sharing/ai/ReAskPresetBar.tsx` — one-click re-ask 프리셋
 - `v10/src/app/api/ai/call/route.ts` — OpenAI 호출 + mock fallback
 
 Touched files/directories (write):
-- `v10/src/features/toolbar/PendingApprovalPanel.tsx` — ai_question 항목 통합
-- `v10/src/features/viewer/ViewerShell.tsx` — StudentAIPromptBar 조건부 추가
-- `v10/src/features/store/useSessionPolicyStore.ts` — auto-pass per-type 추가
+- `v10/src/features/chrome/toolbar/PendingApprovalPanel.tsx` — ai_question 항목 통합
+- `v10/src/features/chrome/viewer/ViewerShell.tsx` — StudentAIPromptBar 조건부 추가
+- `v10/src/features/platform/store/useSessionPolicyStore.ts` — auto-pass per-type 추가
 - `v10/src/core/config/sessionPolicyTemplates.ts` — TUTOR_MODERATED_AI 완성 (LLM provider 설정)
 
 Out of scope:
@@ -301,19 +301,19 @@ Status: COMPLETED
 Changed files:
 - `v10/src/core/types/aiApproval.ts`
 - `v10/src/core/config/aiProviderRegistry.ts`
-- `v10/src/features/sharing/ai/resolvePromptProfile.ts`
-- `v10/src/features/sharing/ai/LLMCallService.ts`
+- `v10/src/features/collaboration/sharing/ai/resolvePromptProfile.ts`
+- `v10/src/features/collaboration/sharing/ai/LLMCallService.ts`
 - `v10/src/app/api/ai/call/route.ts`
-- `v10/src/features/sharing/useTeacherApprovalQueue.ts`
-- `v10/src/features/sharing/ai/ReAskPresetBar.tsx`
-- `v10/src/features/sharing/ai/TeacherApprovalPanel.tsx`
-- `v10/src/features/sharing/useStudentAISession.ts`
-- `v10/src/features/sharing/ai/StudentAIPromptBar.tsx`
-- `v10/src/features/viewer/ViewerShell.tsx`
+- `v10/src/features/collaboration/sharing/useTeacherApprovalQueue.ts`
+- `v10/src/features/collaboration/sharing/ai/ReAskPresetBar.tsx`
+- `v10/src/features/collaboration/sharing/ai/TeacherApprovalPanel.tsx`
+- `v10/src/features/collaboration/sharing/useStudentAISession.ts`
+- `v10/src/features/collaboration/sharing/ai/StudentAIPromptBar.tsx`
+- `v10/src/features/chrome/viewer/ViewerShell.tsx`
 - `v10/src/core/types/sessionPolicy.ts`
 - `v10/src/core/config/sessionPolicyTemplates.ts`
-- `v10/src/features/store/useSessionPolicyStore.ts`
-- `v10/src/features/toolbar/PendingApprovalPanel.tsx`
+- `v10/src/features/platform/store/useSessionPolicyStore.ts`
+- `v10/src/features/chrome/toolbar/PendingApprovalPanel.tsx`
 
 ## Gate Results (Codex fills)
 

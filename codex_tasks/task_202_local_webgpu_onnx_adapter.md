@@ -20,8 +20,8 @@ Date: 2026-02-15
 
 Touched files/directories:
 - `codex_tasks/task_202_local_webgpu_onnx_adapter.md`
-- `v10/src/features/extensions/adapters/webgpuOnnxLocalAdapter.ts` (new)
-- `v10/src/features/extensions/adapters/index.ts`
+- `v10/src/features/platform/extensions/adapters/webgpuOnnxLocalAdapter.ts` (new)
+- `v10/src/features/platform/extensions/adapters/index.ts`
 
 Out of scope:
 - Real ONNX runtime dependency integration.
@@ -131,8 +131,8 @@ Out of scope:
 Status: COMPLETED
 
 Changed files:
-- `v10/src/features/extensions/adapters/webgpuOnnxLocalAdapter.ts`
-- `v10/src/features/extensions/adapters/index.ts`
+- `v10/src/features/platform/extensions/adapters/webgpuOnnxLocalAdapter.ts`
+- `v10/src/features/platform/extensions/adapters/index.ts`
 
 Commands run (only if user asked or required by spec):
 - `cd v10 && npm run lint`

@@ -8,8 +8,8 @@
 Initial screen guide/border lines appeared blurrier than later steps. Adjusted guide rendering to reduce subpixel blur.
 
 ## Scope
-- `v10/src/features/canvas/PageGuides.tsx`
-- `v10/src/features/canvas/PageViewport.tsx`
+- `v10/src/features/editor/canvas/PageGuides.tsx`
+- `v10/src/features/editor/canvas/PageViewport.tsx`
 
 ## Changes
 - Added a page-scale context in `PageViewport` so guide rendering can align to the current render scale.

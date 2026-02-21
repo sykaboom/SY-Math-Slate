@@ -18,7 +18,7 @@ Date: 2026-02-21
 ## Scope (Base Required)
 
 Touched files/directories:
-- v10/src/features/store, v10/src/features/layout, v10/src/features/toolbar, v10/src/core/config
+- v10/src/features/platform/store, v10/src/features/chrome/layout, v10/src/features/chrome/toolbar, v10/src/core/config
 
 Out of scope:
 - Theme token studio logic changes are excluded.

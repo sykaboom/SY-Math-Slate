@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 
-import { evaluateAdPolicyText } from "@features/community/policy/adPolicy";
-import { evaluateUgcSafetyText } from "@features/community/safety/ugcSafetyFilter";
+import { evaluateAdPolicyText } from "@features/governance/community/policy/adPolicy";
+import { evaluateUgcSafetyText } from "@features/governance/community/safety/ugcSafetyFilter";
 import {
   validateCommunityApiRequest,
   validateCommunitySnapshot,
@@ -29,7 +29,7 @@ import {
   type CommunityTrafficSignal,
   type CommunityTrustSafetySloSummary,
 } from "@core/foundation/schemas/community";
-import { assessInvalidTraffic } from "@features/community/traffic/invalidTraffic";
+import { assessInvalidTraffic } from "@features/governance/community/traffic/invalidTraffic";
 
 type CommunityApiErrorResponse = {
   ok: false;

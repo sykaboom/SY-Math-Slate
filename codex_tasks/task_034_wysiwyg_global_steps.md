@@ -38,12 +38,12 @@ Currently step indices reset per page, and break insertion feels like data progr
 - Markers are hidden when panel is closed.
 
 ## Scope (touched files)
-- `v10/src/features/store/useCanvasStore.ts`
-- `v10/src/features/hooks/useSequence.ts`
-- `v10/src/features/toolbar/PlaybackControls.tsx`
-- `v10/src/features/toolbar/FloatingToolbar.tsx`
-- `v10/src/features/canvas/ContentLayer.tsx`
-- `v10/src/features/layout/autoLayout.ts`
+- `v10/src/features/platform/store/useCanvasStore.ts`
+- `v10/src/features/platform/hooks/useSequence.ts`
+- `v10/src/features/chrome/toolbar/PlaybackControls.tsx`
+- `v10/src/features/chrome/toolbar/FloatingToolbar.tsx`
+- `v10/src/features/editor/canvas/ContentLayer.tsx`
+- `v10/src/features/chrome/layout/autoLayout.ts`
 - `v10/src/app/globals.css`
 
 ## Acceptance Criteria
@@ -58,12 +58,12 @@ Currently step indices reset per page, and break insertion feels like data progr
 
 ## Closeout
 - **Changed files:**
-  - `v10/src/features/store/useCanvasStore.ts`
-  - `v10/src/features/hooks/useSequence.ts`
-  - `v10/src/features/toolbar/PlaybackControls.tsx`
-  - `v10/src/features/toolbar/FloatingToolbar.tsx`
-  - `v10/src/features/canvas/ContentLayer.tsx`
-  - `v10/src/features/layout/autoLayout.ts`
+  - `v10/src/features/platform/store/useCanvasStore.ts`
+  - `v10/src/features/platform/hooks/useSequence.ts`
+  - `v10/src/features/chrome/toolbar/PlaybackControls.tsx`
+  - `v10/src/features/chrome/toolbar/FloatingToolbar.tsx`
+  - `v10/src/features/editor/canvas/ContentLayer.tsx`
+  - `v10/src/features/chrome/layout/autoLayout.ts`
   - `v10/src/app/globals.css`
 - **Commands run:** none
 - **Manual verification:** not run (not requested).

@@ -75,10 +75,10 @@ Recent hotfixes stabilized layout/resize behavior and introduced a data input pa
 - Fix: group steps + toolbar into one footer block and remove horizontal scroll.
 - Files: `v10/src/components/layout/AppLayout.tsx`, `v10/src/components/layout/Prompter.tsx`, `v10/src/components/toolbar/FloatingToolbar.tsx`
 - Fix: add raw input line markers and adaptive line spacing for DataInputPanel.
-- Files: `v10/src/features/layout/DataInputPanel.tsx`
+- Files: `v10/src/features/chrome/layout/DataInputPanel.tsx`
 - Fix: categorize and compact the More menu sections.
-- Files: `v10/src/features/toolbar/FloatingToolbar.tsx`
+- Files: `v10/src/features/chrome/toolbar/FloatingToolbar.tsx`
 - Fix: auto-advance pages during autoplay when a next page exists.
-- Files: `v10/src/features/hooks/useSequence.ts`, `v10/src/features/store/useCanvasStore.ts`
+- Files: `v10/src/features/platform/hooks/useSequence.ts`, `v10/src/features/platform/store/useCanvasStore.ts`
 - Fix: keep Data Input Panel open after applying changes.
-- Files: `v10/src/features/layout/DataInputPanel.tsx`
+- Files: `v10/src/features/chrome/layout/DataInputPanel.tsx`

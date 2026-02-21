@@ -27,20 +27,20 @@
 - 폰트 스타일링 기능 자체(폰트 UI/폰트 에셋/폰트 적용 정책)의 구현 완료.
 
 ## Scope (Files)
-- `v10/src/features/canvas/ContentLayer.tsx`
-- `v10/src/features/hooks/useSequence.ts`
-- `v10/src/features/canvas/animation/MixedRevealBlock.tsx` (분해 또는 경량 래퍼화)
-- `v10/src/features/canvas/animation/AnimatedTextBlock.tsx` (공용 primitive 추출 반영)
-- `v10/src/features/canvas/animation/MathRevealBlock.tsx` (공용 primitive 추출 반영)
-- `v10/src/features/canvas/animation/RichTextAnimator.tsx` (new)
-- `v10/src/features/animation/model/animationProfile.ts` (new)
-- `v10/src/features/animation/model/builtinProfiles.ts` (new)
-- `v10/src/features/animation/plan/compileAnimationPlan.ts` (new)
-- `v10/src/features/animation/plan/measureAnimationPlan.ts` (new)
-- `v10/src/features/animation/runtime/playAnimationPlan.ts` (new)
-- `v10/src/features/animation/runtime/types.ts` (new)
-- `v10/src/features/animation/modding/modContract.ts` (new)
-- `v10/src/features/animation/modding/normalizeModProfile.ts` (new)
+- `v10/src/features/editor/canvas/ContentLayer.tsx`
+- `v10/src/features/platform/hooks/useSequence.ts`
+- `v10/src/features/editor/canvas/animation/MixedRevealBlock.tsx` (분해 또는 경량 래퍼화)
+- `v10/src/features/editor/canvas/animation/AnimatedTextBlock.tsx` (공용 primitive 추출 반영)
+- `v10/src/features/editor/canvas/animation/MathRevealBlock.tsx` (공용 primitive 추출 반영)
+- `v10/src/features/editor/canvas/animation/RichTextAnimator.tsx` (new)
+- `v10/src/features/editor/animation/model/animationProfile.ts` (new)
+- `v10/src/features/editor/animation/model/builtinProfiles.ts` (new)
+- `v10/src/features/editor/animation/plan/compileAnimationPlan.ts` (new)
+- `v10/src/features/editor/animation/plan/measureAnimationPlan.ts` (new)
+- `v10/src/features/editor/animation/runtime/playAnimationPlan.ts` (new)
+- `v10/src/features/editor/animation/runtime/types.ts` (new)
+- `v10/src/features/editor/animation/modding/modContract.ts` (new)
+- `v10/src/features/editor/animation/modding/normalizeModProfile.ts` (new)
 - `v10/src/core/types/canvas.ts` (필요 시 최소 필드 확장)
 - `v10/src/core/migrations/migrateToV2.ts` (필요 시 최소 migration 보강)
 - `v10/AI_READ_ME.md` (규칙/핵심 플로우 변경 시)
@@ -142,18 +142,18 @@
 **Status:** COMPLETED
 **Changed files:**  
 - `codex_tasks/task_067_animation_engine_refactor_open_modding.md`
-- `v10/src/features/canvas/ContentLayer.tsx`
-- `v10/src/features/canvas/animation/MixedRevealBlock.tsx`
-- `v10/src/features/canvas/animation/RichTextAnimator.tsx`
-- `v10/src/features/hooks/useSequence.ts`
-- `v10/src/features/animation/model/animationProfile.ts`
-- `v10/src/features/animation/model/builtinProfiles.ts`
-- `v10/src/features/animation/plan/compileAnimationPlan.ts`
-- `v10/src/features/animation/plan/measureAnimationPlan.ts`
-- `v10/src/features/animation/runtime/types.ts`
-- `v10/src/features/animation/runtime/playAnimationPlan.ts`
-- `v10/src/features/animation/modding/modContract.ts`
-- `v10/src/features/animation/modding/normalizeModProfile.ts`
+- `v10/src/features/editor/canvas/ContentLayer.tsx`
+- `v10/src/features/editor/canvas/animation/MixedRevealBlock.tsx`
+- `v10/src/features/editor/canvas/animation/RichTextAnimator.tsx`
+- `v10/src/features/platform/hooks/useSequence.ts`
+- `v10/src/features/editor/animation/model/animationProfile.ts`
+- `v10/src/features/editor/animation/model/builtinProfiles.ts`
+- `v10/src/features/editor/animation/plan/compileAnimationPlan.ts`
+- `v10/src/features/editor/animation/plan/measureAnimationPlan.ts`
+- `v10/src/features/editor/animation/runtime/types.ts`
+- `v10/src/features/editor/animation/runtime/playAnimationPlan.ts`
+- `v10/src/features/editor/animation/modding/modContract.ts`
+- `v10/src/features/editor/animation/modding/normalizeModProfile.ts`
 - `v10/AI_READ_ME.md`
 - `v10/AI_READ_ME_MAP.md`
 

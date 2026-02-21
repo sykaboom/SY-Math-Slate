@@ -20,8 +20,8 @@ Date: 2026-02-15
 
 Touched files/directories:
 - `codex_tasks/task_183_datainput_panel_modular_decomposition.md`
-- `v10/src/features/layout/DataInputPanel.tsx`
-- `v10/src/features/input-studio/components/*`
+- `v10/src/features/chrome/layout/DataInputPanel.tsx`
+- `v10/src/features/editor/input-studio/components/*`
 
 Out of scope:
 - New features for LLM, approval, or publish semantics.
@@ -136,7 +136,7 @@ If NO:
    - Covers: AC-1, AC-2
 
 2) Step:
-   - Command / click path: `cd v10 && npm run lint -- --max-warnings=0 -- src/features/layout/DataInputPanel.tsx src/features/input-studio/components`
+   - Command / click path: `cd v10 && npm run lint -- --max-warnings=0 -- src/features/chrome/layout/DataInputPanel.tsx src/features/editor/input-studio/components`
    - Expected result: PASS
    - Covers: AC-3
 
@@ -166,15 +166,15 @@ If NO:
 Status: COMPLETED
 
 Changed files:
-- `v10/src/features/layout/DataInputPanel.tsx`
-- `v10/src/features/input-studio/components/InputStudioHeaderSection.tsx`
-- `v10/src/features/input-studio/components/InputStudioRawSection.tsx`
-- `v10/src/features/input-studio/components/InputStudioBlocksSection.tsx`
-- `v10/src/features/input-studio/components/InputStudioActionsSection.tsx`
-- `v10/src/features/input-studio/components/index.ts`
+- `v10/src/features/chrome/layout/DataInputPanel.tsx`
+- `v10/src/features/editor/input-studio/components/InputStudioHeaderSection.tsx`
+- `v10/src/features/editor/input-studio/components/InputStudioRawSection.tsx`
+- `v10/src/features/editor/input-studio/components/InputStudioBlocksSection.tsx`
+- `v10/src/features/editor/input-studio/components/InputStudioActionsSection.tsx`
+- `v10/src/features/editor/input-studio/components/index.ts`
 
 Commands run (only if user asked or required by spec):
-- `cd v10 && npm run lint -- --max-warnings=0 -- src/features/layout/DataInputPanel.tsx src/features/input-studio`
+- `cd v10 && npm run lint -- --max-warnings=0 -- src/features/chrome/layout/DataInputPanel.tsx src/features/editor/input-studio`
 - `cd v10 && npm run lint`
 - `cd v10 && npm run build`
 - `VERIFY_STAGE=end bash scripts/run_repo_verifications.sh`

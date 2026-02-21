@@ -102,30 +102,6 @@ v10/src/
 |   |   |-- loader.ts
 |   |   |-- render.ts
 |   |   \-- rules.ts
-|   |-- mod/
-|   |   |-- builtin/
-|   |   |   |-- canvas.mod.ts
-|   |   |   |-- draw.mod.ts
-|   |   |   |-- index.ts
-|   |   |   |-- lecture.mod.ts
-|   |   |   \-- playback.mod.ts
-|   |   |-- contracts/
-|   |   |   |-- index.ts
-|   |   |   \-- types.ts
-|   |   |-- host/
-|   |   |   |-- index.ts
-|   |   |   |-- inputRoutingBridge.ts
-|   |   |   |-- manager.ts
-|   |   |   \-- registry.ts
-|   |   |-- package/
-|   |   |   |-- guards.ts
-|   |   |   |-- index.ts
-|   |   |   |-- registry.ts
-|   |   |   |-- selectors.ts
-|   |   |   |-- templatePackAdapter.ts
-|   |   |   |-- templatePackAdapter.types.ts
-|   |   |   \-- types.ts
-|   |   \-- index.ts
 |   |-- pipelines/
 |   |   |-- export/
 |   |   |   |-- exportPipeline.ts
@@ -141,6 +117,12 @@ v10/src/
 |   |-- runtime/
 |   |   |-- command/
 |   |   |   |-- commandBus.ts
+|   |   |   \-- index.ts
+|   |   |-- modding/
+|   |   |   |-- api/
+|   |   |   |-- builtin/
+|   |   |   |-- host/
+|   |   |   |-- package/
 |   |   |   \-- index.ts
 |   |   |-- plugin-runtime/
 |   |   |   |-- sdk/
@@ -170,317 +152,202 @@ v10/src/
 |   |   \-- index.ts
 |   \-- utils.ts
 |-- features/
-|   |-- animation/
-|   |   |-- modding/
-|   |   |   |-- modContract.ts
-|   |   |   \-- normalizeModProfile.ts
-|   |   |-- model/
-|   |   |   |-- animationProfile.ts
-|   |   |   \-- builtinProfiles.ts
-|   |   |-- plan/
-|   |   |   |-- compileAnimationPlan.ts
-|   |   |   \-- measureAnimationPlan.ts
-|   |   |-- runtime/
-|   |   |   |-- playAnimationPlan.ts
-|   |   |   \-- types.ts
-|   |   \-- styles/
-|   |       \-- rich-text-animation.css
-|   |-- canvas/
-|   |   |-- actors/
-|   |   |   |-- ActorLayer.tsx
-|   |   |   |-- ChalkActor.tsx
-|   |   |   \-- HighlighterActor.tsx
-|   |   |-- animation/
-|   |   |   |-- AnimatedTextBlock.tsx
-|   |   |   |-- MathRevealBlock.tsx
-|   |   |   |-- MixedRevealBlock.tsx
-|   |   |   \-- RichTextAnimator.tsx
-|   |   |-- editing/
-|   |   |-- objects/
-|   |   |   \-- ImageBlock.tsx
-|   |   |-- paste/
-|   |   |   \-- pasteNormalization.ts
-|   |   |-- styles/
-|   |   |   |-- content-layer.css
-|   |   |   \-- mathjax.css
-|   |   |-- viewport/
-|   |   |   \-- useViewportInteraction.ts
-|   |   |-- AnchorIndicator.tsx
-|   |   |-- CanvasGuides.tsx
-|   |   |-- CanvasLayer.tsx
-|   |   |-- CanvasStage.tsx
-|   |   |-- ContentLayer.tsx
-|   |   |-- MathTextBlock.tsx
-|   |   |-- OverviewInkLayer.tsx
-|   |   |-- PageGuides.tsx
-|   |   |-- PageViewport.tsx
-|   |   |-- PasteHelperModal.tsx
-|   |   |-- PresenceOverlay.tsx
-|   |   \-- StaticStrokeLayer.tsx
-|   |-- community/
-|   |   |-- policy/
-|   |   |   \-- adPolicy.ts
-|   |   |-- safety/
-|   |   |   \-- ugcSafetyFilter.ts
-|   |   |-- store/
-|   |   |   \-- useCommunityStore.ts
-|   |   |-- traffic/
-|   |   |   \-- invalidTraffic.ts
-|   |   \-- useCommunityActions.ts
-|   |-- editor-core/
-|   |   |-- model/
-|   |   |   \-- editorSurface.ts
-|   |   |-- outline/
-|   |   |   \-- documentOutline.ts
-|   |   \-- selection/
-|   |       \-- caretEngine.ts
-|   |-- experiments/
-|   |   |-- abFlags.ts
-|   |   \-- index.ts
-|   |-- extensions/
-|   |   |-- adapters/
-|   |   |   |-- audioProviderAdapter.ts
-|   |   |   |-- imageProviderAdapter.ts
-|   |   |   |-- index.ts
-|   |   |   |-- llmProviderAdapter.ts
-|   |   |   |-- lmStudioLocalAdapter.ts
-|   |   |   |-- mockAdapter.ts
-|   |   |   |-- ollamaLocalAdapter.ts
-|   |   |   |-- providerAbi.ts
-|   |   |   |-- registry.ts
-|   |   |   |-- types.ts
-|   |   |   |-- videoProviderAdapter.ts
-|   |   |   \-- webgpuOnnxLocalAdapter.ts
-|   |   |-- commands/
-|   |   |   |-- commands.canvas.ts
-|   |   |   |-- commands.doc.ts
-|   |   |   |-- commands.playback.ts
-|   |   |   |-- commands.tool.ts
-|   |   |   \-- registerCoreCommands.ts
-|   |   |-- jobs/
-|   |   |   |-- asyncJobOrchestrator.ts
-|   |   |   |-- index.ts
-|   |   |   \-- types.ts
-|   |   |-- marketplace/
-|   |   |   |-- index.ts
-|   |   |   |-- resolveMarketplaceCatalog.ts
-|   |   |   \-- useMarketplaceCatalog.ts
-|   |   |-- routing/
-|   |   |   |-- capabilityRouter.ts
-|   |   |   |-- index.ts
-|   |   |   |-- localCloudFallback.ts
-|   |   |   \-- types.ts
-|   |   |-- ui/
-|   |   |   |-- CoreSlotComponents.tsx
-|   |   |   |-- coreTemplates.ts
-|   |   |   |-- ExtensionRuntimeBootstrap.tsx
-|   |   |   |-- ExtensionSlot.tsx
-|   |   |   |-- registerCoreDeclarativeManifest.ts
-|   |   |   \-- registerCoreSlots.ts
-|   |   |-- commandExecutionPolicy.ts
-|   |   \-- toolExecutionPolicy.ts
-|   |-- hooks/
-|   |   |-- useAudioPlayer.ts
-|   |   |-- useBoardTransform.ts
-|   |   |-- useCanvas.ts
-|   |   |-- useDocumentOutline.ts
-|   |   |-- useFileIO.ts
-|   |   |-- useImageInsert.ts
-|   |   |-- useOverlayCanvas.ts
-|   |   |-- usePersistence.ts
-|   |   |-- useSequence.ts
-|   |   |-- useSFX.ts
-|   |   \-- useSnap.ts
-|   |-- input-studio/
-|   |   |-- approval/
-|   |   |   \-- inputStudioApproval.ts
-|   |   |-- components/
-|   |   |   |-- index.ts
-|   |   |   |-- InputStudioActionsSection.tsx
-|   |   |   |-- InputStudioBlocksSection.tsx
-|   |   |   |-- InputStudioHeaderSection.tsx
-|   |   |   \-- InputStudioRawSection.tsx
-|   |   |-- diff/
-|   |   |   |-- draftDiff.ts
-|   |   |   \-- types.ts
-|   |   |-- hooks/
-|   |   |   |-- types.ts
-|   |   |   \-- useInputStudioHeadless.ts
-|   |   |-- llm/
-|   |   |   |-- normalizedToDraftBlocks.ts
-|   |   |   |-- types.ts
-|   |   |   \-- useInputStudioLlmDraft.ts
-|   |   |-- publish/
-|   |   |   |-- types.ts
-|   |   |   \-- useInputStudioPublishRollback.ts
-|   |   |-- schema/
-|   |   |   |-- structuredContentSchema.ts
-|   |   |   \-- StructuredSchemaEditor.tsx
-|   |   |-- validation/
-|   |   |   |-- batchTransformPipeline.ts
-|   |   |   \-- types.ts
-|   |   \-- offlineDraftQueue.ts
-|   |-- layout/
-|   |   |-- dataInput/
-|   |   |   |-- blockDraft.ts
-|   |   |   |-- blockStructureOps.ts
-|   |   |   |-- inlineEditCommands.ts
-|   |   |   |-- mediaIO.ts
-|   |   |   |-- segmentCommands.ts
-|   |   |   \-- types.ts
-|   |   |-- styles/
-|   |   |   \-- prompter.css
-|   |   |-- windowing/
-|   |   |   |-- panelAdapters.tsx
-|   |   |   |-- panelBehavior.schema.ts
-|   |   |   |-- panelBehavior.types.ts
-|   |   |   |-- panelLauncher.registry.ts
-|   |   |   |-- PanelLauncher.tsx
-|   |   |   |-- panelPolicy.runtime.ts
-|   |   |   |-- useWindowRuntime.ts
-|   |   |   |-- WindowHost.tsx
-|   |   |   |-- windowRuntime.ts
-|   |   |   \-- windowRuntime.types.ts
-|   |   |-- AppLayout.tsx
-|   |   |-- autoLayout.ts
-|   |   |-- DataInputPanel.tsx
-|   |   |-- OverviewStage.tsx
-|   |   |-- PlayerBar.tsx
-|   |   |-- Prompter.tsx
-|   |   |-- SessionPolicyPanel.tsx
-|   |   \-- useTabletShellProfile.ts
-|   |-- mod-studio/
-|   |   |-- ai/
-|   |   |   |-- AIModuleGenerationPanel.tsx
-|   |   |   |-- AIModulePromptBar.tsx
-|   |   |   \-- useAIModuleGeneration.ts
-|   |   |-- core/
-|   |   |   |-- ModStudioPanel.tsx
-|   |   |   |-- ModStudioShell.tsx
-|   |   |   \-- types.ts
-|   |   |-- io/
-|   |   |   |-- __fixtures__/
-|   |   |   |-- ioStudio.ts
-|   |   |   \-- IoStudioSection.tsx
+|   |-- chrome/
 |   |   |-- layout/
-|   |   |   \-- LayoutStudioSection.tsx
-|   |   |-- modules/
-|   |   |   |-- moduleDiagnostics.ts
-|   |   |   \-- ModuleStudioSection.tsx
-|   |   |-- policy/
-|   |   |   \-- PolicyStudioSection.tsx
-|   |   |-- publish/
-|   |   |   |-- publishStudioDraft.ts
-|   |   |   \-- PublishStudioSection.tsx
-|   |   |-- theme/
-|   |   |   |-- AIThemeGenerationPanel.tsx
-|   |   |   |-- AIThemePromptBar.tsx
-|   |   |   |-- ThemeExportButton.tsx
-|   |   |   |-- ThemeImportButton.tsx
-|   |   |   |-- themeIsolation.ts
-|   |   |   |-- themeJsonIO.ts
-|   |   |   |-- ThemeStudioSection.tsx
-|   |   |   |-- TokenColorPicker.tsx
-|   |   |   |-- TokenEditorPanel.tsx
-|   |   |   \-- useAIThemeGeneration.ts
+|   |   |   |-- dataInput/
+|   |   |   |-- styles/
+|   |   |   |-- windowing/
+|   |   |   |-- AppLayout.tsx
+|   |   |   |-- autoLayout.ts
+|   |   |   |-- DataInputPanel.tsx
+|   |   |   |-- index.ts
+|   |   |   |-- OverviewStage.tsx
+|   |   |   |-- PlayerBar.tsx
+|   |   |   |-- Prompter.tsx
+|   |   |   |-- SessionPolicyPanel.tsx
+|   |   |   \-- useTabletShellProfile.ts
+|   |   |-- shortcuts/
+|   |   |   |-- index.ts
+|   |   |   \-- useAuthoringShortcuts.ts
+|   |   |-- theming-ui/
+|   |   |   |-- index.ts
+|   |   |   |-- ThemePickerPanel.tsx
+|   |   |   \-- ThemeProvider.tsx
+|   |   |-- toolbar/
+|   |   |   |-- atoms/
+|   |   |   |-- catalog/
+|   |   |   |-- CanvasModeTools.tsx
+|   |   |   |-- compactToolbarSections.ts
+|   |   |   |-- DrawModeTools.tsx
+|   |   |   |-- EraserControls.tsx
+|   |   |   |-- FloatingToolbar.tsx
+|   |   |   |-- index.ts
+|   |   |   |-- LaserControls.tsx
+|   |   |   |-- MorePanel.tsx
+|   |   |   |-- navigationLabels.ts
+|   |   |   |-- PageNavigator.tsx
+|   |   |   |-- PenControls.tsx
+|   |   |   |-- PendingApprovalPanel.tsx
+|   |   |   |-- PlaybackControls.tsx
+|   |   |   |-- PlaybackModeTools.tsx
+|   |   |   |-- ThumbZoneDock.tsx
+|   |   |   |-- toolbarFeedback.ts
+|   |   |   |-- toolbarModePolicy.ts
+|   |   |   \-- useApprovalLogic.ts
+|   |   |-- ui-host/
+|   |   |   |-- index.ts
+|   |   |   \-- modContributionBridge.ts
+|   |   |-- viewer/
+|   |   |   |-- index.ts
+|   |   |   |-- useViewerLiveSession.ts
+|   |   |   |-- useViewerSession.ts
+|   |   |   \-- ViewerShell.tsx
 |   |   \-- index.ts
-|   |-- moderation/
-|   |   |-- ModerationConsolePanel.tsx
-|   |   \-- useModerationConsole.ts
-|   |-- observability/
-|   |   \-- auditLogger.ts
-|   |-- policy/
-|   |   |-- policyShadow.ts
-|   |   \-- useResolvedPanelPolicy.ts
-|   |-- sharing/
-|   |   |-- adapters/
-|   |   |   |-- LocalSnapshotAdapter.ts
-|   |   |   |-- ServerSnapshotAdapter.ts
-|   |   |   |-- SnapshotAdapterInterface.ts
-|   |   |   \-- UpstashSnapshotAdapter.ts
-|   |   |-- ai/
-|   |   |   |-- LLMCallService.ts
-|   |   |   |-- ReAskPresetBar.tsx
-|   |   |   |-- resolvePromptProfile.ts
-|   |   |   |-- StudentAIPromptBar.tsx
-|   |   |   \-- TeacherApprovalPanel.tsx
-|   |   |-- transport/
-|   |   |   \-- LiveBroadcastTransport.ts
-|   |   |-- HostLiveSessionPanel.tsx
-|   |   |-- LayerPickerModal.tsx
-|   |   |-- ProposalCommandBus.ts
-|   |   |-- PublicToggle.tsx
-|   |   |-- ShareButton.tsx
-|   |   |-- ShareScopeSelector.tsx
-|   |   |-- snapshotSerializer.ts
-|   |   |-- useHostPolicyEngine.ts
-|   |   |-- useHostSession.ts
-|   |   |-- useParticipantSession.ts
-|   |   |-- useSnapshotShare.ts
-|   |   |-- useStudentAISession.ts
-|   |   \-- useTeacherApprovalQueue.ts
-|   |-- shortcuts/
-|   |   \-- useAuthoringShortcuts.ts
-|   |-- store/
-|   |   |-- useCanvasStore.ts
-|   |   |-- useCapabilityStore.ts
-|   |   |-- useChromeStore.ts
-|   |   |-- useDocStore.ts
-|   |   |-- useHostShareStore.ts
-|   |   |-- useLocalStore.ts
-|   |   |-- useModStore.ts
-|   |   |-- useModStudioStore.ts
-|   |   |-- usePlaybackStore.ts
-|   |   |-- useSessionPolicyStore.ts
-|   |   |-- useSyncStore.ts
-|   |   |-- useThemeStore.ts
-|   |   |-- useTokenDraftStore.ts
-|   |   |-- useToolStore.ts
-|   |   |-- useUIStoreBridge.ts
-|   |   \-- useViewportStore.ts
-|   |-- sync/
-|   |   |-- realtime/
-|   |   |   |-- backplane.ts
-|   |   |   |-- conflictPolicy.ts
-|   |   |   |-- messageEnvelope.ts
-|   |   |   \-- roleSyncGuard.ts
-|   |   \-- useAsymmetricSessionSync.ts
-|   |-- theme/
-|   |   |-- ThemePickerPanel.tsx
-|   |   \-- ThemeProvider.tsx
-|   |-- toolbar/
-|   |   |-- atoms/
-|   |   |   |-- ToolbarPanel.tsx
-|   |   |   |-- ToolbarSeparator.tsx
-|   |   |   \-- ToolButton.tsx
-|   |   |-- catalog/
-|   |   |   |-- toolbarActionCatalog.ts
-|   |   |   |-- toolbarActionSelectors.ts
-|   |   |   |-- toolbarSurfacePolicy.ts
-|   |   |   \-- toolbarViewportProfile.ts
-|   |   |-- CanvasModeTools.tsx
-|   |   |-- compactToolbarSections.ts
-|   |   |-- DrawModeTools.tsx
-|   |   |-- EraserControls.tsx
-|   |   |-- FloatingToolbar.tsx
-|   |   |-- LaserControls.tsx
-|   |   |-- MorePanel.tsx
-|   |   |-- navigationLabels.ts
-|   |   |-- PageNavigator.tsx
-|   |   |-- PenControls.tsx
-|   |   |-- PendingApprovalPanel.tsx
-|   |   |-- PlaybackControls.tsx
-|   |   |-- PlaybackModeTools.tsx
-|   |   |-- ThumbZoneDock.tsx
-|   |   |-- toolbarFeedback.ts
-|   |   |-- toolbarModePolicy.ts
-|   |   \-- useApprovalLogic.ts
-|   |-- ui-host/
-|   |   \-- modContributionBridge.ts
-|   \-- viewer/
-|       |-- useViewerLiveSession.ts
-|       |-- useViewerSession.ts
-|       \-- ViewerShell.tsx
+|   |-- collaboration/
+|   |   |-- sharing/
+|   |   |   |-- adapters/
+|   |   |   |-- ai/
+|   |   |   |-- transport/
+|   |   |   |-- HostLiveSessionPanel.tsx
+|   |   |   |-- index.ts
+|   |   |   |-- LayerPickerModal.tsx
+|   |   |   |-- ProposalCommandBus.ts
+|   |   |   |-- PublicToggle.tsx
+|   |   |   |-- ShareButton.tsx
+|   |   |   |-- ShareScopeSelector.tsx
+|   |   |   |-- snapshotSerializer.ts
+|   |   |   |-- useHostPolicyEngine.ts
+|   |   |   |-- useHostSession.ts
+|   |   |   |-- useParticipantSession.ts
+|   |   |   |-- useSnapshotShare.ts
+|   |   |   |-- useStudentAISession.ts
+|   |   |   \-- useTeacherApprovalQueue.ts
+|   |   |-- sync/
+|   |   |   |-- realtime/
+|   |   |   |-- index.ts
+|   |   |   \-- useAsymmetricSessionSync.ts
+|   |   \-- index.ts
+|   |-- editor/
+|   |   |-- animation/
+|   |   |   |-- modding/
+|   |   |   |-- model/
+|   |   |   |-- plan/
+|   |   |   |-- runtime/
+|   |   |   |-- styles/
+|   |   |   \-- index.ts
+|   |   |-- canvas/
+|   |   |   |-- actors/
+|   |   |   |-- animation/
+|   |   |   |-- objects/
+|   |   |   |-- paste/
+|   |   |   |-- styles/
+|   |   |   |-- viewport/
+|   |   |   |-- AnchorIndicator.tsx
+|   |   |   |-- CanvasGuides.tsx
+|   |   |   |-- CanvasLayer.tsx
+|   |   |   |-- CanvasStage.tsx
+|   |   |   |-- ContentLayer.tsx
+|   |   |   |-- index.ts
+|   |   |   |-- MathTextBlock.tsx
+|   |   |   |-- OverviewInkLayer.tsx
+|   |   |   |-- PageGuides.tsx
+|   |   |   |-- PageViewport.tsx
+|   |   |   |-- PasteHelperModal.tsx
+|   |   |   |-- PresenceOverlay.tsx
+|   |   |   \-- StaticStrokeLayer.tsx
+|   |   |-- editor-core/
+|   |   |   |-- model/
+|   |   |   |-- outline/
+|   |   |   |-- selection/
+|   |   |   \-- index.ts
+|   |   |-- input-studio/
+|   |   |   |-- approval/
+|   |   |   |-- components/
+|   |   |   |-- diff/
+|   |   |   |-- hooks/
+|   |   |   |-- llm/
+|   |   |   |-- publish/
+|   |   |   |-- schema/
+|   |   |   |-- validation/
+|   |   |   |-- index.ts
+|   |   |   \-- offlineDraftQueue.ts
+|   |   \-- index.ts
+|   |-- governance/
+|   |   |-- community/
+|   |   |   |-- policy/
+|   |   |   |-- safety/
+|   |   |   |-- store/
+|   |   |   |-- traffic/
+|   |   |   |-- index.ts
+|   |   |   \-- useCommunityActions.ts
+|   |   |-- moderation/
+|   |   |   |-- index.ts
+|   |   |   |-- ModerationConsolePanel.tsx
+|   |   |   \-- useModerationConsole.ts
+|   |   |-- policy/
+|   |   |   |-- index.ts
+|   |   |   |-- policyShadow.ts
+|   |   |   \-- useResolvedPanelPolicy.ts
+|   |   \-- index.ts
+|   \-- platform/
+|       |-- experiments/
+|       |   |-- abFlags.ts
+|       |   \-- index.ts
+|       |-- extensions/
+|       |   |-- adapters/
+|       |   |-- commands/
+|       |   |-- jobs/
+|       |   |-- marketplace/
+|       |   |-- routing/
+|       |   |-- ui/
+|       |   |-- commandExecutionPolicy.ts
+|       |   |-- index.ts
+|       |   \-- toolExecutionPolicy.ts
+|       |-- hooks/
+|       |   |-- index.ts
+|       |   |-- useAudioPlayer.ts
+|       |   |-- useBoardTransform.ts
+|       |   |-- useCanvas.ts
+|       |   |-- useDocumentOutline.ts
+|       |   |-- useFileIO.ts
+|       |   |-- useImageInsert.ts
+|       |   |-- useOverlayCanvas.ts
+|       |   |-- usePersistence.ts
+|       |   |-- useSequence.ts
+|       |   |-- useSFX.ts
+|       |   \-- useSnap.ts
+|       |-- mod-studio/
+|       |   |-- ai/
+|       |   |-- core/
+|       |   |-- io/
+|       |   |-- layout/
+|       |   |-- modules/
+|       |   |-- policy/
+|       |   |-- publish/
+|       |   |-- theme/
+|       |   \-- index.ts
+|       |-- observability/
+|       |   |-- auditLogger.ts
+|       |   \-- index.ts
+|       |-- store/
+|       |   |-- index.ts
+|       |   |-- useCanvasStore.ts
+|       |   |-- useCapabilityStore.ts
+|       |   |-- useChromeStore.ts
+|       |   |-- useDocStore.ts
+|       |   |-- useHostShareStore.ts
+|       |   |-- useLocalStore.ts
+|       |   |-- useModStore.ts
+|       |   |-- useModStudioStore.ts
+|       |   |-- usePlaybackStore.ts
+|       |   |-- useSessionPolicyStore.ts
+|       |   |-- useSyncStore.ts
+|       |   |-- useThemeStore.ts
+|       |   |-- useTokenDraftStore.ts
+|       |   |-- useToolStore.ts
+|       |   |-- useUIStoreBridge.ts
+|       |   \-- useViewportStore.ts
+|       \-- index.ts
 |-- generated/
 |   \-- prisma/
 |       |-- internal/

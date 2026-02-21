@@ -19,13 +19,13 @@ Date: 2026-02-19
 ## Scope (Base Required)
 
 Touched files/directories:
-- `v10/src/features/toolbar/FloatingToolbar.tsx`
-- `v10/src/features/toolbar/PageNavigator.tsx`
-- `v10/src/features/toolbar/PlaybackControls.tsx`
-- `v10/src/features/toolbar/PenControls.tsx`
-- `v10/src/features/toolbar/LaserControls.tsx`
-- `v10/src/features/toolbar/EraserControls.tsx`
-- `v10/src/features/toolbar/toolbarFeedback.ts` (new shared helper)
+- `v10/src/features/chrome/toolbar/FloatingToolbar.tsx`
+- `v10/src/features/chrome/toolbar/PageNavigator.tsx`
+- `v10/src/features/chrome/toolbar/PlaybackControls.tsx`
+- `v10/src/features/chrome/toolbar/PenControls.tsx`
+- `v10/src/features/chrome/toolbar/LaserControls.tsx`
+- `v10/src/features/chrome/toolbar/EraserControls.tsx`
+- `v10/src/features/chrome/toolbar/toolbarFeedback.ts` (new shared helper)
 
 Out of scope:
 - Server-side logging pipeline redesign
@@ -66,7 +66,7 @@ Out of scope:
 - Touched file count:
   - 7
 - Files shared with other PENDING tasks:
-  - `v10/src/features/toolbar/FloatingToolbar.tsx`
+  - `v10/src/features/chrome/toolbar/FloatingToolbar.tsx`
 - Cross-module dependency:
   - NO
 - Parallelizable sub-units:
@@ -175,13 +175,13 @@ Out of scope:
 Status: COMPLETED
 
 Changed files:
-- `v10/src/features/toolbar/toolbarFeedback.ts`
-- `v10/src/features/toolbar/FloatingToolbar.tsx`
-- `v10/src/features/toolbar/PageNavigator.tsx`
-- `v10/src/features/toolbar/PlaybackControls.tsx`
-- `v10/src/features/toolbar/PenControls.tsx`
-- `v10/src/features/toolbar/LaserControls.tsx`
-- `v10/src/features/toolbar/EraserControls.tsx`
+- `v10/src/features/chrome/toolbar/toolbarFeedback.ts`
+- `v10/src/features/chrome/toolbar/FloatingToolbar.tsx`
+- `v10/src/features/chrome/toolbar/PageNavigator.tsx`
+- `v10/src/features/chrome/toolbar/PlaybackControls.tsx`
+- `v10/src/features/chrome/toolbar/PenControls.tsx`
+- `v10/src/features/chrome/toolbar/LaserControls.tsx`
+- `v10/src/features/chrome/toolbar/EraserControls.tsx`
 
 Commands run (only if user asked or required by spec):
 - `scripts/check_layer_rules.sh`

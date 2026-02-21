@@ -13,7 +13,7 @@ Date: 2026-02-20
   - `Mod`: runtime behavior unit (input handling, overlay, contributions).
   - `ModPackage`: operational package unit (activation policy, UI policy, dependency/conflict metadata).
 - Compatibility term:
-  - `mode` is a UI-facing alias resolved through `core/mod/package` selectors only.
+  - `mode` is a UI-facing alias resolved through `core/runtime/modding/package` selectors only.
 - Archive rule:
   - `ModeEngine.md` is retired from active docs. Legacy mentions are archive-history only.
 
@@ -61,23 +61,23 @@ Core namespace rollout note (task_461~465):
 
 ### Layer 2) Mod Contracts (Core)
 - Owns `ModDefinition` contracts and normalized event/context types.
-- Path: `v10/src/core/mod/contracts/*`.
+- Path: `v10/src/core/runtime/modding/api/*`.
 
 ### Layer 3) ModPackage Contracts + Registry (Core)
 - Owns `ModPackageDefinition`, validation, registry, selectors, and template-pack adapter.
-- Path: `v10/src/core/mod/package/*`.
+- Path: `v10/src/core/runtime/modding/package/*`.
 
 ### Layer 4) Mod Host Runtime (Core)
 - Owns `ModRegistry` + `ModManager` lifecycle, routing, and contribution resolution.
-- Path: `v10/src/core/mod/host/*`.
+- Path: `v10/src/core/runtime/modding/host/*`.
 
 ### Layer 5) UI Host Runtime (Features)
 - Owns final placement/rendering in toolbar/window/panel surfaces.
 - Consumes package selectors + mod contributions, but keeps layout authority.
 - Paths:
-  - `v10/src/features/ui-host/*`
-  - `v10/src/features/layout/*`
-  - `v10/src/features/toolbar/*`
+  - `v10/src/features/chrome/ui-host/*`
+  - `v10/src/features/chrome/layout/*`
+  - `v10/src/features/chrome/toolbar/*`
 
 Required dependency direction:
 
@@ -93,22 +93,22 @@ core/* X-> features/* (forbidden)
 
 | Path | Owns | Allowed dependencies | Forbidden |
 |---|---|---|---|
-| `v10/src/core/mod/contracts/*` | mod contracts/types | `core/*` | `features/*` |
-| `v10/src/core/mod/package/*` | package contracts/registry/selectors/guards | `core/*` | `features/*` |
-| `v10/src/core/mod/host/*` | runtime host manager/routing | `core/*` | `features/*` |
-| `v10/src/core/mod/builtin/*` | builtin mods | `core/mod/*`, engine public APIs | direct layout/windowing/store imports |
-| `v10/src/mod/bridge/packRegistryBridge.ts` | template pack registry bridge authority | `@core/mod/package` + `src/mod/packs` + `src/mod/schema` | standalone package authority duplication |
-| `v10/src/features/ui-host/*` | host contribution filtering/render bridge | `core/*`, `ui/*`, host features | `@core/mod/**/internal/*` |
+| `v10/src/core/runtime/modding/api/*` | mod contracts/types | `core/*` | `features/*` |
+| `v10/src/core/runtime/modding/package/*` | package contracts/registry/selectors/guards | `core/*` | `features/*` |
+| `v10/src/core/runtime/modding/host/*` | runtime host manager/routing | `core/*` | `features/*` |
+| `v10/src/core/runtime/modding/builtin/*` | builtin mods | `core/runtime/modding/*`, engine public APIs | direct layout/windowing/store imports |
+| `v10/src/mod/bridge/packRegistryBridge.ts` | template pack registry bridge authority | `@core/runtime/modding/package` + `src/mod/packs` + `src/mod/schema` | standalone package authority duplication |
+| `v10/src/features/chrome/ui-host/*` | host contribution filtering/render bridge | `core/*`, `ui/*`, host features | `@core/runtime/modding/**/internal/*` |
 
 Runtime authority lane:
-- Runtime authority is package-first through `core/mod/package` selectors and registries.
+- Runtime authority is package-first through `core/runtime/modding/package` selectors and registries.
 
 ---
 
 ## 3.2 Import and Call Rules
 
 Allowed:
-- `core/mod/package` and `core/mod/host` import only core-layer modules.
+- `core/runtime/modding/package` and `core/runtime/modding/host` import only core-layer modules.
 - Features resolve package policy through selector APIs.
 - Mod state mutations flow through `ModContext.dispatchCommand`.
 
@@ -121,7 +121,7 @@ Forbidden:
 
 ## 4. Contracts (Canonical)
 
-### 4.1 Mod Contract (`core/mod/contracts/types.ts`)
+### 4.1 Mod Contract (`core/runtime/modding/api/types.ts`)
 
 ```ts
 type ModDefinition = {
@@ -134,7 +134,7 @@ type ModDefinition = {
 };
 ```
 
-### 4.2 ModPackage Contract (`core/mod/package/types.ts`)
+### 4.2 ModPackage Contract (`core/runtime/modding/package/types.ts`)
 
 ```ts
 type ModPackageDefinition = {
@@ -167,10 +167,10 @@ Ownership rule:
 ### 5.1 Active state SSOT
 - Active package: `activePackageId` in `useModStore` (feature authority state).
 - Active mod: resolved through package activation policy + runtime manager lifecycle.
-- Toolbar mode mapping authority: `core/mod/package/selectors.ts` (`mode <-> modId`) with deterministic compatibility policy.
+- Toolbar mode mapping authority: `core/runtime/modding/package/selectors.ts` (`mode <-> modId`) with deterministic compatibility policy.
 
 ### 5.2 Input routing
-- Pointer/key/wheel normalization flows through `core/mod/host/inputRoutingBridge.ts`.
+- Pointer/key/wheel normalization flows through `core/runtime/modding/host/inputRoutingBridge.ts`.
 - Host-priority exceptions (pan/zoom safety and reserved shortcuts) still apply first.
 - Mod route returns `handled` or `pass`; routing resolution is deterministic.
 
@@ -238,7 +238,7 @@ Operator note source:
 
 ## 8. Regression Prevention Checklist
 
-- Ensure `core/mod/package/*` remains the package-level authority.
+- Ensure `core/runtime/modding/package/*` remains the package-level authority.
 - Keep template-pack public API compatibility via adapter (`src/mod/bridge/packRegistryBridge.ts`) and catalog contracts (`src/mod/schema/*`).
 - Keep layer boundaries enforced by lint and shell checks.
 - Require deterministic conflict and policy selector behavior in diagnostics/tests.

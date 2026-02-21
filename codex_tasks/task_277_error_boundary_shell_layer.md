@@ -24,8 +24,8 @@ Supersedes: task_273 (분할 2/2; task_276이 먼저 완료되어야 함)
 ## Scope (Base Required)
 
 Touched files/directories:
-- `v10/src/features/layout/AppLayout.tsx` (write) — 주요 영역에 ErrorBoundary 래핑
-- `v10/src/features/layout/windowing/WindowHost.tsx` (write) — 각 패널에 개별 ErrorBoundary 래핑
+- `v10/src/features/chrome/layout/AppLayout.tsx` (write) — 주요 영역에 ErrorBoundary 래핑
+- `v10/src/features/chrome/layout/windowing/WindowHost.tsx` (write) — 각 패널에 개별 ErrorBoundary 래핑
 
 Out of scope:
 - ErrorBoundary 컴포넌트 생성 → task_276에서 완료
@@ -161,12 +161,12 @@ Out of scope:
 ## Manual Verification Steps (Base Required)
 
 1) Step: AppLayout ErrorBoundary 래핑 확인
-   - Command / click path: `grep -n "ErrorBoundary" v10/src/features/layout/AppLayout.tsx`
+   - Command / click path: `grep -n "ErrorBoundary" v10/src/features/chrome/layout/AppLayout.tsx`
    - Expected result: import + 주요 영역 JSX 래핑 확인
    - Covers: AC-1, AC-2
 
 2) Step: WindowHost 패널별 래핑 확인
-   - Command / click path: `grep -n "ErrorBoundary" v10/src/features/layout/windowing/WindowHost.tsx`
+   - Command / click path: `grep -n "ErrorBoundary" v10/src/features/chrome/layout/windowing/WindowHost.tsx`
    - Expected result: 패널 map/render 내부에 ErrorBoundary 래핑 확인
    - Covers: AC-3
 
@@ -215,14 +215,14 @@ Out of scope:
 Status: COMPLETED
 
 Changed files:
-- `v10/src/features/layout/AppLayout.tsx`
-- `v10/src/features/layout/windowing/WindowHost.tsx`
+- `v10/src/features/chrome/layout/AppLayout.tsx`
+- `v10/src/features/chrome/layout/windowing/WindowHost.tsx`
 - `v10/AI_READ_ME.md`
 - `codex_tasks/task_277_error_boundary_shell_layer.md`
 
 Commands run:
-- `grep -n "ErrorBoundary" v10/src/features/layout/AppLayout.tsx`
-- `grep -n "ErrorBoundary" v10/src/features/layout/windowing/WindowHost.tsx`
+- `grep -n "ErrorBoundary" v10/src/features/chrome/layout/AppLayout.tsx`
+- `grep -n "ErrorBoundary" v10/src/features/chrome/layout/windowing/WindowHost.tsx`
 - `grep -n "Error Boundary" v10/AI_READ_ME.md`
 - `./scripts/check_layer_rules.sh`
 
@@ -238,10 +238,10 @@ Commands run:
 - Deferred gates (lint/build) are user-requested deferrals and are non-blocking for this scoped implementation step.
 
 Manual verification notes:
-- Step 1 (AC-1, AC-2): `grep -n "ErrorBoundary" v10/src/features/layout/AppLayout.tsx`
+- Step 1 (AC-1, AC-2): `grep -n "ErrorBoundary" v10/src/features/chrome/layout/AppLayout.tsx`
   - import 확인: line 33
   - 캔버스/패널/툴바 래핑 확인: lines 580, 592, 610, 650 (closing tags at 590, 607, 630, 669)
-- Step 2 (AC-3): `grep -n "ErrorBoundary" v10/src/features/layout/windowing/WindowHost.tsx`
+- Step 2 (AC-3): `grep -n "ErrorBoundary" v10/src/features/chrome/layout/windowing/WindowHost.tsx`
   - import 확인: line 6
   - docked/windowed 패널 개별 래핑 확인: lines 138, 224 (closing tags at 146, 232)
 - Step 3 (AC-4): ErrorBoundary는 정상 경로에서 children을 그대로 반환하므로 기존 레이아웃/동작 경로를 유지함 (no-error path transparent).

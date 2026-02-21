@@ -22,11 +22,11 @@ Date: 2026-02-16
 
 Touched files/directories:
 - `codex_tasks/task_240_window_runtime_foundation_windowed_docked.md`
-- `v10/src/features/layout/windowing/windowRuntime.types.ts` (new)
-- `v10/src/features/layout/windowing/windowRuntime.ts` (new)
-- `v10/src/features/layout/windowing/useWindowRuntime.ts` (new)
-- `v10/src/features/layout/windowing/WindowHost.tsx` (new)
-- `v10/src/features/store/useChromeStore.ts` (minimal state surface update if needed)
+- `v10/src/features/chrome/layout/windowing/windowRuntime.types.ts` (new)
+- `v10/src/features/chrome/layout/windowing/windowRuntime.ts` (new)
+- `v10/src/features/chrome/layout/windowing/useWindowRuntime.ts` (new)
+- `v10/src/features/chrome/layout/windowing/WindowHost.tsx` (new)
+- `v10/src/features/platform/store/useChromeStore.ts` (minimal state surface update if needed)
 
 Out of scope:
 - Panel module adapter cutover (handled in `task_242`)
@@ -182,11 +182,11 @@ Status: COMPLETED
 
 Changed files:
 - `codex_tasks/task_240_window_runtime_foundation_windowed_docked.md`
-- `v10/src/features/layout/windowing/windowRuntime.types.ts`
-- `v10/src/features/layout/windowing/windowRuntime.ts`
-- `v10/src/features/layout/windowing/useWindowRuntime.ts`
-- `v10/src/features/layout/windowing/WindowHost.tsx`
-- `v10/src/features/store/useChromeStore.ts`
+- `v10/src/features/chrome/layout/windowing/windowRuntime.types.ts`
+- `v10/src/features/chrome/layout/windowing/windowRuntime.ts`
+- `v10/src/features/chrome/layout/windowing/useWindowRuntime.ts`
+- `v10/src/features/chrome/layout/windowing/WindowHost.tsx`
+- `v10/src/features/platform/store/useChromeStore.ts`
 
 Commands run (only if user asked or required by spec):
 - `VERIFY_STAGE=mid bash scripts/run_repo_verifications.sh`

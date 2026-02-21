@@ -13,7 +13,7 @@ The cursor (AnchorIndicator) currently has a "wobble" animation (`chalkWobble`).
 2) Ensure the change is easily reversible (Hide, don't Delete).
 
 ## Scope (touched files)
-- `v10/src/features/canvas/AnchorIndicator.tsx`
+- `v10/src/features/editor/canvas/AnchorIndicator.tsx`
 
 ## Requirements
 1) **Comment out CSS Animation:** In the `<style>` block of `AnchorIndicator.tsx`, comment out the `.chalk-anchor-wobble` class definition.
@@ -31,6 +31,6 @@ The cursor (AnchorIndicator) currently has a "wobble" animation (`chalkWobble`).
 
 ## Closeout Notes
 - Changed files:
-  - `v10/src/features/canvas/AnchorIndicator.tsx`
+  - `v10/src/features/editor/canvas/AnchorIndicator.tsx`
 - Commands run: none
 - Manual verification: not run (needs manual steps in spec)

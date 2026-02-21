@@ -20,11 +20,11 @@ Date: 2026-02-15
 
 Touched files/directories:
 - `codex_tasks/task_215_shared_presence_laser_stream.md`
-- `v10/src/features/store/useSyncStore.ts`
-- `v10/src/features/sync/useAsymmetricSessionSync.ts`
-- `v10/src/features/canvas/CanvasStage.tsx`
-- `v10/src/features/canvas/PresenceOverlay.tsx` (new)
-- `v10/src/features/hooks/useCanvas.ts`
+- `v10/src/features/platform/store/useSyncStore.ts`
+- `v10/src/features/collaboration/sync/useAsymmetricSessionSync.ts`
+- `v10/src/features/editor/canvas/CanvasStage.tsx`
+- `v10/src/features/editor/canvas/PresenceOverlay.tsx` (new)
+- `v10/src/features/platform/hooks/useCanvas.ts`
 
 Out of scope:
 - Conflict resolution policy internals (`task_216`).
@@ -140,11 +140,11 @@ Out of scope:
 Status: COMPLETED
 
 Changed files:
-- `v10/src/features/store/useSyncStore.ts`
-- `v10/src/features/sync/useAsymmetricSessionSync.ts`
-- `v10/src/features/hooks/useCanvas.ts`
-- `v10/src/features/canvas/PresenceOverlay.tsx`
-- `v10/src/features/canvas/CanvasStage.tsx`
+- `v10/src/features/platform/store/useSyncStore.ts`
+- `v10/src/features/collaboration/sync/useAsymmetricSessionSync.ts`
+- `v10/src/features/platform/hooks/useCanvas.ts`
+- `v10/src/features/editor/canvas/PresenceOverlay.tsx`
+- `v10/src/features/editor/canvas/CanvasStage.tsx`
 
 Commands run (only if user asked or required by spec):
 - `scripts/check_layer_rules.sh`

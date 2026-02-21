@@ -18,7 +18,7 @@ Date: 2026-02-21
 ## Scope (Base Required)
 
 Touched files/directories:
-- v10/src/core/session-policy, v10/src/features/viewer, v10/src/core/trust
+- v10/src/core/session-policy, v10/src/features/chrome/viewer, v10/src/core/trust
 
 Out of scope:
 - 새 AI 파이프라인

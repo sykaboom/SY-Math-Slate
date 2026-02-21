@@ -8,7 +8,7 @@
 User requested the prompter preview to keep a fixed two-line height; the next hint line should be blank when absent to avoid layout shifts.
 
 ## Scope
-- `v10/src/features/layout/Prompter.tsx`
+- `v10/src/features/chrome/layout/Prompter.tsx`
 
 ## Changes
 - Always render two lines; next hint line uses a placeholder to preserve height.

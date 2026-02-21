@@ -18,7 +18,7 @@ Date: 2026-02-21
 ## Scope (Base Required)
 
 Touched files/directories:
-- v10/src/core/mod, v10/src/features/input, v10/src/features/canvas
+- v10/src/core/mod, v10/src/features/input, v10/src/features/editor/canvas
 
 Out of scope:
 - 레이아웃 구조 변경

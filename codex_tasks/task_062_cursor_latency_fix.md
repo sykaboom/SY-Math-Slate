@@ -19,13 +19,13 @@ Math (MathJax) vs plain text rendering speed differences must be accounted for.
 5.  **Restore "Legacy" Feel:** Cursor feels attached to writing with zero perceptible lag.
 
 ## Scope (Files)
-- `v10/src/features/hooks/useSequence.ts`: Pass a per-instance actor ref/controller down to animation components.
-- `v10/src/features/canvas/actors/ActorLayer.tsx`: Keep actor always mounted; expose `ref` target for movement.
-- `v10/src/features/canvas/actors/ChalkActor.tsx`: Remove transform transition; accept ref for direct transform updates.
-- `v10/src/features/canvas/actors/HighlighterActor.tsx`: Same as ChalkActor.
-- `v10/src/features/canvas/animation/AnimatedTextBlock.tsx`: Drive cursor position updates inside the same animation loop; apply lead offset.
-- `v10/src/features/canvas/animation/MathRevealBlock.tsx`: Use the same sync pattern (progress → cursor position).
-- `v10/src/features/canvas/CanvasStage.tsx`: Provide per-instance refs to actor layer / animation state.
+- `v10/src/features/platform/hooks/useSequence.ts`: Pass a per-instance actor ref/controller down to animation components.
+- `v10/src/features/editor/canvas/actors/ActorLayer.tsx`: Keep actor always mounted; expose `ref` target for movement.
+- `v10/src/features/editor/canvas/actors/ChalkActor.tsx`: Remove transform transition; accept ref for direct transform updates.
+- `v10/src/features/editor/canvas/actors/HighlighterActor.tsx`: Same as ChalkActor.
+- `v10/src/features/editor/canvas/animation/AnimatedTextBlock.tsx`: Drive cursor position updates inside the same animation loop; apply lead offset.
+- `v10/src/features/editor/canvas/animation/MathRevealBlock.tsx`: Use the same sync pattern (progress → cursor position).
+- `v10/src/features/editor/canvas/CanvasStage.tsx`: Provide per-instance refs to actor layer / animation state.
 
 ## Detailed Plan (Single Timeline / Per-Instance Ref)
 
@@ -67,13 +67,13 @@ Math (MathJax) vs plain text rendering speed differences must be accounted for.
 
 ## Completion Notes
 - **Changed files:**
-  - v10/src/features/hooks/useSequence.ts
-  - v10/src/features/canvas/CanvasStage.tsx
-  - v10/src/features/canvas/actors/ActorLayer.tsx
-  - v10/src/features/canvas/actors/ChalkActor.tsx
-  - v10/src/features/canvas/actors/HighlighterActor.tsx
-  - v10/src/features/canvas/animation/AnimatedTextBlock.tsx
-  - v10/src/features/canvas/animation/MathRevealBlock.tsx
-  - v10/src/features/canvas/MathTextBlock.tsx
+  - v10/src/features/platform/hooks/useSequence.ts
+  - v10/src/features/editor/canvas/CanvasStage.tsx
+  - v10/src/features/editor/canvas/actors/ActorLayer.tsx
+  - v10/src/features/editor/canvas/actors/ChalkActor.tsx
+  - v10/src/features/editor/canvas/actors/HighlighterActor.tsx
+  - v10/src/features/editor/canvas/animation/AnimatedTextBlock.tsx
+  - v10/src/features/editor/canvas/animation/MathRevealBlock.tsx
+  - v10/src/features/editor/canvas/MathTextBlock.tsx
 - **Commands run:** None (not requested).
 - **Manual verification:** Not run (dev/build not requested).

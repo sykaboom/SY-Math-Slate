@@ -20,8 +20,8 @@ Date: 2026-02-16
 
 Touched files/directories:
 - `codex_tasks/task_208_thumb_zone_toolbar_recomposition.md`
-- `v10/src/features/toolbar/FloatingToolbar.tsx`
-- `v10/src/features/toolbar/ThumbZoneDock.tsx` (new)
+- `v10/src/features/chrome/toolbar/FloatingToolbar.tsx`
+- `v10/src/features/chrome/toolbar/ThumbZoneDock.tsx` (new)
 
 Out of scope:
 - Role policy rules or layout shell breakpoints (task_207).
@@ -150,8 +150,8 @@ Out of scope:
 Status: COMPLETED
 
 Changed files:
-- `v10/src/features/toolbar/FloatingToolbar.tsx`
-- `v10/src/features/toolbar/ThumbZoneDock.tsx`
+- `v10/src/features/chrome/toolbar/FloatingToolbar.tsx`
+- `v10/src/features/chrome/toolbar/ThumbZoneDock.tsx`
 
 Commands run (only if user asked or required by spec):
 - `cd v10 && npm run lint`

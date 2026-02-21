@@ -21,15 +21,15 @@ Date: 2026-02-15
 
 Touched files/directories:
 - `codex_tasks/task_135_command_only_write_path_wave2.md`
-- `v10/src/features/extensions/commands/registerCoreCommands.ts`
-- `v10/src/features/toolbar/FloatingToolbar.tsx`
-- `v10/src/features/toolbar/PenControls.tsx`
-- `v10/src/features/toolbar/LaserControls.tsx`
-- `v10/src/features/toolbar/PlaybackControls.tsx`
-- `v10/src/features/toolbar/PageNavigator.tsx`
-- `v10/src/features/layout/DataInputPanel.tsx`
-- `v10/src/features/layout/PlayerBar.tsx`
-- `v10/src/features/hooks/useSequence.ts`
+- `v10/src/features/platform/extensions/commands/registerCoreCommands.ts`
+- `v10/src/features/chrome/toolbar/FloatingToolbar.tsx`
+- `v10/src/features/chrome/toolbar/PenControls.tsx`
+- `v10/src/features/chrome/toolbar/LaserControls.tsx`
+- `v10/src/features/chrome/toolbar/PlaybackControls.tsx`
+- `v10/src/features/chrome/toolbar/PageNavigator.tsx`
+- `v10/src/features/chrome/layout/DataInputPanel.tsx`
+- `v10/src/features/chrome/layout/PlayerBar.tsx`
+- `v10/src/features/platform/hooks/useSequence.ts`
 - `scripts/check_v10_migration_baseline.sh`
 - `v10/AI_READ_ME.md`
 
@@ -159,11 +159,11 @@ Status: COMPLETED
 
 Changed files:
 - `codex_tasks/task_135_command_only_write_path_wave2.md`
-- `v10/src/features/extensions/commands/registerCoreCommands.ts`
-- `v10/src/features/layout/DataInputPanel.tsx`
-- `v10/src/features/toolbar/FloatingToolbar.tsx`
-- `v10/src/features/toolbar/PenControls.tsx`
-- `v10/src/features/toolbar/LaserControls.tsx`
+- `v10/src/features/platform/extensions/commands/registerCoreCommands.ts`
+- `v10/src/features/chrome/layout/DataInputPanel.tsx`
+- `v10/src/features/chrome/toolbar/FloatingToolbar.tsx`
+- `v10/src/features/chrome/toolbar/PenControls.tsx`
+- `v10/src/features/chrome/toolbar/LaserControls.tsx`
 - `scripts/check_v10_migration_baseline.sh`
 - `v10/AI_READ_ME.md`
 - `v10/AI_READ_ME_MAP.md`

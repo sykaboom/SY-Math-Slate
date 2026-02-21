@@ -21,11 +21,11 @@
 - animation/runtime 로직 변경
 
 ## Scope
-- `v10/src/features/layout/DataInputPanel.tsx`
-- `v10/src/features/layout/dataInput/segmentCommands.ts` (new)
-- `v10/src/features/layout/dataInput/blockDraft.ts` (new)
-- `v10/src/features/layout/dataInput/mediaIO.ts` (new)
-- `v10/src/features/layout/dataInput/types.ts` (new, 필요 시)
+- `v10/src/features/chrome/layout/DataInputPanel.tsx`
+- `v10/src/features/chrome/layout/dataInput/segmentCommands.ts` (new)
+- `v10/src/features/chrome/layout/dataInput/blockDraft.ts` (new)
+- `v10/src/features/chrome/layout/dataInput/mediaIO.ts` (new)
+- `v10/src/features/chrome/layout/dataInput/types.ts` (new, 필요 시)
 - `v10/AI_READ_ME.md` (규칙/핵심 플로우 변경 시)
 - `v10/AI_READ_ME_MAP.md` (구조 변경 시)
 
@@ -67,11 +67,11 @@
 ## Implementation Log (Codex)
 Status: COMPLETED
 Changed files:
-- `v10/src/features/layout/DataInputPanel.tsx`
-- `v10/src/features/layout/dataInput/blockDraft.ts`
-- `v10/src/features/layout/dataInput/segmentCommands.ts`
-- `v10/src/features/layout/dataInput/mediaIO.ts`
-- `v10/src/features/layout/dataInput/types.ts`
+- `v10/src/features/chrome/layout/DataInputPanel.tsx`
+- `v10/src/features/chrome/layout/dataInput/blockDraft.ts`
+- `v10/src/features/chrome/layout/dataInput/segmentCommands.ts`
+- `v10/src/features/chrome/layout/dataInput/mediaIO.ts`
+- `v10/src/features/chrome/layout/dataInput/types.ts`
 - `v10/AI_READ_ME_MAP.md`
 
 Commands run:

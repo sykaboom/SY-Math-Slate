@@ -19,7 +19,7 @@ Date: 2026-02-15
 
 Touched files/directories:
 - `codex_tasks/task_169_module_scoped_theme_boundaries.md`
-- `v10/src/features/mod-studio/theme/themeIsolation.ts`
+- `v10/src/features/platform/mod-studio/theme/themeIsolation.ts`
 - `scripts/check_v10_module_theme_scope.sh` (new)
 - `scripts/run_repo_verifications.sh`
 - `v10/AI_READ_ME.md`
@@ -149,7 +149,7 @@ Status: COMPLETED
 
 Changed files:
 - `codex_tasks/task_169_module_scoped_theme_boundaries.md`
-- `v10/src/features/mod-studio/theme/themeIsolation.ts`
+- `v10/src/features/platform/mod-studio/theme/themeIsolation.ts`
 - `scripts/check_v10_module_theme_scope.sh`
 - `scripts/run_repo_verifications.sh`
 - `v10/AI_READ_ME.md`

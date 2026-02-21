@@ -21,8 +21,8 @@ Date: 2026-02-16
 Touched files/directories:
 - `codex_tasks/task_211_low_end_tablet_render_optimization.md`
 - `v10/src/core/config/perfProfile.ts` (new)
-- `v10/src/features/hooks/useCanvas.ts`
-- `v10/src/features/hooks/useOverlayCanvas.ts`
+- `v10/src/features/platform/hooks/useCanvas.ts`
+- `v10/src/features/platform/hooks/useOverlayCanvas.ts`
 
 Out of scope:
 - Non-canvas UI performance tuning.
@@ -138,8 +138,8 @@ Status: COMPLETED
 
 Changed files:
 - `v10/src/core/config/perfProfile.ts`
-- `v10/src/features/hooks/useCanvas.ts`
-- `v10/src/features/hooks/useOverlayCanvas.ts`
+- `v10/src/features/platform/hooks/useCanvas.ts`
+- `v10/src/features/platform/hooks/useOverlayCanvas.ts`
 
 Commands run (only if user asked or required by spec):
 - `cd v10 && npm run lint`

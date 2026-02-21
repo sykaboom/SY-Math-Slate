@@ -19,9 +19,9 @@ Date: 2026-02-15
 
 Touched files/directories:
 - `codex_tasks/task_186_llm_draft_request_workflow.md`
-- `v10/src/features/input-studio/llm/*`
-- `v10/src/features/layout/DataInputPanel.tsx`
-- `v10/src/features/extensions/ui/ExtensionRuntimeBootstrap.tsx`
+- `v10/src/features/editor/input-studio/llm/*`
+- `v10/src/features/chrome/layout/DataInputPanel.tsx`
+- `v10/src/features/platform/extensions/ui/ExtensionRuntimeBootstrap.tsx`
 
 Out of scope:
 - Production provider billing/cost router.
@@ -149,14 +149,14 @@ If NO:
 Status: COMPLETED
 
 Changed files:
-- `v10/src/features/input-studio/llm/types.ts`
-- `v10/src/features/input-studio/llm/normalizedToDraftBlocks.ts`
-- `v10/src/features/input-studio/llm/useInputStudioLlmDraft.ts`
-- `v10/src/features/extensions/ui/ExtensionRuntimeBootstrap.tsx`
-- `v10/src/features/layout/DataInputPanel.tsx`
+- `v10/src/features/editor/input-studio/llm/types.ts`
+- `v10/src/features/editor/input-studio/llm/normalizedToDraftBlocks.ts`
+- `v10/src/features/editor/input-studio/llm/useInputStudioLlmDraft.ts`
+- `v10/src/features/platform/extensions/ui/ExtensionRuntimeBootstrap.tsx`
+- `v10/src/features/chrome/layout/DataInputPanel.tsx`
 
 Commands run (only if user asked or required by spec):
-- `cd v10 && npm run lint -- --max-warnings=0 -- src/features/layout/DataInputPanel.tsx src/features/input-studio`
+- `cd v10 && npm run lint -- --max-warnings=0 -- src/features/chrome/layout/DataInputPanel.tsx src/features/editor/input-studio`
 - `cd v10 && npm run lint`
 - `cd v10 && npm run build`
 - `VERIFY_STAGE=end bash scripts/run_repo_verifications.sh`

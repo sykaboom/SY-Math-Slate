@@ -18,7 +18,7 @@ Date: 2026-02-21
 ## Scope (Base Required)
 
 Touched files/directories:
-- v10/src/core/theme, v10/src/features/theme, v10/src/features/store
+- v10/src/core/theme, v10/src/features/chrome/theming-ui, v10/src/features/platform/store
 
 Out of scope:
 - Viewer session sharing changes are excluded.

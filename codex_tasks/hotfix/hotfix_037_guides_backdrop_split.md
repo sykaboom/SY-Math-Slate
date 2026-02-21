@@ -8,9 +8,9 @@
 Screen-space guides introduced a "black mask" feel while panning due to the guide backdrop fill.
 
 ## Scope
-- `v10/src/features/canvas/PageGuides.tsx`
-- `v10/src/features/canvas/CanvasStage.tsx`
-- `v10/src/features/canvas/viewport/useViewportInteraction.ts`
+- `v10/src/features/editor/canvas/PageGuides.tsx`
+- `v10/src/features/editor/canvas/CanvasStage.tsx`
+- `v10/src/features/editor/canvas/viewport/useViewportInteraction.ts`
 
 ## Changes
 - Restored guide backdrop fill to avoid masking border lines.

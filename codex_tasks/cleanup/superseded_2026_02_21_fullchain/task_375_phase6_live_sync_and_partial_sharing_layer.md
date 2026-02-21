@@ -18,7 +18,7 @@ Date: 2026-02-21
 ## Scope (Base Required)
 
 Touched files/directories:
-- v10/src/features/store/useSyncStore.ts, v10/src/features/viewer, v10/src/features/canvas, v10/src/core/extensions
+- v10/src/features/platform/store/useSyncStore.ts, v10/src/features/chrome/viewer, v10/src/features/editor/canvas, v10/src/core/extensions
 
 Out of scope:
 - Object-level partial share is excluded.

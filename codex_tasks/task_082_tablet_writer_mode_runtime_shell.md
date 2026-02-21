@@ -17,15 +17,15 @@ Date: 2026-02-07
 
 ## Scope (Codex must touch ONLY these)
 Touched files/directories:
-- `v10/src/features/layout/AppLayout.tsx`
-- `v10/src/features/layout/DataInputPanel.tsx`
-- `v10/src/features/layout/PlayerBar.tsx`
-- `v10/src/features/layout/Prompter.tsx`
-- `v10/src/features/store/useUIStore.ts` (only if mode/state flags are required)
+- `v10/src/features/chrome/layout/AppLayout.tsx`
+- `v10/src/features/chrome/layout/DataInputPanel.tsx`
+- `v10/src/features/chrome/layout/PlayerBar.tsx`
+- `v10/src/features/chrome/layout/Prompter.tsx`
+- `v10/src/features/platform/store/useUIStore.ts` (only if mode/state flags are required)
 - `codex_tasks/task_082_tablet_writer_mode_runtime_shell.md`
 
 Out of scope:
-- `v10/src/features/layout/dataInput/blockDraft.ts` (non-destructive sync logic)
+- `v10/src/features/chrome/layout/dataInput/blockDraft.ts` (non-destructive sync logic)
 - Any `core/**` contract/type schema changes
 - Any new package installation
 
@@ -124,8 +124,8 @@ Implementation and manual checks must explicitly cover:
 ## Implementation Log (Codex fills)
 Status: COMPLETED
 Changed files:
-- `v10/src/features/layout/AppLayout.tsx`
-- `v10/src/features/layout/DataInputPanel.tsx`
+- `v10/src/features/chrome/layout/AppLayout.tsx`
+- `v10/src/features/chrome/layout/DataInputPanel.tsx`
 - `codex_tasks/task_082_tablet_writer_mode_runtime_shell.md`
 
 Commands run (only if user asked):

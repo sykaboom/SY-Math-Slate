@@ -19,7 +19,7 @@ Date: 2026-02-15
 ## Scope (Base Required)
 
 Touched files/directories:
-- `v10/src/features/mod-studio/io/**` (new)
+- `v10/src/features/platform/mod-studio/io/**` (new)
 - `v10/src/core/migrations/**`
 - `v10/src/core/config/rolePolicyGuards.ts`
 - `v10/src/core/extensions/pluginLoader.ts`
@@ -147,8 +147,8 @@ If NO:
 Status: COMPLETED
 
 Changed files:
-- `v10/src/features/mod-studio/io/ioStudio.ts`
-- `v10/src/features/mod-studio/io/IoStudioSection.tsx`
+- `v10/src/features/platform/mod-studio/io/ioStudio.ts`
+- `v10/src/features/platform/mod-studio/io/IoStudioSection.tsx`
 - `v10/src/core/migrations/modStudioMigration.ts`
 - `v10/src/core/config/rolePolicy.ts` (import validation path)
 - `v10/src/core/extensions/pluginLoader.ts` (manifest validation path)

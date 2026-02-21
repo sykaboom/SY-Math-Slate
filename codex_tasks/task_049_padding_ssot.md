@@ -14,10 +14,10 @@ Currently, the padding constant is inconsistent. `boardSpec.ts` defines `getBoar
 
 ## Scope (touched files)
 - `v10/src/core/config/boardSpec.ts`
-- `v10/src/features/layout/autoLayout.ts`
-- `v10/src/features/store/useCanvasStore.ts`
-- `v10/src/features/canvas/AnchorIndicator.tsx`
-- `v10/src/features/canvas/ContentLayer.tsx`
+- `v10/src/features/chrome/layout/autoLayout.ts`
+- `v10/src/features/platform/store/useCanvasStore.ts`
+- `v10/src/features/editor/canvas/AnchorIndicator.tsx`
+- `v10/src/features/editor/canvas/ContentLayer.tsx`
 
 ## Requirements
 1) **Update Config:** Change `getBoardPadding()` in `boardSpec.ts` to return `48`.
@@ -41,9 +41,9 @@ Currently, the padding constant is inconsistent. `boardSpec.ts` defines `getBoar
 ## Closeout Notes
 - Changed files:
   - `v10/src/core/config/boardSpec.ts`
-  - `v10/src/features/layout/autoLayout.ts`
-  - `v10/src/features/store/useCanvasStore.ts`
-  - `v10/src/features/canvas/AnchorIndicator.tsx`
-  - `v10/src/features/canvas/ContentLayer.tsx`
+  - `v10/src/features/chrome/layout/autoLayout.ts`
+  - `v10/src/features/platform/store/useCanvasStore.ts`
+  - `v10/src/features/editor/canvas/AnchorIndicator.tsx`
+  - `v10/src/features/editor/canvas/ContentLayer.tsx`
 - Commands run: none
 - Manual verification: not run (needs manual steps in spec)

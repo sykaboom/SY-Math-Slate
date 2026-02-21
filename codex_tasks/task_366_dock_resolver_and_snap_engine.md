@@ -18,7 +18,7 @@ Date: 2026-02-21
 ## Scope (Base Required)
 
 Touched files/directories:
-- v10/src/features/layout/windowing, v10/src/features/toolbar, v10/src/features/layout
+- v10/src/features/chrome/layout/windowing, v10/src/features/chrome/toolbar, v10/src/features/chrome/layout
 
 Out of scope:
 - 모드/패키지 계약 변경

@@ -18,7 +18,7 @@ Date: 2026-02-21
 ## Scope (Base Required)
 
 Touched files/directories:
-- v10/src/core/session-policy, v10/src/features/viewer, v10/src/core/mod/package
+- v10/src/core/session-policy, v10/src/features/chrome/viewer, v10/src/core/mod/package
 
 Out of scope:
 - CRDT 구현

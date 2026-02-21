@@ -19,8 +19,8 @@ Date: 2026-02-20
 ## Scope (Base Required)
 
 Touched files/directories:
-- `v10/src/features/ui-host/modContributionBridge.ts`
-- `v10/src/features/layout/windowing/panelAdapters.tsx`
+- `v10/src/features/chrome/ui-host/modContributionBridge.ts`
+- `v10/src/features/chrome/layout/windowing/panelAdapters.tsx`
 - `v10/src/core/mod/package/*` (ui policy selectors)
 
 Out of scope:
@@ -61,7 +61,7 @@ Out of scope:
 - Touched file count:
   - 3
 - Files shared with other PENDING tasks:
-  - `v10/src/features/layout/windowing/panelAdapters.tsx`
+  - `v10/src/features/chrome/layout/windowing/panelAdapters.tsx`
 - Cross-module dependency:
   - YES
 - Parallelizable sub-units:
@@ -172,8 +172,8 @@ Status: COMPLETED
 
 Changed files:
 - `v10/src/core/mod/package/selectors.ts`
-- `v10/src/features/ui-host/modContributionBridge.ts`
-- `v10/src/features/layout/windowing/panelAdapters.tsx`
+- `v10/src/features/chrome/ui-host/modContributionBridge.ts`
+- `v10/src/features/chrome/layout/windowing/panelAdapters.tsx`
 - `codex_tasks/task_344_ui_host_contribution_filter_by_package_policy.md`
 
 Commands run (only if user asked or required by spec):
@@ -194,7 +194,7 @@ Commands run (only if user asked or required by spec):
 ## Failure Classification (Codex fills when any gate fails)
 
 - Pre-existing failures:
-  - `cd v10 && npm run build` fails with TypeScript error in `v10/src/features/canvas/viewport/useViewportInteraction.ts:63` (`Type 'boolean' is not assignable to type 'Element'.`), outside Task 344 scope.
+  - `cd v10 && npm run build` fails with TypeScript error in `v10/src/features/editor/canvas/viewport/useViewportInteraction.ts:63` (`Type 'boolean' is not assignable to type 'Element'.`), outside Task 344 scope.
 - Newly introduced failures:
   - None identified in Task 344 scope.
 - Blocking:

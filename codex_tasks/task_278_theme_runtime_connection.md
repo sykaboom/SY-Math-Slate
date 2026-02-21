@@ -53,12 +53,12 @@ Touched files/directories:
 **신규 (create):**
 - `v10/src/core/theme/applyTheme.ts` — CSS var 주입 코어 함수
 - `v10/src/core/theme/preferences.schema.ts` — ThemePreferences 타입
-- `v10/src/features/store/useThemeStore.ts` — 앱 테마 Zustand store
-- `v10/src/features/theme/ThemeProvider.tsx` — 클라이언트 초기화 컴포넌트
+- `v10/src/features/platform/store/useThemeStore.ts` — 앱 테마 Zustand store
+- `v10/src/features/chrome/theming-ui/ThemeProvider.tsx` — 클라이언트 초기화 컴포넌트
 
 **수정 (write):**
 - `v10/src/app/layout.tsx` — ThemeProvider 삽입
-- `v10/src/features/mod-studio/theme/themeIsolation.ts` — applyTheme 재사용 소수정
+- `v10/src/features/platform/mod-studio/theme/themeIsolation.ts` — applyTheme 재사용 소수정
 
 Out of scope:
 - 기존 컴포넌트의 Tailwind 하드코딩 교체 (Phase 1B)
@@ -285,7 +285,7 @@ ThemeProvider는 "use client"이므로 body 내부에서만 사용 가능. layou
 - [x] Applies: YES
 - If YES:
   - [x] Structure changes:
-    - 신규 디렉토리: `v10/src/core/theme/`, `v10/src/features/theme/`
+    - 신규 디렉토리: `v10/src/core/theme/`, `v10/src/features/chrome/theming-ui/`
     - `node scripts/gen_ai_read_me_map.mjs` 실행 필요
   - [x] Semantic/rule changes:
     - v10/AI_READ_ME.md에 "Theme System" 섹션 추가:
@@ -334,14 +334,14 @@ ThemeProvider는 "use client"이므로 body 내부에서만 사용 가능. layou
        location.reload();
        ```
      - 이후 Elements에서 `<html>` style의 `--theme-surface` 값 확인
-     - CLI: `grep -n 'localStorage.setItem("sy-theme-v1"' v10/src/features/store/useThemeStore.ts`
+     - CLI: `grep -n 'localStorage.setItem("sy-theme-v1"' v10/src/features/platform/store/useThemeStore.ts`
    - Expected result:
      - 새로고침 후 parchment 계열 CSS var가 적용됨
      - store 코드에 `sy-theme-v1` 저장 호출 존재
    - Covers: AC-7
 
 3) Step: Mod Studio 분리 확인
-   - Command / click path: `grep -n "useModStudioStore\|draft\.theme" v10/src/features/store/useThemeStore.ts`
+   - Command / click path: `grep -n "useModStudioStore\|draft\.theme" v10/src/features/platform/store/useThemeStore.ts`
    - Expected result: 매치 없음 (useThemeStore는 ModStudio와 무관)
    - Covers: AC-8
 
@@ -390,10 +390,10 @@ Status: COMPLETED
 Changed files:
 - `v10/src/core/theme/applyTheme.ts` (create)
 - `v10/src/core/theme/preferences.schema.ts` (create)
-- `v10/src/features/store/useThemeStore.ts` (create)
-- `v10/src/features/theme/ThemeProvider.tsx` (create)
+- `v10/src/features/platform/store/useThemeStore.ts` (create)
+- `v10/src/features/chrome/theming-ui/ThemeProvider.tsx` (create)
 - `v10/src/app/layout.tsx` (write)
-- `v10/src/features/mod-studio/theme/themeIsolation.ts` (write)
+- `v10/src/features/platform/mod-studio/theme/themeIsolation.ts` (write)
 
 Commands run:
 - `bash scripts/check_layer_rules.sh`

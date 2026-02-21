@@ -14,13 +14,13 @@ Z-Index values like 12, 14, 15, and 60 are scattered as magic numbers. We will m
 
 ## Scope (touched files)
 - `v10/src/app/globals.css`
-- `v10/src/features/canvas/ContentLayer.tsx`
-- `v10/src/features/canvas/CanvasGuides.tsx`
-- `v10/src/features/canvas/AnchorIndicator.tsx`
-- `v10/src/features/canvas/actors/ActorLayer.tsx`
-- `v10/src/features/canvas/actors/ChalkActor.tsx`
-- `v10/src/features/canvas/actors/HighlighterActor.tsx`
-- `v10/src/features/canvas/PasteHelperModal.tsx`
+- `v10/src/features/editor/canvas/ContentLayer.tsx`
+- `v10/src/features/editor/canvas/CanvasGuides.tsx`
+- `v10/src/features/editor/canvas/AnchorIndicator.tsx`
+- `v10/src/features/editor/canvas/actors/ActorLayer.tsx`
+- `v10/src/features/editor/canvas/actors/ChalkActor.tsx`
+- `v10/src/features/editor/canvas/actors/HighlighterActor.tsx`
+- `v10/src/features/editor/canvas/PasteHelperModal.tsx`
 
 ## Requirements
 1) **Define Tokens:** In `globals.css` (inside `:root`), add:
@@ -49,12 +49,12 @@ Z-Index values like 12, 14, 15, and 60 are scattered as magic numbers. We will m
 ## Closeout Notes
 - Changed files:
   - `v10/src/app/globals.css`
-  - `v10/src/features/canvas/ContentLayer.tsx`
-  - `v10/src/features/canvas/CanvasGuides.tsx`
-  - `v10/src/features/canvas/AnchorIndicator.tsx`
-  - `v10/src/features/canvas/actors/ActorLayer.tsx`
-  - `v10/src/features/canvas/actors/ChalkActor.tsx`
-  - `v10/src/features/canvas/actors/HighlighterActor.tsx`
-  - `v10/src/features/canvas/PasteHelperModal.tsx`
+  - `v10/src/features/editor/canvas/ContentLayer.tsx`
+  - `v10/src/features/editor/canvas/CanvasGuides.tsx`
+  - `v10/src/features/editor/canvas/AnchorIndicator.tsx`
+  - `v10/src/features/editor/canvas/actors/ActorLayer.tsx`
+  - `v10/src/features/editor/canvas/actors/ChalkActor.tsx`
+  - `v10/src/features/editor/canvas/actors/HighlighterActor.tsx`
+  - `v10/src/features/editor/canvas/PasteHelperModal.tsx`
 - Commands run: none
 - Manual verification: not run (needs manual steps in spec)

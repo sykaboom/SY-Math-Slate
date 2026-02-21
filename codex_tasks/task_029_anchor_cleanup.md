@@ -19,8 +19,8 @@ Anchor/indicator logic stabilized but became hard to read and reason about. This
 - No animation timing changes.
 
 ## Scope (touched files)
-- `v10/src/features/canvas/AnchorIndicator.tsx`
-- `v10/src/features/canvas/ContentLayer.tsx`
+- `v10/src/features/editor/canvas/AnchorIndicator.tsx`
+- `v10/src/features/editor/canvas/ContentLayer.tsx`
 
 ## Requirements
 1. Extract measurement logic into a small helper function or internal hook (same file).
@@ -40,7 +40,7 @@ Anchor/indicator logic stabilized but became hard to read and reason about. This
 
 ## Closeout
 - **Changed files:**
-  - `v10/src/features/canvas/AnchorIndicator.tsx`
-  - `v10/src/features/canvas/ContentLayer.tsx`
+  - `v10/src/features/editor/canvas/AnchorIndicator.tsx`
+  - `v10/src/features/editor/canvas/ContentLayer.tsx`
 - **Commands run:** none
 - **Manual verification:** not run (not requested).

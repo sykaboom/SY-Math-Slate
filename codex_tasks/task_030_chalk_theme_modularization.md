@@ -20,8 +20,8 @@ Chalk cursor, actor, and end-marker visuals are currently hardcoded across multi
 
 ## Scope (touched files)
 - `v10/src/core/themes/chalkTheme.ts` (new)
-- `v10/src/features/canvas/AnchorIndicator.tsx`
-- `v10/src/features/canvas/actors/ChalkActor.tsx`
+- `v10/src/features/editor/canvas/AnchorIndicator.tsx`
+- `v10/src/features/editor/canvas/actors/ChalkActor.tsx`
 - `v10/src/app/globals.css`
 
 ## Requirements
@@ -47,8 +47,8 @@ Chalk cursor, actor, and end-marker visuals are currently hardcoded across multi
 ## Closeout
 - **Changed files:**
   - `v10/src/core/themes/chalkTheme.ts`
-  - `v10/src/features/canvas/AnchorIndicator.tsx`
-  - `v10/src/features/canvas/actors/ChalkActor.tsx`
+  - `v10/src/features/editor/canvas/AnchorIndicator.tsx`
+  - `v10/src/features/editor/canvas/actors/ChalkActor.tsx`
   - `v10/src/app/globals.css`
 - **Commands run:** none
 - **Manual verification:** not run (not requested).

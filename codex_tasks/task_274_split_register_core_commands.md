@@ -22,11 +22,11 @@ Date: 2026-02-17
 ## Scope (Base Required)
 
 Touched files/directories:
-- `v10/src/features/extensions/commands/registerCoreCommands.ts` (write) — 파사드로 축소
-- `v10/src/features/extensions/commands/commands.doc.ts` (create) — 문서/콘텐츠 명령
-- `v10/src/features/extensions/commands/commands.canvas.ts` (create) — 캔버스/드로잉 명령
-- `v10/src/features/extensions/commands/commands.playback.ts` (create) — 재생/시퀀스 명령
-- `v10/src/features/extensions/commands/commands.tool.ts` (create) — 도구/펜/지우개 명령
+- `v10/src/features/platform/extensions/commands/registerCoreCommands.ts` (write) — 파사드로 축소
+- `v10/src/features/platform/extensions/commands/commands.doc.ts` (create) — 문서/콘텐츠 명령
+- `v10/src/features/platform/extensions/commands/commands.canvas.ts` (create) — 캔버스/드로잉 명령
+- `v10/src/features/platform/extensions/commands/commands.playback.ts` (create) — 재생/시퀀스 명령
+- `v10/src/features/platform/extensions/commands/commands.tool.ts` (create) — 도구/펜/지우개 명령
 
 Out of scope:
 - commandBus.ts (core 레이어 — 변경 없음)
@@ -163,17 +163,17 @@ Out of scope:
 ## Manual Verification Steps (Base Required)
 
 1) Step: 메인 파일 크기 확인
-   - Command / click path: `wc -l v10/src/features/extensions/commands/registerCoreCommands.ts`
+   - Command / click path: `wc -l v10/src/features/platform/extensions/commands/registerCoreCommands.ts`
    - Expected result: 500줄 이하
    - Covers: AC-1
 
 2) Step: 분할 모듈 존재 확인
-   - Command / click path: `ls v10/src/features/extensions/commands/commands.*.ts`
+   - Command / click path: `ls v10/src/features/platform/extensions/commands/commands.*.ts`
    - Expected result: 4개 파일 존재
    - Covers: AC-2, AC-5
 
 3) Step: 각 모듈 크기 확인
-   - Command / click path: `wc -l v10/src/features/extensions/commands/commands.*.ts`
+   - Command / click path: `wc -l v10/src/features/platform/extensions/commands/commands.*.ts`
    - Expected result: 각 500줄 이하
    - Covers: AC-3
 
@@ -216,19 +216,19 @@ Out of scope:
 Status: COMPLETED
 
 Changed files:
-- `v10/src/features/extensions/commands/registerCoreCommands.ts`
-- `v10/src/features/extensions/commands/commands.doc.ts`
-- `v10/src/features/extensions/commands/commands.canvas.ts`
-- `v10/src/features/extensions/commands/commands.playback.ts`
-- `v10/src/features/extensions/commands/commands.tool.ts`
+- `v10/src/features/platform/extensions/commands/registerCoreCommands.ts`
+- `v10/src/features/platform/extensions/commands/commands.doc.ts`
+- `v10/src/features/platform/extensions/commands/commands.canvas.ts`
+- `v10/src/features/platform/extensions/commands/commands.playback.ts`
+- `v10/src/features/platform/extensions/commands/commands.tool.ts`
 - `scripts/check_v10_migration_baseline.sh`
 - `codex_tasks/task_274_split_register_core_commands.md`
 
 Commands run:
-- `wc -l v10/src/features/extensions/commands/registerCoreCommands.ts v10/src/features/extensions/commands/commands.doc.ts v10/src/features/extensions/commands/commands.canvas.ts v10/src/features/extensions/commands/commands.playback.ts v10/src/features/extensions/commands/commands.tool.ts`
-- `rg -n "export function register" v10/src/features/extensions/commands/commands.*.ts`
-- `ls v10/src/features/extensions/commands/commands.*.ts`
-- `rg -n "export type CommandMigrationDomain|export const COMMAND_MIGRATION_MAP|export const registerCoreCommands" v10/src/features/extensions/commands/registerCoreCommands.ts`
+- `wc -l v10/src/features/platform/extensions/commands/registerCoreCommands.ts v10/src/features/platform/extensions/commands/commands.doc.ts v10/src/features/platform/extensions/commands/commands.canvas.ts v10/src/features/platform/extensions/commands/commands.playback.ts v10/src/features/platform/extensions/commands/commands.tool.ts`
+- `rg -n "export function register" v10/src/features/platform/extensions/commands/commands.*.ts`
+- `ls v10/src/features/platform/extensions/commands/commands.*.ts`
+- `rg -n "export type CommandMigrationDomain|export const COMMAND_MIGRATION_MAP|export const registerCoreCommands" v10/src/features/platform/extensions/commands/registerCoreCommands.ts`
 - `cd v10 && npx tsc --noEmit --pretty false`
 - `VERIFY_STAGE=end bash scripts/run_repo_verifications.sh`
 
@@ -257,7 +257,7 @@ Manual verification notes:
   - `commands.doc.ts:495`
   - `commands.playback.ts:459`
   - `commands.tool.ts:476`
-- `ls v10/src/features/extensions/commands/commands.*.ts`로 4개 분할 모듈 존재 확인
+- `ls v10/src/features/platform/extensions/commands/commands.*.ts`로 4개 분할 모듈 존재 확인
 - `registerCoreCommands.ts`에서 `CommandMigrationDomain`/`COMMAND_MIGRATION_MAP`/`registerCoreCommands` export 유지 확인
 - `cd v10 && npx tsc --noEmit --pretty false` 통과
 - `scripts/check_v10_migration_baseline.sh` 분할 구조 인식 패치 후 `VERIFY_STAGE=end bash scripts/run_repo_verifications.sh` 전체 PASS

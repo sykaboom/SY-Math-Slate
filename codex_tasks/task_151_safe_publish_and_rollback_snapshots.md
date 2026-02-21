@@ -19,10 +19,10 @@ Date: 2026-02-15
 ## Scope (Base Required)
 
 Touched files/directories:
-- `v10/src/features/mod-studio/publish/**` (new)
+- `v10/src/features/platform/mod-studio/publish/**` (new)
 - `v10/src/core/extensions/pluginLoader.ts`
 - `v10/src/core/config/rolePolicyGuards.ts`
-- `v10/src/features/store/**` (snapshot state only)
+- `v10/src/features/platform/store/**` (snapshot state only)
 
 Out of scope:
 - Realtime collaboration sync.
@@ -147,9 +147,9 @@ If NO:
 Status: COMPLETED
 
 Changed files:
-- `v10/src/features/mod-studio/publish/publishStudioDraft.ts`
-- `v10/src/features/mod-studio/publish/PublishStudioSection.tsx`
-- `v10/src/features/store/useModStudioStore.ts`
+- `v10/src/features/platform/mod-studio/publish/publishStudioDraft.ts`
+- `v10/src/features/platform/mod-studio/publish/PublishStudioSection.tsx`
+- `v10/src/features/platform/store/useModStudioStore.ts`
 - `v10/src/core/extensions/pluginLoader.ts`
 - `v10/src/core/config/rolePolicy.ts`
 

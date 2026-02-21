@@ -25,9 +25,9 @@ Touched files/directories:
 - `codex_tasks/task_115_strict_declarative_ui_plugin.md`
 - `v10/src/core/extensions/pluginLoader.ts`
 - `v10/src/core/extensions/registry.ts`
-- `v10/src/features/extensions/ui/ExtensionSlot.tsx`
-- `v10/src/features/extensions/ui/registerCoreSlots.ts`
-- `v10/src/features/extensions/ui/ExtensionRuntimeBootstrap.tsx` (only if plugin loader wiring requires boot-order update)
+- `v10/src/features/platform/extensions/ui/ExtensionSlot.tsx`
+- `v10/src/features/platform/extensions/ui/registerCoreSlots.ts`
+- `v10/src/features/platform/extensions/ui/ExtensionRuntimeBootstrap.tsx` (only if plugin loader wiring requires boot-order update)
 - `v10/AI_READ_ME.md` (if runtime flow text changes)
 - `v10/AI_READ_ME_MAP.md` (if file map changes)
 
@@ -187,9 +187,9 @@ Changed files:
 - `codex_tasks/task_115_strict_declarative_ui_plugin.md`
 - `v10/src/core/extensions/pluginLoader.ts`
 - `v10/src/core/extensions/registry.ts`
-- `v10/src/features/extensions/ui/ExtensionSlot.tsx`
-- `v10/src/features/extensions/ui/registerCoreSlots.ts`
-- `v10/src/features/extensions/ui/ExtensionRuntimeBootstrap.tsx`
+- `v10/src/features/platform/extensions/ui/ExtensionSlot.tsx`
+- `v10/src/features/platform/extensions/ui/registerCoreSlots.ts`
+- `v10/src/features/platform/extensions/ui/ExtensionRuntimeBootstrap.tsx`
 - `v10/AI_READ_ME.md`
 - `v10/AI_READ_ME_MAP.md`
 

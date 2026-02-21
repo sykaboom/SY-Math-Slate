@@ -8,7 +8,7 @@
 Runtime ReferenceError in `NormalCanvasStage`: `showBreakGuides` was referenced without being defined.
 
 ## Scope
-- `v10/src/features/canvas/CanvasStage.tsx`
+- `v10/src/features/editor/canvas/CanvasStage.tsx`
 
 ## Changes
 - Passed `showBreakGuides` from `CanvasStage` to `NormalCanvasStage`.

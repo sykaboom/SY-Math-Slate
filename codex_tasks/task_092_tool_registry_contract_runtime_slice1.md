@@ -33,7 +33,7 @@ Touched files/directories:
 - `v10/AI_READ_ME_MAP.md` (구조 변경 시)
 
 Out of scope:
-- `v10/src/features/**` 및 `v10/src/features/store/**` 수정
+- `v10/src/features/**` 및 `v10/src/features/platform/store/**` 수정
 - 실제 provider adapter 구현
 - 인증키/요금제/비밀정보 저장 로직 추가
 - cross-repo(`math-pdf-builder-codex`) 수정

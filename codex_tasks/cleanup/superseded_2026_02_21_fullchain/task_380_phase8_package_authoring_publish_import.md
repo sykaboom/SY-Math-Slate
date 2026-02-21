@@ -18,7 +18,7 @@ Date: 2026-02-21
 ## Scope (Base Required)
 
 Touched files/directories:
-- v10/src/features/mod-studio/authoring, v10/src/core/mod/package/io, v10/src/core/mod/contracts
+- v10/src/features/platform/mod-studio/authoring, v10/src/core/mod/package/io, v10/src/core/mod/contracts
 
 Out of scope:
 - Third-party remote package execution sandbox is excluded.

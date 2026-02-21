@@ -20,9 +20,9 @@ Date: 2026-02-15
 
 Touched files/directories:
 - `codex_tasks/task_221_ad_policy_enforcement_gates.md`
-- `v10/src/features/community/policy/adPolicy.ts` (new)
+- `v10/src/features/governance/community/policy/adPolicy.ts` (new)
 - `v10/src/app/api/community/route.ts`
-- `v10/src/features/community/useCommunityActions.ts`
+- `v10/src/features/governance/community/useCommunityActions.ts`
 
 Out of scope:
 - Rights claim/takedown model changes.
@@ -139,9 +139,9 @@ Out of scope:
 Status: COMPLETED
 
 Changed files:
-- `v10/src/features/community/policy/adPolicy.ts`
+- `v10/src/features/governance/community/policy/adPolicy.ts`
 - `v10/src/app/api/community/route.ts`
-- `v10/src/features/community/useCommunityActions.ts`
+- `v10/src/features/governance/community/useCommunityActions.ts`
 - `codex_tasks/task_221_ad_policy_enforcement_gates.md`
 
 Commands run (only if user asked or required by spec):

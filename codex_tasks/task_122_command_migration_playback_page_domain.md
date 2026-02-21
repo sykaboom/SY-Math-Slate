@@ -21,11 +21,11 @@ Date: 2026-02-15
 
 Touched files/directories:
 - `codex_tasks/task_122_command_migration_playback_page_domain.md`
-- `v10/src/features/extensions/commands/registerCoreCommands.ts`
-- `v10/src/features/toolbar/PlaybackControls.tsx`
-- `v10/src/features/toolbar/PageNavigator.tsx`
-- `v10/src/features/layout/PlayerBar.tsx`
-- `v10/src/features/hooks/useSequence.ts`
+- `v10/src/features/platform/extensions/commands/registerCoreCommands.ts`
+- `v10/src/features/chrome/toolbar/PlaybackControls.tsx`
+- `v10/src/features/chrome/toolbar/PageNavigator.tsx`
+- `v10/src/features/chrome/layout/PlayerBar.tsx`
+- `v10/src/features/platform/hooks/useSequence.ts`
 
 Out of scope:
 - Tooling command migration

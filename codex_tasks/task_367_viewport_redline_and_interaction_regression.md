@@ -18,7 +18,7 @@ Date: 2026-02-21
 ## Scope (Base Required)
 
 Touched files/directories:
-- design_drafts, codex_tasks/task_367_*.md, v10/src/features/layout
+- design_drafts, codex_tasks/task_367_*.md, v10/src/features/chrome/layout
 
 Out of scope:
 - 신규 도구 기능 추가
