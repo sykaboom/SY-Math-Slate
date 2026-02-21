@@ -1,4 +1,4 @@
-import type { StepBlock } from "@core/types/canvas";
+import type { StepBlock } from "@core/foundation/types/canvas";
 import type { CaretSelectionSnapshot } from "@features/editor-core/selection/caretEngine";
 
 export type StepBlockDraft = StepBlock;

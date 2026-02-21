@@ -6,7 +6,7 @@ import type {
   PersistedSlateDoc,
   StepAudio,
   StepBlock,
-} from "@core/types/canvas";
+} from "@core/foundation/types/canvas";
 
 type DocVersion = PersistedSlateDoc["version"];
 

@@ -2,7 +2,7 @@ import type {
   ToolRegistryCapabilities,
   ToolRegistryCategory,
   ToolRegistryEntry,
-} from "@core/contracts";
+} from "@core/foundation/schemas";
 
 export type CapabilityRoutingHints = {
   estimatedCostUsd?: number;

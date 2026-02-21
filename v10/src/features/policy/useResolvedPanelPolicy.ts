@@ -5,8 +5,8 @@ import { useEffect, useMemo } from "react";
 import {
   CORE_EDIT_ONLY_PANEL_POLICY_IDS,
   CORE_PANEL_POLICY_SOURCE,
-} from "@core/config/panel-policy";
-import { resolveExecutionRole } from "@core/config/rolePolicy";
+} from "@core/foundation/policies/panel-policy";
+import { resolveExecutionRole } from "@core/foundation/policies/rolePolicy";
 import {
   createWindowRuntimePanelPolicyState,
   resolvePanelPolicyRuntimeDocument,

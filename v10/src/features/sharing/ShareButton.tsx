@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 
-import type { SnapshotScope } from "@core/types/snapshot";
+import type { SnapshotScope } from "@core/foundation/types/snapshot";
 import { cn } from "@core/utils";
 import { LayerPickerModal } from "@features/sharing/LayerPickerModal";
 import { ShareScopeSelector } from "@features/sharing/ShareScopeSelector";

@@ -3,8 +3,8 @@
 import { useEffect, useRef } from "react";
 import type { CSSProperties } from "react";
 
-import { loadMathJax } from "@core/math/loader";
-import { typesetElement } from "@core/math/render";
+import { loadMathJax } from "@core/domain/math/loader";
+import { typesetElement } from "@core/domain/math/render";
 
 const hasMathToken = (value: string) => value.includes("$");
 

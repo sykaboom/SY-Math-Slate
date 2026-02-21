@@ -1,4 +1,4 @@
-import type { StepBlockKind } from "@core/types/canvas";
+import type { StepBlockKind } from "@core/foundation/types/canvas";
 
 import { createBlockId } from "./blockDraft";
 import type { StepBlockDraft } from "./types";

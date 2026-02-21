@@ -3,14 +3,14 @@ import {
   publishRolePolicyDocument,
   validateRolePolicyPublishCandidate,
   type RolePolicyPublishResult,
-} from "@core/config/rolePolicy";
+} from "@core/foundation/policies/rolePolicy";
 import {
   listDeclarativePluginManifests,
   registerDeclarativePluginManifest,
   validateDeclarativePluginManifest,
   type DeclarativePluginManifestV1,
   type JsonValue,
-} from "@core/extensions/pluginLoader";
+} from "@core/runtime/plugin-runtime/pluginLoader";
 import {
   applyThemeDraftPreview,
   resolveThemeDraftTokens,

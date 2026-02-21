@@ -2,7 +2,7 @@ import {
   configureCommandAuditHooks,
   resetCommandAuditHooks,
   type CommandAuditEvent,
-} from "@core/engine/commandBus";
+} from "@core/runtime/command/commandBus";
 
 export type AuditEvent = {
   timestamp: number;

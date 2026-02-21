@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 
 import { cn } from "@core/utils";
-import { dispatchCommand } from "@core/engine/commandBus";
+import { dispatchCommand } from "@core/runtime/command/commandBus";
 import { useFileIO } from "@features/hooks/useFileIO";
 import { usePersistence } from "@features/hooks/usePersistence";
 import { useCanvasStore } from "@features/store/useCanvasStore";

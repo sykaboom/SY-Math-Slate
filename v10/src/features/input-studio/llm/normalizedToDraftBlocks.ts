@@ -1,5 +1,5 @@
-import { normalizeTextSegmentStyle } from "@core/config/typography";
-import type { NormalizedBlock, NormalizedContent } from "@core/contracts";
+import { normalizeTextSegmentStyle } from "@core/ui/theming/engine/typography";
+import type { NormalizedBlock, NormalizedContent } from "@core/foundation/schemas";
 import type { StepBlockDraft } from "@features/layout/dataInput/types";
 import {
   createBlockId,

@@ -3,7 +3,7 @@ import type {
   ProposalEnvelopePayload,
   ProposalResultEnvelopePayload,
   ProposalType,
-} from "@core/types/sessionPolicy";
+} from "@core/foundation/types/sessionPolicy";
 
 import type {
   BroadcastEnvelope,

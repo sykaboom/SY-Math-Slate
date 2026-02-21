@@ -12,7 +12,7 @@ import type {
   CommunityTakedownRecord,
   CommunityTrafficSignal,
   CommunitySnapshot,
-} from "@core/contracts/community";
+} from "@core/foundation/schemas/community";
 
 export type CommunityStoreError = {
   code: string;

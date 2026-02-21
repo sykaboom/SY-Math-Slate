@@ -1,10 +1,10 @@
 "use client";
 
 import { createElement } from "react";
-import { dispatchCommand } from "@core/engine/commandBus";
-import { assertRuntimeSurfaceClassOrThrow } from "@core/config/coreModBoundary.guards";
-import type { UISlotComponent, UISlotName } from "@core/extensions/registry";
-import { getPrimaryRuntimeTemplatePack } from "../../../mod/runtime/templatePackRegistry";
+import { dispatchCommand } from "@core/runtime/command/commandBus";
+import { assertRuntimeSurfaceClassOrThrow } from "@core/foundation/policies/coreModBoundary.guards";
+import type { UISlotComponent, UISlotName } from "@core/runtime/plugin-runtime/registry";
+import { getPrimaryRuntimeTemplatePack } from "@/mod/bridge/packRegistryBridge";
 import { Popover, PopoverTrigger } from "@ui/components/popover";
 import { useUIStore, type Tool } from "@features/store/useUIStoreBridge";
 import { LaserControls } from "@features/toolbar/LaserControls";

@@ -1,4 +1,4 @@
-import type { AppCommand } from "@core/engine/commandBus";
+import type { AppCommand } from "@core/runtime/command/commandBus";
 import { CANVAS_COMMANDS, registerCanvasCommands } from "./commands.canvas";
 import { DOC_COMMANDS, registerDocCommands } from "./commands.doc";
 import { PLAYBACK_COMMANDS, registerPlaybackCommands } from "./commands.playback";

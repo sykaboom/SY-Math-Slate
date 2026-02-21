@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-import type { CapabilityKey, CapabilityProfileName } from "@core/config/capabilities";
+import type { CapabilityKey, CapabilityProfileName } from "@core/foundation/policies/capabilities";
 import type { AlignmentGuide } from "@features/hooks/useSnap";
 
 import { useCapabilityStore } from "./useCapabilityStore";

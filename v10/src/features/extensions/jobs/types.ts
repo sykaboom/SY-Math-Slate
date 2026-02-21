@@ -1,4 +1,4 @@
-import type { JsonSafeValue } from "@core/contracts";
+import type { JsonSafeValue } from "@core/foundation/schemas";
 
 export const ASYNC_JOB_STATUS_VALUES = [
   "queued",

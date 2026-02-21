@@ -4,10 +4,10 @@ import { useCallback, useEffect, useMemo, useRef } from "react";
 import type { PointerEvent as ReactPointerEvent } from "react";
 
 import { cn } from "@core/utils";
-import { getBoardSize } from "@core/config/boardSpec";
+import { getBoardSize } from "@core/foundation/policies/boardSpec";
 import { useCanvasStore } from "@features/store/useCanvasStore";
 import { useUIStore } from "@features/store/useUIStoreBridge";
-import type { ImageItem } from "@core/types/canvas";
+import type { ImageItem } from "@core/foundation/types/canvas";
 import { ArrowDown, ArrowUp, SunMoon, Trash2 } from "lucide-react";
 import { useBoardTransform } from "@features/hooks/useBoardTransform";
 import { useSnap } from "@features/hooks/useSnap";

@@ -1,4 +1,4 @@
-import type { PromptProfile } from "@core/types/aiApproval";
+import type { PromptProfile } from "@core/foundation/types/aiApproval";
 
 export type PromptProfileLayer = keyof PromptProfile;
 

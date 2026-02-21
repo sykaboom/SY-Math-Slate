@@ -4,8 +4,8 @@ import { useCallback, useEffect, useMemo, useRef } from "react";
 import type { PointerEvent as ReactPointerEvent } from "react";
 
 import { useUIStore, type LaserType, type PenType } from "@features/store/useUIStoreBridge";
-import type { Point, StrokeItem } from "@core/types/canvas";
-import { getRenderPerfProfile } from "@core/config/perfProfile";
+import type { Point, StrokeItem } from "@core/foundation/types/canvas";
+import { getRenderPerfProfile } from "@core/foundation/policies/perfProfile";
 
 type LaserPoint = { x: number; y: number; t: number };
 

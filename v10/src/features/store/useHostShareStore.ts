@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-import type { LiveSessionMeta } from "@core/types/snapshot";
+import type { LiveSessionMeta } from "@core/foundation/types/snapshot";
 
 export type ActiveHostSession = {
   shareId: string;

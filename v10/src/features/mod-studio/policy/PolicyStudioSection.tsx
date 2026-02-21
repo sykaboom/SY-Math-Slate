@@ -8,7 +8,7 @@ import {
   listKnownRolePolicyActions,
   listKnownRolePolicySurfaces,
   publishRolePolicyDocument,
-} from "@core/config/rolePolicy";
+} from "@core/foundation/policies/rolePolicy";
 import { useModStudioStore } from "@features/store/useModStudioStore";
 
 type RolePolicyDecision = "allow" | "deny";

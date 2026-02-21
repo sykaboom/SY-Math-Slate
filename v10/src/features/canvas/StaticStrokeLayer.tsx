@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef } from "react";
 
 import { useCanvasStore } from "@features/store/useCanvasStore";
-import type { CanvasItem, Point, StrokeItem, PenType } from "@core/types/canvas";
+import type { CanvasItem, Point, StrokeItem, PenType } from "@core/foundation/types/canvas";
 
 const isStrokeItem = (item: CanvasItem): item is StrokeItem => item.type === "stroke";
 

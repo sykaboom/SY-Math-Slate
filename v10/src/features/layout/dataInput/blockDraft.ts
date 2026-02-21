@@ -1,9 +1,9 @@
-import type { ImageItem, StepSegment, TextItem } from "@core/types/canvas";
+import type { ImageItem, StepSegment, TextItem } from "@core/foundation/types/canvas";
 import {
   createDefaultTextSegmentStyle,
   normalizeTextSegmentStyle,
-} from "@core/config/typography";
-import { sanitizeRichTextHtml } from "@core/sanitize/richTextSanitizer";
+} from "@core/ui/theming/engine/typography";
+import { sanitizeRichTextHtml } from "@core/security/sanitization/richTextSanitizer";
 
 import type { RawSyncResult, StepBlockDraft } from "./types";
 

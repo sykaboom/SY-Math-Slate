@@ -2,8 +2,8 @@
 
 import type { ReactNode } from "react";
 
-import { CORE_PANEL_POLICY_IDS, type CorePanelPolicyId } from "@core/config/panel-policy";
-import { resolveExecutionRole } from "@core/config/rolePolicy";
+import { CORE_PANEL_POLICY_IDS, type CorePanelPolicyId } from "@core/foundation/policies/panel-policy";
+import { resolveExecutionRole } from "@core/foundation/policies/rolePolicy";
 import {
   getCoreSlotPanelContract,
   isCorePanelRegisteredInSlotRuntime,

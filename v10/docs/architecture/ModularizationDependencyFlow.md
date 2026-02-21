@@ -65,7 +65,7 @@ flowchart LR
 - `ui -> ui/core`
 - `features -> core/ui`
 - `app -> features/ui`
-- `mod(runtime/templates) -> core(mod package/contracts)`  
+- `mod(packs/bridge/schema) -> core(mod package/contracts)`  
 
 ---
 
@@ -88,7 +88,7 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-    T[mod/templates/*] --> A[templatePackAdapter]
+    T[mod/packs/*] --> A[templatePackAdapter]
     A --> PR[core/mod/package registry]
     PR --> Sel[package selectors]
     Sel --> UH[features/ui-host bridge]
@@ -103,11 +103,11 @@ flowchart TD
 ### 5.1 파일 크기 병목 (900+ LOC)
 
 대표 파일:
-- `core/contracts/community.ts` (1604)
+- `core/foundation/schemas/community.ts` (1604)
 - `features/layout/DataInputPanel.tsx` (1264)
 - `features/hooks/useCanvas.ts` (1046)
 - `features/store/useCanvasStore.ts` (1033)
-- `core/extensions/mcpGateway.ts` (1005)
+- `core/runtime/plugin-runtime/mcpGateway.ts` (1005)
 - `app/api/community/route.ts` (977)
 - `features/extensions/ui/ExtensionRuntimeBootstrap.tsx` (942)
 
@@ -135,7 +135,7 @@ flowchart LR
       C1[core/mod/contracts]
       C2[core/mod/package]
       C3[core/mod/host]
-      C4[core/engine + core/config]
+      C4[core/runtime/command + core/foundation/policies]
     end
 
     subgraph FeatureHost
@@ -146,8 +146,8 @@ flowchart LR
     end
 
     subgraph TemplateInput
-      T1[mod/templates]
-      T2[mod/runtime adapter]
+      T1[mod/packs]
+      T2[mod/bridge adapter]
     end
 
     T1 --> T2 --> C2
@@ -202,4 +202,3 @@ flowchart TD
 - 지금은 “구조를 갈아엎을 시점”이 아니라,  
   **현재 좋은 구조를 유지한 채 병목 구간만 수학적으로 줄이는 시점**이다.
 - 즉, **대수술(재설계)**보다 **전선정리(분해/정합화/수렴화)**가 최적.
-

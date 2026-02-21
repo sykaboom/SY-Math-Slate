@@ -11,12 +11,14 @@ const path = require("path");
 const repoRoot = process.cwd();
 const srcRoot = path.join(repoRoot, "v10", "src");
 
-const SOURCE_LAYERS = new Set(["core", "ui", "features", "app"]);
+const SOURCE_LAYERS = new Set(["core", "ui", "features", "app", "mod"]);
 const ALLOWED_IMPORTS = {
   core: new Set(["core"]),
   ui: new Set(["ui", "core"]),
-  features: new Set(["features", "ui", "core"]),
-  app: new Set(["app", "features", "ui"]),
+  // Compat allowlist mode: features/app may consume mod catalog bridge paths.
+  features: new Set(["features", "ui", "core", "mod"]),
+  app: new Set(["app", "features", "ui", "mod"]),
+  mod: new Set(["mod", "core", "features", "ui"]),
 };
 
 const FILE_EXTENSIONS = new Set([".ts", ".tsx", ".mts"]);
@@ -64,6 +66,7 @@ const resolveAliasLayer = (spec) => {
   if (spec === "@core" || spec.startsWith("@core/")) return "core";
   if (spec === "@ui" || spec.startsWith("@ui/")) return "ui";
   if (spec === "@features" || spec.startsWith("@features/")) return "features";
+  if (spec === "@mod" || spec.startsWith("@mod/")) return "mod";
   if (spec === "@" || spec === "@/") return null;
   if (spec.startsWith("@/")) {
     const rest = spec.slice(2);

@@ -10,8 +10,8 @@ const assert = (condition, message) => {
   if (!condition) throw new Error(message);
 };
 
-const contractSource = read("v10/src/core/contracts/extensionMarketplace.ts");
-const catalogSource = read("v10/src/core/extensions/marketplaceCatalog.ts");
+const contractSource = read("v10/src/core/foundation/schemas/extensionMarketplace.ts");
+const catalogSource = read("v10/src/core/runtime/plugin-runtime/marketplaceCatalog.ts");
 const routeSource = read("v10/src/app/api/extensions/marketplace/route.ts");
 const hookSource = read(
   "v10/src/features/extensions/marketplace/useMarketplaceCatalog.ts"

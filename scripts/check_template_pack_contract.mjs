@@ -5,20 +5,11 @@ import path from "node:path";
 const repoRoot = process.cwd();
 
 const files = {
-  types: path.join(
-    repoRoot,
-    "v10/src/mod/templates/_contracts/templatePack.types.ts"
-  ),
-  guards: path.join(
-    repoRoot,
-    "v10/src/mod/templates/_contracts/templatePack.guards.ts"
-  ),
-  index: path.join(repoRoot, "v10/src/mod/templates/index.ts"),
-  registry: path.join(repoRoot, "v10/src/mod/runtime/templatePackRegistry.ts"),
-  manifest: path.join(
-    repoRoot,
-    "v10/src/mod/templates/base-education/manifest.ts"
-  ),
+  types: path.join(repoRoot, "v10/src/mod/schema/templatePack.types.ts"),
+  guards: path.join(repoRoot, "v10/src/mod/schema/templatePack.guards.ts"),
+  index: path.join(repoRoot, "v10/src/mod/packs/index.ts"),
+  registry: path.join(repoRoot, "v10/src/mod/bridge/packRegistryBridge.ts"),
+  manifest: path.join(repoRoot, "v10/src/mod/packs/base-education/manifest.ts"),
 };
 
 const missing = Object.entries(files)
@@ -87,4 +78,3 @@ if (failures.length > 0) {
 }
 
 console.log("[check_template_pack_contract] PASS");
-

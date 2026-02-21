@@ -10,7 +10,7 @@ import {
   type ChangeEvent,
 } from "react";
 
-import { dispatchCommand } from "@core/engine/commandBus";
+import { dispatchCommand } from "@core/runtime/command/commandBus";
 import { cn } from "@core/utils";
 import {
   DEFAULT_TEXT_LANE_STYLE,
@@ -20,12 +20,12 @@ import {
   TEXT_INLINE_COLOR_OPTIONS,
   TEXT_INLINE_SIZE_OPTIONS,
   normalizeTextSegmentStyle,
-} from "@core/config/typography";
+} from "@core/ui/theming/engine/typography";
 import type {
   ImageItem,
   StepSegmentType,
   TextItem,
-} from "@core/types/canvas";
+} from "@core/foundation/types/canvas";
 import {
   InputStudioActionsSection,
   InputStudioBlocksSection,

@@ -1,6 +1,6 @@
 "use client";
 
-import type { SnapshotScope } from "@core/types/snapshot";
+import type { SnapshotScope } from "@core/foundation/types/snapshot";
 import { cn } from "@core/utils";
 
 type ShareScopeSelectorProps = {

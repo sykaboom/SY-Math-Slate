@@ -3,8 +3,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { CSSProperties } from "react";
 
-import { loadMathJax } from "@core/math/loader";
-import { typesetElement } from "@core/math/render";
+import { loadMathJax } from "@core/domain/math/loader";
+import { typesetElement } from "@core/domain/math/render";
 import { cn } from "@core/utils";
 import { BUILTIN_ANIMATION_PROFILES } from "@features/animation/model/builtinProfiles";
 import type { AnimationModInput, AnimationModNormalizer } from "@features/animation/modding/modContract";

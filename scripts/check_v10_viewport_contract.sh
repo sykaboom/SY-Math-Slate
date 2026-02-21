@@ -4,7 +4,7 @@ set -euo pipefail
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$repo_root"
 
-contract_file="v10/src/core/config/viewportContract.ts"
+contract_file="v10/src/core/foundation/policies/viewportContract.ts"
 if [[ ! -f "$contract_file" ]]; then
   echo "[check_v10_viewport_contract] FAIL: missing contract file: $contract_file"
   exit 1

@@ -5,7 +5,7 @@ import { useState } from "react";
 import type {
   ThemeGlobalTokenKey,
   ThemeGlobalTokenMap,
-} from "@core/config/themeTokens";
+} from "@core/ui/theming/tokens/themeTokens";
 
 import { toGlobalThemeVariable } from "./themeIsolation";
 import { TokenColorPicker } from "./TokenColorPicker";

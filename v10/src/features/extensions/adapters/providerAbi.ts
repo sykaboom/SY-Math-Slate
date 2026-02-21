@@ -3,8 +3,8 @@ import type {
   ToolResult,
   ToolResultDiagnostics,
   ToolResultStatus,
-} from "@core/contracts";
-import type { ConnectorResponse } from "@core/extensions/connectors";
+} from "@core/foundation/schemas";
+import type { ConnectorResponse } from "@core/runtime/plugin-runtime/connectors";
 import type { AdapterInvokeRequest } from "./types";
 
 export const PROVIDER_ADAPTER_ABI_V1 = "provider-adapter-abi.v1" as const;

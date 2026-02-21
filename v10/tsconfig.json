@@ -20,6 +20,24 @@
     ],
     "paths": {
       "@/*": ["./src/*"],
+      "@core/config/aiProviderRegistry": [
+        "./src/core/foundation/registries/aiProviderRegistry"
+      ],
+      "@core/config/themeTokens": ["./src/core/ui/theming/tokens/themeTokens"],
+      "@core/config/typography": ["./src/core/ui/theming/engine/typography"],
+      "@core/config/*": ["./src/core/foundation/policies/*"],
+      "@core/contracts": ["./src/core/foundation/schemas/index"],
+      "@core/contracts/*": ["./src/core/foundation/schemas/*"],
+      "@core/engine/*": ["./src/core/runtime/command/*"],
+      "@core/extensions/*": ["./src/core/runtime/plugin-runtime/*"],
+      "@core/math/*": ["./src/core/domain/math/*"],
+      "@core/migrations/*": ["./src/core/pipelines/migrations/*"],
+      "@core/persistence/*": ["./src/core/pipelines/persistence/*"],
+      "@core/export/*": ["./src/core/pipelines/export/*"],
+      "@core/sanitize/*": ["./src/core/security/sanitization/*"],
+      "@core/theme/*": ["./src/core/ui/theming/engine/*"],
+      "@core/themes/*": ["./src/core/ui/theming/presets/*"],
+      "@core/types/*": ["./src/core/foundation/types/*"],
       "@core/*": ["./src/core/*"],
       "@ui/*": ["./src/ui/*"],
       "@features/*": ["./src/features/*"]

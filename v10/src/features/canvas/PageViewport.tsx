@@ -11,7 +11,7 @@ import {
 import type { ReactNode } from "react";
 
 import { cn } from "@core/utils";
-import { getBoardSize, type BoardRatio } from "@core/config/boardSpec";
+import { getBoardSize, type BoardRatio } from "@core/foundation/policies/boardSpec";
 import { useUIStore } from "@features/store/useUIStoreBridge";
 
 const PageScaleContext = createContext(1);

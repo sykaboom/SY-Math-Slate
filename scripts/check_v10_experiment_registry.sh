@@ -5,7 +5,7 @@ repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$repo_root"
 
 required_paths=(
-  "v10/src/core/config/experiments.ts"
+  "v10/src/core/foundation/policies/experiments.ts"
   "v10/src/features/experiments/abFlags.ts"
   "codex_tasks/workflow/experiment_registry.env"
 )

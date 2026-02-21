@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 
-import type { PersistedCanvasV2, PersistedSlateDoc } from "@core/types/canvas";
-import type { LiveSessionMeta } from "@core/types/snapshot";
+import type { PersistedCanvasV2, PersistedSlateDoc } from "@core/foundation/types/canvas";
+import type { LiveSessionMeta } from "@core/foundation/types/snapshot";
 import {
   createLiveBroadcastTransport,
   type BroadcastEnvelope,

@@ -61,6 +61,35 @@ const eslintConfig = defineConfig([
       ],
     },
   },
+  {
+    files: [
+      "src/features/**/*.{ts,tsx}",
+      "src/app/**/*.{ts,tsx}",
+      "src/mod/**/*.{ts,tsx}",
+    ],
+    rules: {
+      // Compat allowlist mode (R3): old core paths are warned, not hard-failed.
+      "no-restricted-imports": [
+        "warn",
+        {
+          patterns: [
+            "@core/config/*",
+            "@core/contracts",
+            "@core/contracts/*",
+            "@core/engine/*",
+            "@core/extensions/*",
+            "@core/math/*",
+            "@core/migrations/*",
+            "@core/persistence/*",
+            "@core/sanitize/*",
+            "@core/theme/*",
+            "@core/themes/*",
+            "@core/types/*",
+          ],
+        },
+      ],
+    },
+  },
   // Override default ignores of eslint-config-next.
   globalIgnores([
     // Default ignores of eslint-config-next:

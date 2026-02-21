@@ -1,12 +1,12 @@
-import { validateRolePolicyPublishCandidate } from "@core/config/rolePolicy";
+import { validateRolePolicyPublishCandidate } from "@core/foundation/policies/rolePolicy";
 import {
   DEFAULT_THEME_PRESET_ID,
   isThemePresetId,
   normalizeThemeGlobalTokenMap,
   normalizeThemeModuleScopedTokenMap,
-} from "@core/config/themeTokens";
-import { migrateStudioConfigPayload } from "@core/migrations/modStudioMigration";
-import { listKnownUISlotNames } from "@core/extensions/registry";
+} from "@core/ui/theming/tokens/themeTokens";
+import { migrateStudioConfigPayload } from "@core/pipelines/migrations/modStudioMigration";
+import { listKnownUISlotNames } from "@core/runtime/plugin-runtime/registry";
 import type { StudioDraftBundle } from "@features/mod-studio/core/types";
 import { getModuleDiagnostics } from "@features/mod-studio/modules/moduleDiagnostics";
 

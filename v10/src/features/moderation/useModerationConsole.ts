@@ -8,7 +8,7 @@ import type {
   CommunitySafetyEvent,
   CommunityTrafficSignal,
   CommunityTrustSafetySloSummary,
-} from "@core/contracts/community";
+} from "@core/foundation/schemas/community";
 import { useCommunityActions } from "@features/community/useCommunityActions";
 import { useCommunityStore, type CommunityStoreError } from "@features/community/store/useCommunityStore";
 import {

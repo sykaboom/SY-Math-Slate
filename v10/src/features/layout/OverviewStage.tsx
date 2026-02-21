@@ -8,7 +8,7 @@ import { StaticStrokeLayer } from "@features/canvas/StaticStrokeLayer";
 import { useCanvasStore } from "@features/store/useCanvasStore";
 import { useUIStore } from "@features/store/useUIStoreBridge";
 import { cn } from "@core/utils";
-import { getBoardSize } from "@core/config/boardSpec";
+import { getBoardSize } from "@core/foundation/policies/boardSpec";
 
 export function OverviewStage() {
   const containerRef = useRef<HTMLDivElement | null>(null);

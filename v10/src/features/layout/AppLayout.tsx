@@ -9,16 +9,16 @@ import {
   type ReactNode,
 } from "react";
 
-import { CORE_PANEL_POLICY_IDS } from "@core/config/panel-policy";
+import { CORE_PANEL_POLICY_IDS } from "@core/foundation/policies/panel-policy";
 import { CanvasStage } from "@features/canvas/CanvasStage";
 import { PasteHelperModal } from "@features/canvas/PasteHelperModal";
-import { dispatchCommand } from "@core/engine/commandBus";
+import { dispatchCommand } from "@core/runtime/command/commandBus";
 import {
   ROLE_POLICY_ACTIONS,
   canAccessLayoutVisibilityForRole,
   resolveExecutionRole,
   resolveLegacyLayoutVisibilityForRole,
-} from "@core/config/rolePolicy";
+} from "@core/foundation/policies/rolePolicy";
 import { ExtensionSlot } from "@features/extensions/ui/ExtensionSlot";
 import {
   listCorePanelLauncherContract,

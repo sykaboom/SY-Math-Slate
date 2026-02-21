@@ -1,4 +1,4 @@
-import type { AudioAssetPayload } from "@core/contracts";
+import type { AudioAssetPayload } from "@core/foundation/schemas";
 import {
   createProviderAdapterAbiMetadata,
   createProviderAdapterRequestEnvelope,

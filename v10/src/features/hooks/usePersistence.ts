@@ -2,14 +2,14 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { migrateToV2 } from "@core/migrations/migrateToV2";
-import { getBoardSize } from "@core/config/boardSpec";
-import { toTextItemStyle } from "@core/config/typography";
-import { buildPersistedDoc } from "@core/persistence/buildPersistedDoc";
+import { migrateToV2 } from "@core/pipelines/migrations/migrateToV2";
+import { getBoardSize } from "@core/foundation/policies/boardSpec";
+import { toTextItemStyle } from "@core/ui/theming/engine/typography";
+import { buildPersistedDoc } from "@core/pipelines/persistence/buildPersistedDoc";
 import { useCanvasStore } from "@features/store/useCanvasStore";
 import { useDocStore } from "@features/store/useDocStore";
 import { useUIStore } from "@features/store/useUIStoreBridge";
-import type { PersistedSlateDoc } from "@core/types/canvas";
+import type { PersistedSlateDoc } from "@core/foundation/types/canvas";
 
 const STORAGE_KEY = "v10_board_data";
 const COORD_MIGRATION_KEY = "v10_board_coords_migrated";

@@ -1,4 +1,4 @@
-import { dispatchCommand } from "@core/engine/commandBus";
+import { dispatchCommand } from "@core/runtime/command/commandBus";
 
 export type ToolbarFeedbackTone = "info" | "success" | "error";
 

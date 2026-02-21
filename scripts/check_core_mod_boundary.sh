@@ -14,8 +14,8 @@ check_file() {
   fi
 }
 
-check_file "v10/src/core/config/coreModBoundary.ts"
-check_file "v10/src/core/config/coreModBoundary.guards.ts"
+check_file "v10/src/core/foundation/policies/coreModBoundary.ts"
+check_file "v10/src/core/foundation/policies/coreModBoundary.guards.ts"
 check_file "v10/src/features/extensions/ui/registerCoreSlots.ts"
 check_file "v10/src/features/extensions/ui/coreTemplates.ts"
 
@@ -28,7 +28,7 @@ for marker in \
   "engine.command.dispatch-shell" \
   "engine.policy.role-gate-bridge" \
   "engine.window-host.mount-bridge"; do
-  if ! rg -q "$marker" v10/src/core/config/coreModBoundary.ts; then
+  if ! rg -q "$marker" v10/src/core/foundation/policies/coreModBoundary.ts; then
     echo "[FAIL] core allowlist marker missing: $marker"
     fail=1
   fi
@@ -60,4 +60,3 @@ if [[ "$fail" -eq 1 ]]; then
 fi
 
 echo "[check_core_mod_boundary] PASS"
-

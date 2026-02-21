@@ -2,8 +2,8 @@
 
 import { useEffect, useMemo, useState } from "react";
 
-import type { PersistedCanvasV2, PersistedSlateDoc } from "@core/types/canvas";
-import type { CanvasSnapshot } from "@core/types/snapshot";
+import type { PersistedCanvasV2, PersistedSlateDoc } from "@core/foundation/types/canvas";
+import type { CanvasSnapshot } from "@core/foundation/types/snapshot";
 import { LocalSnapshotAdapter } from "@features/sharing/adapters/LocalSnapshotAdapter";
 import { ServerSnapshotAdapter } from "@features/sharing/adapters/ServerSnapshotAdapter";
 import { useCanvasStore } from "@features/store/useCanvasStore";

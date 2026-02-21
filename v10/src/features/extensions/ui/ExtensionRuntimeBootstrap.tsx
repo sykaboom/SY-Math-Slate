@@ -2,29 +2,29 @@
 
 import { useEffect } from "react";
 
-import { dispatchCommand, listAppCommands } from "@core/engine/commandBus";
+import { dispatchCommand, listAppCommands } from "@core/runtime/command/commandBus";
 import {
   configureToolExecutionPreflightHook,
   resetToolExecutionPreflightHook,
-} from "@core/extensions/connectors";
-import { evaluateLocalAiSandboxPolicy } from "@core/extensions/localAiSandboxPolicy";
+} from "@core/runtime/plugin-runtime/connectors";
+import { evaluateLocalAiSandboxPolicy } from "@core/runtime/plugin-runtime/localAiSandboxPolicy";
 import {
   createLocalRuntimeSessionEnvelope,
   type LocalRuntimeHandshakeRole,
-} from "@core/extensions/localRuntimeHandshake";
+} from "@core/runtime/plugin-runtime/localRuntimeHandshake";
 import {
   initializeMcpGatewayRuntime,
   type McpGatewayDispatchRequest,
   type McpGatewayDispatchResponse,
   type McpGatewayMessageRuntime,
-} from "@core/extensions/mcpGateway";
-import { registerDeclarativePluginManifest } from "@core/extensions/pluginLoader";
+} from "@core/runtime/plugin-runtime/mcpGateway";
+import { registerDeclarativePluginManifest } from "@core/runtime/plugin-runtime/pluginLoader";
 import {
   getToolRegistryEntryById,
   listKnownUISlotNames,
   registerToolRegistryEntry,
-} from "@core/extensions/registry";
-import type { ToolRegistryCategory } from "@core/contracts";
+} from "@core/runtime/plugin-runtime/registry";
+import type { ToolRegistryCategory } from "@core/foundation/schemas";
 import {
   getAdapterInvokerById,
   listExtensionAdapters,

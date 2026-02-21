@@ -1,4 +1,4 @@
-import { isKnownUISlotName, type UISlotName } from "@core/extensions/registry";
+import { isKnownUISlotName, type UISlotName } from "@core/runtime/plugin-runtime/registry";
 import {
   PANEL_DISPLAY_MODES,
   type PanelDisplayMode,

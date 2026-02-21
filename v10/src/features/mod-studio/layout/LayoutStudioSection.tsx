@@ -1,6 +1,6 @@
 "use client";
 
-import { type UISlotName } from "@core/extensions/registry";
+import { type UISlotName } from "@core/runtime/plugin-runtime/registry";
 import { useModStudioStore } from "@features/store/useModStudioStore";
 
 const normalizeModuleOrder = (value: string): string[] =>

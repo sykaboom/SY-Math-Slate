@@ -2,8 +2,8 @@
 
 import { useCallback, useMemo, useState } from "react";
 
-import { isNormalizedContent, type NormalizedContent } from "@core/contracts";
-import { executeRegisteredToolRequest } from "@core/extensions/connectors";
+import { isNormalizedContent, type NormalizedContent } from "@core/foundation/schemas";
+import { executeRegisteredToolRequest } from "@core/runtime/plugin-runtime/connectors";
 import { getAdapterInvokerById } from "@features/extensions/adapters";
 import { blocksToRawText } from "@features/layout/dataInput/blockDraft";
 import { useLocalStore } from "@features/store/useLocalStore";

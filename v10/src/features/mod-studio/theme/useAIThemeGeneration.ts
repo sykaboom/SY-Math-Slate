@@ -5,7 +5,7 @@ import { useCallback, useState } from "react";
 import {
   THEME_GLOBAL_TOKEN_KEYS,
   type ThemeGlobalTokenMap,
-} from "@core/config/themeTokens";
+} from "@core/ui/theming/tokens/themeTokens";
 import { useModStudioStore } from "@features/store/useModStudioStore";
 import { useTokenDraftStore } from "@features/store/useTokenDraftStore";
 

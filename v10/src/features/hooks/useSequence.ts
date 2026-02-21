@@ -3,13 +3,13 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { RefObject } from "react";
 
-import { dispatchCommand } from "@core/engine/commandBus";
+import { dispatchCommand } from "@core/runtime/command/commandBus";
 import { useCanvasStore } from "@features/store/useCanvasStore";
 import { useUIStore } from "@features/store/useUIStoreBridge";
-import type { CanvasItem, TextItem } from "@core/types/canvas";
+import type { CanvasItem, TextItem } from "@core/foundation/types/canvas";
 import { useAudioPlayer } from "@features/hooks/useAudioPlayer";
 import { useSFX } from "@features/hooks/useSFX";
-import { chalkTheme } from "@core/themes/chalkTheme";
+import { chalkTheme } from "@core/ui/theming/presets/chalkTheme";
 import type { ActorState } from "@features/canvas/actors/ActorLayer";
 
 const isTextItem = (item: CanvasItem): item is TextItem => item.type === "text";

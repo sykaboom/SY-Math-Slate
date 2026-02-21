@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-import type { PenType } from "@core/types/canvas";
+import type { PenType } from "@core/foundation/types/canvas";
 
 import { useChromeStore } from "./useChromeStore";
 

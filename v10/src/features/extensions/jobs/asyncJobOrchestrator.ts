@@ -1,4 +1,4 @@
-import type { JsonSafeValue } from "@core/contracts";
+import type { JsonSafeValue } from "@core/foundation/schemas";
 import type {
   AsyncJobCancelInput,
   AsyncJobHistoryEntry,

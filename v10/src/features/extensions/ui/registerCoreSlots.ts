@@ -2,14 +2,14 @@ import {
   registerUISlotComponent,
   type UISlotComponent,
   type UISlotName,
-} from "@core/extensions/registry";
-import { listRuntimeTemplatePacks } from "../../../mod/runtime/templatePackRegistry";
+} from "@core/runtime/plugin-runtime/registry";
+import { listRuntimeTemplatePacks } from "@/mod/bridge/packRegistryBridge";
 import {
   CORE_PANEL_POLICY_IDS,
   CORE_PANEL_POLICY_SOURCE,
   type CorePanelPolicyId,
-} from "@core/config/panel-policy";
-import { assertRuntimeSurfaceClassOrThrow } from "@core/config/coreModBoundary.guards";
+} from "@core/foundation/policies/panel-policy";
+import { assertRuntimeSurfaceClassOrThrow } from "@core/foundation/policies/coreModBoundary.guards";
 import { ModerationConsolePanel } from "@features/moderation/ModerationConsolePanel";
 import { HostLiveSessionPanel } from "@features/sharing/HostLiveSessionPanel";
 import { ThemePickerPanel } from "@features/theme/ThemePickerPanel";

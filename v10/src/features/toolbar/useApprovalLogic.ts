@@ -2,12 +2,12 @@
 
 import { useCallback, useMemo } from "react";
 
-import type { NormalizedBlock, NormalizedContent } from "@core/contracts";
-import { isNormalizedContent } from "@core/contracts";
-import { normalizeTextSegmentStyle } from "@core/config/typography";
-import { dispatchCommand } from "@core/engine/commandBus";
-import { sanitizeRichTextHtml } from "@core/sanitize/richTextSanitizer";
-import type { StepBlock } from "@core/types/canvas";
+import type { NormalizedBlock, NormalizedContent } from "@core/foundation/schemas";
+import { isNormalizedContent } from "@core/foundation/schemas";
+import { normalizeTextSegmentStyle } from "@core/ui/theming/engine/typography";
+import { dispatchCommand } from "@core/runtime/command/commandBus";
+import { sanitizeRichTextHtml } from "@core/security/sanitization/richTextSanitizer";
+import type { StepBlock } from "@core/foundation/types/canvas";
 import {
   cloneInputStudioDraftBlocks,
   isInputStudioDraftQueueMeta,

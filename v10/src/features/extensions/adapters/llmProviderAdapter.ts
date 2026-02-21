@@ -1,4 +1,4 @@
-import type { NormalizedContent } from "@core/contracts";
+import type { NormalizedContent } from "@core/foundation/schemas";
 import {
   createProviderAdapterAbiMetadata,
   createProviderAdapterRequestEnvelope,

@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-import type { ToolResult } from "@core/contracts";
+import type { ToolResult } from "@core/foundation/schemas";
 import { resolveQueueEntryConflict } from "@features/sync/realtime/conflictPolicy";
 
 export type SyncPoint = {

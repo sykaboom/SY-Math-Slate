@@ -1,5 +1,5 @@
-import type { NormalizedContent, ToolResult } from "@core/contracts";
-import type { ConnectorResponse } from "@core/extensions/connectors";
+import type { NormalizedContent, ToolResult } from "@core/foundation/schemas";
+import type { ConnectorResponse } from "@core/runtime/plugin-runtime/connectors";
 import type { ExtensionAdapter } from "./types";
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>

@@ -2,7 +2,7 @@ import type {
   StepBlockKind,
   StepSegment,
   TextSegmentStyle,
-} from "@core/types/canvas";
+} from "@core/foundation/types/canvas";
 import type { StepBlockDraft } from "@features/layout/dataInput/types";
 
 export const INPUT_STUDIO_DRAFT_QUEUE_TYPE = "input-studio-draft";

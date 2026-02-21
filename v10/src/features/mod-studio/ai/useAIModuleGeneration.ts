@@ -2,8 +2,8 @@
 
 import { useCallback, useState } from "react";
 
-import { listAppCommands } from "@core/engine/commandBus";
-import { isKnownUISlotName } from "@core/extensions/registry";
+import { listAppCommands } from "@core/runtime/command/commandBus";
+import { isKnownUISlotName } from "@core/runtime/plugin-runtime/registry";
 import type { ModuleDraft } from "@features/mod-studio/core/types";
 import { useModStudioStore } from "@features/store/useModStudioStore";
 

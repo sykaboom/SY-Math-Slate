@@ -5,9 +5,9 @@ import { useUIStore, type LaserType, type PenType } from "@features/store/useUIS
 import { useCanvasStore } from "@features/store/useCanvasStore";
 import { useLocalStore } from "@features/store/useLocalStore";
 import { useSyncStore } from "@features/store/useSyncStore";
-import type { CanvasItem, Point, StrokeItem } from "@core/types/canvas";
-import { getBoardSize } from "@core/config/boardSpec";
-import { getRenderPerfProfile } from "@core/config/perfProfile";
+import type { CanvasItem, Point, StrokeItem } from "@core/foundation/types/canvas";
+import { getBoardSize } from "@core/foundation/policies/boardSpec";
+import { getRenderPerfProfile } from "@core/foundation/policies/perfProfile";
 
 type LaserPoint = { x: number; y: number; t: number };
 

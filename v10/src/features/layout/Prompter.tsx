@@ -3,7 +3,7 @@
 import { useMemo } from "react";
 
 import { useCanvasStore } from "@features/store/useCanvasStore";
-import type { CanvasItem, TextItem } from "@core/types/canvas";
+import type { CanvasItem, TextItem } from "@core/foundation/types/canvas";
 
 const isTextItem = (item: CanvasItem): item is TextItem => item.type === "text";
 

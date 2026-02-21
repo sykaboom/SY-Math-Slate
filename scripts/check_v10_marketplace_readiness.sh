@@ -5,8 +5,8 @@ repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$repo_root"
 
 required_paths=(
-  "v10/src/core/contracts/extensionMarketplace.ts"
-  "v10/src/core/extensions/marketplaceCatalog.ts"
+  "v10/src/core/foundation/schemas/extensionMarketplace.ts"
+  "v10/src/core/runtime/plugin-runtime/marketplaceCatalog.ts"
   "v10/src/app/api/extensions/marketplace/route.ts"
   "v10/src/features/extensions/marketplace/useMarketplaceCatalog.ts"
   "v10/tests/marketplace_readiness.mjs"

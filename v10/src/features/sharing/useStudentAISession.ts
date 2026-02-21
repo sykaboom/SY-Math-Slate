@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 
-import type { SessionPolicy } from "@core/types/sessionPolicy";
+import type { SessionPolicy } from "@core/foundation/types/sessionPolicy";
 
 import type { UseParticipantSessionState } from "./useParticipantSession";
 

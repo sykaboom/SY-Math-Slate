@@ -1,9 +1,9 @@
-import type { AnchorPosition, CanvasItem, PersistedCanvasV2 } from "@core/types/canvas";
+import type { AnchorPosition, CanvasItem, PersistedCanvasV2 } from "@core/foundation/types/canvas";
 import type {
   CanvasSnapshot,
   ShareSessionMeta,
   SnapshotScope,
-} from "@core/types/snapshot";
+} from "@core/foundation/types/snapshot";
 
 export const SNAPSHOT_SCHEMA_VERSION = "1";
 export const SHARE_STORAGE_PREFIX = "sy_share:";

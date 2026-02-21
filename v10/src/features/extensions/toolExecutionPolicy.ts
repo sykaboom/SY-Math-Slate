@@ -2,12 +2,12 @@ import {
   configureToolExecutionPolicyHooks,
   resetToolExecutionPolicyHooks,
   type PendingApprovalEntry,
-} from "@core/extensions/connectors";
+} from "@core/runtime/plugin-runtime/connectors";
 import {
   canExecuteToolForRole,
   resolveExecutionRole,
   shouldQueueToolApprovalByPolicyForRole,
-} from "@core/config/rolePolicy";
+} from "@core/foundation/policies/rolePolicy";
 import { reportPolicyBooleanDiff } from "@features/policy/policyShadow";
 import { emitAuditEvent } from "@features/observability/auditLogger";
 import { useLocalStore } from "@features/store/useLocalStore";

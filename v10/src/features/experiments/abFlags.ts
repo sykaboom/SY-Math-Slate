@@ -3,7 +3,7 @@ import {
   validateExperimentRegistry,
   type ExperimentId,
   type ExperimentVariant,
-} from "@core/config/experiments";
+} from "@core/foundation/policies/experiments";
 
 export type ExperimentAssignment = {
   experimentId: string;

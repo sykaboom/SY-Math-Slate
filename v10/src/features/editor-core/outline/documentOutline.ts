@@ -1,4 +1,4 @@
-import type { StepBlock, StepBlockKind, StepSegment } from "@core/types/canvas";
+import type { StepBlock, StepBlockKind, StepSegment } from "@core/foundation/types/canvas";
 
 export type DocumentOutlineEntry = {
   stepId: string;

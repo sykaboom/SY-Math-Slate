@@ -5,9 +5,9 @@ import { useLayoutEffect, useMemo, useState } from "react";
 import { cn } from "@core/utils";
 import { useCanvasStore } from "@features/store/useCanvasStore";
 import { useUIStore } from "@features/store/useUIStoreBridge";
-import { getBoardPadding } from "@core/config/boardSpec";
+import { getBoardPadding } from "@core/foundation/policies/boardSpec";
 import { useBoardTransform } from "@features/hooks/useBoardTransform";
-import { chalkTheme } from "@core/themes/chalkTheme";
+import { chalkTheme } from "@core/ui/theming/presets/chalkTheme";
 
 type AnchorIndicatorProps = {
   isAnimating: boolean;

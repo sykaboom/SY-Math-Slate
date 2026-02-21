@@ -9,7 +9,7 @@ import {
   listCustomThemePresets,
   listThemePresets,
   type CustomThemePresetDefinition,
-} from "@core/themes/presets";
+} from "@core/ui/theming/presets/presets";
 import { cn } from "@core/utils";
 import { useThemeStore } from "@features/store/useThemeStore";
 

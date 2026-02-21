@@ -20,7 +20,7 @@ import {
   type CreateCommunityRightsClaimInput,
   type ModerateCommunityReportInput,
   type ReviewCommunityRightsClaimInput,
-} from "@core/contracts/community";
+} from "@core/foundation/schemas/community";
 
 import { useCommunityStore } from "./store/useCommunityStore";
 

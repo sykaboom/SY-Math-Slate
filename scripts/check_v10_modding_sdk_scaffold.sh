@@ -5,8 +5,8 @@ repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$repo_root"
 
 required_paths=(
-  "v10/src/core/extensions/sdk/moddingSdk.ts"
-  "v10/src/core/extensions/sdk/index.ts"
+  "v10/src/core/runtime/plugin-runtime/sdk/moddingSdk.ts"
+  "v10/src/core/runtime/plugin-runtime/sdk/index.ts"
   "scripts/modding_sdk_cli.mjs"
   "codex_tasks/workflow/modding_sdk_cli_scaffold.md"
 )

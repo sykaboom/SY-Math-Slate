@@ -34,7 +34,7 @@ if (flags.liveTwoWay && !flags.liveOneWay) {
   throw new Error("phase5 preflight: liveTwoWay requires liveOneWay enabled");
 }
 
-const rolePolicy = read("src/core/config/rolePolicy.ts");
+const rolePolicy = read("src/core/foundation/policies/rolePolicy.ts");
 assertIncludes(
   rolePolicy,
   'defaultDecision: "deny"',
@@ -87,7 +87,7 @@ if (flags.liveTwoWay) {
 
 if (flags.partialSharing) {
   const hasLayerShareScope = [
-    "src/core/types/snapshot.ts",
+    "src/core/foundation/types/snapshot.ts",
     "src/features/sharing/snapshotSerializer.ts",
     "src/features/sharing/useSnapshotShare.ts",
   ].some((candidate) => exists(candidate));

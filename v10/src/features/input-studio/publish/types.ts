@@ -1,4 +1,4 @@
-import type { StepSegment, TextSegmentStyle } from "@core/types/canvas";
+import type { StepSegment, TextSegmentStyle } from "@core/foundation/types/canvas";
 import type { StepBlockDraft } from "@features/layout/dataInput/types";
 
 const INPUT_STUDIO_DEFAULT_SNAPSHOT_REASON = "input-studio-snapshot";

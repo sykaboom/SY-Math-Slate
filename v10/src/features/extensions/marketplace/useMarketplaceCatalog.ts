@@ -5,7 +5,7 @@ import { useCallback, useState } from "react";
 import {
   validateExtensionMarketplaceCatalog,
   type ExtensionMarketplaceCatalog,
-} from "@core/contracts/extensionMarketplace";
+} from "@core/foundation/schemas/extensionMarketplace";
 
 export type MarketplaceCatalogError = {
   code: string;

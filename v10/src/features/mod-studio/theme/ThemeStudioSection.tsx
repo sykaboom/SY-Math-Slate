@@ -2,8 +2,8 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import { isThemePresetId, type ThemeGlobalTokenKey, type ThemePresetId } from "@core/config/themeTokens";
-import { getThemePreset, listThemePresets, saveCustomThemePreset } from "@core/themes/presets";
+import { isThemePresetId, type ThemeGlobalTokenKey, type ThemePresetId } from "@core/ui/theming/tokens/themeTokens";
+import { getThemePreset, listThemePresets, saveCustomThemePreset } from "@core/ui/theming/presets/presets";
 import {
   applyThemeDraftPreview,
   toGlobalThemeVariable,

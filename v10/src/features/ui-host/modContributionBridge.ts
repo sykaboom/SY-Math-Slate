@@ -1,5 +1,5 @@
 import type { ModPanelContribution, ModToolbarItem } from "@core/mod/contracts";
-import { isKnownUISlotName, type UISlotName } from "@core/extensions/registry";
+import { isKnownUISlotName, type UISlotName } from "@core/runtime/plugin-runtime/registry";
 import { getRuntimeModManager } from "@core/mod/host";
 import {
   listRuntimeModPackages,

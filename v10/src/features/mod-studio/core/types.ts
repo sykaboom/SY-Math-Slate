@@ -1,10 +1,10 @@
-import type { RolePolicyDocument } from "@core/config/rolePolicyGuards";
+import type { RolePolicyDocument } from "@core/foundation/policies/rolePolicyGuards";
 import type {
   ThemeGlobalTokenMap,
   ThemeModuleScopedTokenMap,
   ThemePresetId,
-} from "@core/config/themeTokens";
-import type { UISlotName } from "@core/extensions/registry";
+} from "@core/ui/theming/tokens/themeTokens";
+import type { UISlotName } from "@core/runtime/plugin-runtime/registry";
 
 export const MOD_STUDIO_TABS = [
   "policy",

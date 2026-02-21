@@ -5,13 +5,13 @@ import {
   SESSION_POLICY_TEMPLATES,
   cloneSessionPolicy,
   resolveSessionPolicyTemplate,
-} from "@core/config/sessionPolicyTemplates";
+} from "@core/foundation/policies/sessionPolicyTemplates";
 import type {
   ApprovalMode,
   ProposalType,
   SessionPolicy,
   SessionPolicyPromptProfile,
-} from "@core/types/sessionPolicy";
+} from "@core/foundation/types/sessionPolicy";
 
 export type SessionPolicyPromptProfileField =
   keyof SessionPolicyPromptProfile;

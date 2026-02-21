@@ -4,21 +4,21 @@ import {
   getBoardPadding,
   getBoardSize,
   type BoardRatio,
-} from "@core/config/boardSpec";
+} from "@core/foundation/policies/boardSpec";
 import {
   DEFAULT_TEXT_LINE_HEIGHT,
   toTextItemStyle,
-} from "@core/config/typography";
-import { sanitizeRichTextHtml } from "@core/sanitize/richTextSanitizer";
-import { loadMathJax } from "@core/math/loader";
-import { typesetElement } from "@core/math/render";
+} from "@core/ui/theming/engine/typography";
+import { sanitizeRichTextHtml } from "@core/security/sanitization/richTextSanitizer";
+import { loadMathJax } from "@core/domain/math/loader";
+import { typesetElement } from "@core/domain/math/render";
 import type {
   AnchorMap,
   AnchorPosition,
   CanvasItem,
   StepBlock,
   StepSegment,
-} from "@core/types/canvas";
+} from "@core/foundation/types/canvas";
 
 const CONTENT_PADDING = getBoardPadding();
 const COLUMN_GAP = 48;

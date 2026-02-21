@@ -1,4 +1,4 @@
-import type { UISlotName } from "@core/extensions/registry";
+import type { UISlotName } from "@core/runtime/plugin-runtime/registry";
 import type { PanelBehaviorContract, PanelDisplayMode } from "./panelBehavior.types";
 
 export type WindowRuntimeDisplayMode = PanelDisplayMode;

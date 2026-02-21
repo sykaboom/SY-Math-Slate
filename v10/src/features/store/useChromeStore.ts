@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { CORE_PANEL_POLICY_IDS } from "@core/config/panel-policy";
+import { CORE_PANEL_POLICY_IDS } from "@core/foundation/policies/panel-policy";
 import type {
   WindowRuntimePanelPolicyState,
   WindowRuntimePanelPolicyStateEntry,

@@ -1,4 +1,4 @@
-import type { PromptProfile } from "@core/types/aiApproval";
+import type { PromptProfile } from "@core/foundation/types/aiApproval";
 
 import { resolvePromptProfile } from "./resolvePromptProfile";
 
@@ -109,7 +109,7 @@ export const executeLLMCallOnServer = async (
   }
 
   try {
-    const { callAIProvider } = await import("@core/config/aiProviderRegistry");
+    const { callAIProvider } = await import("@core/foundation/registries/aiProviderRegistry");
     const result = await callAIProvider({
       providerId: input.providerId,
       model: input.model,

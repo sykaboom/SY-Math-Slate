@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 
-import { dispatchCommand } from "@core/engine/commandBus";
+import { dispatchCommand } from "@core/runtime/command/commandBus";
 import { cn } from "@core/utils";
 import { PublicToggle } from "@features/sharing/PublicToggle";
 import { ShareButton } from "@features/sharing/ShareButton";

@@ -2,8 +2,8 @@ import type {
   NormalizedContent,
   ToolRegistryEntry,
   ToolResult,
-} from "@core/contracts";
-import type { ConnectorResolutionErrorCode } from "@core/extensions/connectors";
+} from "@core/foundation/schemas";
+import type { ConnectorResolutionErrorCode } from "@core/runtime/plugin-runtime/connectors";
 import type { DraftDiffResult } from "@features/input-studio/diff/types";
 import type { StepBlockDraft } from "@features/layout/dataInput/types";
 

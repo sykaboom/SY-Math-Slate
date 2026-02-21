@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef } from "react";
 
-import { getBoardSize } from "@core/config/boardSpec";
+import { getBoardSize } from "@core/foundation/policies/boardSpec";
 import { useUIStore } from "@features/store/useUIStoreBridge";
 
 export type BoardTransform = {

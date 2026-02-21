@@ -39,7 +39,7 @@ assertIncludes(
   "community route must keep host-token validation path."
 );
 
-const communityContract = read("src/core/contracts/community.ts");
+const communityContract = read("src/core/foundation/schemas/community.ts");
 assertIncludes(
   communityContract,
   "validateCommunitySafetyEvent",

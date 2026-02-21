@@ -4,7 +4,7 @@ import {
   type CapabilityKey,
   type CapabilityProfileName,
   getCapabilities,
-} from "@core/config/capabilities";
+} from "@core/foundation/policies/capabilities";
 
 interface CapabilityStoreState {
   capabilityProfile: CapabilityProfileName;

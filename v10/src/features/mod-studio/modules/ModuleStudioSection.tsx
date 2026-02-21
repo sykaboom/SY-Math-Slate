@@ -2,8 +2,8 @@
 
 import { useMemo, useState } from "react";
 
-import { listAppCommands } from "@core/engine/commandBus";
-import { listKnownUISlotNames, type UISlotName } from "@core/extensions/registry";
+import { listAppCommands } from "@core/runtime/command/commandBus";
+import { listKnownUISlotNames, type UISlotName } from "@core/runtime/plugin-runtime/registry";
 import { getRuntimeModManager, getRuntimeModRegistry } from "@core/mod/host";
 import { listRuntimeModPackages } from "@core/mod/package";
 import type { ModuleDraft } from "@features/mod-studio/core/types";

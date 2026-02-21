@@ -17,7 +17,7 @@ import { useCanvasStore } from "@features/store/useCanvasStore";
 import { listResolvedModToolbarContributions } from "@features/ui-host/modContributionBridge";
 import { useLocalStore } from "@features/store/useLocalStore";
 import { useModStore } from "@features/store/useModStore";
-import { dispatchCommand } from "@core/engine/commandBus";
+import { dispatchCommand } from "@core/runtime/command/commandBus";
 import { cn } from "@core/utils";
 import { useUIStore } from "@features/store/useUIStoreBridge";
 import {

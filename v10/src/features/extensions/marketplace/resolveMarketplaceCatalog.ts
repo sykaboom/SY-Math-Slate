@@ -1,5 +1,5 @@
-import type { ExtensionMarketplaceCatalog } from "@core/contracts/extensionMarketplace";
-import { getExtensionMarketplaceCatalog } from "@core/extensions/marketplaceCatalog";
+import type { ExtensionMarketplaceCatalog } from "@core/foundation/schemas/extensionMarketplace";
+import { getExtensionMarketplaceCatalog } from "@core/runtime/plugin-runtime/marketplaceCatalog";
 
 export type MarketplaceCatalogResolution =
   | {

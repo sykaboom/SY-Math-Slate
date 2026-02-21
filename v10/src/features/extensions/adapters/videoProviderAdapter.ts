@@ -1,4 +1,4 @@
-import type { VideoAssetPayload } from "@core/contracts";
+import type { VideoAssetPayload } from "@core/foundation/schemas";
 import {
   createProviderAdapterAbiMetadata,
   createProviderAdapterRequestEnvelope,

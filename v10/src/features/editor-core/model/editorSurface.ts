@@ -1,4 +1,4 @@
-import type { StepBlock } from "@core/types/canvas";
+import type { StepBlock } from "@core/foundation/types/canvas";
 
 export type EditorSurfaceBreakKind = "line-break" | "column-break" | "page-break";
 

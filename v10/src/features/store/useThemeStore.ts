@@ -10,15 +10,15 @@ import {
   type ThemeGlobalTokenMap,
   type ThemeModuleScopedTokenMap,
   type ThemePresetId,
-} from "@core/config/themeTokens";
-import { applyTheme } from "@core/theme/applyTheme";
+} from "@core/ui/theming/tokens/themeTokens";
+import { applyTheme } from "@core/ui/theming/engine/applyTheme";
 import {
   DEFAULT_THEME_PREFERENCES,
   cloneThemePreferences,
   mergeThemePreferences,
   normalizeThemePreferences,
   type ThemePreferences,
-} from "@core/theme/preferences.schema";
+} from "@core/ui/theming/engine/preferences.schema";
 
 export const THEME_STORAGE_KEY = "sy-theme-v1";
 

@@ -1,4 +1,4 @@
-import { isKnownUISlotName } from "@core/extensions/registry";
+import { isKnownUISlotName } from "@core/runtime/plugin-runtime/registry";
 import {
   PANEL_DISPLAY_MODES,
   PANEL_RUNTIME_ROLES,

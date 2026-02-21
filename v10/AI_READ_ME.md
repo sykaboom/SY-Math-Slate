@@ -36,22 +36,25 @@ Forbidden:
 
 ## 3) Path Aliases
 - `@core/*` -> `v10/src/core/*`
+- `@mod/*` -> `v10/src/mod/*` (optional, layer checker supports mod layer)
 - `@features/*` -> `v10/src/features/*`
 - `@ui/*` -> `v10/src/ui/*`
 - `@/*` -> `v10/src/*`
 
 ## 4) Runtime Architecture (Current)
 Core subsystems:
-- `core/engine`: command bus and preflight execution.
-- `core/contracts`: runtime guards/contracts.
-- `core/extensions`: plugin loader, registry, MCP gateway.
+- `core/foundation`: policies + registries + schemas + types (canonical runtime contracts).
+- `core/runtime`: command + plugin-runtime execution surfaces.
+- `core/domain`: domain logic (math).
+- `core/pipelines`: persistence/migrations/export flows.
+- `core/ui/theming`: theme engine + tokens + presets.
+- `core/security/sanitization`: sanitize runtime.
 - `core/mod/contracts`: mod runtime contracts and normalized event/context types.
 - `core/mod/package`: canonical package contracts/registry/selectors/guards and template-pack adapter (`types.ts`, `registry.ts`, `selectors.ts`, `guards.ts`, `templatePackAdapter.ts`).
 - `core/mod/host`: mod runtime manager/registry and normalized routing bridge (`manager.ts`, `registry.ts`, `inputRoutingBridge.ts`).
 - `core/mod/builtin`: builtin mods (`draw`, `playback`, `canvas`, `lecture`) under one contract.
-- `core/themes`: theme presets.
-- `core/theme`: runtime theme apply/preference schema.
-- `core/config`: tokens, capability/config defaults, and core/mod boundary contract (`coreModBoundary.ts`, guards).
+- Legacy compat lanes (temporary):
+  - `core/{config,contracts,engine,extensions,math,migrations,persistence,sanitize,theme,themes,types}` are shim-only during cutover.
 
 Feature subsystems:
 - `features/extensions`: command registrations and UI slot runtime.
@@ -78,8 +81,9 @@ Feature subsystems:
 - `features/mod-studio/ai`: in-studio AI module generation UI/hooks (`AIModuleGenerationPanel`, `useAIModuleGeneration`).
 
 Template pack runtime:
-- `src/mod/templates/*`: folder-based template packs and contract guards.
-- `src/mod/runtime/templatePackRegistry.ts`: compatibility facade that syncs template packs through `core/mod/package` runtime registry/selectors.
+- `src/mod/packs/*`: folder-based template packs (active path).
+- `src/mod/schema/*`: pack contract guards/types (active path).
+- `src/mod/bridge/packRegistryBridge.ts`: runtime bridge authority (active path).
 
 ## 5) Store Authorities (SSOT)
 Authority-layer stores:
@@ -104,7 +108,7 @@ Token naming:
 - `neon-*` remains compatibility alias only
 
 Theme runtime SSOT:
-- `src/core/theme/applyTheme.ts`: CSS variable application (`--theme-*`, `--mod-*`, `--theme-*-rgb`)
+- `src/core/ui/theming/engine/applyTheme.ts`: CSS variable application (`--theme-*`, `--mod-*`, `--theme-*-rgb`)
 - `src/features/mod-studio/theme/themeIsolation.ts`: draft-preview path using separate applier instance
 - `src/features/theme/ThemeProvider.tsx`: mount-time active theme apply
 - `src/features/theme/ThemePickerPanel.tsx`: end-user preset entry (chalk/parchment/notebook)
@@ -113,7 +117,7 @@ Theme runtime SSOT:
 
 AI call runtime:
 - `src/features/sharing/ai/LLMCallService.ts`: server/client call facade
-- `src/core/config/aiProviderRegistry.ts`: provider resolution and OpenAI/mock execution (no client key exposure)
+- `src/core/foundation/registries/aiProviderRegistry.ts`: provider resolution and OpenAI/mock execution (no client key exposure)
 - `src/app/api/ai/call/route.ts`: server-side LLM proxy endpoint
 - `src/app/api/ai/module/route.ts`: server-side AI module generation endpoint (mock-first + structured validation)
 

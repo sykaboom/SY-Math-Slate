@@ -6,7 +6,7 @@ import {
   type ThemeGlobalTokenKey,
   type ThemeGlobalTokenMap,
   type ThemePresetId,
-} from "@core/config/themeTokens";
+} from "@core/ui/theming/tokens/themeTokens";
 
 type TokenDraftState = {
   basePresetId: ThemePresetId;

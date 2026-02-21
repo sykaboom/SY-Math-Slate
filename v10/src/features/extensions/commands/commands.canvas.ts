@@ -2,8 +2,8 @@ import {
   registerAppCommand,
   type AppCommand,
   type AppCommandPayloadValidationResult,
-} from "@core/engine/commandBus";
-import type { ModInput } from "@core/types/canvas";
+} from "@core/runtime/command/commandBus";
+import type { ModInput } from "@core/foundation/types/canvas";
 import { useCanvasStore } from "@features/store/useCanvasStore";
 import {
   type EmptyPayload,

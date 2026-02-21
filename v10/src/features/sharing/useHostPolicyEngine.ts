@@ -2,14 +2,14 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import type { LiveSessionMeta } from "@core/types/snapshot";
+import type { LiveSessionMeta } from "@core/foundation/types/snapshot";
 import type {
   ApprovalMode,
   ProposalDecision,
   ProposalEnvelopePayload,
   ProposalType,
   SessionPolicy,
-} from "@core/types/sessionPolicy";
+} from "@core/foundation/types/sessionPolicy";
 
 import {
   isProposalPayload,

@@ -1,12 +1,12 @@
-import type { PersistedCanvasV2 } from "@core/types/canvas";
+import type { PersistedCanvasV2 } from "@core/foundation/types/canvas";
 import type {
   ProposalEnvelopePayload,
   ProposalResultEnvelopePayload,
-} from "@core/types/sessionPolicy";
+} from "@core/foundation/types/sessionPolicy";
 import {
   isProposalDecision,
   isProposalType,
-} from "@core/types/sessionPolicy";
+} from "@core/foundation/types/sessionPolicy";
 
 export type SharedViewportState = {
   x: number;

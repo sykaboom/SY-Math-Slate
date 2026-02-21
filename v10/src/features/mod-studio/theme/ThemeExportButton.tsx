@@ -5,7 +5,7 @@ import { useCallback } from "react";
 import type {
   ThemeGlobalTokenMap,
   ThemeModuleScopedTokenMap,
-} from "@core/config/themeTokens";
+} from "@core/ui/theming/tokens/themeTokens";
 
 import { serializeThemeJson, toThemeJsonFilename } from "./themeJsonIO";
 

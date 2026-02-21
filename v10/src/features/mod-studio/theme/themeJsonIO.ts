@@ -4,7 +4,7 @@ import {
   normalizeThemeModuleScopedTokenMap,
   type ThemeGlobalTokenMap,
   type ThemeModuleScopedTokenMap,
-} from "@core/config/themeTokens";
+} from "@core/ui/theming/tokens/themeTokens";
 
 export const THEME_JSON_SCHEMA_MARKER = "1" as const;
 

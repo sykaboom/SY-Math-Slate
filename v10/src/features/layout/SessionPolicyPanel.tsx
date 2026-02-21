@@ -2,8 +2,8 @@
 
 import { useMemo } from "react";
 
-import type { ApprovalMode, ProposalType } from "@core/types/sessionPolicy";
-import { PROPOSAL_TYPES } from "@core/types/sessionPolicy";
+import type { ApprovalMode, ProposalType } from "@core/foundation/types/sessionPolicy";
+import { PROPOSAL_TYPES } from "@core/foundation/types/sessionPolicy";
 import { useSessionPolicyStore } from "@features/store/useSessionPolicyStore";
 
 type SessionPolicyPanelProps = {

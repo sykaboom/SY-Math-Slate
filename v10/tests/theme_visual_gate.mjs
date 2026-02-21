@@ -12,10 +12,10 @@ const assertIncludes = (content, needle, message) => {
   }
 };
 
-const themeTokenSource = readText('src/core/config/themeTokens.ts');
-const presetSource = readText('src/core/themes/presets.ts');
+const themeTokenSource = readText('src/core/ui/theming/tokens/themeTokens.ts');
+const presetSource = readText('src/core/ui/theming/presets/presets.ts');
 const isolationSource = readText('src/features/mod-studio/theme/themeIsolation.ts');
-const applyThemeSource = readText('src/core/theme/applyTheme.ts');
+const applyThemeSource = readText('src/core/ui/theming/engine/applyTheme.ts');
 const storeSource = readText('src/features/store/useModStudioStore.ts');
 
 ['chalk', 'parchment', 'notebook'].forEach((presetId) => {

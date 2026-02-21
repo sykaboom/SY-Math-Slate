@@ -10,9 +10,9 @@ import type {
   StepBlock,
   StepSegment,
   StrokeItem,
-} from "@core/types/canvas";
-import { getBoardPadding } from "@core/config/boardSpec";
-import { toTextItemStyle } from "@core/config/typography";
+} from "@core/foundation/types/canvas";
+import { getBoardPadding } from "@core/foundation/policies/boardSpec";
+import { toTextItemStyle } from "@core/ui/theming/engine/typography";
 import { runAutoLayout } from "@features/layout/autoLayout";
 import { useUIStore } from "@features/store/useUIStoreBridge";
 

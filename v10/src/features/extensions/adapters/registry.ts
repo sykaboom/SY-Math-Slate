@@ -1,4 +1,4 @@
-import type { ConnectorAdapterInvoker } from "@core/extensions/connectors";
+import type { ConnectorAdapterInvoker } from "@core/runtime/plugin-runtime/connectors";
 import type { ProviderAdapterAbiMetadata } from "./providerAbi";
 import type { ExtensionAdapter } from "./types";
 

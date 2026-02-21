@@ -5,8 +5,8 @@ repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$repo_root"
 
 isolation_file="v10/src/features/mod-studio/theme/themeIsolation.ts"
-apply_file="v10/src/core/theme/applyTheme.ts"
-config_file="v10/src/core/config/themeTokens.ts"
+apply_file="v10/src/core/ui/theming/engine/applyTheme.ts"
+config_file="v10/src/core/ui/theming/tokens/themeTokens.ts"
 
 if [[ ! -f "$isolation_file" ]]; then
   echo "[check_v10_module_theme_scope] FAIL: missing $isolation_file"
@@ -58,7 +58,7 @@ if ! rg -q 'toGlobalThemeVariable\(tokenKey\)' "$isolation_file" "$apply_file"; 
 fi
 
 if ! rg -q 'createThemeVariableApplier|resolveThemeTokens' "$isolation_file"; then
-  echo "[check_v10_module_theme_scope] FAIL: themeIsolation is not delegating through core/theme applier path"
+  echo "[check_v10_module_theme_scope] FAIL: themeIsolation is not delegating through core/ui/theming applier path"
   exit 1
 fi
 

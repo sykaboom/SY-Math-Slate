@@ -2,7 +2,7 @@
 
 import { useCallback, useMemo } from "react";
 
-import { dispatchCommand } from "@core/engine/commandBus";
+import { dispatchCommand } from "@core/runtime/command/commandBus";
 import {
   buildDocumentOutline,
   type DocumentOutlineEntry,

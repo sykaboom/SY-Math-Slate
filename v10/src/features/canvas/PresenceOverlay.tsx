@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 
-import { getBoardSize } from "@core/config/boardSpec";
+import { getBoardSize } from "@core/foundation/policies/boardSpec";
 import { useLocalStore } from "@features/store/useLocalStore";
 import { useSyncStore } from "@features/store/useSyncStore";
 import { useUIStore } from "@features/store/useUIStoreBridge";

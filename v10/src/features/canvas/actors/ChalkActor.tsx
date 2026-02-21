@@ -1,6 +1,6 @@
 "use client";
 
-import { chalkTheme } from "@core/themes/chalkTheme";
+import { chalkTheme } from "@core/ui/theming/presets/chalkTheme";
 
 type ChalkActorProps = {
   isMoving: boolean;

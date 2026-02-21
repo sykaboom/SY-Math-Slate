@@ -28,7 +28,7 @@ import {
   type CommunityTrafficAction,
   type CommunityTrafficSignal,
   type CommunityTrustSafetySloSummary,
-} from "@core/contracts/community";
+} from "@core/foundation/schemas/community";
 import { assessInvalidTraffic } from "@features/community/traffic/invalidTraffic";
 
 type CommunityApiErrorResponse = {

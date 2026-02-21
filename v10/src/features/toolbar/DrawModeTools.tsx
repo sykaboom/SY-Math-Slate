@@ -1,7 +1,7 @@
 "use client";
 
 import { Popover, PopoverTrigger } from "@ui/components/popover";
-import { dispatchCommand } from "@core/engine/commandBus";
+import { dispatchCommand } from "@core/runtime/command/commandBus";
 import { useUIStore, type Tool } from "@features/store/useUIStoreBridge";
 import { useCanvasStore } from "@features/store/useCanvasStore";
 import {

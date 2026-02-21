@@ -10,9 +10,9 @@ if [[ ! -d "v10/src" ]]; then
 fi
 
 required_files=(
-  "v10/src/core/engine/commandBus.ts"
-  "v10/src/core/extensions/pluginLoader.ts"
-  "v10/src/core/extensions/mcpGateway.ts"
+  "v10/src/core/runtime/command/commandBus.ts"
+  "v10/src/core/runtime/plugin-runtime/pluginLoader.ts"
+  "v10/src/core/runtime/plugin-runtime/mcpGateway.ts"
   "v10/src/features/extensions/commands/registerCoreCommands.ts"
   "v10/src/features/extensions/ui/ExtensionSlot.tsx"
 )

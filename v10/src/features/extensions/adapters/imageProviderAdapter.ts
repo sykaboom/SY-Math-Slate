@@ -1,4 +1,4 @@
-import type { ImageAssetPayload } from "@core/contracts";
+import type { ImageAssetPayload } from "@core/foundation/schemas";
 import {
   createProviderAdapterAbiMetadata,
   createProviderAdapterRequestEnvelope,

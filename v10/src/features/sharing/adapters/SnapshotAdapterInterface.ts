@@ -1,9 +1,9 @@
-import type { PersistedCanvasV2 } from "@core/types/canvas";
+import type { PersistedCanvasV2 } from "@core/foundation/types/canvas";
 import type {
   CanvasSnapshot,
   LiveSessionMeta,
   ShareSessionMeta,
-} from "@core/types/snapshot";
+} from "@core/foundation/types/snapshot";
 
 export type SnapshotSource = "local" | "server";
 

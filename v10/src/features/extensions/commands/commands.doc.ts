@@ -2,13 +2,13 @@ import {
   registerAppCommand,
   type AppCommand,
   type AppCommandPayloadValidationResult,
-} from "@core/engine/commandBus";
+} from "@core/runtime/command/commandBus";
 import type {
   StepBlock,
   StepBlockKind,
   StepSegment,
   TextSegmentStyle,
-} from "@core/types/canvas";
+} from "@core/foundation/types/canvas";
 import { useCanvasStore } from "@features/store/useCanvasStore";
 import { useDocStore } from "@features/store/useDocStore";
 const canvasStore = useCanvasStore;

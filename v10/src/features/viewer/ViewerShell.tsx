@@ -6,10 +6,10 @@ import {
   LECTURE_BROADCAST,
   cloneSessionPolicy,
   resolveSessionPolicyTemplate,
-} from "@core/config/sessionPolicyTemplates";
-import type { PersistedCanvasV2, PersistedSlateDoc } from "@core/types/canvas";
-import type { CanvasItem } from "@core/types/canvas";
-import type { SessionPolicy } from "@core/types/sessionPolicy";
+} from "@core/foundation/policies/sessionPolicyTemplates";
+import type { PersistedCanvasV2, PersistedSlateDoc } from "@core/foundation/types/canvas";
+import type { CanvasItem } from "@core/foundation/types/canvas";
+import type { SessionPolicy } from "@core/foundation/types/sessionPolicy";
 import { CanvasStage } from "@features/canvas/CanvasStage";
 import { StudentAIPromptBar } from "@features/sharing/ai/StudentAIPromptBar";
 import {

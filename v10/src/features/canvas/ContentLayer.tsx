@@ -4,9 +4,9 @@ import type { CSSProperties } from "react";
 
 import { useCanvasStore } from "@features/store/useCanvasStore";
 import { useUIStore } from "@features/store/useUIStoreBridge";
-import type { CanvasItem, ImageItem, TextItem } from "@core/types/canvas";
-import { getBoardPadding } from "@core/config/boardSpec";
-import { sanitizeRichTextHtml } from "@core/sanitize/richTextSanitizer";
+import type { CanvasItem, ImageItem, TextItem } from "@core/foundation/types/canvas";
+import { getBoardPadding } from "@core/foundation/policies/boardSpec";
+import { sanitizeRichTextHtml } from "@core/security/sanitization/richTextSanitizer";
 import { cn } from "@core/utils";
 import { MathTextBlock } from "@features/canvas/MathTextBlock";
 import { ImageBlock } from "@features/canvas/objects/ImageBlock";

@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 
-import type { QuestionState } from "@core/types/aiApproval";
+import type { QuestionState } from "@core/foundation/types/aiApproval";
 import { useTeacherApprovalQueue } from "@features/sharing/useTeacherApprovalQueue";
 
 import { ReAskPresetBar } from "./ReAskPresetBar";

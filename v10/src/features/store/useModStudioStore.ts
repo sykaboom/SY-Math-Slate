@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-import { getRolePolicyDocument } from "@core/config/rolePolicy";
+import { getRolePolicyDocument } from "@core/foundation/policies/rolePolicy";
 import {
   DEFAULT_THEME_PRESET_ID,
   normalizeThemeGlobalTokenMap,
@@ -9,9 +9,9 @@ import {
   sanitizeThemeModuleId,
   sanitizeThemeTokenKey,
   type ThemePresetId,
-} from "@core/config/themeTokens";
-import { listKnownUISlotNames, type UISlotName } from "@core/extensions/registry";
-import { getThemePreset } from "@core/themes/presets";
+} from "@core/ui/theming/tokens/themeTokens";
+import { listKnownUISlotNames, type UISlotName } from "@core/runtime/plugin-runtime/registry";
+import { getThemePreset } from "@core/ui/theming/presets/presets";
 import {
   MOD_STUDIO_TABS,
   type LayoutDraft,

@@ -2,14 +2,14 @@
 
 import { useCallback, useMemo } from "react";
 
-import { getBoardSize } from "@core/config/boardSpec";
-import type { PersistedCanvasV2 } from "@core/types/canvas";
+import { getBoardSize } from "@core/foundation/policies/boardSpec";
+import type { PersistedCanvasV2 } from "@core/foundation/types/canvas";
 import type {
   CanvasSnapshot,
   LiveSessionMeta,
   ShareSessionMeta,
   SnapshotScope,
-} from "@core/types/snapshot";
+} from "@core/foundation/types/snapshot";
 import { useCanvasStore } from "@features/store/useCanvasStore";
 import { useDocStore } from "@features/store/useDocStore";
 import { useUIStore } from "@features/store/useUIStoreBridge";

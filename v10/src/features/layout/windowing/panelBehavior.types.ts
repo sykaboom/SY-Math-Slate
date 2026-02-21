@@ -1,4 +1,4 @@
-import type { UISlotName } from "@core/extensions/registry";
+import type { UISlotName } from "@core/runtime/plugin-runtime/registry";
 
 export const PANEL_DISPLAY_MODES = ["windowed", "docked"] as const;
 export type PanelDisplayMode = (typeof PANEL_DISPLAY_MODES)[number];

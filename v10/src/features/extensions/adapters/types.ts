@@ -1,5 +1,5 @@
-import type { ToolRegistryCategory } from "@core/contracts";
-import type { ConnectorRequest, ConnectorResponse } from "@core/extensions/connectors";
+import type { ToolRegistryCategory } from "@core/foundation/schemas";
+import type { ConnectorRequest, ConnectorResponse } from "@core/runtime/plugin-runtime/connectors";
 import type { ProviderAdapterAbiMetadata } from "./providerAbi";
 
 export type AdapterHealth = {

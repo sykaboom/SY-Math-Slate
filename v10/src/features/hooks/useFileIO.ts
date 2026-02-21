@@ -3,11 +3,11 @@
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
 
-import { migrateToV2 } from "@core/migrations/migrateToV2";
-import { buildPersistedDoc } from "@core/persistence/buildPersistedDoc";
+import { migrateToV2 } from "@core/pipelines/migrations/migrateToV2";
+import { buildPersistedDoc } from "@core/pipelines/persistence/buildPersistedDoc";
 import { useCanvasStore } from "@features/store/useCanvasStore";
 import { useDocStore } from "@features/store/useDocStore";
-import type { ImageItem, PersistedSlateDoc } from "@core/types/canvas";
+import type { ImageItem, PersistedSlateDoc } from "@core/foundation/types/canvas";
 
 const MANIFEST_VERSION = "1.0";
 const MAX_FILE_SIZE_BYTES = 50 * 1024 * 1024;

@@ -2,19 +2,19 @@
 
 import { useSyncExternalStore } from "react";
 
-import { dispatchCommand } from "@core/engine/commandBus";
+import { dispatchCommand } from "@core/runtime/command/commandBus";
 import {
   getUISlotRegistryVersion,
   listUISlotComponents,
   subscribeUISlotRegistry,
   type UISlotName,
-} from "@core/extensions/registry";
+} from "@core/runtime/plugin-runtime/registry";
 import {
   getDeclarativePluginManifestVersion,
   listDeclarativeSlotContributions,
   subscribeDeclarativePluginManifests,
   type DeclarativeSlotContribution,
-} from "@core/extensions/pluginLoader";
+} from "@core/runtime/plugin-runtime/pluginLoader";
 import ErrorBoundary from "@ui/components/ErrorBoundary";
 import { Button } from "@ui/components/button";
 

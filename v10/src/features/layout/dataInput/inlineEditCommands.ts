@@ -1,5 +1,5 @@
-import type { StepSegment, TextSegmentStyle } from "@core/types/canvas";
-import { normalizeTextSegmentStyle } from "@core/config/typography";
+import type { StepSegment, TextSegmentStyle } from "@core/foundation/types/canvas";
+import { normalizeTextSegmentStyle } from "@core/ui/theming/engine/typography";
 
 import {
   createMediaSegment,

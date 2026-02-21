@@ -2,7 +2,7 @@ import {
   listCoreTemplateLauncherEntries,
   type CoreTemplateLauncherEntry,
 } from "@features/extensions/ui/coreTemplates";
-import type { UISlotName } from "@core/extensions/registry";
+import type { UISlotName } from "@core/runtime/plugin-runtime/registry";
 
 export type PanelLauncherRegistryEntry = {
   launcherId: string;

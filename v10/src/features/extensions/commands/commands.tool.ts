@@ -2,7 +2,7 @@ import {
   registerAppCommand,
   type AppCommand,
   type AppCommandPayloadValidationResult,
-} from "@core/engine/commandBus";
+} from "@core/runtime/command/commandBus";
 import {
   useUIStore as uiBridgeStore,
   type LaserType,

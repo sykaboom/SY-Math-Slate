@@ -2,8 +2,8 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import type { PersistedCanvasV2 } from "@core/types/canvas";
-import type { LiveSessionMeta } from "@core/types/snapshot";
+import type { PersistedCanvasV2 } from "@core/foundation/types/canvas";
+import type { LiveSessionMeta } from "@core/foundation/types/snapshot";
 import { useCanvasStore } from "@features/store/useCanvasStore";
 
 import {

@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 
-import { dispatchCommand } from "@core/engine/commandBus";
+import { dispatchCommand } from "@core/runtime/command/commandBus";
 
 type UseAuthoringShortcutsOptions = {
   enabled?: boolean;

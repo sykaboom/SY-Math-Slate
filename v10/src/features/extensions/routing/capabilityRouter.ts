@@ -1,4 +1,4 @@
-import type { ToolRegistryCapabilities, ToolRegistryCategory } from "@core/contracts";
+import type { ToolRegistryCapabilities, ToolRegistryCategory } from "@core/foundation/schemas";
 
 import type {
   CapabilityRouterAuditSummary,

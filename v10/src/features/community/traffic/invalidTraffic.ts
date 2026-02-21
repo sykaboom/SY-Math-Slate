@@ -1,4 +1,4 @@
-import type { CommunityTrafficAction } from "@core/contracts/community";
+import type { CommunityTrafficAction } from "@core/foundation/schemas/community";
 
 export type InvalidTrafficInput = {
   action: CommunityTrafficAction;

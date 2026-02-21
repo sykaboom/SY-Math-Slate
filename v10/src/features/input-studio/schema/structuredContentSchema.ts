@@ -3,7 +3,7 @@ import type {
   StepSegment,
   StepSegmentType,
   TextSegmentStyle,
-} from "@core/types/canvas";
+} from "@core/foundation/types/canvas";
 import type { StepBlockDraft } from "@features/layout/dataInput/types";
 
 export type StructuredContentValidationIssue = {

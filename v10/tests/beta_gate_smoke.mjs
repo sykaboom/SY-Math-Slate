@@ -12,7 +12,7 @@ const assertIncludes = (content, pattern, message) => {
   }
 };
 
-const rolePolicy = read("src/core/config/rolePolicy.ts");
+const rolePolicy = read("src/core/foundation/policies/rolePolicy.ts");
 assertIncludes(
   rolePolicy,
   "defaultDecision: \"deny\"",

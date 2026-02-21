@@ -2,12 +2,12 @@ import {
   configureCommandExecutionPolicyHooks,
   resetCommandExecutionPolicyHooks,
   type PendingCommandApprovalEntry,
-} from "@core/engine/commandBus";
+} from "@core/runtime/command/commandBus";
 import {
   canDispatchCommandForRole,
   resolveExecutionRole,
   shouldQueueCommandApprovalByPolicyForRole,
-} from "@core/config/rolePolicy";
+} from "@core/foundation/policies/rolePolicy";
 import { reportPolicyBooleanDiff } from "@features/policy/policyShadow";
 import { emitAuditEvent } from "@features/observability/auditLogger";
 import { useLocalStore } from "@features/store/useLocalStore";

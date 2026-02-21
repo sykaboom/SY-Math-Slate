@@ -2,7 +2,7 @@ import {
   registerAppCommand,
   type AppCommand,
   type AppCommandPayloadValidationResult,
-} from "@core/engine/commandBus";
+} from "@core/runtime/command/commandBus";
 import { useCanvasStore } from "@features/store/useCanvasStore";
 import { useUIStore } from "@features/store/useUIStoreBridge";
 import {

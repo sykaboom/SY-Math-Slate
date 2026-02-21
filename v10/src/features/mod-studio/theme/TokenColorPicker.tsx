@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 
-import type { ThemeGlobalTokenKey } from "@core/config/themeTokens";
+import type { ThemeGlobalTokenKey } from "@core/ui/theming/tokens/themeTokens";
 
 type TokenColorPickerProps = {
   tokenKey: ThemeGlobalTokenKey;

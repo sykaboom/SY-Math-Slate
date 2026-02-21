@@ -50,6 +50,11 @@ ModPackage -> activation/ui policy -> Mod host runtime -> UI host rendering
 
 ## 3. Package-First Runtime Architecture
 
+Core namespace rollout note (task_461~465):
+- Active namespaces:
+  - `core/foundation/*`, `core/runtime/*`, `core/domain/*`, `core/pipelines/*`, `core/ui/theming/*`, `core/security/sanitization/*`
+- Legacy core lanes (`core/config`, `core/contracts`, `core/engine`, `core/extensions`, etc.) are compatibility facades during cutover and are purge candidates at closeout.
+
 ### Layer 1) Canvas Runtime (Core)
 - Owns normalized input stream, rendering primitives, and persistence hooks.
 - Must not depend on feature-layer UI ownership.
@@ -92,11 +97,10 @@ core/* X-> features/* (forbidden)
 | `v10/src/core/mod/package/*` | package contracts/registry/selectors/guards | `core/*` | `features/*` |
 | `v10/src/core/mod/host/*` | runtime host manager/routing | `core/*` | `features/*` |
 | `v10/src/core/mod/builtin/*` | builtin mods | `core/mod/*`, engine public APIs | direct layout/windowing/store imports |
-| `v10/src/mod/runtime/templatePackRegistry.ts` | legacy-compatible template pack facade | `@core/mod/package` + `src/mod/templates` contracts | standalone package authority duplication |
+| `v10/src/mod/bridge/packRegistryBridge.ts` | template pack registry bridge authority | `@core/mod/package` + `src/mod/packs` + `src/mod/schema` | standalone package authority duplication |
 | `v10/src/features/ui-host/*` | host contribution filtering/render bridge | `core/*`, `ui/*`, host features | `@core/mod/**/internal/*` |
 
-Compatibility lane:
-- `v10/src/mod/templates/*` remains stable for template-facing callers.
+Runtime authority lane:
 - Runtime authority is package-first through `core/mod/package` selectors and registries.
 
 ---
@@ -235,7 +239,7 @@ Operator note source:
 ## 8. Regression Prevention Checklist
 
 - Ensure `core/mod/package/*` remains the package-level authority.
-- Keep template-pack public API compatibility via adapter (`src/mod/runtime/templatePackRegistry.ts`).
+- Keep template-pack public API compatibility via adapter (`src/mod/bridge/packRegistryBridge.ts`) and catalog contracts (`src/mod/schema/*`).
 - Keep layer boundaries enforced by lint and shell checks.
 - Require deterministic conflict and policy selector behavior in diagnostics/tests.
 

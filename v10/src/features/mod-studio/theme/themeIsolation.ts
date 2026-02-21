@@ -2,7 +2,7 @@ import {
   DEFAULT_THEME_PRESET_ID,
   type ThemeGlobalTokenMap,
   type ThemeModuleScopedTokenMap,
-} from "@core/config/themeTokens";
+} from "@core/ui/theming/tokens/themeTokens";
 import {
   THEME_GLOBAL_PREFIX,
   THEME_MODULE_PREFIX,
@@ -10,7 +10,7 @@ import {
   resolveThemeTokens,
   toGlobalThemeVariable,
   toModuleScopedThemeVariable,
-} from "@core/theme/applyTheme";
+} from "@core/ui/theming/engine/applyTheme";
 
 export const resolveThemeDraftTokens = (
   globalTokens: ThemeGlobalTokenMap,

@@ -1,4 +1,4 @@
-import type { UISlotComponent, UISlotName } from "@core/extensions/registry";
+import type { UISlotComponent, UISlotName } from "@core/runtime/plugin-runtime/registry";
 import type { ModPackageToolbarMode } from "./types";
 
 export type TemplatePackAdapterToolbarMode = ModPackageToolbarMode;

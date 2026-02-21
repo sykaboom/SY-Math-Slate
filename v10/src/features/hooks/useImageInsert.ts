@@ -3,8 +3,8 @@
 import { useCallback } from "react";
 
 import { useCanvasStore } from "@features/store/useCanvasStore";
-import type { ImageItem } from "@core/types/canvas";
-import { getBoardSize } from "@core/config/boardSpec";
+import type { ImageItem } from "@core/foundation/types/canvas";
+import { getBoardSize } from "@core/foundation/policies/boardSpec";
 import { useUIStore } from "@features/store/useUIStoreBridge";
 
 const createItemId = () => {

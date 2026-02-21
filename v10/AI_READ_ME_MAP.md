@@ -54,57 +54,54 @@ v10/src/
 |   |-- layout.tsx
 |   \-- page.tsx
 |-- core/
-|   |-- config/
-|   |   |-- aiProviderRegistry.ts
-|   |   |-- boardSpec.ts
-|   |   |-- capabilities.ts
-|   |   |-- coreModBoundary.guards.ts
-|   |   |-- coreModBoundary.ts
-|   |   |-- experiments.ts
-|   |   |-- panel-policy.ts
-|   |   |-- perfProfile.ts
-|   |   |-- rolePolicy.ts
-|   |   |-- rolePolicyGuards.ts
-|   |   |-- sessionPolicyTemplates.ts
-|   |   |-- themeTokens.ts
-|   |   |-- typography.ts
-|   |   \-- viewportContract.ts
-|   |-- contracts/
-|   |   |-- community.ts
-|   |   |-- extensionMarketplace.ts
-|   |   |-- fromPersistedDoc.ts
-|   |   |-- index.ts
-|   |   |-- multimodalAsset.ts
-|   |   |-- normalizedContent.ts
-|   |   |-- renderPlan.ts
-|   |   |-- toolRegistry.ts
-|   |   |-- toolResult.ts
-|   |   \-- ttsScript.ts
-|   |-- engine/
-|   |   \-- commandBus.ts
+|   |-- domain/
+|   |   |-- math/
+|   |   |   |-- index.ts
+|   |   |   |-- loader.ts
+|   |   |   |-- render.ts
+|   |   |   \-- rules.ts
+|   |   \-- index.ts
 |   |-- export/
 |   |   \-- exportPipeline.ts
-|   |-- extensions/
-|   |   |-- sdk/
+|   |-- foundation/
+|   |   |-- policies/
+|   |   |   |-- boardSpec.ts
+|   |   |   |-- capabilities.ts
+|   |   |   |-- coreModBoundary.guards.ts
+|   |   |   |-- coreModBoundary.ts
+|   |   |   |-- experiments.ts
 |   |   |   |-- index.ts
-|   |   |   \-- moddingSdk.ts
-|   |   |-- aiOutputAssetPipeline.ts
-|   |   |-- connectors.ts
-|   |   |-- localAiSandboxPolicy.ts
-|   |   |-- localRuntimeHandshake.ts
-|   |   |-- manifest.ts
-|   |   |-- marketplaceCatalog.ts
-|   |   |-- mcpGateway.ts
-|   |   |-- pluginLoader.ts
-|   |   |-- registry.ts
-|   |   \-- runtime.ts
+|   |   |   |-- panel-policy.ts
+|   |   |   |-- perfProfile.ts
+|   |   |   |-- rolePolicy.ts
+|   |   |   |-- rolePolicyGuards.ts
+|   |   |   |-- sessionPolicyTemplates.ts
+|   |   |   \-- viewportContract.ts
+|   |   |-- registries/
+|   |   |   |-- aiProviderRegistry.ts
+|   |   |   \-- index.ts
+|   |   |-- schemas/
+|   |   |   |-- community.ts
+|   |   |   |-- extensionMarketplace.ts
+|   |   |   |-- fromPersistedDoc.ts
+|   |   |   |-- index.ts
+|   |   |   |-- multimodalAsset.ts
+|   |   |   |-- normalizedContent.ts
+|   |   |   |-- renderPlan.ts
+|   |   |   |-- toolRegistry.ts
+|   |   |   |-- toolResult.ts
+|   |   |   \-- ttsScript.ts
+|   |   |-- types/
+|   |   |   |-- aiApproval.ts
+|   |   |   |-- canvas.ts
+|   |   |   |-- index.ts
+|   |   |   |-- sessionPolicy.ts
+|   |   |   \-- snapshot.ts
+|   |   \-- index.ts
 |   |-- math/
 |   |   |-- loader.ts
 |   |   |-- render.ts
 |   |   \-- rules.ts
-|   |-- migrations/
-|   |   |-- migrateToV2.ts
-|   |   \-- modStudioMigration.ts
 |   |-- mod/
 |   |   |-- builtin/
 |   |   |   |-- canvas.mod.ts
@@ -129,21 +126,48 @@ v10/src/
 |   |   |   |-- templatePackAdapter.types.ts
 |   |   |   \-- types.ts
 |   |   \-- index.ts
-|   |-- persistence/
-|   |   \-- buildPersistedDoc.ts
-|   |-- sanitize/
-|   |   \-- richTextSanitizer.ts
-|   |-- theme/
-|   |   |-- applyTheme.ts
-|   |   \-- preferences.schema.ts
-|   |-- themes/
-|   |   |-- chalkTheme.ts
-|   |   \-- presets.ts
-|   |-- types/
-|   |   |-- aiApproval.ts
-|   |   |-- canvas.ts
-|   |   |-- sessionPolicy.ts
-|   |   \-- snapshot.ts
+|   |-- pipelines/
+|   |   |-- export/
+|   |   |   |-- exportPipeline.ts
+|   |   |   \-- index.ts
+|   |   |-- migrations/
+|   |   |   |-- index.ts
+|   |   |   |-- migrateToV2.ts
+|   |   |   \-- modStudioMigration.ts
+|   |   |-- persistence/
+|   |   |   |-- buildPersistedDoc.ts
+|   |   |   \-- index.ts
+|   |   \-- index.ts
+|   |-- runtime/
+|   |   |-- command/
+|   |   |   |-- commandBus.ts
+|   |   |   \-- index.ts
+|   |   |-- plugin-runtime/
+|   |   |   |-- sdk/
+|   |   |   |-- aiOutputAssetPipeline.ts
+|   |   |   |-- connectors.ts
+|   |   |   |-- index.ts
+|   |   |   |-- localAiSandboxPolicy.ts
+|   |   |   |-- localRuntimeHandshake.ts
+|   |   |   |-- manifest.ts
+|   |   |   |-- marketplaceCatalog.ts
+|   |   |   |-- mcpGateway.ts
+|   |   |   |-- pluginLoader.ts
+|   |   |   |-- registry.ts
+|   |   |   \-- runtime.ts
+|   |   \-- index.ts
+|   |-- security/
+|   |   |-- sanitization/
+|   |   |   |-- index.ts
+|   |   |   \-- richTextSanitizer.ts
+|   |   \-- index.ts
+|   |-- ui/
+|   |   |-- theming/
+|   |   |   |-- engine/
+|   |   |   |-- presets/
+|   |   |   |-- tokens/
+|   |   |   \-- index.ts
+|   |   \-- index.ts
 |   \-- utils.ts
 |-- features/
 |   |-- animation/
@@ -462,18 +486,18 @@ v10/src/
 |       |-- internal/
 |       \-- models/
 |-- mod/
-|   |-- runtime/
-|   |   \-- templatePackRegistry.ts
-|   \-- templates/
-|       |-- _contracts/
-|       |   |-- templatePack.guards.ts
-|       |   \-- templatePack.types.ts
-|       |-- base-education/
-|       |   |-- layout.ts
-|       |   |-- manifest.ts
-|       |   |-- modules.ts
-|       |   \-- theme.ts
-|       \-- index.ts
+|   |-- bridge/
+|   |   \-- packRegistryBridge.ts
+|   |-- packs/
+|   |   |-- base-education/
+|   |   |   |-- layout.ts
+|   |   |   |-- manifest.ts
+|   |   |   |-- modules.ts
+|   |   |   \-- theme.ts
+|   |   \-- index.ts
+|   \-- schema/
+|       |-- templatePack.guards.ts
+|       \-- templatePack.types.ts
 \-- ui/
     \-- components/
         |-- button.tsx

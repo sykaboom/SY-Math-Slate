@@ -1,4 +1,4 @@
-import type { StepSegment } from "@core/types/canvas";
+import type { StepSegment } from "@core/foundation/types/canvas";
 import type { StepBlockDraft } from "@features/layout/dataInput/types";
 
 import type {

@@ -1,5 +1,5 @@
 import type { ToolbarMode } from "@features/toolbar/toolbarModePolicy";
-import { getPrimaryRuntimeTemplatePack } from "../../../mod/runtime/templatePackRegistry";
+import { getPrimaryRuntimeTemplatePack } from "@/mod/bridge/packRegistryBridge";
 import type { ToolbarActionId } from "./toolbarActionCatalog";
 import type { ToolbarViewportProfile } from "./toolbarViewportProfile";
 
