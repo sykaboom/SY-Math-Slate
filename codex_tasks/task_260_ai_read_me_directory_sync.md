@@ -1,6 +1,6 @@
 # Task 260: AI_READ_ME Directory Map Sync with Current v10 Tree
 
-Status: APPROVED
+Status: COMPLETED
 Owner: Codex (spec / review / implementation)
 Target: v10/
 Date: 2026-02-16

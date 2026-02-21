@@ -1,6 +1,6 @@
 # Task 249: Promote Task238 SVG Pack to Canonical Paths
 
-Status: APPROVED
+Status: COMPLETED
 Owner: Codex (spec / review / implementation)
 Target: root/
 Date: 2026-02-16

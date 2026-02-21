@@ -1,6 +1,6 @@
 # Task 259: Portable Codex Skills Full Sync (Local -> Repo)
 
-Status: APPROVED
+Status: COMPLETED
 Owner: Codex (spec / review / implementation)
 Target: root/
 Date: 2026-02-16

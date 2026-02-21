@@ -1,6 +1,6 @@
 # Task 248: Task238 SVG Temp Pack Remediation
 
-Status: APPROVED
+Status: COMPLETED
 Owner: Codex (spec / review / implementation)
 Target: root/
 Date: 2026-02-16
