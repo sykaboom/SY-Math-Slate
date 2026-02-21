@@ -6,6 +6,7 @@ import { CORE_PANEL_POLICY_IDS, type CorePanelPolicyId } from "@core/config/pane
 import { resolveExecutionRole } from "@core/config/rolePolicy";
 import {
   getCoreSlotPanelContract,
+  isCorePanelRegisteredInSlotRuntime,
   type CoreSlotPanelContract,
 } from "@features/extensions/ui/registerCoreSlots";
 import { DataInputPanel } from "@features/layout/DataInputPanel";
@@ -370,10 +371,15 @@ export const buildCoreWindowHostPanelAdapters = (
     runtimeRole,
     options.layoutSlotCutoverEnabled
   );
+  const isFloatingToolbarRegisteredInSlotRuntime = isCorePanelRegisteredInSlotRuntime(
+    CORE_PANEL_POLICY_IDS.FLOATING_TOOLBAR,
+    options.layoutSlotCutoverEnabled
+  );
   if (
     floatingToolbarContract &&
     floatingToolbarContract.visible &&
-    options.showHostToolchips
+    options.showHostToolchips &&
+    !isFloatingToolbarRegisteredInSlotRuntime
   ) {
     modules.push({
       panelId: floatingToolbarContract.panelId,

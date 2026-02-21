@@ -25,7 +25,6 @@ import {
 
 type SetToolPayload = { tool: Tool };
 type SetViewModePayload = { mode: "edit" | "presentation" };
-type LegacyToolbarDockPosition = "left" | "center" | "right";
 type SetToolbarDockPayload = {
   edge: ToolbarDockEdge;
   mode: ToolbarPlacement["mode"];
@@ -41,11 +40,6 @@ type SetLaserWidthPayload = { width: number };
 
 const VALID_TOOLS = new Set<Tool>(["pen", "eraser", "laser", "hand", "text"]);
 const VALID_VIEW_MODES = new Set<SetViewModePayload["mode"]>(["edit", "presentation"]);
-const VALID_TOOLBAR_DOCK_POSITIONS = new Set<LegacyToolbarDockPosition>([
-  "left",
-  "center",
-  "right",
-]);
 const VALID_TOOLBAR_DOCK_EDGES = new Set<ToolbarDockEdge>([
   "top",
   "right",
@@ -117,7 +111,7 @@ const validateSetToolbarDockPayload = (
   payload: unknown
 ): AppCommandPayloadValidationResult<SetToolbarDockPayload> => {
   const payloadValidation = validatePayloadObject(payload, {
-    allowedKeys: ["edge", "mode", "position"],
+    allowedKeys: ["edge", "mode"],
   });
   if (!payloadValidation.ok) return payloadValidation;
 
@@ -139,26 +133,13 @@ const validateSetToolbarDockPayload = (
     return okValidation({ edge, mode });
   }
 
-  const rawPosition = payloadValidation.value.position;
-  if (isNonEmptyString(rawPosition)) {
-    const position = rawPosition.trim() as LegacyToolbarDockPosition;
-    if (!VALID_TOOLBAR_DOCK_POSITIONS.has(position)) {
-      return failValidation(
-        "invalid-payload-toolbar-dock-position-value",
-        "payload.position must be one of left/center/right."
-      );
-    }
-    // Legacy compat: historic left/center/right controlled bottom alignment only.
-    return okValidation({ edge: "bottom", mode: "docked" });
-  }
-
   if (mode === "floating") {
     return okValidation({ edge: "bottom", mode: "floating" });
   }
 
   return failValidation(
     "invalid-payload-toolbar-dock",
-    "payload.edge or payload.position must be provided."
+    "payload.edge must be provided unless payload.mode is floating."
   );
 };
 
@@ -449,8 +430,6 @@ const setToolbarDockCommand: AppCommand<
     properties: {
       edge: { type: "string", enum: ["top", "right", "bottom", "left"] },
       mode: { type: "string", enum: ["floating", "docked"] },
-      // legacy compat only
-      position: { type: "string", enum: ["left", "center", "right"] },
     },
     additionalProperties: false,
   },

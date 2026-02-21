@@ -45,6 +45,7 @@ if (!CORE_PANEL_POLICY_VALIDATION.ok) {
 const CORE_PANEL_POLICY = CORE_PANEL_POLICY_VALIDATION.value;
 
 type CoreSlotActivation = "always" | "layout-slot-cutover";
+type CoreSlotRuntimeRegistration = "when-activated" | "legacy-fallback";
 
 type CorePanelLauncherBinding = {
   launcherId: string;
@@ -57,7 +58,7 @@ type CoreSlotBinding = {
   panelId: CorePanelPolicyId;
   component: UISlotComponent;
   activation: CoreSlotActivation;
-  registerInSlotRuntime?: boolean;
+  registerInSlotRuntime?: CoreSlotRuntimeRegistration;
   launcher?: CorePanelLauncherBinding;
 };
 
@@ -83,7 +84,7 @@ const CORE_SLOT_BINDINGS: readonly CoreSlotBinding[] = [
     panelId: CORE_PANEL_POLICY_IDS.PENDING_APPROVAL,
     component: PendingApprovalPanel,
     activation: "layout-slot-cutover",
-    registerInSlotRuntime: !LAYOUT_SLOT_CUTOVER_ENABLED,
+    registerInSlotRuntime: "legacy-fallback",
     launcher: {
       launcherId: "core-launcher-panel-pending-approval",
       title: "Pending Approval",
@@ -95,7 +96,7 @@ const CORE_SLOT_BINDINGS: readonly CoreSlotBinding[] = [
     panelId: CORE_PANEL_POLICY_IDS.MODERATION_CONSOLE,
     component: ModerationConsolePanel,
     activation: "layout-slot-cutover",
-    registerInSlotRuntime: !LAYOUT_SLOT_CUTOVER_ENABLED,
+    registerInSlotRuntime: "legacy-fallback",
     launcher: {
       launcherId: "core-launcher-panel-moderation-console",
       title: "Moderation Console",
@@ -107,7 +108,7 @@ const CORE_SLOT_BINDINGS: readonly CoreSlotBinding[] = [
     panelId: CORE_PANEL_POLICY_IDS.HOST_LIVE_SESSION,
     component: HostLiveSessionPanel,
     activation: "layout-slot-cutover",
-    registerInSlotRuntime: !LAYOUT_SLOT_CUTOVER_ENABLED,
+    registerInSlotRuntime: "legacy-fallback",
     launcher: {
       launcherId: "core-launcher-panel-host-live-session",
       title: "Host Live Session",
@@ -119,7 +120,7 @@ const CORE_SLOT_BINDINGS: readonly CoreSlotBinding[] = [
     panelId: CORE_PANEL_POLICY_IDS.DATA_INPUT,
     component: CoreDataInputPanelSlot,
     activation: "layout-slot-cutover",
-    registerInSlotRuntime: !LAYOUT_SLOT_CUTOVER_ENABLED,
+    registerInSlotRuntime: "legacy-fallback",
     launcher: {
       launcherId: "core-launcher-panel-data-input",
       title: "Input Studio",
@@ -131,7 +132,7 @@ const CORE_SLOT_BINDINGS: readonly CoreSlotBinding[] = [
     panelId: CORE_PANEL_POLICY_IDS.PROMPTER,
     component: CorePrompterSlot,
     activation: "layout-slot-cutover",
-    registerInSlotRuntime: !LAYOUT_SLOT_CUTOVER_ENABLED,
+    registerInSlotRuntime: "legacy-fallback",
     launcher: {
       launcherId: "core-launcher-panel-prompter",
       title: "Prompter",
@@ -143,7 +144,7 @@ const CORE_SLOT_BINDINGS: readonly CoreSlotBinding[] = [
     panelId: CORE_PANEL_POLICY_IDS.THEME_PICKER,
     component: ThemePickerPanel,
     activation: "layout-slot-cutover",
-    registerInSlotRuntime: !LAYOUT_SLOT_CUTOVER_ENABLED,
+    registerInSlotRuntime: "legacy-fallback",
     launcher: {
       launcherId: "core-launcher-panel-theme-picker",
       title: "Theme",
@@ -155,7 +156,7 @@ const CORE_SLOT_BINDINGS: readonly CoreSlotBinding[] = [
     panelId: CORE_PANEL_POLICY_IDS.FLOATING_TOOLBAR,
     component: CoreFloatingToolbarSlot,
     activation: "layout-slot-cutover",
-    registerInSlotRuntime: !LAYOUT_SLOT_CUTOVER_ENABLED,
+    registerInSlotRuntime: "legacy-fallback",
     launcher: {
       launcherId: "core-launcher-panel-floating-toolbar",
       title: "Toolbar Deck",
@@ -234,15 +235,36 @@ const resolveCorePanelPolicyEntry = (panelId: CorePanelPolicyId): PanelPolicyEnt
   return entry;
 };
 
-const isCoreSlotBindingActivated = (binding: CoreSlotBinding): boolean => {
+const isCoreSlotBindingActivated = (
+  binding: CoreSlotBinding,
+  layoutSlotCutoverEnabled: boolean
+): boolean => {
   if (
     binding.activation === "layout-slot-cutover" &&
-    !LAYOUT_SLOT_CUTOVER_ENABLED
+    !layoutSlotCutoverEnabled
   ) {
     return false;
   }
   return true;
 };
+
+const shouldRegisterCoreSlotBindingInRuntime = (
+  binding: CoreSlotBinding,
+  layoutSlotCutoverEnabled: boolean
+): boolean => {
+  if (binding.registerInSlotRuntime === "legacy-fallback") {
+    return !layoutSlotCutoverEnabled;
+  }
+  if (binding.registerInSlotRuntime === "when-activated") {
+    return isCoreSlotBindingActivated(binding, layoutSlotCutoverEnabled);
+  }
+  return isCoreSlotBindingActivated(binding, layoutSlotCutoverEnabled);
+};
+
+const isCoreSlotBindingActivatedInCurrentRuntime = (
+  binding: CoreSlotBinding
+): boolean =>
+  isCoreSlotBindingActivated(binding, LAYOUT_SLOT_CUTOVER_ENABLED);
 
 export const listCoreSlotPanelContract = (): readonly CoreSlotPanelContract[] =>
   CORE_SLOT_BINDINGS.map((binding) => {
@@ -277,7 +299,7 @@ const hasLauncherBinding = (
 
 export const listCorePanelLauncherContract = (): readonly CorePanelLauncherContract[] =>
   CORE_SLOT_BINDINGS.filter(hasLauncherBinding)
-    .filter(isCoreSlotBindingActivated)
+    .filter(isCoreSlotBindingActivatedInCurrentRuntime)
     .map((binding) => {
       const entry = resolveCorePanelPolicyEntry(binding.panelId);
       return {
@@ -297,7 +319,7 @@ export const getCorePanelLauncherContract = (
   const binding = CORE_SLOT_BINDINGS.find((entry) => entry.panelId === panelId);
   if (!binding) return null;
   if (!hasLauncherBinding(binding)) return null;
-  if (!isCoreSlotBindingActivated(binding)) return null;
+  if (!isCoreSlotBindingActivatedInCurrentRuntime(binding)) return null;
 
   const entry = resolveCorePanelPolicyEntry(panelId);
   return {
@@ -311,14 +333,28 @@ export const getCorePanelLauncherContract = (
   };
 };
 
+export const isCorePanelRegisteredInSlotRuntime = (
+  panelId: CorePanelPolicyId,
+  layoutSlotCutoverEnabled = LAYOUT_SLOT_CUTOVER_ENABLED
+): boolean => {
+  const binding = CORE_SLOT_BINDINGS.find((entry) => entry.panelId === panelId);
+  if (!binding) return false;
+  return shouldRegisterCoreSlotBindingInRuntime(
+    binding,
+    layoutSlotCutoverEnabled
+  );
+};
+
 let hasRegisteredCoreSlots = false;
 
 export const registerCoreSlots = (): void => {
   if (hasRegisteredCoreSlots) return;
 
   for (const binding of CORE_SLOT_BINDINGS) {
-    const shouldRegisterInSlotRuntime =
-      binding.registerInSlotRuntime ?? isCoreSlotBindingActivated(binding);
+    const shouldRegisterInSlotRuntime = shouldRegisterCoreSlotBindingInRuntime(
+      binding,
+      LAYOUT_SLOT_CUTOVER_ENABLED
+    );
     if (!shouldRegisterInSlotRuntime) {
       continue;
     }

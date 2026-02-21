@@ -56,6 +56,8 @@ Core subsystems:
 Feature subsystems:
 - `features/extensions`: command registrations and UI slot runtime.
 - `features/layout`: app shell/window host.
+  - `AppLayout` safe-area policy includes top/bottom + horizontal (landscape tablet) chrome padding.
+  - bottom `toolbar-bottom` slot is suppressed when window-host panel mode is active (single render path).
 - `features/ui-host`: host-side aggregation bridge for mod toolbar/panel contributions.
 - `features/canvas`: board/cursor/render layers.
 - `features/toolbar`: mode-split floating toolbar, pen/laser/eraser controls, compact IA sections, centralized toolbar feedback/notices.
@@ -144,6 +146,7 @@ Fallback rule:
   - `commands.canvas.ts`
   - `commands.playback.ts`
   - `commands.tool.ts`
+- `setToolbarDock` contract is edge-first only (`top|right|bottom|left` + optional `mode`); legacy `left|center|right` payload path is retired.
 - Migration/guard scripts must scan command directory, not single monolith file assumptions.
 - Toolbar runtime policy:
   - `src/features/toolbar/toolbarModePolicy.ts` is the single env/cutover resolver for toolbar mode render behavior.
@@ -189,6 +192,10 @@ Execution planning sources:
 - roadmap-level: `PROJECT_ROADMAP.md`
 - execution-level: approved `codex_tasks/task_*.md`
 - architecture-level: `v10/docs/architecture/ModEngine.md` (canonical active path)
+- phase9 ops docs:
+  - `v10/docs/telemetry/README.md`
+  - `v10/docs/trust/README.md`
+  - `v10/docs/runbooks/README.md`
 
 Historical/non-SSOT artifacts must be treated as reference only:
 - archived batch plans

@@ -145,10 +145,29 @@ export function AppLayout({ children }: AppLayoutProps) {
   const zoomLabel = isOverviewMode ? Math.round(overviewZoom * 100) : 100;
   const useCompactHorizontalInsets =
     tabletShellProfile.shouldUseCompactHorizontalInsets;
-  const bottomChromeStyle = tabletShellProfile.shouldPadBottomChromeWithSafeArea
-    ? {
-        paddingBottom: "calc(env(safe-area-inset-bottom) + 8px)",
-      }
+  const chromeHorizontalSafeAreaStyle =
+    tabletShellProfile.shouldPadHorizontalChromeWithSafeArea
+      ? {
+          paddingLeft: "env(safe-area-inset-left)",
+          paddingRight: "env(safe-area-inset-right)",
+        }
+      : undefined;
+  const bottomChromeStyle =
+    tabletShellProfile.shouldPadBottomChromeWithSafeArea ||
+    tabletShellProfile.shouldPadHorizontalChromeWithSafeArea
+      ? {
+          ...(tabletShellProfile.shouldPadBottomChromeWithSafeArea
+            ? {
+                paddingBottom: "calc(env(safe-area-inset-bottom) + 8px)",
+              }
+            : {}),
+          ...(tabletShellProfile.shouldPadHorizontalChromeWithSafeArea
+            ? {
+                paddingLeft: "env(safe-area-inset-left)",
+                paddingRight: "env(safe-area-inset-right)",
+              }
+            : {}),
+        }
     : undefined;
   const topChromeClassName = tabletShellProfile.shouldPadTopChromeWithSafeArea
     ? "sticky top-0 z-40 border-b border-theme-border/10 bg-theme-surface/40 pt-[env(safe-area-inset-top)] backdrop-blur-md"
@@ -366,10 +385,11 @@ export function AppLayout({ children }: AppLayoutProps) {
   }, [toolbarCanvasInsets]);
   const shouldOverlayLeftPanel = !useWindowHostPanels && showDataInputPanelPolicy;
   const mainContentClass = "relative flex h-full w-full min-h-0 flex-1";
-  const shouldRenderHostFooter = showHostToolchipsPolicy;
+  const shouldRenderToolbarBottomSlot =
+    showHostToolchipsPolicy && !useWindowHostPanels;
   const shouldRenderBottomChrome =
     !isPresentation &&
-    (showStudentPlayerBarPolicy || shouldRenderHostFooter);
+    (showStudentPlayerBarPolicy || shouldRenderToolbarBottomSlot);
   const panelLauncherEntries = useMemo<PanelLauncherEntry[]>(
     () =>
       useWindowHostPanels
@@ -613,6 +633,7 @@ export function AppLayout({ children }: AppLayoutProps) {
       {showTopChromePolicy && (
         <header
           data-layout-id="region_chrome_top"
+          style={chromeHorizontalSafeAreaStyle}
           className={topChromeClassName}
         >
           <div className="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-x-2 gap-y-1.5 px-2.5 py-1.5 sm:px-3 sm:py-2 lg:px-4 lg:py-2.5 xl:px-6 xl:py-3">
@@ -765,7 +786,7 @@ export function AppLayout({ children }: AppLayoutProps) {
             <div className="pointer-events-auto flex w-full justify-center">
               <PlayerBar readOnly />
             </div>
-          ) : shouldRenderHostFooter ? (
+          ) : shouldRenderToolbarBottomSlot ? (
             <ErrorBoundary
               fallback={
                 <section role="alert" className={SHELL_ERROR_FALLBACK_CLASSNAME}>
