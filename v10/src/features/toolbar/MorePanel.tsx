@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useState } from "react";
 
 import { cn } from "@core/utils";
+import { dispatchCommand } from "@core/engine/commandBus";
 import { useFileIO } from "@features/hooks/useFileIO";
 import { usePersistence } from "@features/hooks/usePersistence";
 import { useCanvasStore } from "@features/store/useCanvasStore";
@@ -15,22 +16,18 @@ import {
 } from "lucide-react";
 
 import { ToolButton } from "./atoms/ToolButton";
-import { fireToolbarCommand, publishToolbarNotice } from "./toolbarFeedback";
+import { publishToolbarNotice } from "./toolbarFeedback";
 
 const menuButtonClass =
   "rounded-md border border-toolbar-border/10 bg-toolbar-menu-bg/20 px-2 py-1.5 text-left text-[11px] text-toolbar-text/70 hover:border-toolbar-border/30";
 
 type MorePanelProps = {
-  toolbarDockSelector: ReactNode;
-  showDockSection: boolean;
   showStepSection: boolean;
   showHistorySection: boolean;
   onOpenClick: () => void;
 };
 
 export function MorePanel({
-  toolbarDockSelector,
-  showDockSection,
   showStepSection,
   showHistorySection,
   onOpenClick,
@@ -111,12 +108,16 @@ export function MorePanel({
   };
 
   const dispatchMoreCommand = (commandId: string, payload: unknown = {}) => {
-    fireToolbarCommand({
-      commandId,
-      payload,
-      source: "toolbar.more-panel",
-      errorMessage: "요청을 처리하지 못했습니다.",
-    });
+    void dispatchCommand(commandId, payload, {
+      meta: { source: "toolbar.more-panel" },
+    })
+      .then((result) => {
+        if (result.ok) return;
+        pushNotice("error", "요청을 처리하지 못했습니다.");
+      })
+      .catch(() => {
+        pushNotice("error", "요청을 처리하지 못했습니다.");
+      });
   };
 
   useEffect(() => {
@@ -130,15 +131,6 @@ export function MorePanel({
 
   return (
     <div className="grid gap-3 text-[11px] text-toolbar-text/70">
-      {showDockSection && (
-        <div className="grid gap-2">
-          <span className="text-[10px] uppercase tracking-wide text-toolbar-muted/40">
-            Dock
-          </span>
-          <div className="flex items-center">{toolbarDockSelector}</div>
-        </div>
-      )}
-
       <div className="grid gap-2">
         <span className="text-[10px] uppercase tracking-wide text-toolbar-muted/40">
           Profile

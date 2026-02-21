@@ -4,10 +4,11 @@ import {
   type AppCommandPayloadValidationResult,
 } from "@core/engine/commandBus";
 import {
-  useUIStore,
+  useUIStore as uiBridgeStore,
   type LaserType,
   type PenType,
-  type ToolbarDockPosition,
+  type ToolbarDockEdge,
+  type ToolbarPlacement,
   type Tool,
 } from "@features/store/useUIStoreBridge";
 import {
@@ -24,7 +25,11 @@ import {
 
 type SetToolPayload = { tool: Tool };
 type SetViewModePayload = { mode: "edit" | "presentation" };
-type SetToolbarDockPayload = { position: ToolbarDockPosition };
+type LegacyToolbarDockPosition = "left" | "center" | "right";
+type SetToolbarDockPayload = {
+  edge: ToolbarDockEdge;
+  mode: ToolbarPlacement["mode"];
+};
 type SetPenTypePayload = { penType: PenType };
 type SetPenColorPayload = { color: string };
 type SetPenWidthPayload = { width: number };
@@ -36,10 +41,20 @@ type SetLaserWidthPayload = { width: number };
 
 const VALID_TOOLS = new Set<Tool>(["pen", "eraser", "laser", "hand", "text"]);
 const VALID_VIEW_MODES = new Set<SetViewModePayload["mode"]>(["edit", "presentation"]);
-const VALID_TOOLBAR_DOCK_POSITIONS = new Set<ToolbarDockPosition>([
+const VALID_TOOLBAR_DOCK_POSITIONS = new Set<LegacyToolbarDockPosition>([
   "left",
   "center",
   "right",
+]);
+const VALID_TOOLBAR_DOCK_EDGES = new Set<ToolbarDockEdge>([
+  "top",
+  "right",
+  "bottom",
+  "left",
+]);
+const VALID_TOOLBAR_PLACEMENT_MODES = new Set<ToolbarPlacement["mode"]>([
+  "floating",
+  "docked",
 ]);
 const VALID_PEN_TYPES = new Set<PenType>(["ink", "pencil", "highlighter"]);
 const VALID_LASER_TYPES = new Set<LaserType>(["standard", "highlighter"]);
@@ -102,24 +117,49 @@ const validateSetToolbarDockPayload = (
   payload: unknown
 ): AppCommandPayloadValidationResult<SetToolbarDockPayload> => {
   const payloadValidation = validatePayloadObject(payload, {
-    allowedKeys: ["position"],
+    allowedKeys: ["edge", "mode", "position"],
   });
   if (!payloadValidation.ok) return payloadValidation;
-  if (!isNonEmptyString(payloadValidation.value.position)) {
-    return failValidation(
-      "invalid-payload-toolbar-dock-position",
-      "payload.position must be a non-empty string."
-    );
+
+  const rawMode = payloadValidation.value.mode;
+  const mode =
+    isNonEmptyString(rawMode) && VALID_TOOLBAR_PLACEMENT_MODES.has(rawMode.trim() as ToolbarPlacement["mode"])
+      ? (rawMode.trim() as ToolbarPlacement["mode"])
+      : "docked";
+
+  const rawEdge = payloadValidation.value.edge;
+  if (isNonEmptyString(rawEdge)) {
+    const edge = rawEdge.trim() as ToolbarDockEdge;
+    if (!VALID_TOOLBAR_DOCK_EDGES.has(edge)) {
+      return failValidation(
+        "invalid-payload-toolbar-dock-edge-value",
+        "payload.edge must be one of top/right/bottom/left."
+      );
+    }
+    return okValidation({ edge, mode });
   }
 
-  const position = payloadValidation.value.position.trim() as ToolbarDockPosition;
-  if (!VALID_TOOLBAR_DOCK_POSITIONS.has(position)) {
-    return failValidation(
-      "invalid-payload-toolbar-dock-position-value",
-      "payload.position must be one of left/center/right."
-    );
+  const rawPosition = payloadValidation.value.position;
+  if (isNonEmptyString(rawPosition)) {
+    const position = rawPosition.trim() as LegacyToolbarDockPosition;
+    if (!VALID_TOOLBAR_DOCK_POSITIONS.has(position)) {
+      return failValidation(
+        "invalid-payload-toolbar-dock-position-value",
+        "payload.position must be one of left/center/right."
+      );
+    }
+    // Legacy compat: historic left/center/right controlled bottom alignment only.
+    return okValidation({ edge: "bottom", mode: "docked" });
   }
-  return okValidation({ position });
+
+  if (mode === "floating") {
+    return okValidation({ edge: "bottom", mode: "floating" });
+  }
+
+  return failValidation(
+    "invalid-payload-toolbar-dock",
+    "payload.edge or payload.position must be provided."
+  );
 };
 
 const validateSetPenTypePayload = (
@@ -275,27 +315,31 @@ const validateSetEraserWidthPayload = (
 };
 
 const executeSetTool = (payload: SetToolPayload) => {
-  const ui = useUIStore.getState();
+  const ui = uiBridgeStore.getState();
   ui.setTool(payload.tool);
   return { tool: payload.tool };
 };
 
 const executeSetViewMode = (payload: SetViewModePayload) => {
-  const ui = useUIStore.getState();
+  const ui = uiBridgeStore.getState();
   ui.setViewMode(payload.mode);
   return { viewMode: payload.mode };
 };
 
 const executeSetToolbarDock = (payload: SetToolbarDockPayload) => {
-  const ui = useUIStore.getState();
-  ui.setToolbarDockPosition(payload.position);
-  return { toolbarDockPosition: payload.position };
+  const ui = uiBridgeStore.getState();
+  if (payload.mode === "floating") {
+    ui.setToolbarFloating();
+  } else {
+    ui.setToolbarDockEdge(payload.edge);
+  }
+  return { toolbarPlacement: uiBridgeStore.getState().toolbarPlacement };
 };
 
 const executeSetPenType = (payload: SetPenTypePayload) => {
-  const ui = useUIStore.getState();
+  const ui = uiBridgeStore.getState();
   ui.setPenType(payload.penType);
-  const next = useUIStore.getState();
+  const next = uiBridgeStore.getState();
   return {
     penType: next.penType,
     penColor: next.penColor,
@@ -305,33 +349,33 @@ const executeSetPenType = (payload: SetPenTypePayload) => {
 };
 
 const executeSetPenColor = (payload: SetPenColorPayload) => {
-  const ui = useUIStore.getState();
+  const ui = uiBridgeStore.getState();
   ui.setColor(payload.color);
   return { penColor: payload.color };
 };
 
 const executeSetPenWidth = (payload: SetPenWidthPayload) => {
-  const ui = useUIStore.getState();
+  const ui = uiBridgeStore.getState();
   ui.setPenWidth(payload.width);
   return { penWidth: payload.width };
 };
 
 const executeSetPenOpacity = (payload: SetPenOpacityPayload) => {
-  const ui = useUIStore.getState();
+  const ui = uiBridgeStore.getState();
   ui.setPenOpacity(payload.opacity);
   return { penOpacity: payload.opacity };
 };
 
 const executeSetEraserWidth = (payload: SetEraserWidthPayload) => {
-  const ui = useUIStore.getState();
+  const ui = uiBridgeStore.getState();
   ui.setEraserWidth(payload.width);
   return { eraserWidth: payload.width };
 };
 
 const executeSetLaserType = (payload: SetLaserTypePayload) => {
-  const ui = useUIStore.getState();
+  const ui = uiBridgeStore.getState();
   ui.setLaserType(payload.laserType);
-  const next = useUIStore.getState();
+  const next = uiBridgeStore.getState();
   return {
     laserType: next.laserType,
     laserColor: next.laserColor,
@@ -340,13 +384,13 @@ const executeSetLaserType = (payload: SetLaserTypePayload) => {
 };
 
 const executeSetLaserColor = (payload: SetLaserColorPayload) => {
-  const ui = useUIStore.getState();
+  const ui = uiBridgeStore.getState();
   ui.setLaserColor(payload.color);
   return { laserColor: payload.color };
 };
 
 const executeSetLaserWidth = (payload: SetLaserWidthPayload) => {
-  const ui = useUIStore.getState();
+  const ui = uiBridgeStore.getState();
   ui.setLaserWidth(payload.width);
   return { laserWidth: payload.width };
 };
@@ -392,17 +436,20 @@ const setViewModeCommand: AppCommand<
 
 const setToolbarDockCommand: AppCommand<
   SetToolbarDockPayload,
-  { toolbarDockPosition: ToolbarDockPosition }
+  { toolbarPlacement: ToolbarPlacement }
 > = {
   id: "setToolbarDock",
-  description: "Set bottom toolbar dock position (left/center/right).",
+  description: "Set toolbar placement (docked edge or floating mode).",
   mutationScope: "local",
   requiresApproval: false,
   auditTag: "command.set-toolbar-dock",
   schema: {
     type: "object",
-    required: ["position"],
+    required: [],
     properties: {
+      edge: { type: "string", enum: ["top", "right", "bottom", "left"] },
+      mode: { type: "string", enum: ["floating", "docked"] },
+      // legacy compat only
       position: { type: "string", enum: ["left", "center", "right"] },
     },
     additionalProperties: false,

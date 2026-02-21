@@ -15,6 +15,15 @@ export type WindowRuntimeSize = {
 
 export type WindowRuntimeRect = WindowRuntimePoint & WindowRuntimeSize;
 
+export type WindowRuntimeEdge = "top" | "right" | "bottom" | "left";
+
+export type WindowRuntimeInsets = {
+  top: number;
+  right: number;
+  bottom: number;
+  left: number;
+};
+
 export type WindowRuntimeDelta = {
   dx: number;
   dy: number;

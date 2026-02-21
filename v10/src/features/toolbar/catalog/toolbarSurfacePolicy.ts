@@ -69,9 +69,6 @@ pushRules(
     "more.overview.ratio.4x3",
     "more.step.prev",
     "more.step.next",
-    "canvas.dock.left",
-    "canvas.dock.center",
-    "canvas.dock.right",
   ],
   "more"
 );
@@ -103,9 +100,6 @@ pushRules(
     "more.overview.toggle",
     "more.overview.ratio.16x9",
     "more.overview.ratio.4x3",
-    "canvas.dock.left",
-    "canvas.dock.center",
-    "canvas.dock.right",
   ],
   "more"
 );
@@ -115,9 +109,6 @@ pushRules(
   [
     "canvas.fullscreen.toggle",
     "canvas.sound.toggle",
-    "canvas.dock.left",
-    "canvas.dock.center",
-    "canvas.dock.right",
   ],
   "primary"
 );
@@ -241,7 +232,6 @@ export const resolvePlaybackToolbarSurfacePolicy = (
 export type CanvasToolbarSurfacePolicy = {
   fullscreen: boolean;
   sound: boolean;
-  dock: boolean;
 };
 
 export const resolveCanvasToolbarSurfacePolicy = (
@@ -249,14 +239,9 @@ export const resolveCanvasToolbarSurfacePolicy = (
 ): CanvasToolbarSurfacePolicy => ({
   fullscreen: isPrimary("canvas", viewport, "canvas.fullscreen.toggle"),
   sound: isPrimary("canvas", viewport, "canvas.sound.toggle"),
-  dock:
-    isPrimary("canvas", viewport, "canvas.dock.left") &&
-    isPrimary("canvas", viewport, "canvas.dock.center") &&
-    isPrimary("canvas", viewport, "canvas.dock.right"),
 });
 
 export type MorePanelSurfacePolicy = {
-  dock: boolean;
   step: boolean;
   history: boolean;
 };
@@ -265,11 +250,6 @@ export const resolveMorePanelSurfacePolicy = (
   mode: ToolbarMode,
   viewport: ToolbarViewportProfile
 ): MorePanelSurfacePolicy => {
-  const dock =
-    isMore(mode, viewport, "canvas.dock.left") &&
-    isMore(mode, viewport, "canvas.dock.center") &&
-    isMore(mode, viewport, "canvas.dock.right");
-
   const step =
     isMore(mode, viewport, "more.step.prev") &&
     isMore(mode, viewport, "more.step.next");
@@ -281,6 +261,5 @@ export const resolveMorePanelSurfacePolicy = (
       : isMore(mode, viewport, "draw.undo") &&
         isMore(mode, viewport, "draw.redo");
 
-  return { dock, step, history };
+  return { step, history };
 };
-

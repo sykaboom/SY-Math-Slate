@@ -11,7 +11,12 @@ import type {
 
 export type PanelId = "pen" | "eraser" | "laser" | null;
 export type FullscreenInkMode = "off" | "native" | "app";
-export type ToolbarDockPosition = "left" | "center" | "right";
+export type ToolbarDockEdge = "top" | "right" | "bottom" | "left";
+export type ToolbarPlacementMode = "floating" | "docked";
+export type ToolbarPlacement = {
+  mode: ToolbarPlacementMode;
+  edge: ToolbarDockEdge;
+};
 export type WindowRuntimePanelOpenState = Record<string, boolean>;
 
 const DATA_INPUT_PANEL_ID = CORE_PANEL_POLICY_IDS.DATA_INPUT;
@@ -28,7 +33,7 @@ interface ChromeStoreState {
   isPasteHelperOpen: boolean;
   isDataInputOpen: boolean;
   fullscreenInkMode: FullscreenInkMode;
-  toolbarDockPosition: ToolbarDockPosition;
+  toolbarPlacement: ToolbarPlacement;
   showCursors: boolean;
   showBreakGuides: boolean;
   showCanvasBorder: boolean;
@@ -43,7 +48,9 @@ interface ChromeStoreState {
   closeDataInput: () => void;
   toggleDataInput: () => void;
   setFullscreenInkMode: (mode: FullscreenInkMode) => void;
-  setToolbarDockPosition: (position: ToolbarDockPosition) => void;
+  setToolbarPlacement: (placement: ToolbarPlacement) => void;
+  setToolbarDockEdge: (edge: ToolbarDockEdge) => void;
+  setToolbarFloating: () => void;
   enterFullscreenInkNative: () => void;
   enterFullscreenInkFallback: () => void;
   exitFullscreenInk: () => void;
@@ -236,13 +243,38 @@ const applyRememberPositionPolicy = (
   return nextPanels;
 };
 
+const DEFAULT_TOOLBAR_PLACEMENT: ToolbarPlacement = {
+  mode: "floating",
+  edge: "bottom",
+};
+
+const sanitizeToolbarPlacement = (
+  value: ToolbarPlacement | undefined
+): ToolbarPlacement => {
+  if (!value) return DEFAULT_TOOLBAR_PLACEMENT;
+  const mode = value.mode === "docked" ? "docked" : "floating";
+  const edge =
+    value.edge === "top" ||
+    value.edge === "right" ||
+    value.edge === "left" ||
+    value.edge === "bottom"
+      ? value.edge
+      : DEFAULT_TOOLBAR_PLACEMENT.edge;
+  return { mode, edge };
+};
+
+const areToolbarPlacementsEqual = (
+  left: ToolbarPlacement,
+  right: ToolbarPlacement
+): boolean => left.mode === right.mode && left.edge === right.edge;
+
 export const useChromeStore = create<ChromeStoreState>((set, get) => ({
   isPanelOpen: false,
   openPanel: null,
   isPasteHelperOpen: false,
   isDataInputOpen: false,
   fullscreenInkMode: "off",
-  toolbarDockPosition: "center",
+  toolbarPlacement: DEFAULT_TOOLBAR_PLACEMENT,
   showCursors: false,
   showBreakGuides: true,
   showCanvasBorder: true,
@@ -294,12 +326,35 @@ export const useChromeStore = create<ChromeStoreState>((set, get) => ({
       };
     }),
   setFullscreenInkMode: (mode) => set(() => ({ fullscreenInkMode: mode })),
-  setToolbarDockPosition: (position) =>
+  setToolbarPlacement: (placement) =>
     set((state) => {
-      if (state.toolbarDockPosition === position) {
+      const nextPlacement = sanitizeToolbarPlacement(placement);
+      if (areToolbarPlacementsEqual(state.toolbarPlacement, nextPlacement)) {
         return state;
       }
-      return { toolbarDockPosition: position };
+      return { toolbarPlacement: nextPlacement };
+    }),
+  setToolbarDockEdge: (edge) =>
+    set((state) => {
+      const nextPlacement = sanitizeToolbarPlacement({
+        mode: "docked",
+        edge,
+      });
+      if (areToolbarPlacementsEqual(state.toolbarPlacement, nextPlacement)) {
+        return state;
+      }
+      return { toolbarPlacement: nextPlacement };
+    }),
+  setToolbarFloating: () =>
+    set((state) => {
+      const nextPlacement = sanitizeToolbarPlacement({
+        mode: "floating",
+        edge: state.toolbarPlacement.edge,
+      });
+      if (areToolbarPlacementsEqual(state.toolbarPlacement, nextPlacement)) {
+        return state;
+      }
+      return { toolbarPlacement: nextPlacement };
     }),
   enterFullscreenInkNative: () => set(() => ({ fullscreenInkMode: "native" })),
   enterFullscreenInkFallback: () => set(() => ({ fullscreenInkMode: "app" })),

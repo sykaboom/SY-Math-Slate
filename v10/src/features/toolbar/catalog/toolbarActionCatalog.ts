@@ -21,9 +21,6 @@ export const TOOLBAR_ACTION_IDS = [
   "playback.extras",
   "canvas.fullscreen.toggle",
   "canvas.sound.toggle",
-  "canvas.dock.left",
-  "canvas.dock.center",
-  "canvas.dock.right",
   "more.file.open",
   "more.file.save",
   "more.local.save",
@@ -72,17 +69,6 @@ const TOOLBAR_ACTION_CATALOG: readonly ToolbarActionCatalogEntry[] = [
     modes: ["canvas"],
   },
   { id: "canvas.sound.toggle", label: "Sound Toggle", modes: ["canvas"] },
-  { id: "canvas.dock.left", label: "Dock Left", modes: ["canvas", "draw", "playback"] },
-  {
-    id: "canvas.dock.center",
-    label: "Dock Center",
-    modes: ["canvas", "draw", "playback"],
-  },
-  {
-    id: "canvas.dock.right",
-    label: "Dock Right",
-    modes: ["canvas", "draw", "playback"],
-  },
   { id: "more.file.open", label: "Open File", modes: ["draw", "playback", "canvas"] },
   { id: "more.file.save", label: "Save File", modes: ["draw", "playback", "canvas"] },
   { id: "more.local.save", label: "Save Local", modes: ["draw", "playback", "canvas"] },
@@ -135,4 +121,3 @@ export const listToolbarActionIdsByMode = (
   TOOLBAR_ACTION_CATALOG.filter((entry) => entry.modes.includes(mode)).map(
     (entry) => entry.id
   );
-

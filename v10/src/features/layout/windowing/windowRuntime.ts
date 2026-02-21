@@ -2,10 +2,12 @@ import type {
   WindowRuntimeInitInput,
   WindowRuntimeMoveByInput,
   WindowRuntimeMoveToInput,
+  WindowRuntimeInsets,
   WindowRuntimePanelContract,
   WindowRuntimePanelState,
   WindowRuntimePersistedPanelLayout,
   WindowRuntimePersistedState,
+  WindowRuntimeEdge,
   WindowRuntimePoint,
   WindowRuntimeReconcileInput,
   WindowRuntimeRect,
@@ -14,7 +16,11 @@ import type {
 } from "./windowRuntime.types";
 
 const MIN_Z_INDEX = 1;
-const WINDOW_EDGE_SNAP_THRESHOLD_PX = 24;
+export const WINDOW_EDGE_SNAP_THRESHOLD_PX = 24;
+const TOOLBAR_DOCKED_THICKNESS_TOP_BOTTOM_PX = 72;
+const TOOLBAR_DOCKED_THICKNESS_LEFT_RIGHT_PX = 84;
+const TOOLBAR_CANVAS_MIN_VISIBLE_WIDTH_PX = 320;
+const TOOLBAR_CANVAS_MIN_VISIBLE_HEIGHT_PX = 240;
 
 const normalizeFinite = (value: number, fallback: number): number =>
   Number.isFinite(value) ? value : fallback;
@@ -80,19 +86,130 @@ const clampFinite = (value: number, min: number, max: number): number => {
   return value;
 };
 
+const resolveClampEdges = (input: {
+  panelSize: WindowRuntimeSize;
+  clampBounds: WindowRuntimeRect;
+}) => {
+  const size = normalizeSize(input.panelSize);
+  const bounds = normalizeRect(input.clampBounds);
+  return {
+    minX: bounds.x,
+    minY: bounds.y,
+    maxX: bounds.x + bounds.width - size.width,
+    maxY: bounds.y + bounds.height - size.height,
+  };
+};
+
+export const resolveWindowRuntimeSnapEdge = (input: {
+  position: WindowRuntimePoint;
+  panelSize: WindowRuntimeSize;
+  clampBounds: WindowRuntimeRect;
+  thresholdPx?: number;
+}): WindowRuntimeEdge | null => {
+  const nextPosition = normalizePoint(input.position);
+  const { minX, minY, maxX, maxY } = resolveClampEdges(input);
+  const threshold = Math.max(
+    0,
+    Math.trunc(normalizeFinite(input.thresholdPx ?? WINDOW_EDGE_SNAP_THRESHOLD_PX, WINDOW_EDGE_SNAP_THRESHOLD_PX))
+  );
+
+  const distances: Array<{ edge: WindowRuntimeEdge; distance: number }> = [
+    { edge: "left", distance: Math.abs(nextPosition.x - minX) },
+    { edge: "right", distance: Math.abs(nextPosition.x - maxX) },
+    { edge: "top", distance: Math.abs(nextPosition.y - minY) },
+    { edge: "bottom", distance: Math.abs(nextPosition.y - maxY) },
+  ];
+
+  const nearest = distances.reduce((best, current) =>
+    current.distance < best.distance ? current : best
+  );
+  if (nearest.distance > threshold) return null;
+  return nearest.edge;
+};
+
+export const resolveToolbarPlacementFromWindowRuntime = (input: {
+  position: WindowRuntimePoint | null | undefined;
+  panelSize: WindowRuntimeSize | null | undefined;
+  clampBounds: WindowRuntimeRect;
+  fallbackEdge: WindowRuntimeEdge;
+}): { mode: "floating" | "docked"; edge: WindowRuntimeEdge } => {
+  const fallbackEdge =
+    input.fallbackEdge === "top" ||
+    input.fallbackEdge === "right" ||
+    input.fallbackEdge === "left" ||
+    input.fallbackEdge === "bottom"
+      ? input.fallbackEdge
+      : "bottom";
+  if (!input.position || !input.panelSize) {
+    return { mode: "floating", edge: fallbackEdge };
+  }
+  const snapEdge = resolveWindowRuntimeSnapEdge({
+    position: input.position,
+    panelSize: input.panelSize,
+    clampBounds: input.clampBounds,
+  });
+  if (!snapEdge) {
+    return { mode: "floating", edge: fallbackEdge };
+  }
+  return { mode: "docked", edge: snapEdge };
+};
+
+export const resolveToolbarCanvasInsets = (input: {
+  placement: { mode: "floating" | "docked"; edge: WindowRuntimeEdge };
+  panelSize: WindowRuntimeSize | null | undefined;
+  clampBounds: WindowRuntimeRect;
+}): WindowRuntimeInsets => {
+  const emptyInsets: WindowRuntimeInsets = {
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
+  };
+  if (input.placement.mode !== "docked" || !input.panelSize) {
+    return emptyInsets;
+  }
+
+  const size = normalizeSize(input.panelSize);
+  const bounds = normalizeRect(input.clampBounds);
+  const isHorizontalEdge =
+    input.placement.edge === "top" || input.placement.edge === "bottom";
+  const rawThickness = isHorizontalEdge ? size.height + 8 : size.width + 8;
+  const boundedByRedline = isHorizontalEdge
+    ? TOOLBAR_DOCKED_THICKNESS_TOP_BOTTOM_PX
+    : TOOLBAR_DOCKED_THICKNESS_LEFT_RIGHT_PX;
+  const boundedByCanvasVisible = isHorizontalEdge
+    ? Math.max(0, bounds.height - TOOLBAR_CANVAS_MIN_VISIBLE_HEIGHT_PX)
+    : Math.max(0, bounds.width - TOOLBAR_CANVAS_MIN_VISIBLE_WIDTH_PX);
+  const thickness = Math.max(
+    0,
+    Math.min(rawThickness, boundedByRedline, boundedByCanvasVisible)
+  );
+  if (thickness <= 0) return emptyInsets;
+
+  switch (input.placement.edge) {
+    case "top":
+      return { ...emptyInsets, top: thickness };
+    case "right":
+      return { ...emptyInsets, right: thickness };
+    case "bottom":
+      return { ...emptyInsets, bottom: thickness };
+    case "left":
+      return { ...emptyInsets, left: thickness };
+    default:
+      return emptyInsets;
+  }
+};
+
 export const clampWindowRuntimePosition = (
   position: WindowRuntimePoint,
   panelSize: WindowRuntimeSize,
   clampBounds: WindowRuntimeRect
 ): WindowRuntimePoint => {
   const nextPosition = normalizePoint(position);
-  const nextSize = normalizeSize(panelSize);
-  const nextBounds = normalizeRect(clampBounds);
-
-  const minX = nextBounds.x;
-  const minY = nextBounds.y;
-  const maxX = nextBounds.x + nextBounds.width - nextSize.width;
-  const maxY = nextBounds.y + nextBounds.height - nextSize.height;
+  const { minX, minY, maxX, maxY } = resolveClampEdges({
+    panelSize,
+    clampBounds,
+  });
 
   const clampedX = clampFinite(nextPosition.x, minX, maxX);
   const clampedY = clampFinite(nextPosition.y, minY, maxY);

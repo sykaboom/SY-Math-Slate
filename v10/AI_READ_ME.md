@@ -58,7 +58,7 @@ Feature subsystems:
 - `features/layout`: app shell/window host.
 - `features/ui-host`: host-side aggregation bridge for mod toolbar/panel contributions.
 - `features/canvas`: board/cursor/render layers.
-- `features/toolbar`: mode-split floating toolbar, pen/laser/eraser controls, dock selector UI, compact IA sections, centralized toolbar feedback/notices.
+- `features/toolbar`: mode-split floating toolbar, pen/laser/eraser controls, compact IA sections, centralized toolbar feedback/notices.
   - Toolbar dedup IA rule: mode-lane controls are primary; `More` is settings/secondary only; avoid duplicate action surfaces for the same command in the same mode.
   - Toolbar single-source invariant: base mode actions must be produced only by `FloatingToolbar` mode slices (`DrawModeTools.tsx`, `PlaybackModeTools.tsx`, `CanvasModeTools.tsx`); core declarative/template base injection into `toolbar-inline` remains disabled.
   - Mode surface split: `DrawModeTools.tsx`, `PlaybackModeTools.tsx`, `CanvasModeTools.tsx`, `MorePanel.tsx` are the primary render slices; `FloatingToolbar.tsx` is orchestration shell.
@@ -84,7 +84,7 @@ Authority-layer stores:
 - `useDocStore`: persisted document authority
 - `useSyncStore`: shared session/sync authority
 - `useLocalStore`: local role authority (`role`, `trustedRoleClaim`)
-- `useChromeStore`: chrome/panel authority including `toolbarDockPosition`
+- `useChromeStore`: chrome/panel authority including `toolbarPlacement` (`floating|docked` + edge)
 
 Compatibility / legacy:
 - `useUIStoreBridge`: transitional bridge

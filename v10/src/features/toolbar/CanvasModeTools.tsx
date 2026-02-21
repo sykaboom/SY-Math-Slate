@@ -1,7 +1,5 @@
 "use client";
 
-import type { ReactNode } from "react";
-
 import { useUIStore } from "@features/store/useUIStoreBridge";
 import { useSFX } from "@features/hooks/useSFX";
 import { Maximize2, Minimize2, Volume2, VolumeX } from "lucide-react";
@@ -13,16 +11,12 @@ type CanvasModeToolsProps = {
   compact?: boolean;
   showFullscreen: boolean;
   showSoundToggle: boolean;
-  showDockSelector: boolean;
-  toolbarDockSelector: ReactNode;
 };
 
 export function CanvasModeTools({
   compact = false,
   showFullscreen,
   showSoundToggle,
-  showDockSelector,
-  toolbarDockSelector,
 }: CanvasModeToolsProps) {
   const {
     fullscreenInkMode,
@@ -119,11 +113,6 @@ export function CanvasModeTools({
           }}
           className={compact ? "h-11 w-11 shrink-0" : undefined}
         />
-      )}
-      {showDockSelector && (
-        <div className={compact ? "shrink-0" : "flex items-center"}>
-          {toolbarDockSelector}
-        </div>
       )}
     </>
   );

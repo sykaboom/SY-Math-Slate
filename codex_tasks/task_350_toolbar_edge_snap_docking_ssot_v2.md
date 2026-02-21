@@ -1,6 +1,6 @@
 # Task 350: Toolbar Edge Snap Docking SSOT v2 (Legacy `left|center|right` 제거)
 
-Status: PENDING
+Status: COMPLETED
 Owner: Codex (spec / review / implementation)
 Target: v10/
 Date: 2026-02-21
@@ -152,17 +152,17 @@ Redlines (binding for this task):
 
 ## Acceptance Criteria (Base Required)
 
-- [ ] AC-1:
+- [x] AC-1:
   - 툴바를 드래그했을 때 `top|right|bottom|left` 4방향 모두 스냅-도킹 가능하다.
-- [ ] AC-2:
+- [x] AC-2:
   - 도킹/언도킹 시 배치 계산은 resolver 단일 경로를 타며, AppLayout은 계산 결과만 렌더한다.
-- [ ] AC-3:
+- [x] AC-3:
   - store의 툴바 배치 상태 타입에서 `left|center|right`가 제거되고, 새 배치 모델(`floating/docked + edge`)로 대체된다.
-- [ ] AC-4:
+- [x] AC-4:
   - FloatingToolbar UI에 `left|center|right` 선택 컨트롤이 존재하지 않는다.
-- [ ] AC-5:
+- [x] AC-5:
   - 캔버스 가시 영역이 레드라인 최소치(320x240) 미만으로 내려가지 않는다.
-- [ ] AC-6:
+- [x] AC-6:
   - `bash scripts/check_toolbar_contract.sh`, `cd v10 && npm run lint`, `cd v10 && npm run build`가 모두 PASS.
 
 ---
@@ -216,7 +216,7 @@ Redlines (binding for this task):
 ## Approval Gate (Base Required)
 
 - [x] Spec self-reviewed by Codex
-- [ ] Explicit user approval received (or delegated chain approval reference)
+- [x] Explicit user approval received (or delegated chain approval reference)
 
 > Implementation MUST NOT begin until both boxes are checked.
 
@@ -224,36 +224,51 @@ Redlines (binding for this task):
 
 ## Implementation Log (Codex fills)
 
-Status: PENDING
+Status: COMPLETED
 
 Changed files:
-- (to be filled)
+- `scripts/check_toolbar_contract.sh`
+- `v10/AI_READ_ME.md`
+- `v10/src/features/extensions/commands/commands.tool.ts`
+- `v10/src/features/layout/AppLayout.tsx`
+- `v10/src/features/layout/windowing/windowRuntime.ts`
+- `v10/src/features/layout/windowing/windowRuntime.types.ts`
+- `v10/src/features/store/useChromeStore.ts`
+- `v10/src/features/store/useUIStoreBridge.ts`
+- `v10/src/features/toolbar/CanvasModeTools.tsx`
+- `v10/src/features/toolbar/FloatingToolbar.tsx`
+- `v10/src/features/toolbar/MorePanel.tsx`
+- `v10/src/features/toolbar/catalog/toolbarActionCatalog.ts`
+- `v10/src/features/toolbar/catalog/toolbarSurfacePolicy.ts`
 
 Commands run (only if user asked or required by spec):
-- (to be filled)
+- `bash scripts/check_toolbar_contract.sh`
+- `cd v10 && npm run lint`
+- `cd v10 && npm run build`
 
 ## Gate Results (Codex fills)
 
 - Lint:
-  - PASS | FAIL | N/A
+  - PASS
 - Build:
-  - PASS | FAIL | N/A
+  - PASS
 - Script checks:
-  - PASS | FAIL | N/A
+  - PASS (`check_toolbar_contract.sh`)
 
 ## Failure Classification (Codex fills when any gate fails)
 
 - Pre-existing failures:
-  - ...
+  - none observed in required gates
 - Newly introduced failures:
-  - ...
+  - none observed in required gates
 - Blocking:
-  - YES | NO
+  - NO
 - Mitigation:
-  - ...
+  - N/A
 
 Manual verification notes:
-- ...
+- Command-level gates passed.
+- Browser drag scenario는 이 CLI 환경에서 실시간 UI 상호작용으로 재현하지 못했으며, 스냅/배치는 `windowRuntime` resolver 경로와 `AppLayout` 반영 코드로 검증했다.
 
 Notes:
 - `task_329` is treated as parked legacy spec; execution contract for this scope is `task_350`.

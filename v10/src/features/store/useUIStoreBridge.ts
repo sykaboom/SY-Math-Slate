@@ -8,7 +8,8 @@ import {
   useChromeStore,
   type FullscreenInkMode,
   type PanelId,
-  type ToolbarDockPosition,
+  type ToolbarDockEdge,
+  type ToolbarPlacement,
 } from "./useChromeStore";
 import { usePlaybackStore } from "./usePlaybackStore";
 import { useModStore } from "./useModStore";
@@ -16,7 +17,12 @@ import { useToolStore, type LaserType, type PenType, type Tool } from "./useTool
 import { useViewportStore, type ViewMode, type ViewportState } from "./useViewportStore";
 
 export type { Tool, LaserType, PenType } from "./useToolStore";
-export type { FullscreenInkMode, PanelId, ToolbarDockPosition } from "./useChromeStore";
+export type {
+  FullscreenInkMode,
+  PanelId,
+  ToolbarDockEdge,
+  ToolbarPlacement,
+} from "./useChromeStore";
 export type { ViewMode, ViewportState } from "./useViewportStore";
 
 export interface UIState {
@@ -53,7 +59,7 @@ export interface UIState {
   isSoundEnabled: boolean;
   isDataInputOpen: boolean;
   fullscreenInkMode: FullscreenInkMode;
-  toolbarDockPosition: ToolbarDockPosition;
+  toolbarPlacement: ToolbarPlacement;
   showCursors: boolean;
   showBreakGuides: boolean;
   showCanvasBorder: boolean;
@@ -102,7 +108,9 @@ export interface UIState {
   closeDataInput: () => void;
   toggleDataInput: () => void;
   setFullscreenInkMode: (mode: FullscreenInkMode) => void;
-  setToolbarDockPosition: (position: ToolbarDockPosition) => void;
+  setToolbarPlacement: (placement: ToolbarPlacement) => void;
+  setToolbarDockEdge: (edge: ToolbarDockEdge) => void;
+  setToolbarFloating: () => void;
   enterFullscreenInkNative: () => void;
   enterFullscreenInkFallback: () => void;
   exitFullscreenInk: () => void;
@@ -164,7 +172,7 @@ const getChromeSliceState = () => {
     isPasteHelperOpen: state.isPasteHelperOpen,
     isDataInputOpen: state.isDataInputOpen,
     fullscreenInkMode: state.fullscreenInkMode,
-    toolbarDockPosition: state.toolbarDockPosition,
+    toolbarPlacement: state.toolbarPlacement,
     showCursors: state.showCursors,
     showBreakGuides: state.showBreakGuides,
     showCanvasBorder: state.showCanvasBorder,
@@ -248,8 +256,10 @@ export const useUIStoreBridge = create<UIState>(() => ({
   closeDataInput: () => useChromeStore.getState().closeDataInput(),
   toggleDataInput: () => useChromeStore.getState().toggleDataInput(),
   setFullscreenInkMode: (mode) => useChromeStore.getState().setFullscreenInkMode(mode),
-  setToolbarDockPosition: (position) =>
-    useChromeStore.getState().setToolbarDockPosition(position),
+  setToolbarPlacement: (placement) =>
+    useChromeStore.getState().setToolbarPlacement(placement),
+  setToolbarDockEdge: (edge) => useChromeStore.getState().setToolbarDockEdge(edge),
+  setToolbarFloating: () => useChromeStore.getState().setToolbarFloating(),
   enterFullscreenInkNative: () => useChromeStore.getState().enterFullscreenInkNative(),
   enterFullscreenInkFallback: () =>
     useChromeStore.getState().enterFullscreenInkFallback(),

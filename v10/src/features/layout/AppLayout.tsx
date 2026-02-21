@@ -1,6 +1,13 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type CSSProperties,
+  type ReactNode,
+} from "react";
 
 import { CORE_PANEL_POLICY_IDS } from "@core/config/panel-policy";
 import { CanvasStage } from "@features/canvas/CanvasStage";
@@ -24,6 +31,10 @@ import {
 } from "@features/layout/windowing/PanelLauncher";
 import { buildCoreWindowHostPanelAdapters } from "@features/layout/windowing/panelAdapters";
 import { WindowHost } from "@features/layout/windowing/WindowHost";
+import {
+  resolveToolbarCanvasInsets,
+  resolveToolbarPlacementFromWindowRuntime,
+} from "@features/layout/windowing/windowRuntime";
 import { ModStudioShell } from "@features/mod-studio";
 import { reportPolicyBooleanDiffBatch } from "@features/policy/policyShadow";
 import { useResolvedPanelPolicy } from "@features/policy/useResolvedPanelPolicy";
@@ -80,11 +91,13 @@ export function AppLayout({ children }: AppLayoutProps) {
     closeDataInput,
     isDataInputOpen,
     fullscreenInkMode,
-    toolbarDockPosition,
+    toolbarPlacement,
     enterFullscreenInkNative,
     enterFullscreenInkFallback,
     exitFullscreenInk,
   } = useUIStore();
+  const windowRuntimePanels = useChromeStore((state) => state.windowRuntimePanels);
+  const setToolbarPlacement = useChromeStore((state) => state.setToolbarPlacement);
   const windowRuntimePanelOpenState = useChromeStore(
     (state) => state.windowRuntimePanelOpenState
   );
@@ -156,12 +169,6 @@ export function AppLayout({ children }: AppLayoutProps) {
   const presentationFooterClass = useCompactHorizontalInsets
     ? "relative flex items-center justify-center px-2 pb-2 sm:px-3 sm:pb-3 xl:px-6 xl:pb-6"
     : "relative flex items-center justify-center px-3 pb-3 sm:px-4 sm:pb-4 xl:px-6 xl:pb-6";
-  const toolbarDockAlignmentClass =
-    toolbarDockPosition === "left"
-      ? "items-start"
-      : toolbarDockPosition === "right"
-        ? "items-end"
-        : "items-center";
   const legacyRoleVisibility: LayoutRoleVisibilityPolicy =
     resolveLegacyLayoutVisibilityForRole(role);
 
@@ -290,6 +297,73 @@ export function AppLayout({ children }: AppLayoutProps) {
   );
   const useWindowHostPanels =
     useLayoutSlotCutover && windowHostPanels.length > 0;
+  const floatingToolbarPanel = useMemo(
+    () =>
+      windowHostPanels.find(
+        (panel) => panel.panelId === CORE_PANEL_POLICY_IDS.FLOATING_TOOLBAR
+      ) ?? null,
+    [windowHostPanels]
+  );
+  const floatingToolbarLayout =
+    windowRuntimePanels[CORE_PANEL_POLICY_IDS.FLOATING_TOOLBAR] ?? null;
+  const isFloatingToolbarOpen =
+    windowRuntimePanelOpenState[CORE_PANEL_POLICY_IDS.FLOATING_TOOLBAR] === true;
+  const resolvedToolbarPlacement = useMemo(
+    () =>
+      resolveToolbarPlacementFromWindowRuntime({
+        position: isFloatingToolbarOpen ? floatingToolbarLayout?.position : null,
+        panelSize: isFloatingToolbarOpen ? floatingToolbarPanel?.size : null,
+        clampBounds: windowHostClampBounds,
+        fallbackEdge: toolbarPlacement.edge,
+      }),
+    [
+      floatingToolbarLayout?.position,
+      floatingToolbarPanel?.size,
+      isFloatingToolbarOpen,
+      toolbarPlacement.edge,
+      windowHostClampBounds,
+    ]
+  );
+  const toolbarCanvasInsets = useMemo(
+    () =>
+      resolveToolbarCanvasInsets({
+        placement: resolvedToolbarPlacement,
+        panelSize: isFloatingToolbarOpen ? floatingToolbarPanel?.size : null,
+        clampBounds: windowHostClampBounds,
+      }),
+    [
+      floatingToolbarPanel?.size,
+      isFloatingToolbarOpen,
+      resolvedToolbarPlacement,
+      windowHostClampBounds,
+    ]
+  );
+  const canvasPrimaryStyle = useMemo<CSSProperties | undefined>(() => {
+    if (
+      toolbarCanvasInsets.top <= 0 &&
+      toolbarCanvasInsets.right <= 0 &&
+      toolbarCanvasInsets.bottom <= 0 &&
+      toolbarCanvasInsets.left <= 0
+    ) {
+      return undefined;
+    }
+    return {
+      paddingTop:
+        toolbarCanvasInsets.top > 0 ? `${toolbarCanvasInsets.top}px` : undefined,
+      paddingRight:
+        toolbarCanvasInsets.right > 0
+          ? `${toolbarCanvasInsets.right}px`
+          : undefined,
+      paddingBottom:
+        toolbarCanvasInsets.bottom > 0
+          ? `${toolbarCanvasInsets.bottom}px`
+          : undefined,
+      paddingLeft:
+        toolbarCanvasInsets.left > 0
+          ? `${toolbarCanvasInsets.left}px`
+          : undefined,
+    };
+  }, [toolbarCanvasInsets]);
   const shouldOverlayLeftPanel = !useWindowHostPanels && showDataInputPanelPolicy;
   const mainContentClass = "relative flex h-full w-full min-h-0 flex-1";
   const shouldRenderHostFooter = showHostToolchipsPolicy;
@@ -444,6 +518,21 @@ export function AppLayout({ children }: AppLayoutProps) {
     window.addEventListener("resize", updateClampBounds);
     return () => window.removeEventListener("resize", updateClampBounds);
   }, [useWindowHostPanels]);
+
+  useEffect(() => {
+    if (
+      toolbarPlacement.mode === resolvedToolbarPlacement.mode &&
+      toolbarPlacement.edge === resolvedToolbarPlacement.edge
+    ) {
+      return;
+    }
+    setToolbarPlacement(resolvedToolbarPlacement);
+  }, [
+    resolvedToolbarPlacement,
+    setToolbarPlacement,
+    toolbarPlacement.edge,
+    toolbarPlacement.mode,
+  ]);
 
   useEffect(() => {
     reportPolicyBooleanDiffBatch([
@@ -610,7 +699,11 @@ export function AppLayout({ children }: AppLayoutProps) {
               </section>
             }
           >
-            <div data-layout-id="region_canvas_primary" className="min-w-0 flex-1">
+            <div
+              data-layout-id="region_canvas_primary"
+              className="min-w-0 flex-1"
+              style={canvasPrimaryStyle}
+            >
               <CanvasStage>{children}</CanvasStage>
             </div>
           </ErrorBoundary>
@@ -684,8 +777,8 @@ export function AppLayout({ children }: AppLayoutProps) {
                 data-layout-id="region_toolchips"
                 className={
                   isFullscreenInkActive
-                    ? `pointer-events-auto flex w-full max-w-[min(980px,96vw)] flex-col gap-2 ${toolbarDockAlignmentClass}`
-                    : `pointer-events-auto flex w-full max-w-[min(1120px,96vw)] flex-col gap-2 ${toolbarDockAlignmentClass} xl:max-w-[min(1120px,94vw)]`
+                    ? "pointer-events-auto flex w-full max-w-[min(980px,96vw)] flex-col items-center gap-2"
+                    : "pointer-events-auto flex w-full max-w-[min(1120px,96vw)] flex-col items-center gap-2 xl:max-w-[min(1120px,94vw)]"
                 }
               >
                 <div data-extension-slot-host="toolbar-bottom" className="flex flex-col gap-2">

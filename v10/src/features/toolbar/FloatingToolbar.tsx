@@ -81,15 +81,6 @@ const TOOLBAR_MODES: ReadonlyArray<{
   { id: "canvas", label: "Canvas" },
 ];
 
-const TOOLBAR_DOCK_OPTIONS: ReadonlyArray<{
-  value: "left" | "center" | "right";
-  label: string;
-}> = [
-  { value: "left", label: "Left" },
-  { value: "center", label: "Center" },
-  { value: "right", label: "Right" },
-];
-
 const publishToolbarRequestFailureNotice = (): void => {
   publishToolbarNotice({
     tone: "error",
@@ -184,7 +175,6 @@ export function FloatingToolbar(props: FloatingToolbarProps = {}) {
     activePackageId,
   });
   const {
-    toolbarDockPosition,
     isOverviewMode,
     fullscreenInkMode,
     closeDataInput,
@@ -217,14 +207,6 @@ export function FloatingToolbar(props: FloatingToolbarProps = {}) {
     reservedActionIds: reservedToolbarActionIds,
   });
   const activeModToolbarContributionCount = activeModToolbarContributions.length;
-
-  const handleToolbarDockSelect = (position: "left" | "center" | "right") => {
-    void dispatchCommand("setToolbarDock", { position }, {
-      meta: { source: "toolbar.floating-toolbar" },
-    }).catch(() => {
-      publishToolbarRequestFailureNotice();
-    });
-  };
 
   const handleToolbarModeSelect = (mode: ToolbarMode) => {
     activateToolbarRuntimeMod(
@@ -384,33 +366,8 @@ export function FloatingToolbar(props: FloatingToolbarProps = {}) {
     </div>
   );
 
-  const toolbarDockSelector = (
-    <div className="flex items-center gap-1 rounded-full border border-toolbar-border/10 bg-toolbar-chip/5 p-1">
-      {TOOLBAR_DOCK_OPTIONS.map((dockOption) => {
-        const isActive = toolbarDockPosition === dockOption.value;
-        return (
-          <button
-            key={dockOption.value}
-            type="button"
-            onClick={() => handleToolbarDockSelect(dockOption.value)}
-            className={cn(
-              "rounded-full px-2.5 py-1 text-[11px] transition",
-              isActive
-                ? "bg-toolbar-active-bg text-toolbar-active-text shadow-[var(--toolbar-active-shadow)]"
-                : "text-toolbar-text/70 hover:bg-toolbar-chip/15 hover:text-toolbar-text"
-            )}
-          >
-            {dockOption.label}
-          </button>
-        );
-      })}
-    </div>
-  );
-
   const morePanelContent = (
     <MorePanel
-      toolbarDockSelector={toolbarDockSelector}
-      showDockSection={morePanelActions.dock}
       showStepSection={morePanelActions.step}
       showHistorySection={morePanelActions.history}
       onOpenClick={handleOpenClick}
@@ -583,8 +540,6 @@ export function FloatingToolbar(props: FloatingToolbarProps = {}) {
                   compact
                   showFullscreen={canvasToolbarActions.fullscreen}
                   showSoundToggle={canvasToolbarActions.sound}
-                  showDockSelector={canvasToolbarActions.dock}
-                  toolbarDockSelector={toolbarDockSelector}
                 />
               )}
               {compactModToolbarContributionButtons}
@@ -625,8 +580,6 @@ export function FloatingToolbar(props: FloatingToolbarProps = {}) {
             <CanvasModeTools
               showFullscreen={canvasToolbarActions.fullscreen}
               showSoundToggle={canvasToolbarActions.sound}
-              showDockSelector={canvasToolbarActions.dock}
-              toolbarDockSelector={toolbarDockSelector}
             />
           )}
           {desktopModToolbarContributionButtons}

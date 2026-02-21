@@ -65,6 +65,15 @@ else
   fail "navigation labels are not centralized"
 fi
 
+if rg -n "TOOLBAR_DOCK_OPTIONS|toolbarDockSelector|canvas\\.dock\\.(left|center|right)|toolbarDockPosition" \
+  v10/src/features/toolbar \
+  v10/src/features/store/useUIStoreBridge.ts \
+  v10/src/features/layout/AppLayout.tsx >/dev/null; then
+  fail "legacy toolbar dock selector references detected"
+else
+  pass "legacy left/center/right toolbar dock selector references removed"
+fi
+
 if [ "$fail_count" -gt 0 ]; then
   echo "[check_toolbar_contract] RESULT: FAIL ($fail_count issue(s))"
   exit 1
