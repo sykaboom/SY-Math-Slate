@@ -1,10 +1,10 @@
 viewport,check_id,file,pattern
-desktop,activation_policy,v10/src/features/chrome/toolbar/toolbarModePolicy.ts,selectActiveModPackageActivationToolbarModeMappedModId
+desktop,activation_policy,v10/src/features/chrome/toolbar/toolbarModePolicy.ts,selectActiveModPackageActivationModIdResolutionForToolbarMode
 desktop,input_routing,v10/src/features/editor/canvas/viewport/useViewportInteraction.ts,routeModKeyInput
 desktop,host_policy,v10/src/features/chrome/ui-host/modContributionBridge.ts,selectActiveModPackageAllowsToolbarContributionGroup
-tablet,activation_policy,v10/src/features/chrome/toolbar/toolbarModePolicy.ts,selectActiveModPackageActivationToolbarModeMappedModId
+tablet,activation_policy,v10/src/features/chrome/toolbar/toolbarModePolicy.ts,selectActiveModPackageActivationModIdResolutionForToolbarMode
 tablet,input_routing,v10/src/features/editor/canvas/viewport/useViewportInteraction.ts,addEventListener("touchstart"
 tablet,host_policy,v10/src/features/chrome/ui-host/modContributionBridge.ts,selectActiveModPackageAllowsPanelSlot
-mobile,activation_policy,v10/src/features/chrome/toolbar/toolbarModePolicy.ts,selectActiveModPackageActivationToolbarModeMappedModId
+mobile,activation_policy,v10/src/features/chrome/toolbar/toolbarModePolicy.ts,selectActiveModPackageActivationModIdResolutionForToolbarMode
 mobile,input_routing,v10/src/features/editor/canvas/viewport/useViewportInteraction.ts,routeModPointerInput
 mobile,host_policy,v10/src/features/chrome/ui-host/modContributionBridge.ts,mountMode !== "window-host"

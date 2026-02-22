@@ -5,7 +5,6 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT_DIR"
 
 FAIL=0
-WARN_COUNT=0
 RUNTIME_MATRIX_FILE="codex_tasks/workflow/mod_package_runtime_regression_matrix.csv"
 RUNTIME_MATRIX_THRESHOLD_FILE="codex_tasks/workflow/mod_package_runtime_thresholds.env"
 TOOLBAR_HOST_RENDERER_FILES=(
@@ -206,25 +205,8 @@ check_runtime_regression_matrix() {
     if rg -n -F -q "$pattern" "$file"; then
       echo "[PASS] runtime-matrix $viewport/$check_id"
     else
-      local compat_pattern=""
-      local compat_hit=0
-
-      if [[ "$check_id" == "activation_policy" && "$file" == "v10/src/features/chrome/toolbar/toolbarModePolicy.ts" ]]; then
-        if [[ "$pattern" == "selectActiveModPackageActivationToolbarModeMappedModId" ]]; then
-          compat_pattern="selectActiveModPackageActivationModIdResolutionForToolbarMode"
-        fi
-      fi
-
-      if [[ -n "$compat_pattern" ]] && rg -n -F -q "$compat_pattern" "$file"; then
-        echo "[WARN] runtime-matrix $viewport/$check_id pattern '$pattern' matched via compat '$compat_pattern' in $file"
-        WARN_COUNT=$((WARN_COUNT + 1))
-        compat_hit=1
-      fi
-
-      if [[ "$compat_hit" -eq 0 ]]; then
-        echo "[FAIL] runtime-matrix $viewport/$check_id missing pattern '$pattern' in $file"
-        FAIL=1
-      fi
+      echo "[FAIL] runtime-matrix $viewport/$check_id missing pattern '$pattern' in $file"
+      FAIL=1
     fi
   done < "$RUNTIME_MATRIX_FILE"
 
@@ -383,10 +365,6 @@ check_runtime_regression_matrix
 if [[ "$FAIL" -eq 1 ]]; then
   echo "[check_mod_contract] FAIL"
   exit 1
-fi
-
-if [[ "$WARN_COUNT" -gt 0 ]]; then
-  echo "[check_mod_contract] WARN deprecated-imports=$WARN_COUNT"
 fi
 
 echo "[check_mod_contract] PASS"

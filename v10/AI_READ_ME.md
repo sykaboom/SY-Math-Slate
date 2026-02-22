@@ -65,6 +65,7 @@ Core subsystems:
 - Runtime modding namespace (finalized in task_471):
   - `core/runtime/modding/api`: mod runtime contracts and normalized event/context types.
   - `core/runtime/modding/package`: package contracts/registry/selectors/guards + template-pack adapter.
+    - legacy alias mapping SSOT: `core/runtime/modding/package/legacyAlias.ts` (feature-layer redefinition 금지).
   - `core/runtime/modding/host`: mod runtime manager/registry and normalized routing bridge.
   - `core/runtime/modding/builtin`: builtin mods (`draw`, `playback`, `canvas`, `lecture`) under one contract.
 - Legacy compat lanes (temporary):

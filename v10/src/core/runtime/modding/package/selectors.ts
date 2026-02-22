@@ -3,7 +3,6 @@ import {
   MOD_RESOURCE_LAYER_LOAD_ORDER,
   MOD_PACKAGE_TOOLBAR_MODES,
   type ModPackageActivationModIdResolution,
-  type ModPackageAliasFallbackSource,
   type ModPackageJsonObject,
   type ModPackageJsonValue,
   type ModPackageCommandRule,
@@ -28,30 +27,12 @@ import {
   getRuntimeModResourceLayerOverrides,
   getRuntimeToolbarBaseProvider,
 } from "./registry";
-
-// Transitional compatibility policy centralized in package selectors.
-// Toolbar mode mapping must not be redefined in feature-layer code.
-const COMPAT_TOOLBAR_MODE_TO_MOD_ID: Readonly<
-  Record<ModPackageToolbarMode, ModId>
-> = {
-  draw: "draw",
-  playback: "lecture",
-  canvas: "canvas",
-};
-
-const COMPAT_MOD_ID_TO_TOOLBAR_MODE: Readonly<
-  Record<string, ModPackageToolbarMode>
-> = {
-  draw: "draw",
-  lecture: "playback",
-  playback: "playback",
-  canvas: "canvas",
-};
-
-const LEGACY_TOOLBAR_MODE_TO_MOD_ID_ALIAS_FALLBACK_SOURCE: ModPackageAliasFallbackSource =
-  "legacy.toolbar-mode-to-mod-id";
-const LEGACY_MOD_ID_TO_TOOLBAR_MODE_ALIAS_FALLBACK_SOURCE: ModPackageAliasFallbackSource =
-  "legacy.mod-id-to-toolbar-mode";
+import {
+  LEGACY_MOD_ID_TO_TOOLBAR_MODE_ALIAS_FALLBACK_SOURCE,
+  LEGACY_TOOLBAR_MODE_TO_MOD_ID_ALIAS_FALLBACK_SOURCE,
+  selectLegacyAliasModIdForToolbarMode,
+  selectLegacyAliasToolbarModeForModId,
+} from "./legacyAlias";
 
 const EMPTY_TOOLBAR_BASE_MODE_DEFINITIONS: readonly ToolbarBaseModeDefinition[] =
   Object.freeze([]);
@@ -251,7 +232,7 @@ export const selectModPackageActivationModIdResolutionForToolbarMode = (
     };
   }
 
-  const fallbackModId = COMPAT_TOOLBAR_MODE_TO_MOD_ID[toolbarMode] ?? null;
+  const fallbackModId = selectLegacyAliasModIdForToolbarMode(toolbarMode);
   if (fallbackModId) {
     return {
       modId: fallbackModId,
@@ -328,7 +309,7 @@ export const selectModPackageToolbarModeResolutionForActivationModId = (
     }
   }
 
-  const compatToolbarMode = COMPAT_MOD_ID_TO_TOOLBAR_MODE[modId];
+  const compatToolbarMode = selectLegacyAliasToolbarModeForModId(modId);
   if (compatToolbarMode) {
     return {
       toolbarMode: compatToolbarMode,
