@@ -66,6 +66,7 @@ Core subsystems:
   - `core/runtime/modding/api`: mod runtime contracts and normalized event/context types.
   - `core/runtime/modding/package`: package contracts/registry/selectors/guards + template-pack adapter.
     - selector split (task_509): domain selectors live under `src/core/runtime/modding/package/selectors/*`; `src/core/runtime/modding/package/selectors.ts` is facade export only.
+    - guard split (task_511): domain validators live under `src/core/runtime/modding/package/guards/*`; `src/core/runtime/modding/package/guards.ts` is facade export only.
     - legacy alias runtime path: retired (task_496).
     - legacy alias retire freeze gate:
       - budget: `codex_tasks/workflow/mod_alias_retire_budget.env`
