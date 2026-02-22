@@ -21,13 +21,9 @@ if (unknownArgs.length > 0) {
 const selfTestDuplicate = cliArgs.includes(SELF_TEST_DUPLICATE_FLAG);
 
 const files = {
-  policy: path.join(
+  toolbarBaseDefinition: path.join(
     repoRoot,
-    "v10/src/features/chrome/toolbar/catalog/toolbarSurfacePolicy.ts"
-  ),
-  selectors: path.join(
-    repoRoot,
-    "v10/src/features/chrome/toolbar/catalog/toolbarActionSelectors.ts"
+    "v10/src/mod/packs/base-education/toolbarBaseDefinition.ts"
   ),
   floatingToolbar: path.join(
     repoRoot,
@@ -55,75 +51,97 @@ const missing = Object.entries(files)
   .filter(([, file]) => !fs.existsSync(file))
   .map(([name, file]) => `${name}:${path.relative(repoRoot, file)}`);
 if (missing.length > 0) {
-  console.log(
-    `[check_toolbar_surface_uniqueness] SKIP (missing prerequisite files: ${missing.join(
+  console.error(
+    `[check_toolbar_surface_uniqueness] FAIL (missing prerequisite files: ${missing.join(
       ", "
     )})`
-  );
-  process.exit(0);
-}
-
-const source = fs.readFileSync(files.policy, "utf8");
-
-const pushRuleRegex =
-  /pushRules\(\s*FALLBACK_RULES,\s*"([^"]+)",\s*\[([\s\S]*?)\],\s*"([^"]+)"\s*\);/g;
-
-const viewports = ["desktop", "tablet", "mobile"];
-const keyMap = new Map();
-const violations = [];
-
-let match = pushRuleRegex.exec(source);
-while (match) {
-  const mode = match[1];
-  const actionBlock = match[2];
-  const surface = match[3];
-
-  const actionIds = [...actionBlock.matchAll(/"([^"]+)"/g)].map(
-    (actionMatch) => actionMatch[1]
-  );
-  for (const actionId of actionIds) {
-    for (const viewport of viewports) {
-      const key = `${mode}:${viewport}:${actionId}`;
-      const previous = keyMap.get(key);
-      if (previous && previous !== surface) {
-        violations.push({ key, previous, next: surface });
-      } else {
-        keyMap.set(key, surface);
-      }
-    }
-  }
-
-  match = pushRuleRegex.exec(source);
-}
-
-if (keyMap.size === 0) {
-  console.log(
-    "[check_toolbar_surface_uniqueness] SKIP (surface rule table not found)"
-  );
-  process.exit(0);
-}
-
-const floatingToolbarSource = fs.readFileSync(files.floatingToolbar, "utf8");
-if (
-  !floatingToolbarSource.includes("selectMorePanelActions") ||
-  !floatingToolbarSource.includes("<DrawModeTools") ||
-  !floatingToolbarSource.includes("<PlaybackModeTools") ||
-  !floatingToolbarSource.includes("<CanvasModeTools")
-) {
-  console.error(
-    "[check_toolbar_surface_uniqueness] FAIL (FloatingToolbar mode renderer path missing)"
   );
   process.exit(1);
 }
 
-const selectorsSource = fs.readFileSync(files.selectors, "utf8");
+const toolbarBaseSource = fs.readFileSync(files.toolbarBaseDefinition, "utf8");
+
+const placementConstRegex =
+  /const\s+([A-Z0-9_]+_PLACEMENTS)\s*=\s*\[([\s\S]*?)\]\s+as const/g;
+const placementEntryRegex = /mode:\s*"([^"]+)"\s*,\s*surface:\s*"([^"]+)"/g;
+const actionDefinitionRegex =
+  /\{\s*id:\s*"([^"]+)"\s*,\s*label:\s*"[^"]+"\s*,\s*placements:\s*([A-Z0-9_]+)\s*\}/g;
+
+const placementMap = new Map();
+let placementMatch = placementConstRegex.exec(toolbarBaseSource);
+while (placementMatch) {
+  const constName = placementMatch[1];
+  const block = placementMatch[2];
+  const placements = [];
+  let entryMatch = placementEntryRegex.exec(block);
+  while (entryMatch) {
+    placements.push({ mode: entryMatch[1], surface: entryMatch[2] });
+    entryMatch = placementEntryRegex.exec(block);
+  }
+  placementMap.set(constName, placements);
+  placementMatch = placementConstRegex.exec(toolbarBaseSource);
+}
+
+if (placementMap.size === 0) {
+  console.error(
+    "[check_toolbar_surface_uniqueness] FAIL (placement constants not found in toolbar base definition)"
+  );
+  process.exit(1);
+}
+
+const viewports = ["desktop", "tablet", "mobile"];
+const keyMap = new Map();
+const violations = [];
+const actionIds = new Set();
+
+let actionMatch = actionDefinitionRegex.exec(toolbarBaseSource);
+while (actionMatch) {
+  const actionId = actionMatch[1];
+  const placementConstName = actionMatch[2];
+  const placements = placementMap.get(placementConstName);
+
+  if (!placements || placements.length === 0) {
+    violations.push({
+      key: `action:${actionId}`,
+      previous: "missing-placement-const",
+      next: placementConstName,
+    });
+    actionMatch = actionDefinitionRegex.exec(toolbarBaseSource);
+    continue;
+  }
+
+  actionIds.add(actionId);
+  for (const placement of placements) {
+    for (const viewport of viewports) {
+      const key = `${placement.mode}:${viewport}:${actionId}`;
+      const previous = keyMap.get(key);
+      if (previous && previous !== placement.surface) {
+        violations.push({ key, previous, next: placement.surface });
+      } else {
+        keyMap.set(key, placement.surface);
+      }
+    }
+  }
+
+  actionMatch = actionDefinitionRegex.exec(toolbarBaseSource);
+}
+
+if (actionIds.size === 0) {
+  console.error(
+    "[check_toolbar_surface_uniqueness] FAIL (toolbar action definitions not found)"
+  );
+  process.exit(1);
+}
+
+const floatingToolbarSource = fs.readFileSync(files.floatingToolbar, "utf8");
 if (
-  !selectorsSource.includes("selectDrawToolbarActions") ||
-  !selectorsSource.includes("selectPlaybackToolbarActions") ||
-  !selectorsSource.includes("selectCanvasToolbarActions")
+  !floatingToolbarSource.includes("<DrawModeTools") ||
+  !floatingToolbarSource.includes("<PlaybackModeTools") ||
+  !floatingToolbarSource.includes("<CanvasModeTools") ||
+  !floatingToolbarSource.includes("<MorePanel")
 ) {
   console.error(
-    "[check_toolbar_surface_uniqueness] FAIL (toolbar selector wiring incomplete)"
+    "[check_toolbar_surface_uniqueness] FAIL (FloatingToolbar mode renderer path missing)"
   );
   process.exit(1);
 }
@@ -196,5 +214,5 @@ if (violations.length > 0 || producerConflicts.length > 0) {
 }
 
 console.log(
-  `[check_toolbar_surface_uniqueness] PASS (${keyMap.size} mode/viewport/action assignments; producers=mode-renderer only)`
+  `[check_toolbar_surface_uniqueness] PASS (${keyMap.size} mode/viewport/action assignments; actions=${actionIds.size}; producers=mode-renderer only)`
 );
