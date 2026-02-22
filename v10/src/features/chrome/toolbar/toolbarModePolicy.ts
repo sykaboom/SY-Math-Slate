@@ -11,7 +11,6 @@ import {
 } from "@core/runtime/modding/package";
 import { emitModAliasFallbackHitAuditEvent } from "@features/platform/observability";
 import type { ModId } from "@core/runtime/modding/api";
-import { BASE_EDUCATION_TOOLBAR_MODE_DEFINITIONS } from "@/mod/packs/base-education/modules";
 
 export type ToolbarMod = "draw" | "playback" | "canvas";
 export type ToolbarMode = ToolbarMod;
@@ -24,7 +23,11 @@ export const DEFAULT_TOOLBAR_MODE: ToolbarMode = "draw";
 const DEFAULT_TOOLBAR_MODE_FALLBACK_MOD_ID: ModId = "draw";
 
 const COMPAT_FALLBACK_TOOLBAR_MODE_DEFINITIONS: readonly ToolbarBaseModeDefinition[] =
-  BASE_EDUCATION_TOOLBAR_MODE_DEFINITIONS;
+  Object.freeze([
+    { id: "draw", label: "Draw", fallbackModId: "draw" },
+    { id: "playback", label: "Playback", fallbackModId: "lecture" },
+    { id: "canvas", label: "Canvas", fallbackModId: "canvas" },
+  ]);
 
 const resolvePackageDefinitions = (
   activationContext: ToolbarModeActivationContext

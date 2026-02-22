@@ -26,6 +26,9 @@ const runtimeTemplatePackManifestRegistry = new Map<string, TemplatePackManifest
 
 let hasBootstrappedDefaultPacks = false;
 
+export const isRuntimeTemplatePackBootstrapEnabled = (): boolean =>
+  process.env.NEXT_PUBLIC_TEMPLATE_PACK_BOOTSTRAP !== "0";
+
 const toTemplatePackRegistryFailure = (
   path: string,
   message: string
@@ -101,6 +104,10 @@ const listRuntimeTemplatePackDefinitions = () =>
 
 const bootstrapDefaultTemplatePacks = (): void => {
   if (hasBootstrappedDefaultPacks) return;
+  if (!isRuntimeTemplatePackBootstrapEnabled()) {
+    hasBootstrappedDefaultPacks = true;
+    return;
+  }
   for (const pack of listDefaultEnabledTemplatePacks()) {
     runtimeTemplatePackManifestRegistry.set(pack.packId, pack);
   }

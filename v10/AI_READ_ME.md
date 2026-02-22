@@ -98,6 +98,7 @@ Template pack runtime:
 - `src/mod/packs/*`: folder-based template packs (active path).
 - `src/mod/schema/*`: pack contract guards/types (active path).
 - `src/mod/bridge/packRegistryBridge.ts`: runtime bridge authority (active path).
+  - `NEXT_PUBLIC_TEMPLATE_PACK_BOOTSTRAP=0`이면 기본 템플릿팩 자동 부트스트랩을 끈다(no-mod boot certification path).
 
 ## 5) Store Authorities (SSOT)
 Authority-layer stores:
@@ -187,6 +188,7 @@ Primary checks used by hooks/CI:
 - `scripts/check_v10_hardcoding_budget.sh`
 - `scripts/check_v10_legacy_freeze.sh`
 - `scripts/check_v10_migration_baseline.sh`
+- `scripts/check_v10_no_mod_boot.sh`
 - `scripts/check_core_mod_boundary.sh`
 - `scripts/check_toolbar_surface_uniqueness.mjs`
 - `scripts/check_template_pack_contract.mjs`
