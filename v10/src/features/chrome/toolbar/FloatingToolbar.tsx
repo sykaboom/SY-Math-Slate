@@ -10,7 +10,7 @@ import {
   type ModManager,
 } from "@core/runtime/modding/host";
 import {
-  selectResolvedToolbarPlanInputFromBaseProvider,
+  selectResolvedToolbarPlanInputFromRuntimeResolver,
   type ResolvedToolbarPlan,
 } from "@core/runtime/modding/package";
 import { Popover, PopoverTrigger } from "@ui/components/popover";
@@ -38,7 +38,7 @@ import { DrawModeTools } from "./DrawModeTools";
 import { MorePanel } from "./MorePanel";
 import { PlaybackModeTools } from "./PlaybackModeTools";
 import { COMPACT_TOOLBAR_SCROLL_HINT } from "./compactToolbarSections";
-import { selectResolvedToolbarPlanInput as selectFallbackResolvedToolbarPlanInput } from "./catalog/toolbarActionSelectors";
+import { selectToolbarStepMetrics } from "./lib/stepMetrics";
 import { listToolbarActionIdsByMode } from "./catalog/toolbarActionCatalog";
 import {
   getToolbarViewportProfileSnapshot,
@@ -103,16 +103,12 @@ const resolveToolbarModContext = (modId: ModId): ModContext => ({
     activeTool: () => useUIStore.getState().activeTool,
     playbackStep: () => {
       const canvas = useCanvasStore.getState();
-      const maxStep = Object.values(canvas.pages).reduce((max, items) => {
-        return items.reduce((innerMax, item) => {
-          if (item.type !== "text" && item.type !== "image") return innerMax;
-          const stepIndex =
-            typeof item.stepIndex === "number" ? item.stepIndex : 0;
-          return Math.max(innerMax, stepIndex);
-        }, max);
-      }, -1);
-      const total = Math.max(maxStep + 1, 0);
-      const current = total === 0 ? 0 : Math.min(canvas.currentStep + 1, total);
+      const { displayStep, totalSteps } = selectToolbarStepMetrics({
+        pages: canvas.pages,
+        currentStep: canvas.currentStep,
+      });
+      const total = totalSteps;
+      const current = displayStep;
       return { current, total };
     },
     role: () => resolveToolbarRuntimeRole(),
@@ -188,12 +184,8 @@ export function FloatingToolbar(props: FloatingToolbarProps = {}) {
     viewport: viewportProfile,
     cutoverEnabled: toolbarRenderPolicy.cutoverEnabled,
   } as const;
-  const fallbackResolvedToolbarPlan = selectFallbackResolvedToolbarPlanInput(
-    toolbarPlanInput
-  );
   const resolvedToolbarPlan: ResolvedToolbarPlan =
-    selectResolvedToolbarPlanInputFromBaseProvider(toolbarPlanInput) ??
-    fallbackResolvedToolbarPlan;
+    selectResolvedToolbarPlanInputFromRuntimeResolver(toolbarPlanInput);
   const resolvedToolbarMode = resolvedToolbarPlan.mode;
   const drawToolbarActions = resolvedToolbarPlan.draw;
   const playbackToolbarActions = resolvedToolbarPlan.playback;

@@ -2,6 +2,10 @@
 
 import { useUIStore } from "@features/platform/store/useUIStoreBridge";
 import { useSFX } from "@features/platform/hooks/useSFX";
+import {
+  enterFullscreenInkRuntime,
+  exitFullscreenInkRuntime,
+} from "@features/chrome/shared/fullscreenInkRuntime";
 import { Maximize2, Minimize2, Volume2, VolumeX } from "lucide-react";
 
 import { ToolButton } from "./atoms/ToolButton";
@@ -31,37 +35,20 @@ export function CanvasModeTools({
   const isFullscreenInkActive = fullscreenInkMode !== "off";
 
   const handleEnterFullscreenInk = async () => {
-    closeDataInput();
-    if (typeof document === "undefined") {
-      enterFullscreenInkFallback();
-      return;
-    }
-    const rootNode = document.documentElement;
-    if (typeof rootNode.requestFullscreen !== "function") {
-      enterFullscreenInkFallback();
-      return;
-    }
-    try {
-      await rootNode.requestFullscreen();
-      enterFullscreenInkNative();
-    } catch {
-      enterFullscreenInkFallback();
-    }
+    await enterFullscreenInkRuntime({
+      rootNode:
+        typeof document === "undefined" ? null : document.documentElement,
+      onBeforeEnter: closeDataInput,
+      onEnterNative: enterFullscreenInkNative,
+      onEnterFallback: enterFullscreenInkFallback,
+    });
   };
 
   const handleExitFullscreenInk = async () => {
-    if (
-      isNativeFullscreen &&
-      typeof document !== "undefined" &&
-      document.fullscreenElement
-    ) {
-      try {
-        await document.exitFullscreen();
-      } catch {
-        // ignore
-      }
-    }
-    exitFullscreenInk();
+    await exitFullscreenInkRuntime({
+      isNativeFullscreen,
+      onExit: exitFullscreenInk,
+    });
   };
 
   const handleSoundToggle = async () => {

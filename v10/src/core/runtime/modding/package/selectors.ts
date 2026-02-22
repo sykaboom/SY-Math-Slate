@@ -218,17 +218,6 @@ export const selectModPackageActivationDefaultModId = (
   definition: ModPackageDefinition | null | undefined
 ): ModId | null => definition?.activation.defaultModId ?? null;
 
-/**
- * @deprecated Use selectModPackageActivationModIdForToolbarMode for canonical behavior.
- */
-export const selectModPackageActivationToolbarModeMappedModId = (
-  definition: ModPackageDefinition | null | undefined,
-  toolbarMode: ModPackageToolbarMode
-): ModId | null => {
-  if (!definition) return null;
-  return definition.activation.toolbarModeMap?.[toolbarMode] ?? null;
-};
-
 export const selectModPackageActivationModIdForToolbarMode = (
   definition: ModPackageDefinition | null | undefined,
   toolbarMode: ModPackageToolbarMode
@@ -291,21 +280,6 @@ export const selectActiveModPackageActivationModIdResolutionForToolbarMode = (
 ): ModPackageActivationModIdResolution => {
   const activeDefinition = selectActiveModPackage(definitions, activePackageId);
   return selectModPackageActivationModIdResolutionForToolbarMode(
-    activeDefinition,
-    toolbarMode
-  );
-};
-
-/**
- * @deprecated Use selectActiveModPackageActivationModIdForToolbarMode for canonical behavior.
- */
-export const selectActiveModPackageActivationToolbarModeMappedModId = (
-  definitions: readonly ModPackageDefinition[],
-  activePackageId: ModPackageId | null | undefined,
-  toolbarMode: ModPackageToolbarMode
-): ModId | null => {
-  const activeDefinition = selectActiveModPackage(definitions, activePackageId);
-  return selectModPackageActivationToolbarModeMappedModId(
     activeDefinition,
     toolbarMode
   );
@@ -472,6 +446,46 @@ export const selectResolvedToolbarPlanInputFromBaseProvider = (
   if (!provider) return null;
   return provider.resolvePlan(input);
 };
+
+const buildFallbackResolvedToolbarPlan = (
+  input: ResolvedToolbarPlanInput
+): ResolvedToolbarPlan =>
+  selectResolvedToolbarPlan({
+    mode: input.mode,
+    viewport: input.viewport,
+    cutoverEnabled: input.cutoverEnabled,
+    draw: {
+      hand: false,
+      pen: false,
+      eraser: false,
+      laser: false,
+      text: false,
+      image: false,
+      clipboard: false,
+      undoRedo: false,
+      breakActions: false,
+    },
+    playback: {
+      step: false,
+      undoRedo: false,
+      sound: false,
+      extras: false,
+    },
+    canvas: {
+      fullscreen: false,
+      sound: false,
+    },
+    morePanel: {
+      step: false,
+      history: false,
+    },
+  });
+
+export const selectResolvedToolbarPlanInputFromRuntimeResolver = (
+  input: ResolvedToolbarPlanInput
+): ResolvedToolbarPlan =>
+  selectResolvedToolbarPlanInputFromBaseProvider(input) ??
+  buildFallbackResolvedToolbarPlan(input);
 
 export type ToolbarSurfaceRuleMergeResult = {
   map: Map<string, ToolbarBaseActionSurface>;

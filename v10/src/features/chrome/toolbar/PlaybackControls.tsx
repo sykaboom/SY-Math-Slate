@@ -21,6 +21,7 @@ import { ToolButton } from "./atoms/ToolButton";
 import { NAVIGATION_LABELS } from "./navigationLabels";
 import { fireToolbarCommand } from "./toolbarFeedback";
 import { ToolbarPanel } from "./atoms/ToolbarPanel";
+import { selectToolbarStepMetrics } from "./lib/stepMetrics";
 
 export function PlaybackControls() {
   const {
@@ -32,25 +33,24 @@ export function PlaybackControls() {
     isCapabilityEnabled,
   } = useUIStore();
   const { pages, currentStep, stepBlocks } = useCanvasStore();
-  const maxStep = useMemo(() => {
-    if (stepBlocks.length > 0) return stepBlocks.length - 1;
-    return Object.values(pages).reduce((max, items) => {
-      return items.reduce((innerMax, item) => {
-        if (item.type !== "text" && item.type !== "image") return innerMax;
-        const stepIndex =
-          typeof item.stepIndex === "number" ? item.stepIndex : 0;
-        return Math.max(innerMax, stepIndex);
-      }, max);
-    }, -1);
-  }, [pages, stepBlocks]);
-  const totalSteps = Math.max(maxStep + 1, 0);
-  const displayStep =
-    totalSteps === 0 ? 0 : Math.min(currentStep + 1, totalSteps);
-  const canStepPrev = currentStep > 0;
-  const canStepNext = currentStep <= maxStep;
-  const canStepJump = totalSteps > 1;
-  const stepSliderMax = Math.max(maxStep + 1, 0);
-  const stepSliderValue = Math.min(currentStep, stepSliderMax);
+  const {
+    maxStep,
+    totalSteps,
+    displayStep,
+    canStepPrev,
+    canStepNext,
+    canStepJump,
+    stepSliderMax,
+    stepSliderValue,
+  } = useMemo(
+    () =>
+      selectToolbarStepMetrics({
+        pages,
+        currentStep,
+        stepBlocks,
+      }),
+    [pages, currentStep, stepBlocks]
+  );
 
   const speedLabel = useMemo(() => playbackSpeed.toFixed(2), [playbackSpeed]);
   const delayLabel = useMemo(

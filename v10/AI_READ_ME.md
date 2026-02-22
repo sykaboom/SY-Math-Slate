@@ -84,9 +84,8 @@ Feature subsystems:
   - Mode surface split: `DrawModeTools.tsx`, `PlaybackModeTools.tsx`, `CanvasModeTools.tsx`, `MorePanel.tsx` are the primary render slices; `FloatingToolbar.tsx` is orchestration shell.
   - Toolbar SSOT/policy files:
     - `src/features/chrome/toolbar/catalog/toolbarActionCatalog.ts`
-    - `src/features/chrome/toolbar/catalog/toolbarActionSelectors.ts`
-    - `src/features/chrome/toolbar/catalog/toolbarSurfacePolicy.ts`
     - `src/features/chrome/toolbar/catalog/toolbarViewportProfile.ts`
+    - `src/core/runtime/modding/package/selectors.ts` (`selectResolvedToolbarPlanInputFromRuntimeResolver`)
 - `features/collaboration/sharing`: snapshot share adapters, host live session/store wiring, live transport, policy/proposal flow, AI approval queue hook.
 - `features/chrome/viewer`: public viewer shell/session/live sync hooks.
 - `features/editor/input-studio`: structured input + LLM draft flows.
@@ -169,7 +168,7 @@ Fallback rule:
 - Migration/guard scripts must scan command directory, not single monolith file assumptions.
 - Toolbar runtime policy:
   - `src/features/chrome/toolbar/toolbarModePolicy.ts` is the single env/cutover resolver for toolbar mode render behavior.
-  - `src/features/chrome/toolbar/catalog/toolbarSurfacePolicy.ts` is the single source for mode/viewport/action surface placement.
+  - `src/core/runtime/modding/package/selectors.ts` is the single source for mode/viewport/action surface plan resolution.
 - Navigation copy policy:
   - `src/features/chrome/toolbar/navigationLabels.ts` is the shared vocabulary source for Page/Outline/Playback step labels.
 

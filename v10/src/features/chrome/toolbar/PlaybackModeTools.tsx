@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 
 import { useSFX } from "@features/platform/hooks/useSFX";
+import { selectToolbarStepMetrics } from "./lib/stepMetrics";
 import { PageNavigator } from "./PageNavigator";
 import { PlaybackControls } from "./PlaybackControls";
 import { ToolButton } from "./atoms/ToolButton";
@@ -41,19 +42,11 @@ export function PlaybackModeTools({
   const currentItems = pages[currentPageId] ?? [];
   const canUndo = currentItems.some((item) => item.type === "stroke");
   const canRedo = (strokeRedoByPage[currentPageId]?.length ?? 0) > 0;
-  const maxStep = Object.values(pages).reduce((max, items) => {
-    return items.reduce((innerMax, item) => {
-      if (item.type !== "text" && item.type !== "image") return innerMax;
-      const stepIndex =
-        typeof item.stepIndex === "number" ? item.stepIndex : 0;
-      return Math.max(innerMax, stepIndex);
-    }, max);
-  }, -1);
-  const canStepPrev = currentStep > 0;
-  const canStepNext = currentStep <= maxStep;
-  const totalSteps = Math.max(maxStep + 1, 0);
-  const displayStep =
-    totalSteps === 0 ? 0 : Math.min(currentStep + 1, totalSteps);
+  const { canStepPrev, canStepNext, totalSteps, displayStep } =
+    selectToolbarStepMetrics({
+      pages,
+      currentStep,
+    });
 
   const dispatchToolbarCommand = (commandId: string, payload: unknown = {}) => {
     void dispatchCommand(commandId, payload, {

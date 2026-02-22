@@ -14,8 +14,6 @@ export * from "./atoms/ToolButton";
 export * from "./atoms/ToolbarPanel";
 export * from "./atoms/ToolbarSeparator";
 export * from "./catalog/toolbarActionCatalog";
-export * from "./catalog/toolbarActionSelectors";
-export * from "./catalog/toolbarSurfacePolicy";
 export * from "./catalog/toolbarViewportProfile";
 export * from "./compactToolbarSections";
 export * from "./navigationLabels";

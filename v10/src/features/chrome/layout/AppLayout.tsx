@@ -40,6 +40,10 @@ import { reportPolicyBooleanDiffBatch } from "@features/governance/policy/policy
 import { useResolvedPanelPolicy } from "@features/governance/policy/useResolvedPanelPolicy";
 import { useAuthoringShortcuts } from "@features/chrome/shortcuts/useAuthoringShortcuts";
 import { useAsymmetricSessionSync } from "@features/collaboration/sync/useAsymmetricSessionSync";
+import {
+  enterFullscreenInkRuntime,
+  exitFullscreenInkRuntime,
+} from "@features/chrome/shared/fullscreenInkRuntime";
 import { Button } from "@ui/components/button";
 import ErrorBoundary from "@ui/components/ErrorBoundary";
 import { useChromeStore } from "@features/platform/store/useChromeStore";
@@ -443,33 +447,19 @@ export function AppLayout({ children }: AppLayoutProps) {
   };
 
   const handleEnterFullscreenInk = async () => {
-    closeDataInput();
-    const rootNode = layoutRootRef.current;
-    if (!rootNode || typeof rootNode.requestFullscreen !== "function") {
-      enterFullscreenInkFallback();
-      return;
-    }
-    try {
-      await rootNode.requestFullscreen();
-      enterFullscreenInkNative();
-    } catch {
-      enterFullscreenInkFallback();
-    }
+    await enterFullscreenInkRuntime({
+      rootNode: layoutRootRef.current,
+      onBeforeEnter: closeDataInput,
+      onEnterNative: enterFullscreenInkNative,
+      onEnterFallback: enterFullscreenInkFallback,
+    });
   };
 
   const handleExitFullscreenInk = async () => {
-    if (
-      isNativeFullscreen &&
-      typeof document !== "undefined" &&
-      document.fullscreenElement
-    ) {
-      try {
-        await document.exitFullscreen();
-      } catch {
-        // ignore
-      }
-    }
-    exitFullscreenInk();
+    await exitFullscreenInkRuntime({
+      isNativeFullscreen,
+      onExit: exitFullscreenInk,
+    });
   };
 
   useEffect(() => {
