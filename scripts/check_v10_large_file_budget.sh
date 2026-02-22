@@ -101,6 +101,13 @@ guards_ui_policy_parse_validators_apply_optional_fields_max="${GUARDS_UI_POLICY_
 selectors_resource_command_merge_operations_remove_rule_max="${SELECTORS_RESOURCE_COMMAND_MERGE_OPERATIONS_REMOVE_RULE_MAX:-0}"
 selectors_resource_command_merge_operations_upsert_rule_max="${SELECTORS_RESOURCE_COMMAND_MERGE_OPERATIONS_UPSERT_RULE_MAX:-0}"
 selectors_resource_command_merge_operations_result_max="${SELECTORS_RESOURCE_COMMAND_MERGE_OPERATIONS_RESULT_MAX:-0}"
+package_types_toolbar_plan_mode_viewport_max="${PACKAGE_TYPES_TOOLBAR_PLAN_MODE_VIEWPORT_MAX:-0}"
+package_types_toolbar_plan_action_groups_max="${PACKAGE_TYPES_TOOLBAR_PLAN_ACTION_GROUPS_MAX:-0}"
+package_types_toolbar_plan_resolved_plan_max="${PACKAGE_TYPES_TOOLBAR_PLAN_RESOLVED_PLAN_MAX:-0}"
+package_types_toolbar_plan_base_catalog_max="${PACKAGE_TYPES_TOOLBAR_PLAN_BASE_CATALOG_MAX:-0}"
+package_types_toolbar_plan_resource_overrides_max="${PACKAGE_TYPES_TOOLBAR_PLAN_RESOURCE_OVERRIDES_MAX:-0}"
+selectors_resource_shortcut_merge_merge_run_max="${SELECTORS_RESOURCE_SHORTCUT_MERGE_MERGE_RUN_MAX:-0}"
+selectors_resource_shortcut_merge_merge_operations_max="${SELECTORS_RESOURCE_SHORTCUT_MERGE_MERGE_OPERATIONS_MAX:-0}"
 guards_validate_definition_base_fields_parse_root_fields_max="${GUARDS_VALIDATE_DEFINITION_BASE_FIELDS_PARSE_ROOT_FIELDS_MAX:-0}"
 guards_validate_definition_base_fields_parse_mod_ids_max="${GUARDS_VALIDATE_DEFINITION_BASE_FIELDS_PARSE_MOD_IDS_MAX:-0}"
 guards_validate_definition_base_fields_parse_activation_max="${GUARDS_VALIDATE_DEFINITION_BASE_FIELDS_PARSE_ACTIVATION_MAX:-0}"
@@ -183,6 +190,13 @@ validate_int "GUARDS_UI_POLICY_PARSE_VALIDATORS_APPLY_OPTIONAL_FIELDS_MAX" "$gua
 validate_int "SELECTORS_RESOURCE_COMMAND_MERGE_OPERATIONS_REMOVE_RULE_MAX" "$selectors_resource_command_merge_operations_remove_rule_max"
 validate_int "SELECTORS_RESOURCE_COMMAND_MERGE_OPERATIONS_UPSERT_RULE_MAX" "$selectors_resource_command_merge_operations_upsert_rule_max"
 validate_int "SELECTORS_RESOURCE_COMMAND_MERGE_OPERATIONS_RESULT_MAX" "$selectors_resource_command_merge_operations_result_max"
+validate_int "PACKAGE_TYPES_TOOLBAR_PLAN_MODE_VIEWPORT_MAX" "$package_types_toolbar_plan_mode_viewport_max"
+validate_int "PACKAGE_TYPES_TOOLBAR_PLAN_ACTION_GROUPS_MAX" "$package_types_toolbar_plan_action_groups_max"
+validate_int "PACKAGE_TYPES_TOOLBAR_PLAN_RESOLVED_PLAN_MAX" "$package_types_toolbar_plan_resolved_plan_max"
+validate_int "PACKAGE_TYPES_TOOLBAR_PLAN_BASE_CATALOG_MAX" "$package_types_toolbar_plan_base_catalog_max"
+validate_int "PACKAGE_TYPES_TOOLBAR_PLAN_RESOURCE_OVERRIDES_MAX" "$package_types_toolbar_plan_resource_overrides_max"
+validate_int "SELECTORS_RESOURCE_SHORTCUT_MERGE_MERGE_RUN_MAX" "$selectors_resource_shortcut_merge_merge_run_max"
+validate_int "SELECTORS_RESOURCE_SHORTCUT_MERGE_MERGE_OPERATIONS_MAX" "$selectors_resource_shortcut_merge_merge_operations_max"
 validate_int "GUARDS_VALIDATE_DEFINITION_BASE_FIELDS_PARSE_ROOT_FIELDS_MAX" "$guards_validate_definition_base_fields_parse_root_fields_max"
 validate_int "GUARDS_VALIDATE_DEFINITION_BASE_FIELDS_PARSE_MOD_IDS_MAX" "$guards_validate_definition_base_fields_parse_mod_ids_max"
 validate_int "GUARDS_VALIDATE_DEFINITION_BASE_FIELDS_PARSE_ACTIVATION_MAX" "$guards_validate_definition_base_fields_parse_activation_max"
@@ -299,6 +313,23 @@ for file in "${wave12_extra_files[@]}"; do
   fi
 done
 
+wave13_extra_files=(
+  "v10/src/core/runtime/modding/package/types/toolbarPlan/modeAndViewport.ts"
+  "v10/src/core/runtime/modding/package/types/toolbarPlan/actionGroups.ts"
+  "v10/src/core/runtime/modding/package/types/toolbarPlan/resolvedPlan.ts"
+  "v10/src/core/runtime/modding/package/types/toolbarPlan/baseCatalog.ts"
+  "v10/src/core/runtime/modding/package/types/toolbarPlan/resourceOverrides.ts"
+  "v10/src/core/runtime/modding/package/selectors/resourceShortcutMerge/merge/run.ts"
+  "v10/src/core/runtime/modding/package/selectors/resourceShortcutMerge/merge/operations.ts"
+)
+
+for file in "${wave13_extra_files[@]}"; do
+  if [[ ! -f "$file" ]]; then
+    echo "[check_v10_large_file_budget] FAIL: missing target file: $file"
+    exit 1
+  fi
+done
+
 app_layout_lines="$(wc -l < "${target_files[0]}")"
 ext_runtime_lines="$(wc -l < "${target_files[1]}")"
 data_input_lines="$(wc -l < "${target_files[2]}")"
@@ -380,6 +411,13 @@ guards_ui_policy_parse_validators_apply_optional_fields_lines="$(wc -l < "v10/sr
 selectors_resource_command_merge_operations_remove_rule_lines="$(wc -l < "v10/src/core/runtime/modding/package/selectors/resourceCommandMerge/merge/operations/removeRule.ts")"
 selectors_resource_command_merge_operations_upsert_rule_lines="$(wc -l < "v10/src/core/runtime/modding/package/selectors/resourceCommandMerge/merge/operations/upsertRule.ts")"
 selectors_resource_command_merge_operations_result_lines="$(wc -l < "v10/src/core/runtime/modding/package/selectors/resourceCommandMerge/merge/operations/result.ts")"
+package_types_toolbar_plan_mode_viewport_lines="$(wc -l < "v10/src/core/runtime/modding/package/types/toolbarPlan/modeAndViewport.ts")"
+package_types_toolbar_plan_action_groups_lines="$(wc -l < "v10/src/core/runtime/modding/package/types/toolbarPlan/actionGroups.ts")"
+package_types_toolbar_plan_resolved_plan_lines="$(wc -l < "v10/src/core/runtime/modding/package/types/toolbarPlan/resolvedPlan.ts")"
+package_types_toolbar_plan_base_catalog_lines="$(wc -l < "v10/src/core/runtime/modding/package/types/toolbarPlan/baseCatalog.ts")"
+package_types_toolbar_plan_resource_overrides_lines="$(wc -l < "v10/src/core/runtime/modding/package/types/toolbarPlan/resourceOverrides.ts")"
+selectors_resource_shortcut_merge_merge_run_lines="$(wc -l < "v10/src/core/runtime/modding/package/selectors/resourceShortcutMerge/merge/run.ts")"
+selectors_resource_shortcut_merge_merge_operations_lines="$(wc -l < "v10/src/core/runtime/modding/package/selectors/resourceShortcutMerge/merge/operations.ts")"
 
 printf '[check_v10_large_file_budget] budget_wave=%s app_layout=%s/%s extension_runtime_bootstrap=%s/%s data_input_panel=%s/%s selectors_package_selection=%s/%s selectors_toolbar_plan=%s/%s guards_validate_definition=%s/%s guards_resource_policy=%s/%s registry=%s/%s guards_validate_definition_ui_resource_policy=%s/%s template_pack_adaptation=%s/%s template_pack_toolbar_definition=%s/%s selectors_package_selection_sorting_active=%s/%s selectors_package_selection_activation_mapping=%s/%s guards_validate_definition_index=%s/%s guards_validate_definition_base_fields=%s/%s selectors_toolbar_plan_provider=%s/%s selectors_toolbar_plan_surface_rules=%s/%s selectors_toolbar_plan_plan_resolution=%s/%s guards_resource_policy_command_rules=%s/%s guards_resource_policy_shortcut_rules=%s/%s guards_resource_policy_input_behavior_rule=%s/%s registry_class=%s/%s registry_runtime_state=%s/%s registry_resource_overrides=%s/%s guards_validate_definition_ui_policy=%s/%s guards_validate_definition_resource_policy=%s/%s types_facade=%s/%s types_toolbar_plan=%s/%s resource_policy_merge=%s/%s resource_shortcut_merge=%s/%s resource_input_behavior_merge=%s/%s activation_mapping_base=%s/%s provider_base=%s/%s ui_policy_parse=%s/%s base_fields_parse=%s/%s registry_class_comparators=%s/%s registry_class_types=%s/%s registry_class_core=%s/%s command_merge_operations=%s/%s command_merge_run=%s/%s item_merge_operations=%s/%s item_merge_run=%s/%s input_behavior_normalize=%s/%s input_behavior_parse=%s/%s ui_policy_validators=%s/%s ui_policy_parser=%s/%s base_root_fields=%s/%s base_mod_ids=%s/%s base_activation=%s/%s base_parse=%s/%s\n' \
   "${BUDGET_WAVE:-unknown}" \
@@ -441,6 +479,15 @@ printf '[check_v10_large_file_budget] wave12 ui_policy_validators_record=%s/%s u
   "$selectors_resource_command_merge_operations_remove_rule_lines" "$selectors_resource_command_merge_operations_remove_rule_max" \
   "$selectors_resource_command_merge_operations_upsert_rule_lines" "$selectors_resource_command_merge_operations_upsert_rule_max" \
   "$selectors_resource_command_merge_operations_result_lines" "$selectors_resource_command_merge_operations_result_max"
+
+printf '[check_v10_large_file_budget] wave13 toolbar_plan_mode_viewport=%s/%s toolbar_plan_action_groups=%s/%s toolbar_plan_resolved_plan=%s/%s toolbar_plan_base_catalog=%s/%s toolbar_plan_resource_overrides=%s/%s shortcut_merge_run=%s/%s shortcut_merge_operations=%s/%s\n' \
+  "$package_types_toolbar_plan_mode_viewport_lines" "$package_types_toolbar_plan_mode_viewport_max" \
+  "$package_types_toolbar_plan_action_groups_lines" "$package_types_toolbar_plan_action_groups_max" \
+  "$package_types_toolbar_plan_resolved_plan_lines" "$package_types_toolbar_plan_resolved_plan_max" \
+  "$package_types_toolbar_plan_base_catalog_lines" "$package_types_toolbar_plan_base_catalog_max" \
+  "$package_types_toolbar_plan_resource_overrides_lines" "$package_types_toolbar_plan_resource_overrides_max" \
+  "$selectors_resource_shortcut_merge_merge_run_lines" "$selectors_resource_shortcut_merge_merge_run_max" \
+  "$selectors_resource_shortcut_merge_merge_operations_lines" "$selectors_resource_shortcut_merge_merge_operations_max"
 
 if (( app_layout_lines > app_layout_max )); then
   echo "[check_v10_large_file_budget] FAIL: AppLayout.tsx exceeded budget"
@@ -844,6 +891,41 @@ fi
 
 if (( selectors_resource_command_merge_operations_result_lines > selectors_resource_command_merge_operations_result_max )); then
   echo "[check_v10_large_file_budget] FAIL: resourceCommandMerge/merge/operations/result.ts exceeded budget"
+  exit 1
+fi
+
+if (( package_types_toolbar_plan_mode_viewport_lines > package_types_toolbar_plan_mode_viewport_max )); then
+  echo "[check_v10_large_file_budget] FAIL: types/toolbarPlan/modeAndViewport.ts exceeded budget"
+  exit 1
+fi
+
+if (( package_types_toolbar_plan_action_groups_lines > package_types_toolbar_plan_action_groups_max )); then
+  echo "[check_v10_large_file_budget] FAIL: types/toolbarPlan/actionGroups.ts exceeded budget"
+  exit 1
+fi
+
+if (( package_types_toolbar_plan_resolved_plan_lines > package_types_toolbar_plan_resolved_plan_max )); then
+  echo "[check_v10_large_file_budget] FAIL: types/toolbarPlan/resolvedPlan.ts exceeded budget"
+  exit 1
+fi
+
+if (( package_types_toolbar_plan_base_catalog_lines > package_types_toolbar_plan_base_catalog_max )); then
+  echo "[check_v10_large_file_budget] FAIL: types/toolbarPlan/baseCatalog.ts exceeded budget"
+  exit 1
+fi
+
+if (( package_types_toolbar_plan_resource_overrides_lines > package_types_toolbar_plan_resource_overrides_max )); then
+  echo "[check_v10_large_file_budget] FAIL: types/toolbarPlan/resourceOverrides.ts exceeded budget"
+  exit 1
+fi
+
+if (( selectors_resource_shortcut_merge_merge_run_lines > selectors_resource_shortcut_merge_merge_run_max )); then
+  echo "[check_v10_large_file_budget] FAIL: resourceShortcutMerge/merge/run.ts exceeded budget"
+  exit 1
+fi
+
+if (( selectors_resource_shortcut_merge_merge_operations_lines > selectors_resource_shortcut_merge_merge_operations_max )); then
+  echo "[check_v10_large_file_budget] FAIL: resourceShortcutMerge/merge/operations.ts exceeded budget"
   exit 1
 fi
 
