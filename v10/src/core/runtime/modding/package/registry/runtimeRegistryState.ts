@@ -1,75 +1,25 @@
-import type {
-  ModPackageDefinition,
-  ModPackageId,
-  ToolbarBaseProvider,
-} from "../types";
-import {
-  ModPackageRegistry,
-  type ModPackageRegistryRegisterResult,
-  type RuntimeModPackageRegistrationEntry,
-  sortModPackageDefinitionsByPackId,
-} from "./classRegistry";
 import { resetRuntimeModResourceOverridesState } from "./resourceOverrides";
-
-let runtimeModPackageRegistrySingleton: ModPackageRegistry | null = null;
-let runtimeToolbarBaseProviderSingleton: ToolbarBaseProvider | null = null;
-
-const ensureRuntimeModPackageRegistry = (): ModPackageRegistry => {
-  if (!runtimeModPackageRegistrySingleton) {
-    runtimeModPackageRegistrySingleton = new ModPackageRegistry();
-  }
-  return runtimeModPackageRegistrySingleton;
-};
-
-export const getRuntimeModPackageRegistry = (): ModPackageRegistry =>
-  ensureRuntimeModPackageRegistry();
-
-export const registerRuntimeModPackage = (
-  value: unknown
-): ModPackageRegistryRegisterResult =>
-  ensureRuntimeModPackageRegistry().register(value);
-
-export const registerRuntimeModPackages = (
-  definitions: readonly ModPackageDefinition[]
-): RuntimeModPackageRegistrationEntry[] => {
-  const registry = ensureRuntimeModPackageRegistry();
-  const orderedDefinitions = sortModPackageDefinitionsByPackId(definitions);
-  return orderedDefinitions.map((definition) => ({
-    packId: definition.packId,
-    result: registry.register(definition),
-  }));
-};
-
-export const listRuntimeModPackages = (): ModPackageDefinition[] =>
-  ensureRuntimeModPackageRegistry().list();
-
-export const getRuntimeModPackageById = (
-  packId: ModPackageId
-): ModPackageDefinition | null => ensureRuntimeModPackageRegistry().get(packId);
-
-export const getPrimaryRuntimeModPackage = (): ModPackageDefinition | null =>
-  ensureRuntimeModPackageRegistry().getPrimary();
-
-export const clearRuntimeModPackageRegistry = (): void => {
-  ensureRuntimeModPackageRegistry().clear();
-};
+export {
+  clearRuntimeModPackageRegistry,
+  getPrimaryRuntimeModPackage,
+  getRuntimeModPackageById,
+  getRuntimeModPackageRegistry,
+  listRuntimeModPackages,
+  registerRuntimeModPackage,
+  registerRuntimeModPackages,
+} from "./runtimeRegistryState/registrySingleton";
+export {
+  clearRuntimeToolbarBaseProvider,
+  getRuntimeToolbarBaseProvider,
+  registerRuntimeToolbarBaseProvider,
+} from "./runtimeRegistryState/toolbarProvider";
+import {
+  resetRuntimeModPackageRegistryState,
+} from "./runtimeRegistryState/registrySingleton";
+import { resetRuntimeToolbarBaseProviderState } from "./runtimeRegistryState/toolbarProvider";
 
 export const resetRuntimeModPackageRegistry = (): void => {
-  runtimeModPackageRegistrySingleton = null;
-  runtimeToolbarBaseProviderSingleton = null;
+  resetRuntimeModPackageRegistryState();
+  resetRuntimeToolbarBaseProviderState();
   resetRuntimeModResourceOverridesState();
-};
-
-export const registerRuntimeToolbarBaseProvider = (
-  provider: ToolbarBaseProvider
-): ToolbarBaseProvider => {
-  runtimeToolbarBaseProviderSingleton = provider;
-  return provider;
-};
-
-export const getRuntimeToolbarBaseProvider = (): ToolbarBaseProvider | null =>
-  runtimeToolbarBaseProviderSingleton;
-
-export const clearRuntimeToolbarBaseProvider = (): void => {
-  runtimeToolbarBaseProviderSingleton = null;
 };

@@ -74,6 +74,15 @@ guards_validate_definition_ui_policy_sections_items_max="${GUARDS_VALIDATE_DEFIN
 guards_validate_definition_resource_policy_index_max="${GUARDS_VALIDATE_DEFINITION_RESOURCE_POLICY_INDEX_MAX:-0}"
 guards_validate_definition_resource_policy_parse_max="${GUARDS_VALIDATE_DEFINITION_RESOURCE_POLICY_PARSE_MAX:-0}"
 guards_validate_definition_resource_policy_sections_max="${GUARDS_VALIDATE_DEFINITION_RESOURCE_POLICY_SECTIONS_MAX:-0}"
+guards_validate_definition_resource_policy_sections_common_max="${GUARDS_VALIDATE_DEFINITION_RESOURCE_POLICY_SECTIONS_COMMON_MAX:-0}"
+guards_validate_definition_resource_policy_sections_policy_patch_max="${GUARDS_VALIDATE_DEFINITION_RESOURCE_POLICY_SECTIONS_POLICY_PATCH_MAX:-0}"
+guards_validate_definition_resource_policy_sections_commands_max="${GUARDS_VALIDATE_DEFINITION_RESOURCE_POLICY_SECTIONS_COMMANDS_MAX:-0}"
+guards_validate_definition_resource_policy_sections_shortcuts_max="${GUARDS_VALIDATE_DEFINITION_RESOURCE_POLICY_SECTIONS_SHORTCUTS_MAX:-0}"
+guards_validate_definition_resource_policy_sections_input_behavior_max="${GUARDS_VALIDATE_DEFINITION_RESOURCE_POLICY_SECTIONS_INPUT_BEHAVIOR_MAX:-0}"
+registry_runtime_state_registry_singleton_max="${REGISTRY_RUNTIME_STATE_REGISTRY_SINGLETON_MAX:-0}"
+registry_runtime_state_toolbar_provider_max="${REGISTRY_RUNTIME_STATE_TOOLBAR_PROVIDER_MAX:-0}"
+registry_resource_overrides_layer_max="${REGISTRY_RESOURCE_OVERRIDES_LAYER_MAX:-0}"
+registry_resource_overrides_state_max="${REGISTRY_RESOURCE_OVERRIDES_STATE_MAX:-0}"
 selectors_resource_item_merge_max="${SELECTORS_RESOURCE_ITEM_MERGE_MAX:-0}"
 selectors_resource_command_merge_max="${SELECTORS_RESOURCE_COMMAND_MERGE_MAX:-0}"
 template_pack_toolbar_definition_guards_max="${TEMPLATE_PACK_TOOLBAR_DEFINITION_GUARDS_MAX:-0}"
@@ -214,6 +223,15 @@ validate_int "GUARDS_VALIDATE_DEFINITION_UI_POLICY_SECTIONS_ITEMS_MAX" "$guards_
 validate_int "GUARDS_VALIDATE_DEFINITION_RESOURCE_POLICY_INDEX_MAX" "$guards_validate_definition_resource_policy_index_max"
 validate_int "GUARDS_VALIDATE_DEFINITION_RESOURCE_POLICY_PARSE_MAX" "$guards_validate_definition_resource_policy_parse_max"
 validate_int "GUARDS_VALIDATE_DEFINITION_RESOURCE_POLICY_SECTIONS_MAX" "$guards_validate_definition_resource_policy_sections_max"
+validate_int "GUARDS_VALIDATE_DEFINITION_RESOURCE_POLICY_SECTIONS_COMMON_MAX" "$guards_validate_definition_resource_policy_sections_common_max"
+validate_int "GUARDS_VALIDATE_DEFINITION_RESOURCE_POLICY_SECTIONS_POLICY_PATCH_MAX" "$guards_validate_definition_resource_policy_sections_policy_patch_max"
+validate_int "GUARDS_VALIDATE_DEFINITION_RESOURCE_POLICY_SECTIONS_COMMANDS_MAX" "$guards_validate_definition_resource_policy_sections_commands_max"
+validate_int "GUARDS_VALIDATE_DEFINITION_RESOURCE_POLICY_SECTIONS_SHORTCUTS_MAX" "$guards_validate_definition_resource_policy_sections_shortcuts_max"
+validate_int "GUARDS_VALIDATE_DEFINITION_RESOURCE_POLICY_SECTIONS_INPUT_BEHAVIOR_MAX" "$guards_validate_definition_resource_policy_sections_input_behavior_max"
+validate_int "REGISTRY_RUNTIME_STATE_REGISTRY_SINGLETON_MAX" "$registry_runtime_state_registry_singleton_max"
+validate_int "REGISTRY_RUNTIME_STATE_TOOLBAR_PROVIDER_MAX" "$registry_runtime_state_toolbar_provider_max"
+validate_int "REGISTRY_RESOURCE_OVERRIDES_LAYER_MAX" "$registry_resource_overrides_layer_max"
+validate_int "REGISTRY_RESOURCE_OVERRIDES_STATE_MAX" "$registry_resource_overrides_state_max"
 validate_int "SELECTORS_RESOURCE_ITEM_MERGE_MAX" "$selectors_resource_item_merge_max"
 validate_int "SELECTORS_RESOURCE_COMMAND_MERGE_MAX" "$selectors_resource_command_merge_max"
 validate_int "TEMPLATE_PACK_TOOLBAR_DEFINITION_GUARDS_MAX" "$template_pack_toolbar_definition_guards_max"
@@ -553,6 +571,25 @@ for file in "${wave20_extra_files[@]}"; do
   fi
 done
 
+wave21_extra_files=(
+  "v10/src/core/runtime/modding/package/guards/validateDefinition/uiAndResourcePolicy/resourcePolicy/sections/common.ts"
+  "v10/src/core/runtime/modding/package/guards/validateDefinition/uiAndResourcePolicy/resourcePolicy/sections/policyPatch.ts"
+  "v10/src/core/runtime/modding/package/guards/validateDefinition/uiAndResourcePolicy/resourcePolicy/sections/commands.ts"
+  "v10/src/core/runtime/modding/package/guards/validateDefinition/uiAndResourcePolicy/resourcePolicy/sections/shortcuts.ts"
+  "v10/src/core/runtime/modding/package/guards/validateDefinition/uiAndResourcePolicy/resourcePolicy/sections/inputBehavior.ts"
+  "v10/src/core/runtime/modding/package/registry/runtimeRegistryState/registrySingleton.ts"
+  "v10/src/core/runtime/modding/package/registry/runtimeRegistryState/toolbarProvider.ts"
+  "v10/src/core/runtime/modding/package/registry/resourceOverrides/layer.ts"
+  "v10/src/core/runtime/modding/package/registry/resourceOverrides/state.ts"
+)
+
+for file in "${wave21_extra_files[@]}"; do
+  if [[ ! -f "$file" ]]; then
+    echo "[check_v10_large_file_budget] FAIL: missing target file: $file"
+    exit 1
+  fi
+done
+
 app_layout_lines="$(wc -l < "${target_files[0]}")"
 ext_runtime_lines="$(wc -l < "${target_files[1]}")"
 data_input_lines="$(wc -l < "${target_files[2]}")"
@@ -692,6 +729,15 @@ guards_validate_definition_ui_policy_sections_items_lines="$(wc -l < "v10/src/co
 guards_validate_definition_resource_policy_index_lines="$(wc -l < "v10/src/core/runtime/modding/package/guards/validateDefinition/uiAndResourcePolicy/resourcePolicy/index.ts")"
 guards_validate_definition_resource_policy_parse_lines="$(wc -l < "v10/src/core/runtime/modding/package/guards/validateDefinition/uiAndResourcePolicy/resourcePolicy/parse.ts")"
 guards_validate_definition_resource_policy_sections_lines="$(wc -l < "v10/src/core/runtime/modding/package/guards/validateDefinition/uiAndResourcePolicy/resourcePolicy/sections.ts")"
+guards_validate_definition_resource_policy_sections_common_lines="$(wc -l < "v10/src/core/runtime/modding/package/guards/validateDefinition/uiAndResourcePolicy/resourcePolicy/sections/common.ts")"
+guards_validate_definition_resource_policy_sections_policy_patch_lines="$(wc -l < "v10/src/core/runtime/modding/package/guards/validateDefinition/uiAndResourcePolicy/resourcePolicy/sections/policyPatch.ts")"
+guards_validate_definition_resource_policy_sections_commands_lines="$(wc -l < "v10/src/core/runtime/modding/package/guards/validateDefinition/uiAndResourcePolicy/resourcePolicy/sections/commands.ts")"
+guards_validate_definition_resource_policy_sections_shortcuts_lines="$(wc -l < "v10/src/core/runtime/modding/package/guards/validateDefinition/uiAndResourcePolicy/resourcePolicy/sections/shortcuts.ts")"
+guards_validate_definition_resource_policy_sections_input_behavior_lines="$(wc -l < "v10/src/core/runtime/modding/package/guards/validateDefinition/uiAndResourcePolicy/resourcePolicy/sections/inputBehavior.ts")"
+registry_runtime_state_registry_singleton_lines="$(wc -l < "v10/src/core/runtime/modding/package/registry/runtimeRegistryState/registrySingleton.ts")"
+registry_runtime_state_toolbar_provider_lines="$(wc -l < "v10/src/core/runtime/modding/package/registry/runtimeRegistryState/toolbarProvider.ts")"
+registry_resource_overrides_layer_lines="$(wc -l < "v10/src/core/runtime/modding/package/registry/resourceOverrides/layer.ts")"
+registry_resource_overrides_state_lines="$(wc -l < "v10/src/core/runtime/modding/package/registry/resourceOverrides/state.ts")"
 
 printf '[check_v10_large_file_budget] budget_wave=%s app_layout=%s/%s extension_runtime_bootstrap=%s/%s data_input_panel=%s/%s selectors_package_selection=%s/%s selectors_toolbar_plan=%s/%s guards_validate_definition=%s/%s guards_resource_policy=%s/%s registry=%s/%s guards_validate_definition_ui_resource_policy=%s/%s template_pack_adaptation=%s/%s template_pack_manifest_selectors=%s/%s template_pack_toolbar_definition=%s/%s selectors_package_selection_sorting_active=%s/%s selectors_package_selection_activation_mapping=%s/%s guards_validate_definition_index=%s/%s guards_validate_definition_base_fields=%s/%s selectors_toolbar_plan_provider=%s/%s selectors_toolbar_plan_surface_rules=%s/%s selectors_toolbar_plan_plan_resolution=%s/%s guards_resource_policy_command_rules=%s/%s guards_resource_policy_shortcut_rules=%s/%s guards_resource_policy_input_behavior_rule=%s/%s registry_class=%s/%s registry_runtime_state=%s/%s registry_resource_overrides=%s/%s guards_validate_definition_ui_policy=%s/%s guards_validate_definition_resource_policy=%s/%s types_facade=%s/%s types_toolbar_plan=%s/%s resource_policy_merge=%s/%s resource_shortcut_merge=%s/%s resource_input_behavior_merge=%s/%s activation_mapping_base=%s/%s provider_base=%s/%s ui_policy_parse=%s/%s base_fields_parse=%s/%s registry_class_comparators=%s/%s registry_class_types=%s/%s registry_class_core=%s/%s command_merge_operations=%s/%s command_merge_run=%s/%s item_merge_operations=%s/%s item_merge_run=%s/%s input_behavior_normalize=%s/%s input_behavior_parse=%s/%s ui_policy_validators=%s/%s ui_policy_parser=%s/%s base_root_fields=%s/%s base_mod_ids=%s/%s base_activation=%s/%s base_parse=%s/%s\n' \
   "${BUDGET_WAVE:-unknown}" \
@@ -825,6 +871,17 @@ printf '[check_v10_large_file_budget] wave20 ui_sections_common=%s/%s ui_section
   "$guards_resource_policy_input_behavior_rule_normalize_mod_id_lines" "$guards_resource_policy_input_behavior_rule_normalize_mod_id_max" \
   "$guards_resource_policy_input_behavior_rule_normalize_chain_lines" "$guards_resource_policy_input_behavior_rule_normalize_chain_max" \
   "$guards_resource_policy_input_behavior_rule_normalize_rule_lines" "$guards_resource_policy_input_behavior_rule_normalize_rule_max"
+
+printf '[check_v10_large_file_budget] wave21 resource_sections_common=%s/%s resource_sections_policy_patch=%s/%s resource_sections_commands=%s/%s resource_sections_shortcuts=%s/%s resource_sections_input_behavior=%s/%s registry_state_registry=%s/%s registry_state_provider=%s/%s resource_overrides_layer=%s/%s resource_overrides_state=%s/%s\n' \
+  "$guards_validate_definition_resource_policy_sections_common_lines" "$guards_validate_definition_resource_policy_sections_common_max" \
+  "$guards_validate_definition_resource_policy_sections_policy_patch_lines" "$guards_validate_definition_resource_policy_sections_policy_patch_max" \
+  "$guards_validate_definition_resource_policy_sections_commands_lines" "$guards_validate_definition_resource_policy_sections_commands_max" \
+  "$guards_validate_definition_resource_policy_sections_shortcuts_lines" "$guards_validate_definition_resource_policy_sections_shortcuts_max" \
+  "$guards_validate_definition_resource_policy_sections_input_behavior_lines" "$guards_validate_definition_resource_policy_sections_input_behavior_max" \
+  "$registry_runtime_state_registry_singleton_lines" "$registry_runtime_state_registry_singleton_max" \
+  "$registry_runtime_state_toolbar_provider_lines" "$registry_runtime_state_toolbar_provider_max" \
+  "$registry_resource_overrides_layer_lines" "$registry_resource_overrides_layer_max" \
+  "$registry_resource_overrides_state_lines" "$registry_resource_overrides_state_max"
 
 if (( app_layout_lines > app_layout_max )); then
   echo "[check_v10_large_file_budget] FAIL: AppLayout.tsx exceeded budget"
@@ -1518,6 +1575,51 @@ fi
 
 if (( guards_validate_definition_resource_policy_sections_lines > guards_validate_definition_resource_policy_sections_max )); then
   echo "[check_v10_large_file_budget] FAIL: uiAndResourcePolicy/resourcePolicy/sections.ts exceeded budget"
+  exit 1
+fi
+
+if (( guards_validate_definition_resource_policy_sections_common_lines > guards_validate_definition_resource_policy_sections_common_max )); then
+  echo "[check_v10_large_file_budget] FAIL: uiAndResourcePolicy/resourcePolicy/sections/common.ts exceeded budget"
+  exit 1
+fi
+
+if (( guards_validate_definition_resource_policy_sections_policy_patch_lines > guards_validate_definition_resource_policy_sections_policy_patch_max )); then
+  echo "[check_v10_large_file_budget] FAIL: uiAndResourcePolicy/resourcePolicy/sections/policyPatch.ts exceeded budget"
+  exit 1
+fi
+
+if (( guards_validate_definition_resource_policy_sections_commands_lines > guards_validate_definition_resource_policy_sections_commands_max )); then
+  echo "[check_v10_large_file_budget] FAIL: uiAndResourcePolicy/resourcePolicy/sections/commands.ts exceeded budget"
+  exit 1
+fi
+
+if (( guards_validate_definition_resource_policy_sections_shortcuts_lines > guards_validate_definition_resource_policy_sections_shortcuts_max )); then
+  echo "[check_v10_large_file_budget] FAIL: uiAndResourcePolicy/resourcePolicy/sections/shortcuts.ts exceeded budget"
+  exit 1
+fi
+
+if (( guards_validate_definition_resource_policy_sections_input_behavior_lines > guards_validate_definition_resource_policy_sections_input_behavior_max )); then
+  echo "[check_v10_large_file_budget] FAIL: uiAndResourcePolicy/resourcePolicy/sections/inputBehavior.ts exceeded budget"
+  exit 1
+fi
+
+if (( registry_runtime_state_registry_singleton_lines > registry_runtime_state_registry_singleton_max )); then
+  echo "[check_v10_large_file_budget] FAIL: registry/runtimeRegistryState/registrySingleton.ts exceeded budget"
+  exit 1
+fi
+
+if (( registry_runtime_state_toolbar_provider_lines > registry_runtime_state_toolbar_provider_max )); then
+  echo "[check_v10_large_file_budget] FAIL: registry/runtimeRegistryState/toolbarProvider.ts exceeded budget"
+  exit 1
+fi
+
+if (( registry_resource_overrides_layer_lines > registry_resource_overrides_layer_max )); then
+  echo "[check_v10_large_file_budget] FAIL: registry/resourceOverrides/layer.ts exceeded budget"
+  exit 1
+fi
+
+if (( registry_resource_overrides_state_lines > registry_resource_overrides_state_max )); then
+  echo "[check_v10_large_file_budget] FAIL: registry/resourceOverrides/state.ts exceeded budget"
   exit 1
 fi
 
