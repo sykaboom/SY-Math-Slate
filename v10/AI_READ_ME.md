@@ -81,6 +81,9 @@ Core subsystems:
     - policy merge selectors split (task_529): `resourcePolicyMerge.ts`, `resourceShortcutMerge.ts`, `resourceInputBehaviorMerge.ts` are facades and merge helpers live under sibling module folders.
     - activation/provider split (task_530): `packageSelection/activationMapping.ts` and `toolbarPlan/provider.ts` are facades and resolver steps live under `.../activationMapping/*`, `.../provider/*`.
     - guard parser split (task_531): `guards/uiPolicy.ts` and `guards/validateDefinition/baseFields.ts` are facades and parser modules live under `.../uiPolicy/*`, `.../baseFields/*`.
+    - registry class split (task_533): `registry/classRegistry.ts` is facade and internals live under `registry/classRegistry/*`.
+    - merge core split (task_534): `resourceCommandMerge/merge.ts` and `resourceItemMerge/merge.ts` are facades with operation modules under `.../merge/*`.
+    - inputBehavior guard split (task_535): `guards/resourcePolicy/inputBehaviorRule.ts` is facade and parser modules live under `.../inputBehaviorRule/*`.
     - legacy alias runtime path: retired (task_496).
     - legacy alias retire freeze gate:
       - budget: `codex_tasks/workflow/mod_alias_retire_budget.env`
