@@ -65,6 +65,7 @@ Core subsystems:
 - Runtime modding namespace (finalized in task_471):
   - `core/runtime/modding/api`: mod runtime contracts and normalized event/context types.
   - `core/runtime/modding/package`: package contracts/registry/selectors/guards + template-pack adapter.
+    - selector split (task_509): domain selectors live under `src/core/runtime/modding/package/selectors/*`; `src/core/runtime/modding/package/selectors.ts` is facade export only.
     - legacy alias runtime path: retired (task_496).
     - legacy alias retire freeze gate:
       - budget: `codex_tasks/workflow/mod_alias_retire_budget.env`
@@ -175,7 +176,7 @@ Fallback rule:
 - Toolbar runtime policy:
 - `src/core/runtime/modding/package/selectors.ts` (`selectRuntimeToolbarCutoverEnabled`) is the single env/cutover resolver for toolbar plan input.
 - `src/features/chrome/toolbar/toolbarModePolicy.ts` is now a thin host bridge for alias-telemetry + package-aware mode resolution.
-  - `src/core/runtime/modding/package/selectors.ts` is the single source for mode/viewport/action surface plan resolution.
+  - `src/core/runtime/modding/package/selectors.ts` facade + `src/core/runtime/modding/package/selectors/toolbarPlan.ts` is the single source for mode/viewport/action surface plan resolution.
 - Navigation copy policy:
   - `src/features/chrome/toolbar/navigationLabels.ts` is the shared vocabulary source for Page/Outline/Playback step labels.
 

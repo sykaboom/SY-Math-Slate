@@ -27,15 +27,21 @@ validate_int() {
 app_layout_max="${APP_LAYOUT_MAX:-0}"
 ext_runtime_max="${EXTENSION_RUNTIME_BOOTSTRAP_MAX:-0}"
 data_input_max="${DATA_INPUT_PANEL_MAX:-0}"
+selectors_package_selection_max="${SELECTORS_PACKAGE_SELECTION_MAX:-0}"
+selectors_toolbar_plan_max="${SELECTORS_TOOLBAR_PLAN_MAX:-0}"
 
 validate_int "APP_LAYOUT_MAX" "$app_layout_max"
 validate_int "EXTENSION_RUNTIME_BOOTSTRAP_MAX" "$ext_runtime_max"
 validate_int "DATA_INPUT_PANEL_MAX" "$data_input_max"
+validate_int "SELECTORS_PACKAGE_SELECTION_MAX" "$selectors_package_selection_max"
+validate_int "SELECTORS_TOOLBAR_PLAN_MAX" "$selectors_toolbar_plan_max"
 
 target_files=(
   "v10/src/features/chrome/layout/AppLayout.tsx"
   "v10/src/features/platform/extensions/ui/ExtensionRuntimeBootstrap.tsx"
   "v10/src/features/chrome/layout/DataInputPanel.tsx"
+  "v10/src/core/runtime/modding/package/selectors/packageSelection.ts"
+  "v10/src/core/runtime/modding/package/selectors/toolbarPlan.ts"
 )
 
 for file in "${target_files[@]}"; do
@@ -48,12 +54,16 @@ done
 app_layout_lines="$(wc -l < "${target_files[0]}")"
 ext_runtime_lines="$(wc -l < "${target_files[1]}")"
 data_input_lines="$(wc -l < "${target_files[2]}")"
+selectors_package_selection_lines="$(wc -l < "${target_files[3]}")"
+selectors_toolbar_plan_lines="$(wc -l < "${target_files[4]}")"
 
-printf '[check_v10_large_file_budget] budget_wave=%s app_layout=%s/%s extension_runtime_bootstrap=%s/%s data_input_panel=%s/%s\n' \
+printf '[check_v10_large_file_budget] budget_wave=%s app_layout=%s/%s extension_runtime_bootstrap=%s/%s data_input_panel=%s/%s selectors_package_selection=%s/%s selectors_toolbar_plan=%s/%s\n' \
   "${BUDGET_WAVE:-unknown}" \
   "$app_layout_lines" "$app_layout_max" \
   "$ext_runtime_lines" "$ext_runtime_max" \
-  "$data_input_lines" "$data_input_max"
+  "$data_input_lines" "$data_input_max" \
+  "$selectors_package_selection_lines" "$selectors_package_selection_max" \
+  "$selectors_toolbar_plan_lines" "$selectors_toolbar_plan_max"
 
 if (( app_layout_lines > app_layout_max )); then
   echo "[check_v10_large_file_budget] FAIL: AppLayout.tsx exceeded budget"
@@ -67,6 +77,16 @@ fi
 
 if (( data_input_lines > data_input_max )); then
   echo "[check_v10_large_file_budget] FAIL: DataInputPanel.tsx exceeded budget"
+  exit 1
+fi
+
+if (( selectors_package_selection_lines > selectors_package_selection_max )); then
+  echo "[check_v10_large_file_budget] FAIL: selectors/packageSelection.ts exceeded budget"
+  exit 1
+fi
+
+if (( selectors_toolbar_plan_lines > selectors_toolbar_plan_max )); then
+  echo "[check_v10_large_file_budget] FAIL: selectors/toolbarPlan.ts exceeded budget"
   exit 1
 fi
 
