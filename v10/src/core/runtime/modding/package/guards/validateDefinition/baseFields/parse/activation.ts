@@ -1,4 +1,5 @@
-import { fail, isNonEmptyString, isPlainRecord } from "../../../utils";
+import { fail } from "../../../utils";
+import { validateActivation } from "./activation/validate";
 
 export type ParsedActivation = {
   activation: Record<string, unknown>;
@@ -9,44 +10,14 @@ export const parseActivation = (
   value: unknown,
   modIdSet: Set<string>
 ): { ok: true; value: ParsedActivation } | { ok: false; value: ReturnType<typeof fail> } => {
-  if (!isPlainRecord(value)) {
-    return {
-      ok: false,
-      value: fail(
-        "invalid-activation",
-        "manifest.activation",
-        "activation must be an object."
-      ),
-    };
-  }
-
-  if (!isNonEmptyString(value.defaultModId)) {
-    return {
-      ok: false,
-      value: fail(
-        "invalid-default-mod-id",
-        "manifest.activation.defaultModId",
-        "defaultModId must be a string."
-      ),
-    };
-  }
-
-  if (!modIdSet.has(value.defaultModId)) {
-    return {
-      ok: false,
-      value: fail(
-        "invalid-default-mod-id",
-        "manifest.activation.defaultModId",
-        "defaultModId must exist in modIds."
-      ),
-    };
-  }
+  const validated = validateActivation(value, modIdSet);
+  if (!validated.ok) return { ok: false, value: validated.value };
 
   return {
     ok: true,
     value: {
-      activation: value,
-      defaultModId: value.defaultModId,
+      activation: validated.value.activation,
+      defaultModId: validated.value.defaultModId,
     },
   };
 };

@@ -1,4 +1,5 @@
-import { fail, isNonEmptyString, isPlainRecord } from "../../../utils";
+import { fail } from "../../../utils";
+import { validateBaseManifestRoot } from "./rootFields/validate";
 
 export type BaseManifestRoot = {
   manifest: Record<string, unknown>;
@@ -10,41 +11,16 @@ export type BaseManifestRoot = {
 export const parseBaseManifestRoot = (
   value: unknown
 ): { ok: true; value: BaseManifestRoot } | { ok: false; value: ReturnType<typeof fail> } => {
-  if (!isPlainRecord(value)) {
-    return {
-      ok: false,
-      value: fail("invalid-root", "manifest", "manifest must be a plain object."),
-    };
-  }
-
-  if (!isNonEmptyString(value.packId)) {
-    return {
-      ok: false,
-      value: fail("invalid-pack-id", "manifest.packId", "packId must be a string."),
-    };
-  }
-
-  if (!isNonEmptyString(value.version)) {
-    return {
-      ok: false,
-      value: fail("invalid-version", "manifest.version", "version must be a string."),
-    };
-  }
-
-  if (!isNonEmptyString(value.label)) {
-    return {
-      ok: false,
-      value: fail("invalid-label", "manifest.label", "label must be a string."),
-    };
-  }
+  const validated = validateBaseManifestRoot(value);
+  if (!validated.ok) return { ok: false, value: validated.value };
 
   return {
     ok: true,
     value: {
-      manifest: value,
-      packId: value.packId,
-      version: value.version,
-      label: value.label,
+      manifest: validated.value.manifest,
+      packId: validated.value.packId,
+      version: validated.value.version,
+      label: validated.value.label,
     },
   };
 };

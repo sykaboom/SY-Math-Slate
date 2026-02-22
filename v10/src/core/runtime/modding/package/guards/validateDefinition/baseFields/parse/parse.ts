@@ -1,4 +1,5 @@
 import { parseActivation } from "./activation";
+import { buildValidationBaseContext } from "./parse/buildContext";
 import { parseModIds } from "./modIds";
 import { parseBaseManifestRoot } from "./rootFields";
 import type { ValidationBaseContext } from "../types";
@@ -27,15 +28,10 @@ export const parseValidationBase = (
 
   return {
     ok: true,
-    value: {
-      manifest: rootResult.value.manifest,
-      packId: rootResult.value.packId,
-      version: rootResult.value.version,
-      label: rootResult.value.label,
-      modIds: modIdsResult.value.modIds,
-      modIdSet: modIdsResult.value.modIdSet,
-      activation: activationResult.value.activation,
-      defaultModId: activationResult.value.defaultModId,
-    },
+    value: buildValidationBaseContext(
+      rootResult.value,
+      modIdsResult.value,
+      activationResult.value
+    ),
   };
 };
