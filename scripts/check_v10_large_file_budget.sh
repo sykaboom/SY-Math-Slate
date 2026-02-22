@@ -43,6 +43,7 @@ selectors_package_selection_activation_mapping_max="${SELECTORS_PACKAGE_SELECTIO
 guards_validate_definition_index_max="${GUARDS_VALIDATE_DEFINITION_INDEX_MAX:-0}"
 guards_validate_definition_base_fields_max="${GUARDS_VALIDATE_DEFINITION_BASE_FIELDS_MAX:-0}"
 guards_validate_definition_index_validate_max="${GUARDS_VALIDATE_DEFINITION_INDEX_VALIDATE_MAX:-0}"
+guards_validate_definition_index_validate_core_max="${GUARDS_VALIDATE_DEFINITION_INDEX_VALIDATE_CORE_MAX:-0}"
 guards_validate_definition_index_predicate_max="${GUARDS_VALIDATE_DEFINITION_INDEX_PREDICATE_MAX:-0}"
 guards_validate_definition_index_validate_policies_max="${GUARDS_VALIDATE_DEFINITION_INDEX_VALIDATE_POLICIES_MAX:-0}"
 guards_validate_definition_index_validate_relations_max="${GUARDS_VALIDATE_DEFINITION_INDEX_VALIDATE_RELATIONS_MAX:-0}"
@@ -53,6 +54,7 @@ selectors_toolbar_plan_plan_resolution_max="${SELECTORS_TOOLBAR_PLAN_PLAN_RESOLU
 selectors_toolbar_plan_surface_rules_keys_max="${SELECTORS_TOOLBAR_PLAN_SURFACE_RULES_KEYS_MAX:-0}"
 selectors_toolbar_plan_surface_rules_merge_max="${SELECTORS_TOOLBAR_PLAN_SURFACE_RULES_MERGE_MAX:-0}"
 selectors_toolbar_plan_surface_rules_merge_helpers_max="${SELECTORS_TOOLBAR_PLAN_SURFACE_RULES_MERGE_HELPERS_MAX:-0}"
+selectors_toolbar_plan_surface_rules_merge_core_max="${SELECTORS_TOOLBAR_PLAN_SURFACE_RULES_MERGE_CORE_MAX:-0}"
 selectors_toolbar_plan_plan_resolution_surface_predicates_max="${SELECTORS_TOOLBAR_PLAN_PLAN_RESOLUTION_SURFACE_PREDICATES_MAX:-0}"
 selectors_toolbar_plan_plan_resolution_sections_max="${SELECTORS_TOOLBAR_PLAN_PLAN_RESOLUTION_SECTIONS_MAX:-0}"
 selectors_toolbar_plan_plan_resolution_sections_modes_max="${SELECTORS_TOOLBAR_PLAN_PLAN_RESOLUTION_SECTIONS_MODES_MAX:-0}"
@@ -237,6 +239,7 @@ guards_validate_definition_base_fields_parse_root_fields_validate_helpers_core_m
 guards_validate_definition_base_fields_parse_activation_max="${GUARDS_VALIDATE_DEFINITION_BASE_FIELDS_PARSE_ACTIVATION_MAX:-0}"
 guards_validate_definition_base_fields_parse_activation_validate_max="${GUARDS_VALIDATE_DEFINITION_BASE_FIELDS_PARSE_ACTIVATION_VALIDATE_MAX:-0}"
 guards_validate_definition_base_fields_parse_parse_max="${GUARDS_VALIDATE_DEFINITION_BASE_FIELDS_PARSE_PARSE_MAX:-0}"
+guards_validate_definition_base_fields_parse_parse_core_max="${GUARDS_VALIDATE_DEFINITION_BASE_FIELDS_PARSE_PARSE_CORE_MAX:-0}"
 guards_validate_definition_base_fields_parse_parse_build_context_max="${GUARDS_VALIDATE_DEFINITION_BASE_FIELDS_PARSE_PARSE_BUILD_CONTEXT_MAX:-0}"
 guards_validate_definition_activation_max="${GUARDS_VALIDATE_DEFINITION_ACTIVATION_MAX:-0}"
 guards_validate_definition_activation_entry_max="${GUARDS_VALIDATE_DEFINITION_ACTIVATION_ENTRY_MAX:-0}"
@@ -260,6 +263,7 @@ validate_int "SELECTORS_PACKAGE_SELECTION_ACTIVATION_MAPPING_MAX" "$selectors_pa
 validate_int "GUARDS_VALIDATE_DEFINITION_INDEX_MAX" "$guards_validate_definition_index_max"
 validate_int "GUARDS_VALIDATE_DEFINITION_BASE_FIELDS_MAX" "$guards_validate_definition_base_fields_max"
 validate_int "GUARDS_VALIDATE_DEFINITION_INDEX_VALIDATE_MAX" "$guards_validate_definition_index_validate_max"
+validate_int "GUARDS_VALIDATE_DEFINITION_INDEX_VALIDATE_CORE_MAX" "$guards_validate_definition_index_validate_core_max"
 validate_int "GUARDS_VALIDATE_DEFINITION_INDEX_PREDICATE_MAX" "$guards_validate_definition_index_predicate_max"
 validate_int "GUARDS_VALIDATE_DEFINITION_INDEX_VALIDATE_POLICIES_MAX" "$guards_validate_definition_index_validate_policies_max"
 validate_int "GUARDS_VALIDATE_DEFINITION_INDEX_VALIDATE_RELATIONS_MAX" "$guards_validate_definition_index_validate_relations_max"
@@ -270,6 +274,7 @@ validate_int "SELECTORS_TOOLBAR_PLAN_PLAN_RESOLUTION_MAX" "$selectors_toolbar_pl
 validate_int "SELECTORS_TOOLBAR_PLAN_SURFACE_RULES_KEYS_MAX" "$selectors_toolbar_plan_surface_rules_keys_max"
 validate_int "SELECTORS_TOOLBAR_PLAN_SURFACE_RULES_MERGE_MAX" "$selectors_toolbar_plan_surface_rules_merge_max"
 validate_int "SELECTORS_TOOLBAR_PLAN_SURFACE_RULES_MERGE_HELPERS_MAX" "$selectors_toolbar_plan_surface_rules_merge_helpers_max"
+validate_int "SELECTORS_TOOLBAR_PLAN_SURFACE_RULES_MERGE_CORE_MAX" "$selectors_toolbar_plan_surface_rules_merge_core_max"
 validate_int "SELECTORS_TOOLBAR_PLAN_PLAN_RESOLUTION_SURFACE_PREDICATES_MAX" "$selectors_toolbar_plan_plan_resolution_surface_predicates_max"
 validate_int "SELECTORS_TOOLBAR_PLAN_PLAN_RESOLUTION_SECTIONS_MAX" "$selectors_toolbar_plan_plan_resolution_sections_max"
 validate_int "SELECTORS_TOOLBAR_PLAN_PLAN_RESOLUTION_SECTIONS_MODES_MAX" "$selectors_toolbar_plan_plan_resolution_sections_modes_max"
@@ -454,6 +459,7 @@ validate_int "GUARDS_VALIDATE_DEFINITION_BASE_FIELDS_PARSE_ROOT_FIELDS_VALIDATE_
 validate_int "GUARDS_VALIDATE_DEFINITION_BASE_FIELDS_PARSE_ACTIVATION_MAX" "$guards_validate_definition_base_fields_parse_activation_max"
 validate_int "GUARDS_VALIDATE_DEFINITION_BASE_FIELDS_PARSE_ACTIVATION_VALIDATE_MAX" "$guards_validate_definition_base_fields_parse_activation_validate_max"
 validate_int "GUARDS_VALIDATE_DEFINITION_BASE_FIELDS_PARSE_PARSE_MAX" "$guards_validate_definition_base_fields_parse_parse_max"
+validate_int "GUARDS_VALIDATE_DEFINITION_BASE_FIELDS_PARSE_PARSE_CORE_MAX" "$guards_validate_definition_base_fields_parse_parse_core_max"
 validate_int "GUARDS_VALIDATE_DEFINITION_BASE_FIELDS_PARSE_PARSE_BUILD_CONTEXT_MAX" "$guards_validate_definition_base_fields_parse_parse_build_context_max"
 validate_int "GUARDS_VALIDATE_DEFINITION_ACTIVATION_MAX" "$guards_validate_definition_activation_max"
 validate_int "GUARDS_VALIDATE_DEFINITION_ACTIVATION_ENTRY_MAX" "$guards_validate_definition_activation_entry_max"
@@ -930,6 +936,19 @@ for file in "${wave35_extra_files[@]}"; do
   fi
 done
 
+wave36_extra_files=(
+  "v10/src/core/runtime/modding/package/selectors/toolbarPlan/surfaceRules/merge/core.ts"
+  "v10/src/core/runtime/modding/package/guards/validateDefinition/index/validate/core.ts"
+  "v10/src/core/runtime/modding/package/guards/validateDefinition/baseFields/parse/parse/core.ts"
+)
+
+for file in "${wave36_extra_files[@]}"; do
+  if [[ ! -f "$file" ]]; then
+    echo "[check_v10_large_file_budget] FAIL: missing target file: $file"
+    exit 1
+  fi
+done
+
 app_layout_lines="$(wc -l < "${target_files[0]}")"
 ext_runtime_lines="$(wc -l < "${target_files[1]}")"
 data_input_lines="$(wc -l < "${target_files[2]}")"
@@ -952,6 +971,7 @@ selectors_toolbar_plan_plan_resolution_lines="$(wc -l < "${target_files[17]}")"
 selectors_toolbar_plan_surface_rules_keys_lines="$(wc -l < "v10/src/core/runtime/modding/package/selectors/toolbarPlan/surfaceRules/keys.ts")"
 selectors_toolbar_plan_surface_rules_merge_lines="$(wc -l < "v10/src/core/runtime/modding/package/selectors/toolbarPlan/surfaceRules/merge.ts")"
 selectors_toolbar_plan_surface_rules_merge_helpers_lines="$(wc -l < "v10/src/core/runtime/modding/package/selectors/toolbarPlan/surfaceRules/merge/helpers.ts")"
+selectors_toolbar_plan_surface_rules_merge_core_lines="$(wc -l < "v10/src/core/runtime/modding/package/selectors/toolbarPlan/surfaceRules/merge/core.ts")"
 selectors_toolbar_plan_plan_resolution_surface_predicates_lines="$(wc -l < "v10/src/core/runtime/modding/package/selectors/toolbarPlan/planResolution/surfacePredicates.ts")"
 selectors_toolbar_plan_plan_resolution_sections_lines="$(wc -l < "v10/src/core/runtime/modding/package/selectors/toolbarPlan/planResolution/sections.ts")"
 selectors_toolbar_plan_plan_resolution_sections_modes_lines="$(wc -l < "v10/src/core/runtime/modding/package/selectors/toolbarPlan/planResolution/sections/modes.ts")"
@@ -1062,6 +1082,7 @@ guards_validate_definition_base_fields_parse_root_fields_validate_helpers_core_l
 guards_validate_definition_base_fields_parse_activation_lines="$(wc -l < "${extra_target_files[49]}")"
 guards_validate_definition_base_fields_parse_activation_validate_lines="$(wc -l < "v10/src/core/runtime/modding/package/guards/validateDefinition/baseFields/parse/activation/validate.ts")"
 guards_validate_definition_base_fields_parse_parse_lines="$(wc -l < "${extra_target_files[50]}")"
+guards_validate_definition_base_fields_parse_parse_core_lines="$(wc -l < "v10/src/core/runtime/modding/package/guards/validateDefinition/baseFields/parse/parse/core.ts")"
 guards_validate_definition_base_fields_parse_parse_build_context_lines="$(wc -l < "v10/src/core/runtime/modding/package/guards/validateDefinition/baseFields/parse/parse/buildContext.ts")"
 guards_ui_policy_parse_validators_validate_record_lines="$(wc -l < "v10/src/core/runtime/modding/package/guards/uiPolicy/parseUIItemRules/validators/validateRecord.ts")"
 guards_ui_policy_parse_validators_validate_base_fields_lines="$(wc -l < "v10/src/core/runtime/modding/package/guards/uiPolicy/parseUIItemRules/validators/validateBaseFields.ts")"
@@ -1116,6 +1137,7 @@ template_pack_manifest_selectors_list_lines="$(wc -l < "v10/src/core/runtime/mod
 template_pack_manifest_selectors_select_by_id_lines="$(wc -l < "v10/src/core/runtime/modding/package/templatePackAdapter/manifestSelectors/selectById.ts")"
 template_pack_manifest_selectors_select_primary_lines="$(wc -l < "v10/src/core/runtime/modding/package/templatePackAdapter/manifestSelectors/selectPrimary.ts")"
 guards_validate_definition_index_validate_lines="$(wc -l < "v10/src/core/runtime/modding/package/guards/validateDefinition/index/validate.ts")"
+guards_validate_definition_index_validate_core_lines="$(wc -l < "v10/src/core/runtime/modding/package/guards/validateDefinition/index/validate/core.ts")"
 guards_validate_definition_index_validate_policies_lines="$(wc -l < "v10/src/core/runtime/modding/package/guards/validateDefinition/index/validate/policies.ts")"
 guards_validate_definition_index_validate_relations_lines="$(wc -l < "v10/src/core/runtime/modding/package/guards/validateDefinition/index/validate/relations.ts")"
 guards_validate_definition_index_validate_finalize_lines="$(wc -l < "v10/src/core/runtime/modding/package/guards/validateDefinition/index/validate/finalize.ts")"
@@ -1389,6 +1411,11 @@ printf '[check_v10_large_file_budget] wave35 sections_modes_helpers=%s/%s confli
   "$selectors_package_selection_conflicts_summary_helpers_core_lines" "$selectors_package_selection_conflicts_summary_helpers_core_max" \
   "$guards_validate_definition_base_fields_parse_root_fields_validate_helpers_core_lines" "$guards_validate_definition_base_fields_parse_root_fields_validate_helpers_core_max"
 
+printf '[check_v10_large_file_budget] wave36 surface_rules_merge_core=%s/%s index_validate_core=%s/%s base_parse_core=%s/%s\n' \
+  "$selectors_toolbar_plan_surface_rules_merge_core_lines" "$selectors_toolbar_plan_surface_rules_merge_core_max" \
+  "$guards_validate_definition_index_validate_core_lines" "$guards_validate_definition_index_validate_core_max" \
+  "$guards_validate_definition_base_fields_parse_parse_core_lines" "$guards_validate_definition_base_fields_parse_parse_core_max"
+
 if (( app_layout_lines > app_layout_max )); then
   echo "[check_v10_large_file_budget] FAIL: AppLayout.tsx exceeded budget"
   exit 1
@@ -1506,6 +1533,11 @@ fi
 
 if (( selectors_toolbar_plan_surface_rules_merge_helpers_lines > selectors_toolbar_plan_surface_rules_merge_helpers_max )); then
   echo "[check_v10_large_file_budget] FAIL: toolbarPlan/surfaceRules/merge/helpers.ts exceeded budget"
+  exit 1
+fi
+
+if (( selectors_toolbar_plan_surface_rules_merge_core_lines > selectors_toolbar_plan_surface_rules_merge_core_max )); then
+  echo "[check_v10_large_file_budget] FAIL: toolbarPlan/surfaceRules/merge/core.ts exceeded budget"
   exit 1
 fi
 
@@ -2044,6 +2076,11 @@ if (( guards_validate_definition_base_fields_parse_parse_lines > guards_validate
   exit 1
 fi
 
+if (( guards_validate_definition_base_fields_parse_parse_core_lines > guards_validate_definition_base_fields_parse_parse_core_max )); then
+  echo "[check_v10_large_file_budget] FAIL: baseFields/parse/parse/core.ts exceeded budget"
+  exit 1
+fi
+
 if (( guards_validate_definition_base_fields_parse_root_fields_validate_lines > guards_validate_definition_base_fields_parse_root_fields_validate_max )); then
   echo "[check_v10_large_file_budget] FAIL: baseFields/parse/rootFields/validate.ts exceeded budget"
   exit 1
@@ -2316,6 +2353,11 @@ fi
 
 if (( guards_validate_definition_index_validate_lines > guards_validate_definition_index_validate_max )); then
   echo "[check_v10_large_file_budget] FAIL: validateDefinition/index/validate.ts exceeded budget"
+  exit 1
+fi
+
+if (( guards_validate_definition_index_validate_core_lines > guards_validate_definition_index_validate_core_max )); then
+  echo "[check_v10_large_file_budget] FAIL: validateDefinition/index/validate/core.ts exceeded budget"
   exit 1
 fi
 
