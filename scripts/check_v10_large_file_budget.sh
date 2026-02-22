@@ -66,12 +66,14 @@ guards_resource_policy_command_rules_validators_max="${GUARDS_RESOURCE_POLICY_CO
 guards_resource_policy_shortcut_rules_parse_max="${GUARDS_RESOURCE_POLICY_SHORTCUT_RULES_PARSE_MAX:-0}"
 guards_resource_policy_shortcut_rules_validators_max="${GUARDS_RESOURCE_POLICY_SHORTCUT_RULES_VALIDATORS_MAX:-0}"
 guards_resource_policy_command_rules_validators_entry_max="${GUARDS_RESOURCE_POLICY_COMMAND_RULES_VALIDATORS_ENTRY_MAX:-0}"
+guards_resource_policy_command_rules_validators_entry_core_max="${GUARDS_RESOURCE_POLICY_COMMAND_RULES_VALIDATORS_ENTRY_CORE_MAX:-0}"
 guards_resource_policy_command_rules_validators_entry_helpers_max="${GUARDS_RESOURCE_POLICY_COMMAND_RULES_VALIDATORS_ENTRY_HELPERS_MAX:-0}"
 guards_resource_policy_command_rules_validators_entry_helpers_shape_max="${GUARDS_RESOURCE_POLICY_COMMAND_RULES_VALIDATORS_ENTRY_HELPERS_SHAPE_MAX:-0}"
 guards_resource_policy_command_rules_validators_entry_helpers_build_max="${GUARDS_RESOURCE_POLICY_COMMAND_RULES_VALIDATORS_ENTRY_HELPERS_BUILD_MAX:-0}"
 guards_resource_policy_command_rules_validators_operation_max="${GUARDS_RESOURCE_POLICY_COMMAND_RULES_VALIDATORS_OPERATION_MAX:-0}"
 guards_resource_policy_command_rules_validators_override_max="${GUARDS_RESOURCE_POLICY_COMMAND_RULES_VALIDATORS_OVERRIDE_MAX:-0}"
 guards_resource_policy_shortcut_rules_validators_entry_max="${GUARDS_RESOURCE_POLICY_SHORTCUT_RULES_VALIDATORS_ENTRY_MAX:-0}"
+guards_resource_policy_shortcut_rules_validators_entry_core_max="${GUARDS_RESOURCE_POLICY_SHORTCUT_RULES_VALIDATORS_ENTRY_CORE_MAX:-0}"
 guards_resource_policy_shortcut_rules_validators_entry_helpers_max="${GUARDS_RESOURCE_POLICY_SHORTCUT_RULES_VALIDATORS_ENTRY_HELPERS_MAX:-0}"
 guards_resource_policy_shortcut_rules_validators_entry_helpers_shape_max="${GUARDS_RESOURCE_POLICY_SHORTCUT_RULES_VALIDATORS_ENTRY_HELPERS_SHAPE_MAX:-0}"
 guards_resource_policy_shortcut_rules_validators_entry_helpers_build_max="${GUARDS_RESOURCE_POLICY_SHORTCUT_RULES_VALIDATORS_ENTRY_HELPERS_BUILD_MAX:-0}"
@@ -292,12 +294,14 @@ validate_int "GUARDS_RESOURCE_POLICY_COMMAND_RULES_VALIDATORS_MAX" "$guards_reso
 validate_int "GUARDS_RESOURCE_POLICY_SHORTCUT_RULES_PARSE_MAX" "$guards_resource_policy_shortcut_rules_parse_max"
 validate_int "GUARDS_RESOURCE_POLICY_SHORTCUT_RULES_VALIDATORS_MAX" "$guards_resource_policy_shortcut_rules_validators_max"
 validate_int "GUARDS_RESOURCE_POLICY_COMMAND_RULES_VALIDATORS_ENTRY_MAX" "$guards_resource_policy_command_rules_validators_entry_max"
+validate_int "GUARDS_RESOURCE_POLICY_COMMAND_RULES_VALIDATORS_ENTRY_CORE_MAX" "$guards_resource_policy_command_rules_validators_entry_core_max"
 validate_int "GUARDS_RESOURCE_POLICY_COMMAND_RULES_VALIDATORS_ENTRY_HELPERS_MAX" "$guards_resource_policy_command_rules_validators_entry_helpers_max"
 validate_int "GUARDS_RESOURCE_POLICY_COMMAND_RULES_VALIDATORS_ENTRY_HELPERS_SHAPE_MAX" "$guards_resource_policy_command_rules_validators_entry_helpers_shape_max"
 validate_int "GUARDS_RESOURCE_POLICY_COMMAND_RULES_VALIDATORS_ENTRY_HELPERS_BUILD_MAX" "$guards_resource_policy_command_rules_validators_entry_helpers_build_max"
 validate_int "GUARDS_RESOURCE_POLICY_COMMAND_RULES_VALIDATORS_OPERATION_MAX" "$guards_resource_policy_command_rules_validators_operation_max"
 validate_int "GUARDS_RESOURCE_POLICY_COMMAND_RULES_VALIDATORS_OVERRIDE_MAX" "$guards_resource_policy_command_rules_validators_override_max"
 validate_int "GUARDS_RESOURCE_POLICY_SHORTCUT_RULES_VALIDATORS_ENTRY_MAX" "$guards_resource_policy_shortcut_rules_validators_entry_max"
+validate_int "GUARDS_RESOURCE_POLICY_SHORTCUT_RULES_VALIDATORS_ENTRY_CORE_MAX" "$guards_resource_policy_shortcut_rules_validators_entry_core_max"
 validate_int "GUARDS_RESOURCE_POLICY_SHORTCUT_RULES_VALIDATORS_ENTRY_HELPERS_MAX" "$guards_resource_policy_shortcut_rules_validators_entry_helpers_max"
 validate_int "GUARDS_RESOURCE_POLICY_SHORTCUT_RULES_VALIDATORS_ENTRY_HELPERS_SHAPE_MAX" "$guards_resource_policy_shortcut_rules_validators_entry_helpers_shape_max"
 validate_int "GUARDS_RESOURCE_POLICY_SHORTCUT_RULES_VALIDATORS_ENTRY_HELPERS_BUILD_MAX" "$guards_resource_policy_shortcut_rules_validators_entry_helpers_build_max"
@@ -987,6 +991,18 @@ for file in "${wave38_extra_files[@]}"; do
   fi
 done
 
+wave39_extra_files=(
+  "v10/src/core/runtime/modding/package/guards/resourcePolicy/commandRules/validators/entry/core.ts"
+  "v10/src/core/runtime/modding/package/guards/resourcePolicy/shortcutRules/validators/entry/core.ts"
+)
+
+for file in "${wave39_extra_files[@]}"; do
+  if [[ ! -f "$file" ]]; then
+    echo "[check_v10_large_file_budget] FAIL: missing target file: $file"
+    exit 1
+  fi
+done
+
 app_layout_lines="$(wc -l < "${target_files[0]}")"
 ext_runtime_lines="$(wc -l < "${target_files[1]}")"
 data_input_lines="$(wc -l < "${target_files[2]}")"
@@ -1019,6 +1035,7 @@ guards_resource_policy_shortcut_rules_lines="$(wc -l < "${target_files[19]}")"
 guards_resource_policy_command_rules_parse_lines="$(wc -l < "v10/src/core/runtime/modding/package/guards/resourcePolicy/commandRules/parse.ts")"
 guards_resource_policy_command_rules_validators_lines="$(wc -l < "v10/src/core/runtime/modding/package/guards/resourcePolicy/commandRules/validators.ts")"
 guards_resource_policy_command_rules_validators_entry_lines="$(wc -l < "v10/src/core/runtime/modding/package/guards/resourcePolicy/commandRules/validators/entry.ts")"
+guards_resource_policy_command_rules_validators_entry_core_lines="$(wc -l < "v10/src/core/runtime/modding/package/guards/resourcePolicy/commandRules/validators/entry/core.ts")"
 guards_resource_policy_command_rules_validators_entry_helpers_lines="$(wc -l < "v10/src/core/runtime/modding/package/guards/resourcePolicy/commandRules/validators/entry/helpers.ts")"
 guards_resource_policy_command_rules_validators_entry_helpers_shape_lines="$(wc -l < "v10/src/core/runtime/modding/package/guards/resourcePolicy/commandRules/validators/entry/helpers/shape.ts")"
 guards_resource_policy_command_rules_validators_entry_helpers_build_lines="$(wc -l < "v10/src/core/runtime/modding/package/guards/resourcePolicy/commandRules/validators/entry/helpers/build.ts")"
@@ -1027,6 +1044,7 @@ guards_resource_policy_command_rules_validators_override_lines="$(wc -l < "v10/s
 guards_resource_policy_shortcut_rules_parse_lines="$(wc -l < "v10/src/core/runtime/modding/package/guards/resourcePolicy/shortcutRules/parse.ts")"
 guards_resource_policy_shortcut_rules_validators_lines="$(wc -l < "v10/src/core/runtime/modding/package/guards/resourcePolicy/shortcutRules/validators.ts")"
 guards_resource_policy_shortcut_rules_validators_entry_lines="$(wc -l < "v10/src/core/runtime/modding/package/guards/resourcePolicy/shortcutRules/validators/entry.ts")"
+guards_resource_policy_shortcut_rules_validators_entry_core_lines="$(wc -l < "v10/src/core/runtime/modding/package/guards/resourcePolicy/shortcutRules/validators/entry/core.ts")"
 guards_resource_policy_shortcut_rules_validators_entry_helpers_lines="$(wc -l < "v10/src/core/runtime/modding/package/guards/resourcePolicy/shortcutRules/validators/entry/helpers.ts")"
 guards_resource_policy_shortcut_rules_validators_entry_helpers_shape_lines="$(wc -l < "v10/src/core/runtime/modding/package/guards/resourcePolicy/shortcutRules/validators/entry/helpers/shape.ts")"
 guards_resource_policy_shortcut_rules_validators_entry_helpers_build_lines="$(wc -l < "v10/src/core/runtime/modding/package/guards/resourcePolicy/shortcutRules/validators/entry/helpers/build.ts")"
@@ -1645,6 +1663,11 @@ if (( guards_resource_policy_command_rules_validators_entry_lines > guards_resou
   exit 1
 fi
 
+if (( guards_resource_policy_command_rules_validators_entry_core_lines > guards_resource_policy_command_rules_validators_entry_core_max )); then
+  echo "[check_v10_large_file_budget] FAIL: resourcePolicy/commandRules/validators/entry/core.ts exceeded budget"
+  exit 1
+fi
+
 if (( guards_resource_policy_command_rules_validators_entry_helpers_lines > guards_resource_policy_command_rules_validators_entry_helpers_max )); then
   echo "[check_v10_large_file_budget] FAIL: resourcePolicy/commandRules/validators/entry/helpers.ts exceeded budget"
   exit 1
@@ -1672,6 +1695,11 @@ fi
 
 if (( guards_resource_policy_shortcut_rules_validators_entry_lines > guards_resource_policy_shortcut_rules_validators_entry_max )); then
   echo "[check_v10_large_file_budget] FAIL: resourcePolicy/shortcutRules/validators/entry.ts exceeded budget"
+  exit 1
+fi
+
+if (( guards_resource_policy_shortcut_rules_validators_entry_core_lines > guards_resource_policy_shortcut_rules_validators_entry_core_max )); then
+  echo "[check_v10_large_file_budget] FAIL: resourcePolicy/shortcutRules/validators/entry/core.ts exceeded budget"
   exit 1
 fi
 
