@@ -49,6 +49,10 @@ selectors_toolbar_plan_surface_rules_max="${SELECTORS_TOOLBAR_PLAN_SURFACE_RULES
 selectors_toolbar_plan_plan_resolution_max="${SELECTORS_TOOLBAR_PLAN_PLAN_RESOLUTION_MAX:-0}"
 guards_resource_policy_command_rules_max="${GUARDS_RESOURCE_POLICY_COMMAND_RULES_MAX:-0}"
 guards_resource_policy_shortcut_rules_max="${GUARDS_RESOURCE_POLICY_SHORTCUT_RULES_MAX:-0}"
+guards_resource_policy_command_rules_parse_max="${GUARDS_RESOURCE_POLICY_COMMAND_RULES_PARSE_MAX:-0}"
+guards_resource_policy_command_rules_validators_max="${GUARDS_RESOURCE_POLICY_COMMAND_RULES_VALIDATORS_MAX:-0}"
+guards_resource_policy_shortcut_rules_parse_max="${GUARDS_RESOURCE_POLICY_SHORTCUT_RULES_PARSE_MAX:-0}"
+guards_resource_policy_shortcut_rules_validators_max="${GUARDS_RESOURCE_POLICY_SHORTCUT_RULES_VALIDATORS_MAX:-0}"
 guards_resource_policy_input_behavior_rule_max="${GUARDS_RESOURCE_POLICY_INPUT_BEHAVIOR_RULE_MAX:-0}"
 registry_class_max="${REGISTRY_CLASS_MAX:-0}"
 registry_runtime_state_max="${REGISTRY_RUNTIME_STATE_MAX:-0}"
@@ -173,6 +177,10 @@ validate_int "SELECTORS_TOOLBAR_PLAN_SURFACE_RULES_MAX" "$selectors_toolbar_plan
 validate_int "SELECTORS_TOOLBAR_PLAN_PLAN_RESOLUTION_MAX" "$selectors_toolbar_plan_plan_resolution_max"
 validate_int "GUARDS_RESOURCE_POLICY_COMMAND_RULES_MAX" "$guards_resource_policy_command_rules_max"
 validate_int "GUARDS_RESOURCE_POLICY_SHORTCUT_RULES_MAX" "$guards_resource_policy_shortcut_rules_max"
+validate_int "GUARDS_RESOURCE_POLICY_COMMAND_RULES_PARSE_MAX" "$guards_resource_policy_command_rules_parse_max"
+validate_int "GUARDS_RESOURCE_POLICY_COMMAND_RULES_VALIDATORS_MAX" "$guards_resource_policy_command_rules_validators_max"
+validate_int "GUARDS_RESOURCE_POLICY_SHORTCUT_RULES_PARSE_MAX" "$guards_resource_policy_shortcut_rules_parse_max"
+validate_int "GUARDS_RESOURCE_POLICY_SHORTCUT_RULES_VALIDATORS_MAX" "$guards_resource_policy_shortcut_rules_validators_max"
 validate_int "GUARDS_RESOURCE_POLICY_INPUT_BEHAVIOR_RULE_MAX" "$guards_resource_policy_input_behavior_rule_max"
 validate_int "REGISTRY_CLASS_MAX" "$registry_class_max"
 validate_int "REGISTRY_RUNTIME_STATE_MAX" "$registry_runtime_state_max"
@@ -475,6 +483,20 @@ for file in "${wave17_extra_files[@]}"; do
   fi
 done
 
+wave18_extra_files=(
+  "v10/src/core/runtime/modding/package/guards/resourcePolicy/commandRules/parse.ts"
+  "v10/src/core/runtime/modding/package/guards/resourcePolicy/commandRules/validators.ts"
+  "v10/src/core/runtime/modding/package/guards/resourcePolicy/shortcutRules/parse.ts"
+  "v10/src/core/runtime/modding/package/guards/resourcePolicy/shortcutRules/validators.ts"
+)
+
+for file in "${wave18_extra_files[@]}"; do
+  if [[ ! -f "$file" ]]; then
+    echo "[check_v10_large_file_budget] FAIL: missing target file: $file"
+    exit 1
+  fi
+done
+
 app_layout_lines="$(wc -l < "${target_files[0]}")"
 ext_runtime_lines="$(wc -l < "${target_files[1]}")"
 data_input_lines="$(wc -l < "${target_files[2]}")"
@@ -496,6 +518,10 @@ selectors_toolbar_plan_surface_rules_lines="$(wc -l < "${target_files[16]}")"
 selectors_toolbar_plan_plan_resolution_lines="$(wc -l < "${target_files[17]}")"
 guards_resource_policy_command_rules_lines="$(wc -l < "${target_files[18]}")"
 guards_resource_policy_shortcut_rules_lines="$(wc -l < "${target_files[19]}")"
+guards_resource_policy_command_rules_parse_lines="$(wc -l < "v10/src/core/runtime/modding/package/guards/resourcePolicy/commandRules/parse.ts")"
+guards_resource_policy_command_rules_validators_lines="$(wc -l < "v10/src/core/runtime/modding/package/guards/resourcePolicy/commandRules/validators.ts")"
+guards_resource_policy_shortcut_rules_parse_lines="$(wc -l < "v10/src/core/runtime/modding/package/guards/resourcePolicy/shortcutRules/parse.ts")"
+guards_resource_policy_shortcut_rules_validators_lines="$(wc -l < "v10/src/core/runtime/modding/package/guards/resourcePolicy/shortcutRules/validators.ts")"
 guards_resource_policy_input_behavior_rule_lines="$(wc -l < "${target_files[20]}")"
 registry_class_lines="$(wc -l < "${target_files[21]}")"
 registry_runtime_state_lines="$(wc -l < "${target_files[22]}")"
@@ -710,6 +736,12 @@ printf '[check_v10_large_file_budget] wave17 validate_index=%s/%s validate_predi
   "$guards_validate_definition_resource_policy_parse_lines" "$guards_validate_definition_resource_policy_parse_max" \
   "$guards_validate_definition_resource_policy_sections_lines" "$guards_validate_definition_resource_policy_sections_max"
 
+printf '[check_v10_large_file_budget] wave18 command_rules_parse=%s/%s command_rules_validators=%s/%s shortcut_rules_parse=%s/%s shortcut_rules_validators=%s/%s\n' \
+  "$guards_resource_policy_command_rules_parse_lines" "$guards_resource_policy_command_rules_parse_max" \
+  "$guards_resource_policy_command_rules_validators_lines" "$guards_resource_policy_command_rules_validators_max" \
+  "$guards_resource_policy_shortcut_rules_parse_lines" "$guards_resource_policy_shortcut_rules_parse_max" \
+  "$guards_resource_policy_shortcut_rules_validators_lines" "$guards_resource_policy_shortcut_rules_validators_max"
+
 if (( app_layout_lines > app_layout_max )); then
   echo "[check_v10_large_file_budget] FAIL: AppLayout.tsx exceeded budget"
   exit 1
@@ -822,6 +854,26 @@ fi
 
 if (( guards_resource_policy_shortcut_rules_lines > guards_resource_policy_shortcut_rules_max )); then
   echo "[check_v10_large_file_budget] FAIL: resourcePolicy/shortcutRules.ts exceeded budget"
+  exit 1
+fi
+
+if (( guards_resource_policy_command_rules_parse_lines > guards_resource_policy_command_rules_parse_max )); then
+  echo "[check_v10_large_file_budget] FAIL: resourcePolicy/commandRules/parse.ts exceeded budget"
+  exit 1
+fi
+
+if (( guards_resource_policy_command_rules_validators_lines > guards_resource_policy_command_rules_validators_max )); then
+  echo "[check_v10_large_file_budget] FAIL: resourcePolicy/commandRules/validators.ts exceeded budget"
+  exit 1
+fi
+
+if (( guards_resource_policy_shortcut_rules_parse_lines > guards_resource_policy_shortcut_rules_parse_max )); then
+  echo "[check_v10_large_file_budget] FAIL: resourcePolicy/shortcutRules/parse.ts exceeded budget"
+  exit 1
+fi
+
+if (( guards_resource_policy_shortcut_rules_validators_lines > guards_resource_policy_shortcut_rules_validators_max )); then
+  echo "[check_v10_large_file_budget] FAIL: resourcePolicy/shortcutRules/validators.ts exceeded budget"
   exit 1
 fi
 
