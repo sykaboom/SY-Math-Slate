@@ -1,0 +1,1 @@
+export { parseResourcePolicy } from "./parse";

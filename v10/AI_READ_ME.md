@@ -90,6 +90,7 @@ Core subsystems:
     - selection/mapping stage6 split (task_546, task_547): `packageSelection/sortingAndActive.ts` and `packageSelection/activationMapping/base.ts` are facade-only exports; internals live under `.../sortingAndActive/*` and `.../activationMapping/base/*`.
     - selection policy stage7 split (task_549, task_550): `packageSelection/conflicts.ts` and `packageSelection/uiPolicyAccess.ts` are facade-only exports; internals live under `.../conflicts/*` and `.../uiPolicyAccess/*`.
     - template adapter stage8 split (task_552, task_553): `templatePackAdapter/adaptation.ts` and `templatePackAdapter/manifestSelectors.ts` are facade-only exports; internals live under `.../adaptation/*` and `.../manifestSelectors/*`.
+    - validate policy stage9 split (task_555, task_556): `guards/validateDefinition/index.ts`, `.../uiAndResourcePolicy/uiPolicy.ts`, and `.../uiAndResourcePolicy/resourcePolicy.ts` are facade-only exports; internals live under `.../validateDefinition/index/*`, `.../uiPolicy/*`, and `.../resourcePolicy/*`.
     - legacy alias runtime path: retired (task_496).
     - legacy alias retire freeze gate:
       - budget: `codex_tasks/workflow/mod_alias_retire_budget.env`
