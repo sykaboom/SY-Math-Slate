@@ -4,7 +4,11 @@ import {
   selectActiveModPackageActivationModIdResolutionForToolbarMode,
   selectActiveModPackageToolbarModeForActivationModId,
   selectActiveModPackageToolbarModeResolutionForActivationModId,
-  selectToolbarBaseModeDefinitions,
+  selectToolbarDefaultFallbackModIdWithCompatFallback,
+  selectToolbarDefaultModeWithCompatFallback,
+  selectToolbarFallbackModIdForModeWithCompatFallback,
+  selectToolbarModeDefinitionsWithCompatFallback,
+  selectRuntimeToolbarCutoverEnabled,
   type ModPackageDefinition,
   type ModPackageId,
   type ToolbarBaseModeDefinition,
@@ -19,42 +23,16 @@ export type ToolbarModeActivationContext = {
   packageDefinitions?: readonly ModPackageDefinition[];
 };
 
-export const DEFAULT_TOOLBAR_MODE: ToolbarMode = "draw";
-const DEFAULT_TOOLBAR_MODE_FALLBACK_MOD_ID: ModId = "draw";
-
-const COMPAT_FALLBACK_TOOLBAR_MODE_DEFINITIONS: readonly ToolbarBaseModeDefinition[] =
-  Object.freeze([
-    { id: "draw", label: "Draw", fallbackModId: "draw" },
-    { id: "playback", label: "Playback", fallbackModId: "lecture" },
-    { id: "canvas", label: "Canvas", fallbackModId: "canvas" },
-  ]);
-
 const resolvePackageDefinitions = (
   activationContext: ToolbarModeActivationContext
 ): readonly ModPackageDefinition[] =>
   activationContext.packageDefinitions ?? listRuntimeModPackages();
 
-const resolveToolbarBaseModes = (): readonly ToolbarBaseModeDefinition[] => {
-  const providerModes = selectToolbarBaseModeDefinitions();
-  return providerModes.length > 0
-    ? providerModes
-    : COMPAT_FALLBACK_TOOLBAR_MODE_DEFINITIONS;
-};
-
 const resolveFallbackModIdForMode = (mode: ToolbarMode): ModId | null =>
-  resolveToolbarBaseModes().find((definition) => definition.id === mode)
-    ?.fallbackModId ?? null;
-
-const resolveDefaultToolbarMode = (): ToolbarMode =>
-  (resolveToolbarBaseModes()[0]?.id as ToolbarMode | undefined) ??
-  DEFAULT_TOOLBAR_MODE;
-
-const resolveDefaultToolbarModeFallbackModId = (): ModId =>
-  resolveFallbackModIdForMode(resolveDefaultToolbarMode()) ??
-  DEFAULT_TOOLBAR_MODE_FALLBACK_MOD_ID;
+  selectToolbarFallbackModIdForModeWithCompatFallback(mode);
 
 export const listToolbarModeDefinitions = (): readonly ToolbarBaseModeDefinition[] =>
-  resolveToolbarBaseModes();
+  selectToolbarModeDefinitionsWithCompatFallback();
 
 export const resolveActiveModIdFromToolbarMode = (
   mode: ToolbarMode,
@@ -86,7 +64,8 @@ export const resolveActiveModIdFromToolbarMode = (
     return activationPolicyResolution.modId;
   }
   return (
-    resolveFallbackModIdForMode(mode) ?? resolveDefaultToolbarModeFallbackModId()
+    resolveFallbackModIdForMode(mode) ??
+    selectToolbarDefaultFallbackModIdWithCompatFallback()
   );
 };
 
@@ -94,7 +73,7 @@ export const resolveToolbarModeFromActiveModId = (
   activeModId: ModId | null | undefined,
   activationContext: ToolbarModeActivationContext = {}
 ): ToolbarMode => {
-  if (!activeModId) return resolveDefaultToolbarMode();
+  if (!activeModId) return selectToolbarDefaultModeWithCompatFallback();
   const packageDefinitions = resolvePackageDefinitions(activationContext);
   const activeDefinition = selectActiveModPackage(
     packageDefinitions,
@@ -120,7 +99,7 @@ export const resolveToolbarModeFromActiveModId = (
     }
     return activationPolicyModeResolution.toolbarMode;
   }
-  const fallbackModId = resolveDefaultToolbarModeFallbackModId();
+  const fallbackModId = selectToolbarDefaultFallbackModIdWithCompatFallback();
   const resolvedDefaultMode =
     selectActiveModPackageToolbarModeForActivationModId(
       packageDefinitions,
@@ -130,7 +109,7 @@ export const resolveToolbarModeFromActiveModId = (
   if (resolvedDefaultMode) {
     return resolvedDefaultMode;
   }
-  return resolveDefaultToolbarMode();
+  return selectToolbarDefaultModeWithCompatFallback();
 };
 
 export type ToolbarRenderPolicy = {
@@ -140,23 +119,17 @@ export type ToolbarRenderPolicy = {
   showPlaybackExtras: boolean;
 };
 
-export const isCoreToolbarCutoverEnabled = (): boolean =>
-  process.env.NEXT_PUBLIC_CORE_TOOLBAR_CUTOVER !== "0";
-
 export const resolveToolbarRenderPolicy = (
   mode: ToolbarMode,
-  cutoverEnabled = isCoreToolbarCutoverEnabled()
+  cutoverEnabled = selectRuntimeToolbarCutoverEnabled()
 ): ToolbarRenderPolicy => {
   const isDrawMode = mode === "draw";
   const isPlaybackMode = mode === "playback";
 
   return {
     cutoverEnabled,
-    // Draw core tools should always be reachable regardless of cutover state.
     showDrawCoreTools: isDrawMode,
-    // Transitional break controls still follow fallback gating until declarative parity lands.
     showBreakActions: isDrawMode && !cutoverEnabled,
-    // Heavy playback/page widgets remain fallback-gated to avoid toolbar overload.
     showPlaybackExtras: isPlaybackMode && !cutoverEnabled,
   };
 };

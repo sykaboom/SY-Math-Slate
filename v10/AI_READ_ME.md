@@ -168,7 +168,8 @@ Fallback rule:
 - `setToolbarDock` contract is edge-first only (`top|right|bottom|left` + optional `mode`); legacy `left|center|right` payload path is retired.
 - Migration/guard scripts must scan command directory, not single monolith file assumptions.
 - Toolbar runtime policy:
-  - `src/features/chrome/toolbar/toolbarModePolicy.ts` is the single env/cutover resolver for toolbar mode render behavior.
+- `src/core/runtime/modding/package/selectors.ts` (`selectRuntimeToolbarCutoverEnabled`) is the single env/cutover resolver for toolbar plan input.
+- `src/features/chrome/toolbar/toolbarModePolicy.ts` is now a thin host bridge for alias-telemetry + package-aware mode resolution.
   - `src/core/runtime/modding/package/selectors.ts` is the single source for mode/viewport/action surface plan resolution.
 - Navigation copy policy:
   - `src/features/chrome/toolbar/navigationLabels.ts` is the shared vocabulary source for Page/Outline/Playback step labels.
