@@ -61,7 +61,9 @@ export function AIThemeGenerationPanel({
       ) : null}
 
       {aiTheme.errorMessage ? (
-        <div className="text-[11px] text-rose-200">{aiTheme.errorMessage}</div>
+        <div className="text-[11px] text-[var(--theme-danger)]">
+          {aiTheme.errorMessage}
+        </div>
       ) : null}
 
       <div className="grid gap-2 rounded border border-theme-border/10 bg-theme-surface/25 p-2">

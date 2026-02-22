@@ -93,7 +93,7 @@ export function ModerationConsolePanel() {
       </header>
 
       {lastError ? (
-        <p className="rounded-xl border border-red-300/25 bg-red-500/10 px-3 py-2 text-[11px] text-red-100">
+        <p className="rounded-xl border border-[var(--theme-danger)]/35 bg-[var(--theme-danger-soft)] px-3 py-2 text-[11px] text-[var(--theme-text)]">
           {lastError.code}: {lastError.message}
         </p>
       ) : null}

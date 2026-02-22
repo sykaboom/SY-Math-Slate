@@ -79,7 +79,9 @@ export function StudentAIPromptBar({ session }: StudentAIPromptBarProps) {
       </div>
 
       {session.error ? (
-        <p className="mt-1.5 text-[11px] text-rose-200">{session.error}</p>
+        <p className="mt-1.5 text-[11px] text-[var(--theme-danger)]">
+          {session.error}
+        </p>
       ) : null}
 
       {session.latestEntry?.response ? (

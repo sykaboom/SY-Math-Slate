@@ -118,7 +118,7 @@ export function StructuredSchemaEditor({
       <p
         className={`mt-3 text-xs ${
           isErrorState(validation)
-            ? "text-red-300"
+            ? "text-[var(--theme-danger)]"
             : "text-[var(--theme-text-subtle)]"
         }`}
       >
@@ -126,7 +126,7 @@ export function StructuredSchemaEditor({
       </p>
 
       {validation && !validation.ok ? (
-        <ul className="mt-2 max-h-44 space-y-1 overflow-auto rounded-md border border-red-400/30 bg-red-500/10 p-2 text-xs text-red-200">
+        <ul className="mt-2 max-h-44 space-y-1 overflow-auto rounded-md border border-[var(--theme-danger)]/35 bg-[var(--theme-danger-soft)] p-2 text-xs text-[var(--theme-text)]">
           {validation.issues.map((issue, index) => (
             <li key={`${issue.code}:${issue.path}:${index}`}>
               <code>{issue.path}</code>: {issue.message} ({issue.code})

@@ -208,6 +208,9 @@ Toolbar dedup verifier expectation:
 - `node scripts/check_toolbar_surface_uniqueness.mjs` => PASS in normal runtime analysis.
 - `node scripts/check_toolbar_surface_uniqueness.mjs --self-test-duplicate` => intentional FAIL with non-zero exit.
 
+Guardrail warning scan note:
+- `scripts/scan_guardrails.sh` step [3] overlay warning은 dynamic pointer policy(`pointerClass`), color-input hit-target overlay(`cursor-pointer`), 인접 라인 pointer-events 제어를 false-positive로 취급해 제외한다.
+
 When touching `v10/src/**`, update this file (`v10/AI_READ_ME.md`) in same change set.
 
 ## 10) Generated Map

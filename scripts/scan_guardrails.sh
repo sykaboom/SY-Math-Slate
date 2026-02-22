@@ -64,10 +64,34 @@ OVERLAY_MISSING=""
 while IFS= read -r line; do
   # line format: path:line:matched_text
   file=$(printf "%s" "$line" | cut -d: -f1)
+  line_no=$(printf "%s" "$line" | cut -d: -f2)
   text=$(printf "%s" "$line" | cut -d: -f3-)
-  if [[ "$text" != *"pointer-events-none"* ]]; then
-    OVERLAY_MISSING+="${line}"$'\n'
+
+  # Known non-risk patterns:
+  # - color input overlay hit-targets
+  # - canvas layers where pointer policy is controlled by parent/dynamic class
+  # - dynamic pointerClass compositions
+  # - WindowHost prop string where parent wrapper already controls pointer events
+  if [[ "$text" == *"cursor-pointer"* ]] || [[ "$text" == *"<canvas"* ]] || [[ "$text" == *"pointerClass"* ]] || [[ "$text" == *"windowLayerClassName"* ]]; then
+    continue
   fi
+
+  start_line=$((line_no - 2))
+  if (( start_line < 1 )); then
+    start_line=1
+  fi
+  end_line=$((line_no + 2))
+  context="$(sed -n "${start_line},${end_line}p" "$file")"
+
+  if printf "%s" "$text" | rg -q "pointer-events-(none|auto)"; then
+    continue
+  fi
+
+  if printf "%s" "$context" | rg -q "pointer-events-(none|auto)"; then
+    continue
+  fi
+
+  OVERLAY_MISSING+="${line}"$'\n'
 done < <(rg -n "absolute inset-0" "$ROOT" -g '*.tsx' || true)
 if [ -n "$OVERLAY_MISSING" ]; then
   echo "  [WARN] pointer-events-none 미설정 오버레이 의심 파일:"

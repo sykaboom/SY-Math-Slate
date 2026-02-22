@@ -210,7 +210,9 @@ export function TeacherApprovalPanel() {
                 ) : null}
 
                 {errorText ? (
-                  <p className="mt-2 text-[11px] text-rose-200">{errorText}</p>
+                  <p className="mt-2 text-[11px] text-[var(--theme-danger)]">
+                    {errorText}
+                  </p>
                 ) : null}
               </li>
             );
