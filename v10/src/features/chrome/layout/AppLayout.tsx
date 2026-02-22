@@ -4,7 +4,6 @@ import {
   useEffect,
   useMemo,
   useRef,
-  useState,
   type CSSProperties,
   type ReactNode,
 } from "react";
@@ -24,6 +23,10 @@ import {
   listCorePanelLauncherContract,
 } from "@features/platform/extensions/ui/registerCoreSlots";
 import { PlayerBar } from "@features/chrome/layout/PlayerBar";
+import {
+  useFullscreenInkLifecycle,
+  useWindowHostClampBounds,
+} from "@features/chrome/layout/runtime";
 import { useTabletShellProfile } from "@features/chrome/layout/useTabletShellProfile";
 import {
   PanelLauncher,
@@ -40,17 +43,12 @@ import { reportPolicyBooleanDiffBatch } from "@features/governance/policy/policy
 import { useResolvedPanelPolicy } from "@features/governance/policy/useResolvedPanelPolicy";
 import { useAuthoringShortcuts } from "@features/chrome/shortcuts/useAuthoringShortcuts";
 import { useAsymmetricSessionSync } from "@features/collaboration/sync/useAsymmetricSessionSync";
-import {
-  enterFullscreenInkRuntime,
-  exitFullscreenInkRuntime,
-} from "@features/chrome/shared/fullscreenInkRuntime";
 import { Button } from "@ui/components/button";
 import ErrorBoundary from "@ui/components/ErrorBoundary";
 import { useChromeStore } from "@features/platform/store/useChromeStore";
 import { useLocalStore } from "@features/platform/store/useLocalStore";
 import { useUIStore } from "@features/platform/store/useUIStoreBridge";
 import { Maximize2, Minimize2, Minus, MonitorPlay, Plus, ZoomIn } from "lucide-react";
-import type { WindowRuntimeRect } from "@features/chrome/layout/windowing/windowRuntime.types";
 
 interface AppLayoutProps {
   children?: ReactNode;
@@ -64,15 +62,6 @@ type LayoutRoleVisibilityPolicy = {
   showPasteHelperModal: boolean;
 };
 
-const WINDOW_HOST_CLAMP_INSET_PX = 16;
-
-const createDefaultWindowHostClampBounds = (): WindowRuntimeRect => ({
-  x: WINDOW_HOST_CLAMP_INSET_PX,
-  y: WINDOW_HOST_CLAMP_INSET_PX,
-  width: 960,
-  height: 640,
-});
-
 const SHELL_ERROR_FALLBACK_CLASSNAME =
   "rounded border border-[var(--theme-border-strong)] bg-[var(--theme-danger-soft)] px-2 py-1 text-xs text-[var(--theme-text)]";
 
@@ -80,9 +69,6 @@ export function AppLayout({ children }: AppLayoutProps) {
   useAsymmetricSessionSync();
   useResolvedPanelPolicy();
   const layoutRootRef = useRef<HTMLDivElement | null>(null);
-  const windowHostViewportRef = useRef<HTMLDivElement | null>(null);
-  const [windowHostClampBounds, setWindowHostClampBounds] =
-    useState<WindowRuntimeRect>(createDefaultWindowHostClampBounds);
   const tabletShellProfile = useTabletShellProfile();
   const role = useLocalStore((state) => state.role);
   const {
@@ -114,6 +100,10 @@ export function AppLayout({ children }: AppLayoutProps) {
   const isFullscreenInkActive = fullscreenInkMode !== "off";
   const useLayoutSlotCutover =
     process.env.NEXT_PUBLIC_LAYOUT_SLOT_CUTOVER !== "0";
+  const { windowHostClampBounds, windowHostViewportRef } =
+    useWindowHostClampBounds({
+      enabled: useLayoutSlotCutover,
+    });
   const roleVisibilityPolicy: LayoutRoleVisibilityPolicy = {
     showTopChrome: canAccessLayoutVisibilityForRole(
       role,
@@ -422,6 +412,18 @@ export function AppLayout({ children }: AppLayoutProps) {
     tabletShellProfile.shouldPadBottomChromeWithSafeArea
       ? "pointer-events-none absolute inset-x-0 bottom-2 z-20 flex flex-col items-center gap-2 px-3 pb-[calc(env(safe-area-inset-bottom)+8px)] sm:px-4 xl:px-6"
       : "pointer-events-none absolute inset-x-0 bottom-3 z-20 flex flex-col items-center gap-2 px-3 sm:px-4 xl:px-6";
+  const { handleEnterFullscreenInk, handleExitFullscreenInk } =
+    useFullscreenInkLifecycle({
+      layoutRootRef,
+      closeDataInput,
+      enterFullscreenInkNative,
+      enterFullscreenInkFallback,
+      exitFullscreenInk,
+      fullscreenInkMode,
+      isNativeFullscreen,
+      isDataInputOpen,
+      isFullscreenInkActive,
+    });
 
   const handleToggleLauncherPanel = (panelId: string, nextOpen: boolean) => {
     if (panelId === CORE_PANEL_POLICY_IDS.DATA_INPUT) {
@@ -445,89 +447,6 @@ export function AppLayout({ children }: AppLayoutProps) {
       meta: { source: "layout.app-layout" },
     }).catch(() => undefined);
   };
-
-  const handleEnterFullscreenInk = async () => {
-    await enterFullscreenInkRuntime({
-      rootNode: layoutRootRef.current,
-      onBeforeEnter: closeDataInput,
-      onEnterNative: enterFullscreenInkNative,
-      onEnterFallback: enterFullscreenInkFallback,
-    });
-  };
-
-  const handleExitFullscreenInk = async () => {
-    await exitFullscreenInkRuntime({
-      isNativeFullscreen,
-      onExit: exitFullscreenInk,
-    });
-  };
-
-  useEffect(() => {
-    if (typeof document === "undefined") return;
-    const handleFullscreenChange = () => {
-      if (document.fullscreenElement) return;
-      if (fullscreenInkMode === "native") {
-        exitFullscreenInk();
-      }
-    };
-    document.addEventListener("fullscreenchange", handleFullscreenChange);
-    return () =>
-      document.removeEventListener("fullscreenchange", handleFullscreenChange);
-  }, [exitFullscreenInk, fullscreenInkMode]);
-
-  useEffect(() => {
-    if (!isDataInputOpen || !isFullscreenInkActive) return;
-    exitFullscreenInk();
-  }, [exitFullscreenInk, isDataInputOpen, isFullscreenInkActive]);
-
-  useEffect(() => {
-    if (!useWindowHostPanels) return;
-
-    const viewportNode = windowHostViewportRef.current;
-    if (!viewportNode) return;
-
-    const updateClampBounds = () => {
-      const rect = viewportNode.getBoundingClientRect();
-      const nextWidth = Math.max(
-        320,
-        Math.round(rect.width) - WINDOW_HOST_CLAMP_INSET_PX * 2
-      );
-      const nextHeight = Math.max(
-        240,
-        Math.round(rect.height) - WINDOW_HOST_CLAMP_INSET_PX * 2
-      );
-      setWindowHostClampBounds((previous) => {
-        if (
-          previous.x === WINDOW_HOST_CLAMP_INSET_PX &&
-          previous.y === WINDOW_HOST_CLAMP_INSET_PX &&
-          previous.width === nextWidth &&
-          previous.height === nextHeight
-        ) {
-          return previous;
-        }
-        return {
-          x: WINDOW_HOST_CLAMP_INSET_PX,
-          y: WINDOW_HOST_CLAMP_INSET_PX,
-          width: nextWidth,
-          height: nextHeight,
-        };
-      });
-    };
-
-    updateClampBounds();
-
-    if (typeof ResizeObserver === "function") {
-      const observer = new ResizeObserver(() => {
-        updateClampBounds();
-      });
-      observer.observe(viewportNode);
-      return () => observer.disconnect();
-    }
-
-    if (typeof window === "undefined") return;
-    window.addEventListener("resize", updateClampBounds);
-    return () => window.removeEventListener("resize", updateClampBounds);
-  }, [useWindowHostPanels]);
 
   useEffect(() => {
     if (

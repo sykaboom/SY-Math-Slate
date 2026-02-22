@@ -20,6 +20,7 @@ echo "[verify-sh] Stage: ${verify_stage}"
 required_scripts=(
   "scripts/check_layer_rules.sh"
   "scripts/check_mod_contract.sh"
+  "scripts/check_v10_large_file_budget.sh"
 )
 
 mapfile -t candidates < <(

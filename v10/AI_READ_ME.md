@@ -192,6 +192,7 @@ Primary checks used by hooks/CI:
 - `scripts/check_toolbar_contract.sh`
 - `scripts/check_v10_changed_lint.sh`
 - `scripts/check_v10_hardcoding_budget.sh`
+- `scripts/check_v10_large_file_budget.sh`
 - `scripts/check_v10_legacy_freeze.sh`
 - `scripts/check_v10_migration_baseline.sh`
 - `scripts/check_v10_no_mod_boot.sh`
