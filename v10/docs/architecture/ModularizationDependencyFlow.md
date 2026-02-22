@@ -6,6 +6,18 @@ Date: 2026-02-21
 
 ---
 
+## 0) Related Map Set (Task 488)
+
+이 문서는 의존성 관점 요약본이다. 상세 맵은 아래를 1차 참조한다.
+
+- `v10/docs/architecture/00_AsIs_SystemFlowMap.md`
+- `v10/docs/architecture/01_ToBe_EngineModFlowMap.md`
+- `v10/docs/architecture/02_Gap_Register_And_RiskMap.md`
+- `v10/docs/architecture/03_Refactor_DAG_ExecutionPlan.md`
+- `v10/docs/architecture/04_Symbol_Dependency_Map.md`
+
+---
+
 ## 1) 결론 먼저
 
 - **전체 재설계(갈아엎기): 불필요**

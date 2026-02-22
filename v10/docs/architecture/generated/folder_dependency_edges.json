@@ -1,0 +1,66 @@
+{
+  "generatedAt": "2026-02-22T12:01:29.031Z",
+  "sourceRoot": "v10/src",
+  "edges": [
+    {
+      "from": "features",
+      "to": "features",
+      "count": 506
+    },
+    {
+      "from": "features",
+      "to": "core",
+      "count": 281
+    },
+    {
+      "from": "core",
+      "to": "core",
+      "count": 74
+    },
+    {
+      "from": "features",
+      "to": "ui",
+      "count": 32
+    },
+    {
+      "from": "app",
+      "to": "features",
+      "count": 20
+    },
+    {
+      "from": "ui",
+      "to": "core",
+      "count": 8
+    },
+    {
+      "from": "features",
+      "to": "mod",
+      "count": 7
+    },
+    {
+      "from": "mod",
+      "to": "mod",
+      "count": 5
+    },
+    {
+      "from": "mod",
+      "to": "core",
+      "count": 4
+    },
+    {
+      "from": "app",
+      "to": "app",
+      "count": 1
+    },
+    {
+      "from": "app",
+      "to": "core",
+      "count": 1
+    },
+    {
+      "from": "ui",
+      "to": "ui",
+      "count": 1
+    }
+  ]
+}

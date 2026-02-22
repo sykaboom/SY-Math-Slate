@@ -6,6 +6,18 @@ Date: 2026-02-20
 
 ---
 
+## 0-A. Architecture Map SSOT (Task 488)
+
+이 문서는 계약/원칙 SSOT이며, 실제 구조 점검/목표/갭/실행 DAG는 아래 문서군을 1차 참조한다.
+
+- `v10/docs/architecture/00_AsIs_SystemFlowMap.md`
+- `v10/docs/architecture/01_ToBe_EngineModFlowMap.md`
+- `v10/docs/architecture/02_Gap_Register_And_RiskMap.md`
+- `v10/docs/architecture/03_Refactor_DAG_ExecutionPlan.md`
+- `v10/docs/architecture/04_Symbol_Dependency_Map.md`
+
+---
+
 ## 0. Canonical Naming and Path
 
 - Canonical architecture doc path: `v10/docs/architecture/ModEngine.md`.

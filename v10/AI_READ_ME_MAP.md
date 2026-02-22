@@ -99,9 +99,6 @@ v10/src/
 |   |   |   \-- snapshot.ts
 |   |   \-- index.ts
 |   |-- math/
-|   |   |-- loader.ts
-|   |   |-- render.ts
-|   |   \-- rules.ts
 |   |-- pipelines/
 |   |   |-- export/
 |   |   |   |-- exportPipeline.ts
@@ -166,6 +163,8 @@ v10/src/
 |   |   |   |-- Prompter.tsx
 |   |   |   |-- SessionPolicyPanel.tsx
 |   |   |   \-- useTabletShellProfile.ts
+|   |   |-- shared/
+|   |   |   \-- fullscreenInkRuntime.ts
 |   |   |-- shortcuts/
 |   |   |   |-- index.ts
 |   |   |   \-- useAuthoringShortcuts.ts
@@ -176,6 +175,7 @@ v10/src/
 |   |   |-- toolbar/
 |   |   |   |-- atoms/
 |   |   |   |-- catalog/
+|   |   |   |-- lib/
 |   |   |   |-- CanvasModeTools.tsx
 |   |   |   |-- compactToolbarSections.ts
 |   |   |   |-- DrawModeTools.tsx
@@ -360,7 +360,8 @@ v10/src/
 |   |   |   |-- layout.ts
 |   |   |   |-- manifest.ts
 |   |   |   |-- modules.ts
-|   |   |   \-- theme.ts
+|   |   |   |-- theme.ts
+|   |   |   \-- toolbarBaseDefinition.ts
 |   |   \-- index.ts
 |   \-- schema/
 |       |-- templatePack.guards.ts

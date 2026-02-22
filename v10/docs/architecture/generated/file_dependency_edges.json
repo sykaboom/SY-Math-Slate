@@ -1,0 +1,4616 @@
+{
+  "generatedAt": "2026-02-22T12:01:29.031Z",
+  "sourceRoot": "v10/src",
+  "edges": [
+    {
+      "from": "core/foundation/registries/aiProviderRegistry.ts",
+      "to": "core/foundation/types/aiApproval.ts",
+      "count": 2
+    },
+    {
+      "from": "core/foundation/schemas/fromPersistedDoc.ts",
+      "to": "core/foundation/schemas/normalizedContent.ts",
+      "count": 2
+    },
+    {
+      "from": "core/foundation/schemas/toolResult.ts",
+      "to": "core/foundation/schemas/multimodalAsset.ts",
+      "count": 2
+    },
+    {
+      "from": "core/foundation/schemas/toolResult.ts",
+      "to": "core/foundation/schemas/normalizedContent.ts",
+      "count": 2
+    },
+    {
+      "from": "core/foundation/schemas/toolResult.ts",
+      "to": "core/foundation/schemas/renderPlan.ts",
+      "count": 2
+    },
+    {
+      "from": "core/foundation/schemas/toolResult.ts",
+      "to": "core/foundation/schemas/ttsScript.ts",
+      "count": 2
+    },
+    {
+      "from": "core/runtime/modding/package/guards.ts",
+      "to": "core/runtime/modding/package/types.ts",
+      "count": 2
+    },
+    {
+      "from": "core/runtime/modding/package/registry.ts",
+      "to": "core/runtime/modding/package/guards.ts",
+      "count": 2
+    },
+    {
+      "from": "core/runtime/plugin-runtime/aiOutputAssetPipeline.ts",
+      "to": "core/foundation/schemas/index.ts",
+      "count": 2
+    },
+    {
+      "from": "core/runtime/plugin-runtime/registry.ts",
+      "to": "core/foundation/schemas/index.ts",
+      "count": 2
+    },
+    {
+      "from": "features/chrome/layout/SessionPolicyPanel.tsx",
+      "to": "core/foundation/types/sessionPolicy.ts",
+      "count": 2
+    },
+    {
+      "from": "features/chrome/toolbar/catalog/toolbarSurfacePolicy.ts",
+      "to": "core/runtime/modding/package/index.ts",
+      "count": 2
+    },
+    {
+      "from": "features/chrome/toolbar/useApprovalLogic.ts",
+      "to": "core/foundation/schemas/index.ts",
+      "count": 2
+    },
+    {
+      "from": "features/chrome/viewer/ViewerShell.tsx",
+      "to": "core/foundation/types/canvas.ts",
+      "count": 2
+    },
+    {
+      "from": "features/collaboration/sharing/adapters/ServerSnapshotAdapter.ts",
+      "to": "features/collaboration/sharing/adapters/SnapshotAdapterInterface.ts",
+      "count": 2
+    },
+    {
+      "from": "features/collaboration/sharing/adapters/UpstashSnapshotAdapter.ts",
+      "to": "features/collaboration/sharing/adapters/SnapshotAdapterInterface.ts",
+      "count": 2
+    },
+    {
+      "from": "features/collaboration/sharing/transport/LiveBroadcastTransport.ts",
+      "to": "core/foundation/types/sessionPolicy.ts",
+      "count": 2
+    },
+    {
+      "from": "features/collaboration/sync/useAsymmetricSessionSync.ts",
+      "to": "features/platform/store/useSyncStore.ts",
+      "count": 2
+    },
+    {
+      "from": "app/api/ai/call/route.ts",
+      "to": "features/collaboration/sharing/ai/LLMCallService.ts",
+      "count": 1
+    },
+    {
+      "from": "app/api/ai/module/route.ts",
+      "to": "features/collaboration/sharing/ai/LLMCallService.ts",
+      "count": 1
+    },
+    {
+      "from": "app/api/ai/module/route.ts",
+      "to": "features/platform/mod-studio/core/types.ts",
+      "count": 1
+    },
+    {
+      "from": "app/api/ai/theme/route.ts",
+      "to": "features/collaboration/sharing/ai/LLMCallService.ts",
+      "count": 1
+    },
+    {
+      "from": "app/api/ai/theme/route.ts",
+      "to": "features/platform/mod-studio/theme/themeJsonIO.ts",
+      "count": 1
+    },
+    {
+      "from": "app/api/community/route.ts",
+      "to": "core/foundation/schemas/community.ts",
+      "count": 1
+    },
+    {
+      "from": "app/api/community/route.ts",
+      "to": "features/governance/community/policy/adPolicy.ts",
+      "count": 1
+    },
+    {
+      "from": "app/api/community/route.ts",
+      "to": "features/governance/community/safety/ugcSafetyFilter.ts",
+      "count": 1
+    },
+    {
+      "from": "app/api/community/route.ts",
+      "to": "features/governance/community/traffic/invalidTraffic.ts",
+      "count": 1
+    },
+    {
+      "from": "app/api/extensions/marketplace/route.ts",
+      "to": "features/platform/extensions/marketplace/index.ts",
+      "count": 1
+    },
+    {
+      "from": "app/api/share/[shareId]/route.ts",
+      "to": "features/collaboration/sharing/adapters/UpstashSnapshotAdapter.ts",
+      "count": 1
+    },
+    {
+      "from": "app/api/share/route.ts",
+      "to": "features/collaboration/sharing/adapters/SnapshotAdapterInterface.ts",
+      "count": 1
+    },
+    {
+      "from": "app/api/share/route.ts",
+      "to": "features/collaboration/sharing/adapters/UpstashSnapshotAdapter.ts",
+      "count": 1
+    },
+    {
+      "from": "app/layout.tsx",
+      "to": "app/globals.css",
+      "count": 1
+    },
+    {
+      "from": "app/layout.tsx",
+      "to": "features/chrome/layout/styles/prompter.css",
+      "count": 1
+    },
+    {
+      "from": "app/layout.tsx",
+      "to": "features/chrome/theming-ui/ThemeProvider.tsx",
+      "count": 1
+    },
+    {
+      "from": "app/layout.tsx",
+      "to": "features/editor/animation/styles/rich-text-animation.css",
+      "count": 1
+    },
+    {
+      "from": "app/layout.tsx",
+      "to": "features/editor/canvas/styles/content-layer.css",
+      "count": 1
+    },
+    {
+      "from": "app/layout.tsx",
+      "to": "features/editor/canvas/styles/mathjax.css",
+      "count": 1
+    },
+    {
+      "from": "app/page.tsx",
+      "to": "features/chrome/layout/AppLayout.tsx",
+      "count": 1
+    },
+    {
+      "from": "app/page.tsx",
+      "to": "features/platform/extensions/ui/ExtensionRuntimeBootstrap.tsx",
+      "count": 1
+    },
+    {
+      "from": "app/view/[shareId]/page.tsx",
+      "to": "features/chrome/viewer/ViewerShell.tsx",
+      "count": 1
+    },
+    {
+      "from": "core/domain/math/render.ts",
+      "to": "core/domain/math/loader.ts",
+      "count": 1
+    },
+    {
+      "from": "core/domain/math/render.ts",
+      "to": "core/domain/math/rules.ts",
+      "count": 1
+    },
+    {
+      "from": "core/foundation/policies/coreModBoundary.guards.ts",
+      "to": "core/foundation/policies/coreModBoundary.ts",
+      "count": 1
+    },
+    {
+      "from": "core/foundation/policies/coreModBoundary.ts",
+      "to": "core/foundation/policies/panel-policy.ts",
+      "count": 1
+    },
+    {
+      "from": "core/foundation/policies/rolePolicy.ts",
+      "to": "core/foundation/policies/rolePolicyGuards.ts",
+      "count": 1
+    },
+    {
+      "from": "core/foundation/policies/sessionPolicyTemplates.ts",
+      "to": "core/foundation/types/aiApproval.ts",
+      "count": 1
+    },
+    {
+      "from": "core/foundation/policies/sessionPolicyTemplates.ts",
+      "to": "core/foundation/types/sessionPolicy.ts",
+      "count": 1
+    },
+    {
+      "from": "core/foundation/schemas/fromPersistedDoc.ts",
+      "to": "core/foundation/types/canvas.ts",
+      "count": 1
+    },
+    {
+      "from": "core/foundation/types/aiApproval.ts",
+      "to": "core/foundation/types/sessionPolicy.ts",
+      "count": 1
+    },
+    {
+      "from": "core/foundation/types/snapshot.ts",
+      "to": "core/foundation/types/canvas.ts",
+      "count": 1
+    },
+    {
+      "from": "core/foundation/types/snapshot.ts",
+      "to": "core/foundation/types/sessionPolicy.ts",
+      "count": 1
+    },
+    {
+      "from": "core/pipelines/export/exportPipeline.ts",
+      "to": "core/foundation/schemas/index.ts",
+      "count": 1
+    },
+    {
+      "from": "core/pipelines/migrations/migrateToV2.ts",
+      "to": "core/foundation/types/canvas.ts",
+      "count": 1
+    },
+    {
+      "from": "core/pipelines/migrations/migrateToV2.ts",
+      "to": "core/security/sanitization/richTextSanitizer.ts",
+      "count": 1
+    },
+    {
+      "from": "core/pipelines/migrations/migrateToV2.ts",
+      "to": "core/ui/theming/engine/typography.ts",
+      "count": 1
+    },
+    {
+      "from": "core/pipelines/persistence/buildPersistedDoc.ts",
+      "to": "core/foundation/types/canvas.ts",
+      "count": 1
+    },
+    {
+      "from": "core/runtime/modding/builtin/canvas.mod.ts",
+      "to": "core/runtime/modding/api/index.ts",
+      "count": 1
+    },
+    {
+      "from": "core/runtime/modding/builtin/draw.mod.ts",
+      "to": "core/runtime/modding/api/index.ts",
+      "count": 1
+    },
+    {
+      "from": "core/runtime/modding/builtin/index.ts",
+      "to": "core/runtime/modding/api/index.ts",
+      "count": 1
+    },
+    {
+      "from": "core/runtime/modding/builtin/index.ts",
+      "to": "core/runtime/modding/host/index.ts",
+      "count": 1
+    },
+    {
+      "from": "core/runtime/modding/builtin/lecture.mod.ts",
+      "to": "core/runtime/modding/api/index.ts",
+      "count": 1
+    },
+    {
+      "from": "core/runtime/modding/builtin/playback.mod.ts",
+      "to": "core/runtime/modding/api/index.ts",
+      "count": 1
+    },
+    {
+      "from": "core/runtime/modding/host/inputRoutingBridge.ts",
+      "to": "core/runtime/modding/api/index.ts",
+      "count": 1
+    },
+    {
+      "from": "core/runtime/modding/host/inputRoutingBridge.ts",
+      "to": "core/runtime/modding/host/manager.ts",
+      "count": 1
+    },
+    {
+      "from": "core/runtime/modding/host/manager.ts",
+      "to": "core/runtime/modding/api/index.ts",
+      "count": 1
+    },
+    {
+      "from": "core/runtime/modding/host/manager.ts",
+      "to": "core/runtime/modding/host/registry.ts",
+      "count": 1
+    },
+    {
+      "from": "core/runtime/modding/host/registry.ts",
+      "to": "core/runtime/modding/api/index.ts",
+      "count": 1
+    },
+    {
+      "from": "core/runtime/modding/package/registry.ts",
+      "to": "core/runtime/modding/package/types.ts",
+      "count": 1
+    },
+    {
+      "from": "core/runtime/modding/package/selectors.ts",
+      "to": "core/runtime/modding/api/index.ts",
+      "count": 1
+    },
+    {
+      "from": "core/runtime/modding/package/selectors.ts",
+      "to": "core/runtime/modding/package/registry.ts",
+      "count": 1
+    },
+    {
+      "from": "core/runtime/modding/package/selectors.ts",
+      "to": "core/runtime/modding/package/types.ts",
+      "count": 1
+    },
+    {
+      "from": "core/runtime/modding/package/templatePackAdapter.ts",
+      "to": "core/runtime/modding/package/guards.ts",
+      "count": 1
+    },
+    {
+      "from": "core/runtime/modding/package/templatePackAdapter.ts",
+      "to": "core/runtime/modding/package/selectors.ts",
+      "count": 1
+    },
+    {
+      "from": "core/runtime/modding/package/templatePackAdapter.ts",
+      "to": "core/runtime/modding/package/types.ts",
+      "count": 1
+    },
+    {
+      "from": "core/runtime/modding/package/templatePackAdapter.types.ts",
+      "to": "core/runtime/modding/package/types.ts",
+      "count": 1
+    },
+    {
+      "from": "core/runtime/modding/package/templatePackAdapter.types.ts",
+      "to": "core/runtime/plugin-runtime/registry.ts",
+      "count": 1
+    },
+    {
+      "from": "core/runtime/modding/package/types.ts",
+      "to": "core/runtime/modding/api/index.ts",
+      "count": 1
+    },
+    {
+      "from": "core/runtime/plugin-runtime/connectors.ts",
+      "to": "core/foundation/schemas/index.ts",
+      "count": 1
+    },
+    {
+      "from": "core/runtime/plugin-runtime/connectors.ts",
+      "to": "core/runtime/plugin-runtime/registry.ts",
+      "count": 1
+    },
+    {
+      "from": "core/runtime/plugin-runtime/localAiSandboxPolicy.ts",
+      "to": "core/runtime/plugin-runtime/localRuntimeHandshake.ts",
+      "count": 1
+    },
+    {
+      "from": "core/runtime/plugin-runtime/marketplaceCatalog.ts",
+      "to": "core/foundation/schemas/extensionMarketplace.ts",
+      "count": 1
+    },
+    {
+      "from": "core/runtime/plugin-runtime/mcpGateway.ts",
+      "to": "core/runtime/plugin-runtime/connectors.ts",
+      "count": 1
+    },
+    {
+      "from": "core/runtime/plugin-runtime/pluginLoader.ts",
+      "to": "core/runtime/command/commandBus.ts",
+      "count": 1
+    },
+    {
+      "from": "core/runtime/plugin-runtime/pluginLoader.ts",
+      "to": "core/runtime/plugin-runtime/registry.ts",
+      "count": 1
+    },
+    {
+      "from": "core/runtime/plugin-runtime/registry.ts",
+      "to": "core/runtime/plugin-runtime/manifest.ts",
+      "count": 1
+    },
+    {
+      "from": "core/runtime/plugin-runtime/runtime.ts",
+      "to": "core/runtime/plugin-runtime/manifest.ts",
+      "count": 1
+    },
+    {
+      "from": "core/runtime/plugin-runtime/sdk/moddingSdk.ts",
+      "to": "core/runtime/command/commandBus.ts",
+      "count": 1
+    },
+    {
+      "from": "core/runtime/plugin-runtime/sdk/moddingSdk.ts",
+      "to": "core/runtime/plugin-runtime/pluginLoader.ts",
+      "count": 1
+    },
+    {
+      "from": "core/runtime/plugin-runtime/sdk/moddingSdk.ts",
+      "to": "core/runtime/plugin-runtime/registry.ts",
+      "count": 1
+    },
+    {
+      "from": "core/security/sanitization/richTextSanitizer.ts",
+      "to": "core/ui/theming/engine/typography.ts",
+      "count": 1
+    },
+    {
+      "from": "core/ui/theming/engine/applyTheme.ts",
+      "to": "core/ui/theming/presets/presets.ts",
+      "count": 1
+    },
+    {
+      "from": "core/ui/theming/engine/applyTheme.ts",
+      "to": "core/ui/theming/tokens/themeTokens.ts",
+      "count": 1
+    },
+    {
+      "from": "core/ui/theming/engine/typography.ts",
+      "to": "core/foundation/types/canvas.ts",
+      "count": 1
+    },
+    {
+      "from": "core/ui/theming/presets/presets.ts",
+      "to": "core/ui/theming/tokens/themeTokens.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/AppLayout.tsx",
+      "to": "core/foundation/policies/panel-policy.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/AppLayout.tsx",
+      "to": "core/foundation/policies/rolePolicy.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/AppLayout.tsx",
+      "to": "core/runtime/command/commandBus.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/AppLayout.tsx",
+      "to": "features/chrome/layout/PlayerBar.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/AppLayout.tsx",
+      "to": "features/chrome/layout/useTabletShellProfile.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/AppLayout.tsx",
+      "to": "features/chrome/layout/windowing/panelAdapters.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/AppLayout.tsx",
+      "to": "features/chrome/layout/windowing/PanelLauncher.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/AppLayout.tsx",
+      "to": "features/chrome/layout/windowing/WindowHost.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/AppLayout.tsx",
+      "to": "features/chrome/layout/windowing/windowRuntime.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/AppLayout.tsx",
+      "to": "features/chrome/shared/fullscreenInkRuntime.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/AppLayout.tsx",
+      "to": "features/chrome/shortcuts/useAuthoringShortcuts.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/AppLayout.tsx",
+      "to": "features/collaboration/sync/useAsymmetricSessionSync.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/AppLayout.tsx",
+      "to": "features/editor/canvas/CanvasStage.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/AppLayout.tsx",
+      "to": "features/editor/canvas/PasteHelperModal.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/AppLayout.tsx",
+      "to": "features/governance/policy/policyShadow.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/AppLayout.tsx",
+      "to": "features/governance/policy/useResolvedPanelPolicy.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/AppLayout.tsx",
+      "to": "features/platform/extensions/ui/ExtensionSlot.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/AppLayout.tsx",
+      "to": "features/platform/extensions/ui/registerCoreSlots.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/AppLayout.tsx",
+      "to": "features/platform/mod-studio/index.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/AppLayout.tsx",
+      "to": "features/platform/store/useChromeStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/AppLayout.tsx",
+      "to": "features/platform/store/useLocalStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/AppLayout.tsx",
+      "to": "features/platform/store/useUIStoreBridge.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/AppLayout.tsx",
+      "to": "ui/components/button.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/AppLayout.tsx",
+      "to": "ui/components/ErrorBoundary.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/autoLayout.ts",
+      "to": "core/domain/math/loader.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/autoLayout.ts",
+      "to": "core/domain/math/render.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/autoLayout.ts",
+      "to": "core/foundation/policies/boardSpec.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/autoLayout.ts",
+      "to": "core/foundation/types/canvas.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/autoLayout.ts",
+      "to": "core/security/sanitization/richTextSanitizer.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/autoLayout.ts",
+      "to": "core/ui/theming/engine/typography.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/dataInput/blockDraft.ts",
+      "to": "core/foundation/types/canvas.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/dataInput/blockDraft.ts",
+      "to": "core/security/sanitization/richTextSanitizer.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/dataInput/blockDraft.ts",
+      "to": "core/ui/theming/engine/typography.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/dataInput/blockDraft.ts",
+      "to": "features/chrome/layout/dataInput/types.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/dataInput/blockStructureOps.ts",
+      "to": "core/foundation/types/canvas.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/dataInput/blockStructureOps.ts",
+      "to": "features/chrome/layout/dataInput/blockDraft.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/dataInput/blockStructureOps.ts",
+      "to": "features/chrome/layout/dataInput/types.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/dataInput/inlineEditCommands.ts",
+      "to": "core/foundation/types/canvas.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/dataInput/inlineEditCommands.ts",
+      "to": "core/ui/theming/engine/typography.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/dataInput/inlineEditCommands.ts",
+      "to": "features/chrome/layout/dataInput/blockDraft.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/dataInput/inlineEditCommands.ts",
+      "to": "features/chrome/layout/dataInput/types.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/dataInput/segmentCommands.ts",
+      "to": "features/chrome/layout/dataInput/types.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/dataInput/segmentCommands.ts",
+      "to": "features/editor/editor-core/selection/caretEngine.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/dataInput/types.ts",
+      "to": "core/foundation/types/canvas.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/dataInput/types.ts",
+      "to": "features/editor/editor-core/selection/caretEngine.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/DataInputPanel.tsx",
+      "to": "core/foundation/types/canvas.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/DataInputPanel.tsx",
+      "to": "core/runtime/command/commandBus.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/DataInputPanel.tsx",
+      "to": "core/ui/theming/engine/typography.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/DataInputPanel.tsx",
+      "to": "core/utils.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/DataInputPanel.tsx",
+      "to": "features/chrome/layout/autoLayout.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/DataInputPanel.tsx",
+      "to": "features/chrome/layout/dataInput/blockDraft.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/DataInputPanel.tsx",
+      "to": "features/chrome/layout/dataInput/inlineEditCommands.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/DataInputPanel.tsx",
+      "to": "features/chrome/layout/dataInput/mediaIO.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/DataInputPanel.tsx",
+      "to": "features/chrome/layout/dataInput/segmentCommands.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/DataInputPanel.tsx",
+      "to": "features/chrome/layout/dataInput/types.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/DataInputPanel.tsx",
+      "to": "features/editor/input-studio/approval/inputStudioApproval.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/DataInputPanel.tsx",
+      "to": "features/editor/input-studio/components/index.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/DataInputPanel.tsx",
+      "to": "features/editor/input-studio/hooks/types.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/DataInputPanel.tsx",
+      "to": "features/editor/input-studio/hooks/useInputStudioHeadless.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/DataInputPanel.tsx",
+      "to": "features/editor/input-studio/llm/types.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/DataInputPanel.tsx",
+      "to": "features/editor/input-studio/llm/useInputStudioLlmDraft.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/DataInputPanel.tsx",
+      "to": "features/editor/input-studio/publish/useInputStudioPublishRollback.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/DataInputPanel.tsx",
+      "to": "features/editor/input-studio/schema/structuredContentSchema.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/DataInputPanel.tsx",
+      "to": "features/editor/input-studio/schema/StructuredSchemaEditor.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/DataInputPanel.tsx",
+      "to": "features/editor/input-studio/validation/batchTransformPipeline.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/DataInputPanel.tsx",
+      "to": "features/editor/input-studio/validation/types.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/DataInputPanel.tsx",
+      "to": "features/platform/store/useCanvasStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/DataInputPanel.tsx",
+      "to": "features/platform/store/useLocalStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/DataInputPanel.tsx",
+      "to": "features/platform/store/useSyncStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/DataInputPanel.tsx",
+      "to": "features/platform/store/useUIStoreBridge.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/DataInputPanel.tsx",
+      "to": "ui/components/button.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/OverviewStage.tsx",
+      "to": "core/foundation/policies/boardSpec.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/OverviewStage.tsx",
+      "to": "core/utils.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/OverviewStage.tsx",
+      "to": "features/editor/canvas/ContentLayer.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/OverviewStage.tsx",
+      "to": "features/editor/canvas/OverviewInkLayer.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/OverviewStage.tsx",
+      "to": "features/editor/canvas/StaticStrokeLayer.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/OverviewStage.tsx",
+      "to": "features/platform/store/useCanvasStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/OverviewStage.tsx",
+      "to": "features/platform/store/useUIStoreBridge.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/PlayerBar.tsx",
+      "to": "core/runtime/command/commandBus.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/PlayerBar.tsx",
+      "to": "core/utils.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/PlayerBar.tsx",
+      "to": "features/chrome/toolbar/atoms/ToolbarPanel.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/PlayerBar.tsx",
+      "to": "features/collaboration/sharing/PublicToggle.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/PlayerBar.tsx",
+      "to": "features/collaboration/sharing/ShareButton.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/PlayerBar.tsx",
+      "to": "features/platform/store/useCanvasStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/PlayerBar.tsx",
+      "to": "features/platform/store/useUIStoreBridge.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/PlayerBar.tsx",
+      "to": "ui/components/popover.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/PlayerBar.tsx",
+      "to": "ui/components/slider.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/Prompter.tsx",
+      "to": "core/foundation/types/canvas.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/Prompter.tsx",
+      "to": "features/platform/store/useCanvasStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/SessionPolicyPanel.tsx",
+      "to": "features/platform/store/useSessionPolicyStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/windowing/panelAdapters.tsx",
+      "to": "core/foundation/policies/panel-policy.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/windowing/panelAdapters.tsx",
+      "to": "core/foundation/policies/rolePolicy.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/windowing/panelAdapters.tsx",
+      "to": "features/chrome/layout/DataInputPanel.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/windowing/panelAdapters.tsx",
+      "to": "features/chrome/layout/Prompter.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/windowing/panelAdapters.tsx",
+      "to": "features/chrome/layout/windowing/WindowHost.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/windowing/panelAdapters.tsx",
+      "to": "features/chrome/theming-ui/ThemePickerPanel.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/windowing/panelAdapters.tsx",
+      "to": "features/chrome/toolbar/FloatingToolbar.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/windowing/panelAdapters.tsx",
+      "to": "features/chrome/toolbar/PendingApprovalPanel.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/windowing/panelAdapters.tsx",
+      "to": "features/chrome/ui-host/modContributionBridge.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/windowing/panelAdapters.tsx",
+      "to": "features/collaboration/sharing/HostLiveSessionPanel.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/windowing/panelAdapters.tsx",
+      "to": "features/governance/moderation/ModerationConsolePanel.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/windowing/panelAdapters.tsx",
+      "to": "features/platform/extensions/ui/registerCoreSlots.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/windowing/panelAdapters.tsx",
+      "to": "features/platform/store/useModStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/windowing/panelBehavior.schema.ts",
+      "to": "core/runtime/plugin-runtime/registry.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/windowing/panelBehavior.types.ts",
+      "to": "core/runtime/plugin-runtime/registry.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/windowing/panelLauncher.registry.ts",
+      "to": "core/runtime/plugin-runtime/registry.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/windowing/panelLauncher.registry.ts",
+      "to": "features/platform/extensions/ui/coreTemplates.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/windowing/PanelLauncher.tsx",
+      "to": "core/utils.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/windowing/PanelLauncher.tsx",
+      "to": "ui/components/button.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/windowing/PanelLauncher.tsx",
+      "to": "ui/components/popover.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/windowing/panelPolicy.runtime.ts",
+      "to": "core/runtime/plugin-runtime/registry.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/windowing/useWindowRuntime.ts",
+      "to": "features/chrome/layout/windowing/windowRuntime.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/windowing/useWindowRuntime.ts",
+      "to": "features/platform/store/useChromeStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/windowing/WindowHost.tsx",
+      "to": "core/utils.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/windowing/WindowHost.tsx",
+      "to": "features/chrome/layout/windowing/useWindowRuntime.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/windowing/WindowHost.tsx",
+      "to": "ui/components/ErrorBoundary.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/layout/windowing/windowRuntime.types.ts",
+      "to": "core/runtime/plugin-runtime/registry.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/shortcuts/useAuthoringShortcuts.ts",
+      "to": "core/runtime/command/commandBus.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/theming-ui/ThemePickerPanel.tsx",
+      "to": "core/ui/theming/presets/presets.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/theming-ui/ThemePickerPanel.tsx",
+      "to": "core/utils.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/theming-ui/ThemePickerPanel.tsx",
+      "to": "features/platform/store/useThemeStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/theming-ui/ThemeProvider.tsx",
+      "to": "features/platform/store/useThemeStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/atoms/ToolbarPanel.tsx",
+      "to": "core/utils.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/atoms/ToolbarPanel.tsx",
+      "to": "ui/components/popover.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/atoms/ToolbarSeparator.tsx",
+      "to": "core/utils.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/atoms/ToolbarSeparator.tsx",
+      "to": "ui/components/separator.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/atoms/ToolButton.tsx",
+      "to": "core/utils.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/atoms/ToolButton.tsx",
+      "to": "ui/components/button.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/CanvasModeTools.tsx",
+      "to": "features/chrome/shared/fullscreenInkRuntime.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/CanvasModeTools.tsx",
+      "to": "features/chrome/toolbar/atoms/ToolButton.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/CanvasModeTools.tsx",
+      "to": "features/chrome/toolbar/toolbarFeedback.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/CanvasModeTools.tsx",
+      "to": "features/platform/hooks/useSFX.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/CanvasModeTools.tsx",
+      "to": "features/platform/store/useUIStoreBridge.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/catalog/toolbarActionCatalog.ts",
+      "to": "core/runtime/modding/package/index.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/catalog/toolbarActionCatalog.ts",
+      "to": "mod/packs/base-education/modules.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/catalog/toolbarActionSelectors.ts",
+      "to": "core/runtime/modding/api/index.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/catalog/toolbarActionSelectors.ts",
+      "to": "core/runtime/modding/package/index.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/catalog/toolbarActionSelectors.ts",
+      "to": "features/chrome/toolbar/catalog/toolbarSurfacePolicy.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/catalog/toolbarActionSelectors.ts",
+      "to": "features/chrome/toolbar/catalog/toolbarViewportProfile.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/catalog/toolbarSurfacePolicy.ts",
+      "to": "features/chrome/toolbar/catalog/toolbarActionCatalog.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/catalog/toolbarSurfacePolicy.ts",
+      "to": "features/chrome/toolbar/catalog/toolbarViewportProfile.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/catalog/toolbarSurfacePolicy.ts",
+      "to": "mod/bridge/packRegistryBridge.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/catalog/toolbarSurfacePolicy.ts",
+      "to": "mod/packs/base-education/manifest.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/DrawModeTools.tsx",
+      "to": "core/runtime/command/commandBus.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/DrawModeTools.tsx",
+      "to": "features/chrome/toolbar/atoms/ToolbarPanel.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/DrawModeTools.tsx",
+      "to": "features/chrome/toolbar/atoms/ToolButton.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/DrawModeTools.tsx",
+      "to": "features/chrome/toolbar/EraserControls.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/DrawModeTools.tsx",
+      "to": "features/chrome/toolbar/LaserControls.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/DrawModeTools.tsx",
+      "to": "features/chrome/toolbar/PenControls.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/DrawModeTools.tsx",
+      "to": "features/chrome/toolbar/toolbarFeedback.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/DrawModeTools.tsx",
+      "to": "features/platform/store/useCanvasStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/DrawModeTools.tsx",
+      "to": "features/platform/store/useUIStoreBridge.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/DrawModeTools.tsx",
+      "to": "ui/components/popover.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/EraserControls.tsx",
+      "to": "features/chrome/toolbar/toolbarFeedback.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/EraserControls.tsx",
+      "to": "features/platform/store/useToolStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/EraserControls.tsx",
+      "to": "ui/components/slider.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/FloatingToolbar.tsx",
+      "to": "core/runtime/command/commandBus.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/FloatingToolbar.tsx",
+      "to": "core/runtime/modding/api/index.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/FloatingToolbar.tsx",
+      "to": "core/runtime/modding/builtin/index.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/FloatingToolbar.tsx",
+      "to": "core/runtime/modding/host/index.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/FloatingToolbar.tsx",
+      "to": "core/runtime/modding/package/index.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/FloatingToolbar.tsx",
+      "to": "core/utils.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/FloatingToolbar.tsx",
+      "to": "features/chrome/toolbar/atoms/ToolbarPanel.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/FloatingToolbar.tsx",
+      "to": "features/chrome/toolbar/atoms/ToolButton.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/FloatingToolbar.tsx",
+      "to": "features/chrome/toolbar/CanvasModeTools.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/FloatingToolbar.tsx",
+      "to": "features/chrome/toolbar/catalog/toolbarActionCatalog.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/FloatingToolbar.tsx",
+      "to": "features/chrome/toolbar/catalog/toolbarActionSelectors.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/FloatingToolbar.tsx",
+      "to": "features/chrome/toolbar/catalog/toolbarViewportProfile.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/FloatingToolbar.tsx",
+      "to": "features/chrome/toolbar/compactToolbarSections.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/FloatingToolbar.tsx",
+      "to": "features/chrome/toolbar/DrawModeTools.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/FloatingToolbar.tsx",
+      "to": "features/chrome/toolbar/lib/stepMetrics.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/FloatingToolbar.tsx",
+      "to": "features/chrome/toolbar/MorePanel.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/FloatingToolbar.tsx",
+      "to": "features/chrome/toolbar/PlaybackModeTools.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/FloatingToolbar.tsx",
+      "to": "features/chrome/toolbar/ThumbZoneDock.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/FloatingToolbar.tsx",
+      "to": "features/chrome/toolbar/toolbarFeedback.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/FloatingToolbar.tsx",
+      "to": "features/chrome/toolbar/toolbarModePolicy.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/FloatingToolbar.tsx",
+      "to": "features/chrome/ui-host/modContributionBridge.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/FloatingToolbar.tsx",
+      "to": "features/platform/extensions/ui/ExtensionSlot.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/FloatingToolbar.tsx",
+      "to": "features/platform/hooks/useFileIO.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/FloatingToolbar.tsx",
+      "to": "features/platform/hooks/useImageInsert.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/FloatingToolbar.tsx",
+      "to": "features/platform/store/useCanvasStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/FloatingToolbar.tsx",
+      "to": "features/platform/store/useLocalStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/FloatingToolbar.tsx",
+      "to": "features/platform/store/useModStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/FloatingToolbar.tsx",
+      "to": "features/platform/store/useUIStoreBridge.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/FloatingToolbar.tsx",
+      "to": "mod/bridge/packRegistryBridge.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/FloatingToolbar.tsx",
+      "to": "ui/components/popover.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/LaserControls.tsx",
+      "to": "core/utils.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/LaserControls.tsx",
+      "to": "features/chrome/toolbar/toolbarFeedback.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/LaserControls.tsx",
+      "to": "features/platform/store/useUIStoreBridge.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/LaserControls.tsx",
+      "to": "ui/components/toggle-group.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/lib/stepMetrics.ts",
+      "to": "core/foundation/types/canvas.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/MorePanel.tsx",
+      "to": "core/runtime/command/commandBus.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/MorePanel.tsx",
+      "to": "core/utils.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/MorePanel.tsx",
+      "to": "features/chrome/toolbar/atoms/ToolButton.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/MorePanel.tsx",
+      "to": "features/chrome/toolbar/lib/stepMetrics.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/MorePanel.tsx",
+      "to": "features/chrome/toolbar/toolbarFeedback.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/MorePanel.tsx",
+      "to": "features/platform/hooks/useFileIO.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/MorePanel.tsx",
+      "to": "features/platform/hooks/usePersistence.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/MorePanel.tsx",
+      "to": "features/platform/store/useCanvasStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/MorePanel.tsx",
+      "to": "features/platform/store/useUIStoreBridge.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/PageNavigator.tsx",
+      "to": "features/chrome/toolbar/atoms/ToolbarPanel.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/PageNavigator.tsx",
+      "to": "features/chrome/toolbar/atoms/ToolButton.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/PageNavigator.tsx",
+      "to": "features/chrome/toolbar/navigationLabels.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/PageNavigator.tsx",
+      "to": "features/chrome/toolbar/toolbarFeedback.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/PageNavigator.tsx",
+      "to": "features/platform/hooks/useDocumentOutline.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/PageNavigator.tsx",
+      "to": "features/platform/store/useCanvasStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/PageNavigator.tsx",
+      "to": "features/platform/store/useUIStoreBridge.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/PageNavigator.tsx",
+      "to": "ui/components/popover.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/PageNavigator.tsx",
+      "to": "ui/components/slider.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/PenControls.tsx",
+      "to": "core/utils.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/PenControls.tsx",
+      "to": "features/chrome/toolbar/toolbarFeedback.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/PenControls.tsx",
+      "to": "features/platform/store/useUIStoreBridge.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/PenControls.tsx",
+      "to": "ui/components/slider.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/PenControls.tsx",
+      "to": "ui/components/toggle-group.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/PendingApprovalPanel.tsx",
+      "to": "features/chrome/toolbar/useApprovalLogic.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/PendingApprovalPanel.tsx",
+      "to": "features/collaboration/sharing/ai/TeacherApprovalPanel.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/PendingApprovalPanel.tsx",
+      "to": "features/platform/store/useLocalStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/PendingApprovalPanel.tsx",
+      "to": "features/platform/store/useSyncStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/PendingApprovalPanel.tsx",
+      "to": "ui/components/button.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/PlaybackControls.tsx",
+      "to": "core/utils.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/PlaybackControls.tsx",
+      "to": "features/chrome/toolbar/atoms/ToolbarPanel.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/PlaybackControls.tsx",
+      "to": "features/chrome/toolbar/atoms/ToolButton.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/PlaybackControls.tsx",
+      "to": "features/chrome/toolbar/lib/stepMetrics.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/PlaybackControls.tsx",
+      "to": "features/chrome/toolbar/navigationLabels.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/PlaybackControls.tsx",
+      "to": "features/chrome/toolbar/toolbarFeedback.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/PlaybackControls.tsx",
+      "to": "features/platform/store/useCanvasStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/PlaybackControls.tsx",
+      "to": "features/platform/store/useUIStoreBridge.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/PlaybackControls.tsx",
+      "to": "ui/components/popover.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/PlaybackControls.tsx",
+      "to": "ui/components/slider.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/PlaybackModeTools.tsx",
+      "to": "core/runtime/command/commandBus.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/PlaybackModeTools.tsx",
+      "to": "features/chrome/toolbar/atoms/ToolButton.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/PlaybackModeTools.tsx",
+      "to": "features/chrome/toolbar/lib/stepMetrics.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/PlaybackModeTools.tsx",
+      "to": "features/chrome/toolbar/PageNavigator.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/PlaybackModeTools.tsx",
+      "to": "features/chrome/toolbar/PlaybackControls.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/PlaybackModeTools.tsx",
+      "to": "features/chrome/toolbar/toolbarFeedback.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/PlaybackModeTools.tsx",
+      "to": "features/platform/hooks/useSFX.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/PlaybackModeTools.tsx",
+      "to": "features/platform/store/useCanvasStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/PlaybackModeTools.tsx",
+      "to": "features/platform/store/useUIStoreBridge.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/ThumbZoneDock.tsx",
+      "to": "core/utils.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/ThumbZoneDock.tsx",
+      "to": "features/chrome/toolbar/atoms/ToolbarPanel.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/ThumbZoneDock.tsx",
+      "to": "features/chrome/toolbar/atoms/ToolButton.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/ThumbZoneDock.tsx",
+      "to": "features/chrome/toolbar/compactToolbarSections.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/ThumbZoneDock.tsx",
+      "to": "ui/components/popover.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/toolbarFeedback.ts",
+      "to": "core/runtime/command/commandBus.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/toolbarModePolicy.ts",
+      "to": "core/runtime/modding/api/index.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/toolbarModePolicy.ts",
+      "to": "core/runtime/modding/package/index.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/toolbarModePolicy.ts",
+      "to": "features/platform/observability/index.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/toolbarModePolicy.ts",
+      "to": "mod/packs/base-education/modules.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/useApprovalLogic.ts",
+      "to": "core/foundation/types/canvas.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/useApprovalLogic.ts",
+      "to": "core/runtime/command/commandBus.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/useApprovalLogic.ts",
+      "to": "core/security/sanitization/richTextSanitizer.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/useApprovalLogic.ts",
+      "to": "core/ui/theming/engine/typography.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/useApprovalLogic.ts",
+      "to": "features/editor/input-studio/approval/inputStudioApproval.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/useApprovalLogic.ts",
+      "to": "features/platform/store/useCanvasStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/useApprovalLogic.ts",
+      "to": "features/platform/store/useDocStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/toolbar/useApprovalLogic.ts",
+      "to": "features/platform/store/useSyncStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/ui-host/modContributionBridge.ts",
+      "to": "core/runtime/modding/api/index.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/ui-host/modContributionBridge.ts",
+      "to": "core/runtime/modding/host/index.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/ui-host/modContributionBridge.ts",
+      "to": "core/runtime/modding/package/index.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/ui-host/modContributionBridge.ts",
+      "to": "core/runtime/plugin-runtime/registry.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/ui-host/modContributionBridge.ts",
+      "to": "features/platform/store/useModStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/viewer/useViewerLiveSession.ts",
+      "to": "core/foundation/types/canvas.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/viewer/useViewerLiveSession.ts",
+      "to": "core/foundation/types/snapshot.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/viewer/useViewerLiveSession.ts",
+      "to": "features/collaboration/sharing/transport/LiveBroadcastTransport.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/viewer/useViewerLiveSession.ts",
+      "to": "features/platform/store/useCanvasStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/viewer/useViewerLiveSession.ts",
+      "to": "features/platform/store/useDocStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/viewer/useViewerSession.ts",
+      "to": "core/foundation/types/canvas.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/viewer/useViewerSession.ts",
+      "to": "core/foundation/types/snapshot.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/viewer/useViewerSession.ts",
+      "to": "features/chrome/viewer/useViewerLiveSession.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/viewer/useViewerSession.ts",
+      "to": "features/collaboration/sharing/adapters/LocalSnapshotAdapter.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/viewer/useViewerSession.ts",
+      "to": "features/collaboration/sharing/adapters/ServerSnapshotAdapter.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/viewer/useViewerSession.ts",
+      "to": "features/platform/store/useCanvasStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/viewer/useViewerSession.ts",
+      "to": "features/platform/store/useDocStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/viewer/useViewerSession.ts",
+      "to": "features/platform/store/useUIStoreBridge.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/viewer/ViewerShell.tsx",
+      "to": "core/foundation/policies/sessionPolicyTemplates.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/viewer/ViewerShell.tsx",
+      "to": "core/foundation/types/sessionPolicy.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/viewer/ViewerShell.tsx",
+      "to": "features/chrome/viewer/useViewerSession.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/viewer/ViewerShell.tsx",
+      "to": "features/collaboration/sharing/ai/StudentAIPromptBar.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/viewer/ViewerShell.tsx",
+      "to": "features/collaboration/sharing/snapshotSerializer.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/viewer/ViewerShell.tsx",
+      "to": "features/collaboration/sharing/useParticipantSession.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/viewer/ViewerShell.tsx",
+      "to": "features/collaboration/sharing/useStudentAISession.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/viewer/ViewerShell.tsx",
+      "to": "features/editor/canvas/CanvasStage.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/viewer/ViewerShell.tsx",
+      "to": "features/platform/store/useCanvasStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/chrome/viewer/ViewerShell.tsx",
+      "to": "features/platform/store/useDocStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/collaboration/sharing/adapters/LocalSnapshotAdapter.ts",
+      "to": "features/collaboration/sharing/adapters/SnapshotAdapterInterface.ts",
+      "count": 1
+    },
+    {
+      "from": "features/collaboration/sharing/adapters/LocalSnapshotAdapter.ts",
+      "to": "features/collaboration/sharing/snapshotSerializer.ts",
+      "count": 1
+    },
+    {
+      "from": "features/collaboration/sharing/adapters/SnapshotAdapterInterface.ts",
+      "to": "core/foundation/types/canvas.ts",
+      "count": 1
+    },
+    {
+      "from": "features/collaboration/sharing/adapters/SnapshotAdapterInterface.ts",
+      "to": "core/foundation/types/snapshot.ts",
+      "count": 1
+    },
+    {
+      "from": "features/collaboration/sharing/ai/LLMCallService.ts",
+      "to": "core/foundation/types/aiApproval.ts",
+      "count": 1
+    },
+    {
+      "from": "features/collaboration/sharing/ai/LLMCallService.ts",
+      "to": "features/collaboration/sharing/ai/resolvePromptProfile.ts",
+      "count": 1
+    },
+    {
+      "from": "features/collaboration/sharing/ai/ReAskPresetBar.tsx",
+      "to": "ui/components/button.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/collaboration/sharing/ai/resolvePromptProfile.ts",
+      "to": "core/foundation/types/aiApproval.ts",
+      "count": 1
+    },
+    {
+      "from": "features/collaboration/sharing/ai/StudentAIPromptBar.tsx",
+      "to": "features/collaboration/sharing/useStudentAISession.ts",
+      "count": 1
+    },
+    {
+      "from": "features/collaboration/sharing/ai/TeacherApprovalPanel.tsx",
+      "to": "core/foundation/types/aiApproval.ts",
+      "count": 1
+    },
+    {
+      "from": "features/collaboration/sharing/ai/TeacherApprovalPanel.tsx",
+      "to": "features/collaboration/sharing/ai/ReAskPresetBar.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/collaboration/sharing/ai/TeacherApprovalPanel.tsx",
+      "to": "features/collaboration/sharing/useTeacherApprovalQueue.ts",
+      "count": 1
+    },
+    {
+      "from": "features/collaboration/sharing/HostLiveSessionPanel.tsx",
+      "to": "features/collaboration/sharing/ai/TeacherApprovalPanel.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/collaboration/sharing/HostLiveSessionPanel.tsx",
+      "to": "features/collaboration/sharing/useHostPolicyEngine.ts",
+      "count": 1
+    },
+    {
+      "from": "features/collaboration/sharing/HostLiveSessionPanel.tsx",
+      "to": "features/collaboration/sharing/useHostSession.ts",
+      "count": 1
+    },
+    {
+      "from": "features/collaboration/sharing/HostLiveSessionPanel.tsx",
+      "to": "features/platform/store/useHostShareStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/collaboration/sharing/HostLiveSessionPanel.tsx",
+      "to": "features/platform/store/useSessionPolicyStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/collaboration/sharing/LayerPickerModal.tsx",
+      "to": "core/utils.ts",
+      "count": 1
+    },
+    {
+      "from": "features/collaboration/sharing/ProposalCommandBus.ts",
+      "to": "core/foundation/types/sessionPolicy.ts",
+      "count": 1
+    },
+    {
+      "from": "features/collaboration/sharing/ProposalCommandBus.ts",
+      "to": "features/collaboration/sharing/transport/LiveBroadcastTransport.ts",
+      "count": 1
+    },
+    {
+      "from": "features/collaboration/sharing/PublicToggle.tsx",
+      "to": "core/utils.ts",
+      "count": 1
+    },
+    {
+      "from": "features/collaboration/sharing/ShareButton.tsx",
+      "to": "core/foundation/types/snapshot.ts",
+      "count": 1
+    },
+    {
+      "from": "features/collaboration/sharing/ShareButton.tsx",
+      "to": "core/utils.ts",
+      "count": 1
+    },
+    {
+      "from": "features/collaboration/sharing/ShareButton.tsx",
+      "to": "features/collaboration/sharing/LayerPickerModal.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/collaboration/sharing/ShareButton.tsx",
+      "to": "features/collaboration/sharing/ShareScopeSelector.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/collaboration/sharing/ShareButton.tsx",
+      "to": "features/collaboration/sharing/useSnapshotShare.ts",
+      "count": 1
+    },
+    {
+      "from": "features/collaboration/sharing/ShareButton.tsx",
+      "to": "features/platform/store/useCanvasStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/collaboration/sharing/ShareButton.tsx",
+      "to": "features/platform/store/useHostShareStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/collaboration/sharing/ShareScopeSelector.tsx",
+      "to": "core/foundation/types/snapshot.ts",
+      "count": 1
+    },
+    {
+      "from": "features/collaboration/sharing/ShareScopeSelector.tsx",
+      "to": "core/utils.ts",
+      "count": 1
+    },
+    {
+      "from": "features/collaboration/sharing/snapshotSerializer.ts",
+      "to": "core/foundation/types/canvas.ts",
+      "count": 1
+    },
+    {
+      "from": "features/collaboration/sharing/snapshotSerializer.ts",
+      "to": "core/foundation/types/snapshot.ts",
+      "count": 1
+    },
+    {
+      "from": "features/collaboration/sharing/transport/LiveBroadcastTransport.ts",
+      "to": "core/foundation/types/canvas.ts",
+      "count": 1
+    },
+    {
+      "from": "features/collaboration/sharing/useHostPolicyEngine.ts",
+      "to": "core/foundation/types/sessionPolicy.ts",
+      "count": 1
+    },
+    {
+      "from": "features/collaboration/sharing/useHostPolicyEngine.ts",
+      "to": "core/foundation/types/snapshot.ts",
+      "count": 1
+    },
+    {
+      "from": "features/collaboration/sharing/useHostPolicyEngine.ts",
+      "to": "features/collaboration/sharing/ProposalCommandBus.ts",
+      "count": 1
+    },
+    {
+      "from": "features/collaboration/sharing/useHostPolicyEngine.ts",
+      "to": "features/collaboration/sharing/transport/LiveBroadcastTransport.ts",
+      "count": 1
+    },
+    {
+      "from": "features/collaboration/sharing/useHostSession.ts",
+      "to": "core/foundation/types/canvas.ts",
+      "count": 1
+    },
+    {
+      "from": "features/collaboration/sharing/useHostSession.ts",
+      "to": "core/foundation/types/snapshot.ts",
+      "count": 1
+    },
+    {
+      "from": "features/collaboration/sharing/useHostSession.ts",
+      "to": "features/collaboration/sharing/transport/LiveBroadcastTransport.ts",
+      "count": 1
+    },
+    {
+      "from": "features/collaboration/sharing/useHostSession.ts",
+      "to": "features/platform/store/useCanvasStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/collaboration/sharing/useParticipantSession.ts",
+      "to": "core/foundation/types/sessionPolicy.ts",
+      "count": 1
+    },
+    {
+      "from": "features/collaboration/sharing/useParticipantSession.ts",
+      "to": "core/foundation/types/snapshot.ts",
+      "count": 1
+    },
+    {
+      "from": "features/collaboration/sharing/useParticipantSession.ts",
+      "to": "features/collaboration/sharing/ProposalCommandBus.ts",
+      "count": 1
+    },
+    {
+      "from": "features/collaboration/sharing/useParticipantSession.ts",
+      "to": "features/collaboration/sharing/transport/LiveBroadcastTransport.ts",
+      "count": 1
+    },
+    {
+      "from": "features/collaboration/sharing/useSnapshotShare.ts",
+      "to": "core/foundation/policies/boardSpec.ts",
+      "count": 1
+    },
+    {
+      "from": "features/collaboration/sharing/useSnapshotShare.ts",
+      "to": "core/foundation/types/canvas.ts",
+      "count": 1
+    },
+    {
+      "from": "features/collaboration/sharing/useSnapshotShare.ts",
+      "to": "core/foundation/types/snapshot.ts",
+      "count": 1
+    },
+    {
+      "from": "features/collaboration/sharing/useSnapshotShare.ts",
+      "to": "features/collaboration/sharing/adapters/LocalSnapshotAdapter.ts",
+      "count": 1
+    },
+    {
+      "from": "features/collaboration/sharing/useSnapshotShare.ts",
+      "to": "features/collaboration/sharing/adapters/ServerSnapshotAdapter.ts",
+      "count": 1
+    },
+    {
+      "from": "features/collaboration/sharing/useSnapshotShare.ts",
+      "to": "features/collaboration/sharing/snapshotSerializer.ts",
+      "count": 1
+    },
+    {
+      "from": "features/collaboration/sharing/useSnapshotShare.ts",
+      "to": "features/platform/store/useCanvasStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/collaboration/sharing/useSnapshotShare.ts",
+      "to": "features/platform/store/useDocStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/collaboration/sharing/useSnapshotShare.ts",
+      "to": "features/platform/store/useUIStoreBridge.ts",
+      "count": 1
+    },
+    {
+      "from": "features/collaboration/sharing/useStudentAISession.ts",
+      "to": "core/foundation/types/sessionPolicy.ts",
+      "count": 1
+    },
+    {
+      "from": "features/collaboration/sharing/useStudentAISession.ts",
+      "to": "features/collaboration/sharing/useParticipantSession.ts",
+      "count": 1
+    },
+    {
+      "from": "features/collaboration/sharing/useTeacherApprovalQueue.ts",
+      "to": "features/collaboration/sharing/ai/LLMCallService.ts",
+      "count": 1
+    },
+    {
+      "from": "features/collaboration/sharing/useTeacherApprovalQueue.ts",
+      "to": "features/platform/store/useSyncStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/collaboration/sync/realtime/backplane.ts",
+      "to": "features/collaboration/sync/realtime/messageEnvelope.ts",
+      "count": 1
+    },
+    {
+      "from": "features/collaboration/sync/realtime/roleSyncGuard.ts",
+      "to": "features/collaboration/sync/realtime/messageEnvelope.ts",
+      "count": 1
+    },
+    {
+      "from": "features/collaboration/sync/realtime/roleSyncGuard.ts",
+      "to": "features/platform/store/useLocalStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/collaboration/sync/useAsymmetricSessionSync.ts",
+      "to": "features/collaboration/sync/realtime/backplane.ts",
+      "count": 1
+    },
+    {
+      "from": "features/collaboration/sync/useAsymmetricSessionSync.ts",
+      "to": "features/collaboration/sync/realtime/conflictPolicy.ts",
+      "count": 1
+    },
+    {
+      "from": "features/collaboration/sync/useAsymmetricSessionSync.ts",
+      "to": "features/collaboration/sync/realtime/messageEnvelope.ts",
+      "count": 1
+    },
+    {
+      "from": "features/collaboration/sync/useAsymmetricSessionSync.ts",
+      "to": "features/collaboration/sync/realtime/roleSyncGuard.ts",
+      "count": 1
+    },
+    {
+      "from": "features/collaboration/sync/useAsymmetricSessionSync.ts",
+      "to": "features/platform/store/useLocalStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/animation/modding/modContract.ts",
+      "to": "core/foundation/types/canvas.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/animation/modding/modContract.ts",
+      "to": "features/editor/animation/model/animationProfile.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/animation/modding/normalizeModProfile.ts",
+      "to": "features/editor/animation/modding/modContract.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/animation/modding/normalizeModProfile.ts",
+      "to": "features/editor/animation/model/animationProfile.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/animation/modding/normalizeModProfile.ts",
+      "to": "features/editor/animation/model/builtinProfiles.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/animation/model/builtinProfiles.ts",
+      "to": "features/editor/animation/model/animationProfile.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/animation/plan/compileAnimationPlan.ts",
+      "to": "features/editor/animation/runtime/types.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/animation/plan/measureAnimationPlan.ts",
+      "to": "features/editor/animation/runtime/types.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/animation/runtime/playAnimationPlan.ts",
+      "to": "features/editor/animation/runtime/types.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/animation/runtime/types.ts",
+      "to": "features/editor/animation/model/animationProfile.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/canvas/actors/ActorLayer.tsx",
+      "to": "features/editor/canvas/actors/ChalkActor.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/editor/canvas/actors/ActorLayer.tsx",
+      "to": "features/editor/canvas/actors/HighlighterActor.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/editor/canvas/actors/ChalkActor.tsx",
+      "to": "core/ui/theming/presets/chalkTheme.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/canvas/actors/HighlighterActor.tsx",
+      "to": "core/utils.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/canvas/AnchorIndicator.tsx",
+      "to": "core/foundation/policies/boardSpec.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/canvas/AnchorIndicator.tsx",
+      "to": "core/ui/theming/presets/chalkTheme.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/canvas/AnchorIndicator.tsx",
+      "to": "core/utils.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/canvas/AnchorIndicator.tsx",
+      "to": "features/platform/hooks/useBoardTransform.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/canvas/AnchorIndicator.tsx",
+      "to": "features/platform/store/useCanvasStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/canvas/AnchorIndicator.tsx",
+      "to": "features/platform/store/useUIStoreBridge.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/canvas/animation/AnimatedTextBlock.tsx",
+      "to": "features/editor/canvas/animation/RichTextAnimator.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/editor/canvas/animation/MathRevealBlock.tsx",
+      "to": "features/editor/canvas/animation/RichTextAnimator.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/editor/canvas/animation/MixedRevealBlock.tsx",
+      "to": "features/editor/canvas/animation/RichTextAnimator.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/editor/canvas/animation/RichTextAnimator.tsx",
+      "to": "core/domain/math/loader.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/canvas/animation/RichTextAnimator.tsx",
+      "to": "core/domain/math/render.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/canvas/animation/RichTextAnimator.tsx",
+      "to": "core/utils.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/canvas/animation/RichTextAnimator.tsx",
+      "to": "features/editor/animation/modding/modContract.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/canvas/animation/RichTextAnimator.tsx",
+      "to": "features/editor/animation/modding/normalizeModProfile.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/canvas/animation/RichTextAnimator.tsx",
+      "to": "features/editor/animation/model/builtinProfiles.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/canvas/animation/RichTextAnimator.tsx",
+      "to": "features/editor/animation/plan/compileAnimationPlan.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/canvas/animation/RichTextAnimator.tsx",
+      "to": "features/editor/animation/plan/measureAnimationPlan.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/canvas/animation/RichTextAnimator.tsx",
+      "to": "features/editor/animation/runtime/playAnimationPlan.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/canvas/animation/RichTextAnimator.tsx",
+      "to": "features/editor/animation/runtime/types.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/canvas/animation/RichTextAnimator.tsx",
+      "to": "features/platform/hooks/useBoardTransform.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/canvas/CanvasGuides.tsx",
+      "to": "core/foundation/policies/boardSpec.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/canvas/CanvasGuides.tsx",
+      "to": "features/platform/store/useUIStoreBridge.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/canvas/CanvasLayer.tsx",
+      "to": "core/utils.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/canvas/CanvasLayer.tsx",
+      "to": "features/platform/hooks/useCanvas.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/canvas/CanvasLayer.tsx",
+      "to": "features/platform/store/useLocalStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/canvas/CanvasLayer.tsx",
+      "to": "features/platform/store/useUIStoreBridge.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/canvas/CanvasStage.tsx",
+      "to": "features/chrome/layout/OverviewStage.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/editor/canvas/CanvasStage.tsx",
+      "to": "features/editor/canvas/actors/ActorLayer.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/editor/canvas/CanvasStage.tsx",
+      "to": "features/editor/canvas/AnchorIndicator.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/editor/canvas/CanvasStage.tsx",
+      "to": "features/editor/canvas/CanvasGuides.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/editor/canvas/CanvasStage.tsx",
+      "to": "features/editor/canvas/CanvasLayer.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/editor/canvas/CanvasStage.tsx",
+      "to": "features/editor/canvas/ContentLayer.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/editor/canvas/CanvasStage.tsx",
+      "to": "features/editor/canvas/PageGuides.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/editor/canvas/CanvasStage.tsx",
+      "to": "features/editor/canvas/PageViewport.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/editor/canvas/CanvasStage.tsx",
+      "to": "features/editor/canvas/paste/pasteNormalization.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/canvas/CanvasStage.tsx",
+      "to": "features/editor/canvas/PresenceOverlay.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/editor/canvas/CanvasStage.tsx",
+      "to": "features/editor/canvas/viewport/useViewportInteraction.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/canvas/CanvasStage.tsx",
+      "to": "features/platform/hooks/useImageInsert.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/canvas/CanvasStage.tsx",
+      "to": "features/platform/hooks/useSequence.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/canvas/CanvasStage.tsx",
+      "to": "features/platform/store/useCanvasStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/canvas/CanvasStage.tsx",
+      "to": "features/platform/store/useUIStoreBridge.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/canvas/ContentLayer.tsx",
+      "to": "core/foundation/policies/boardSpec.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/canvas/ContentLayer.tsx",
+      "to": "core/foundation/types/canvas.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/canvas/ContentLayer.tsx",
+      "to": "core/security/sanitization/richTextSanitizer.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/canvas/ContentLayer.tsx",
+      "to": "core/utils.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/canvas/ContentLayer.tsx",
+      "to": "features/editor/canvas/animation/RichTextAnimator.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/editor/canvas/ContentLayer.tsx",
+      "to": "features/editor/canvas/MathTextBlock.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/editor/canvas/ContentLayer.tsx",
+      "to": "features/editor/canvas/objects/ImageBlock.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/editor/canvas/ContentLayer.tsx",
+      "to": "features/platform/hooks/useSequence.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/canvas/ContentLayer.tsx",
+      "to": "features/platform/store/useCanvasStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/canvas/ContentLayer.tsx",
+      "to": "features/platform/store/useUIStoreBridge.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/canvas/MathTextBlock.tsx",
+      "to": "core/domain/math/loader.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/canvas/MathTextBlock.tsx",
+      "to": "core/domain/math/render.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/canvas/objects/ImageBlock.tsx",
+      "to": "core/foundation/policies/boardSpec.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/canvas/objects/ImageBlock.tsx",
+      "to": "core/foundation/types/canvas.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/canvas/objects/ImageBlock.tsx",
+      "to": "core/utils.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/canvas/objects/ImageBlock.tsx",
+      "to": "features/platform/hooks/useBoardTransform.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/canvas/objects/ImageBlock.tsx",
+      "to": "features/platform/hooks/useSnap.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/canvas/objects/ImageBlock.tsx",
+      "to": "features/platform/store/useCanvasStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/canvas/objects/ImageBlock.tsx",
+      "to": "features/platform/store/useUIStoreBridge.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/canvas/OverviewInkLayer.tsx",
+      "to": "core/utils.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/canvas/OverviewInkLayer.tsx",
+      "to": "features/platform/hooks/useOverlayCanvas.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/canvas/OverviewInkLayer.tsx",
+      "to": "features/platform/store/useUIStoreBridge.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/canvas/PageGuides.tsx",
+      "to": "core/foundation/policies/boardSpec.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/canvas/PageGuides.tsx",
+      "to": "core/utils.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/canvas/PageGuides.tsx",
+      "to": "features/editor/canvas/PageViewport.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/editor/canvas/PageGuides.tsx",
+      "to": "features/platform/store/useUIStoreBridge.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/canvas/PageViewport.tsx",
+      "to": "core/foundation/policies/boardSpec.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/canvas/PageViewport.tsx",
+      "to": "core/utils.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/canvas/PageViewport.tsx",
+      "to": "features/platform/store/useUIStoreBridge.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/canvas/PasteHelperModal.tsx",
+      "to": "features/editor/canvas/paste/pasteNormalization.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/canvas/PasteHelperModal.tsx",
+      "to": "features/platform/hooks/useImageInsert.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/canvas/PasteHelperModal.tsx",
+      "to": "features/platform/store/useUIStoreBridge.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/canvas/PresenceOverlay.tsx",
+      "to": "core/foundation/policies/boardSpec.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/canvas/PresenceOverlay.tsx",
+      "to": "features/platform/store/useLocalStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/canvas/PresenceOverlay.tsx",
+      "to": "features/platform/store/useSyncStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/canvas/PresenceOverlay.tsx",
+      "to": "features/platform/store/useUIStoreBridge.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/canvas/StaticStrokeLayer.tsx",
+      "to": "core/foundation/types/canvas.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/canvas/StaticStrokeLayer.tsx",
+      "to": "features/platform/store/useCanvasStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/canvas/viewport/useViewportInteraction.ts",
+      "to": "core/runtime/modding/host/index.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/canvas/viewport/useViewportInteraction.ts",
+      "to": "features/platform/store/useLocalStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/canvas/viewport/useViewportInteraction.ts",
+      "to": "features/platform/store/useSyncStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/canvas/viewport/useViewportInteraction.ts",
+      "to": "features/platform/store/useToolStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/canvas/viewport/useViewportInteraction.ts",
+      "to": "features/platform/store/useViewportStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/editor-core/model/editorSurface.ts",
+      "to": "core/foundation/types/canvas.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/editor-core/outline/documentOutline.ts",
+      "to": "core/foundation/types/canvas.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/input-studio/approval/inputStudioApproval.ts",
+      "to": "core/foundation/types/canvas.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/input-studio/approval/inputStudioApproval.ts",
+      "to": "features/chrome/layout/dataInput/types.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/input-studio/components/InputStudioActionsSection.tsx",
+      "to": "core/utils.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/input-studio/components/InputStudioActionsSection.tsx",
+      "to": "features/editor/input-studio/hooks/types.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/input-studio/components/InputStudioActionsSection.tsx",
+      "to": "ui/components/button.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/editor/input-studio/components/InputStudioBlocksSection.tsx",
+      "to": "core/utils.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/input-studio/components/InputStudioBlocksSection.tsx",
+      "to": "features/editor/input-studio/hooks/types.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/input-studio/components/InputStudioBlocksSection.tsx",
+      "to": "ui/components/button.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/editor/input-studio/components/InputStudioHeaderSection.tsx",
+      "to": "core/utils.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/input-studio/components/InputStudioHeaderSection.tsx",
+      "to": "features/editor/input-studio/hooks/types.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/input-studio/components/InputStudioHeaderSection.tsx",
+      "to": "ui/components/button.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/editor/input-studio/components/InputStudioRawSection.tsx",
+      "to": "core/utils.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/input-studio/components/InputStudioRawSection.tsx",
+      "to": "features/editor/input-studio/hooks/types.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/input-studio/diff/draftDiff.ts",
+      "to": "core/foundation/types/canvas.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/input-studio/diff/draftDiff.ts",
+      "to": "features/chrome/layout/dataInput/types.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/input-studio/diff/draftDiff.ts",
+      "to": "features/editor/input-studio/diff/types.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/input-studio/diff/types.ts",
+      "to": "features/chrome/layout/dataInput/types.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/input-studio/hooks/types.ts",
+      "to": "features/chrome/layout/dataInput/blockStructureOps.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/input-studio/hooks/types.ts",
+      "to": "features/chrome/layout/dataInput/types.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/input-studio/hooks/types.ts",
+      "to": "features/editor/editor-core/model/editorSurface.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/input-studio/hooks/useInputStudioHeadless.ts",
+      "to": "features/chrome/layout/dataInput/blockDraft.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/input-studio/hooks/useInputStudioHeadless.ts",
+      "to": "features/chrome/layout/dataInput/blockStructureOps.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/input-studio/hooks/useInputStudioHeadless.ts",
+      "to": "features/chrome/layout/dataInput/types.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/input-studio/hooks/useInputStudioHeadless.ts",
+      "to": "features/editor/editor-core/model/editorSurface.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/input-studio/hooks/useInputStudioHeadless.ts",
+      "to": "features/editor/input-studio/hooks/types.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/input-studio/llm/normalizedToDraftBlocks.ts",
+      "to": "core/foundation/schemas/index.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/input-studio/llm/normalizedToDraftBlocks.ts",
+      "to": "core/ui/theming/engine/typography.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/input-studio/llm/normalizedToDraftBlocks.ts",
+      "to": "features/chrome/layout/dataInput/blockDraft.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/input-studio/llm/normalizedToDraftBlocks.ts",
+      "to": "features/chrome/layout/dataInput/types.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/input-studio/llm/types.ts",
+      "to": "core/foundation/schemas/index.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/input-studio/llm/types.ts",
+      "to": "core/runtime/plugin-runtime/connectors.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/input-studio/llm/types.ts",
+      "to": "features/chrome/layout/dataInput/types.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/input-studio/llm/types.ts",
+      "to": "features/editor/input-studio/diff/types.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/input-studio/llm/useInputStudioLlmDraft.ts",
+      "to": "core/foundation/schemas/index.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/input-studio/llm/useInputStudioLlmDraft.ts",
+      "to": "core/runtime/plugin-runtime/connectors.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/input-studio/llm/useInputStudioLlmDraft.ts",
+      "to": "features/chrome/layout/dataInput/blockDraft.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/input-studio/llm/useInputStudioLlmDraft.ts",
+      "to": "features/editor/input-studio/diff/draftDiff.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/input-studio/llm/useInputStudioLlmDraft.ts",
+      "to": "features/editor/input-studio/llm/normalizedToDraftBlocks.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/input-studio/llm/useInputStudioLlmDraft.ts",
+      "to": "features/editor/input-studio/llm/types.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/input-studio/llm/useInputStudioLlmDraft.ts",
+      "to": "features/editor/input-studio/offlineDraftQueue.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/input-studio/llm/useInputStudioLlmDraft.ts",
+      "to": "features/platform/extensions/adapters/index.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/input-studio/llm/useInputStudioLlmDraft.ts",
+      "to": "features/platform/store/useLocalStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/input-studio/publish/types.ts",
+      "to": "core/foundation/types/canvas.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/input-studio/publish/types.ts",
+      "to": "features/chrome/layout/dataInput/types.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/input-studio/publish/useInputStudioPublishRollback.ts",
+      "to": "features/chrome/layout/dataInput/types.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/input-studio/publish/useInputStudioPublishRollback.ts",
+      "to": "features/editor/input-studio/publish/types.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/input-studio/schema/structuredContentSchema.ts",
+      "to": "core/foundation/types/canvas.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/input-studio/schema/structuredContentSchema.ts",
+      "to": "features/chrome/layout/dataInput/types.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/input-studio/schema/StructuredSchemaEditor.tsx",
+      "to": "features/chrome/layout/dataInput/types.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/input-studio/schema/StructuredSchemaEditor.tsx",
+      "to": "features/editor/input-studio/schema/structuredContentSchema.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/input-studio/validation/batchTransformPipeline.ts",
+      "to": "features/chrome/layout/dataInput/types.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/input-studio/validation/batchTransformPipeline.ts",
+      "to": "features/editor/input-studio/schema/structuredContentSchema.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/input-studio/validation/batchTransformPipeline.ts",
+      "to": "features/editor/input-studio/validation/types.ts",
+      "count": 1
+    },
+    {
+      "from": "features/editor/input-studio/validation/types.ts",
+      "to": "features/chrome/layout/dataInput/types.ts",
+      "count": 1
+    },
+    {
+      "from": "features/governance/community/store/useCommunityStore.ts",
+      "to": "core/foundation/schemas/community.ts",
+      "count": 1
+    },
+    {
+      "from": "features/governance/community/traffic/invalidTraffic.ts",
+      "to": "core/foundation/schemas/community.ts",
+      "count": 1
+    },
+    {
+      "from": "features/governance/community/useCommunityActions.ts",
+      "to": "core/foundation/schemas/community.ts",
+      "count": 1
+    },
+    {
+      "from": "features/governance/community/useCommunityActions.ts",
+      "to": "features/governance/community/policy/adPolicy.ts",
+      "count": 1
+    },
+    {
+      "from": "features/governance/community/useCommunityActions.ts",
+      "to": "features/governance/community/store/useCommunityStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/governance/moderation/ModerationConsolePanel.tsx",
+      "to": "features/governance/moderation/useModerationConsole.ts",
+      "count": 1
+    },
+    {
+      "from": "features/governance/moderation/ModerationConsolePanel.tsx",
+      "to": "ui/components/button.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/governance/moderation/useModerationConsole.ts",
+      "to": "core/foundation/schemas/community.ts",
+      "count": 1
+    },
+    {
+      "from": "features/governance/moderation/useModerationConsole.ts",
+      "to": "features/governance/community/store/useCommunityStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/governance/moderation/useModerationConsole.ts",
+      "to": "features/governance/community/useCommunityActions.ts",
+      "count": 1
+    },
+    {
+      "from": "features/governance/moderation/useModerationConsole.ts",
+      "to": "features/platform/observability/auditLogger.ts",
+      "count": 1
+    },
+    {
+      "from": "features/governance/moderation/useModerationConsole.ts",
+      "to": "features/platform/store/useLocalStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/governance/policy/useResolvedPanelPolicy.ts",
+      "to": "core/foundation/policies/panel-policy.ts",
+      "count": 1
+    },
+    {
+      "from": "features/governance/policy/useResolvedPanelPolicy.ts",
+      "to": "core/foundation/policies/rolePolicy.ts",
+      "count": 1
+    },
+    {
+      "from": "features/governance/policy/useResolvedPanelPolicy.ts",
+      "to": "features/platform/store/useChromeStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/governance/policy/useResolvedPanelPolicy.ts",
+      "to": "features/platform/store/useLocalStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/experiments/abFlags.ts",
+      "to": "core/foundation/policies/experiments.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/adapters/audioProviderAdapter.ts",
+      "to": "core/foundation/schemas/index.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/adapters/audioProviderAdapter.ts",
+      "to": "features/platform/extensions/adapters/providerAbi.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/adapters/audioProviderAdapter.ts",
+      "to": "features/platform/extensions/adapters/types.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/adapters/imageProviderAdapter.ts",
+      "to": "core/foundation/schemas/index.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/adapters/imageProviderAdapter.ts",
+      "to": "features/platform/extensions/adapters/providerAbi.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/adapters/imageProviderAdapter.ts",
+      "to": "features/platform/extensions/adapters/types.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/adapters/index.ts",
+      "to": "features/platform/extensions/adapters/audioProviderAdapter.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/adapters/index.ts",
+      "to": "features/platform/extensions/adapters/imageProviderAdapter.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/adapters/index.ts",
+      "to": "features/platform/extensions/adapters/llmProviderAdapter.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/adapters/index.ts",
+      "to": "features/platform/extensions/adapters/lmStudioLocalAdapter.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/adapters/index.ts",
+      "to": "features/platform/extensions/adapters/mockAdapter.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/adapters/index.ts",
+      "to": "features/platform/extensions/adapters/ollamaLocalAdapter.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/adapters/index.ts",
+      "to": "features/platform/extensions/adapters/registry.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/adapters/index.ts",
+      "to": "features/platform/extensions/adapters/videoProviderAdapter.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/adapters/index.ts",
+      "to": "features/platform/extensions/adapters/webgpuOnnxLocalAdapter.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/adapters/llmProviderAdapter.ts",
+      "to": "core/foundation/schemas/index.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/adapters/llmProviderAdapter.ts",
+      "to": "features/platform/extensions/adapters/providerAbi.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/adapters/llmProviderAdapter.ts",
+      "to": "features/platform/extensions/adapters/types.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/adapters/lmStudioLocalAdapter.ts",
+      "to": "core/foundation/schemas/index.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/adapters/lmStudioLocalAdapter.ts",
+      "to": "features/platform/extensions/adapters/providerAbi.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/adapters/lmStudioLocalAdapter.ts",
+      "to": "features/platform/extensions/adapters/types.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/adapters/mockAdapter.ts",
+      "to": "core/foundation/schemas/index.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/adapters/mockAdapter.ts",
+      "to": "core/runtime/plugin-runtime/connectors.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/adapters/mockAdapter.ts",
+      "to": "features/platform/extensions/adapters/types.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/adapters/ollamaLocalAdapter.ts",
+      "to": "core/foundation/schemas/index.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/adapters/ollamaLocalAdapter.ts",
+      "to": "features/platform/extensions/adapters/providerAbi.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/adapters/ollamaLocalAdapter.ts",
+      "to": "features/platform/extensions/adapters/types.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/adapters/providerAbi.ts",
+      "to": "core/foundation/schemas/index.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/adapters/providerAbi.ts",
+      "to": "core/runtime/plugin-runtime/connectors.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/adapters/providerAbi.ts",
+      "to": "features/platform/extensions/adapters/types.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/adapters/registry.ts",
+      "to": "core/runtime/plugin-runtime/connectors.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/adapters/registry.ts",
+      "to": "features/platform/extensions/adapters/providerAbi.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/adapters/registry.ts",
+      "to": "features/platform/extensions/adapters/types.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/adapters/types.ts",
+      "to": "core/foundation/schemas/index.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/adapters/types.ts",
+      "to": "core/runtime/plugin-runtime/connectors.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/adapters/types.ts",
+      "to": "features/platform/extensions/adapters/providerAbi.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/adapters/videoProviderAdapter.ts",
+      "to": "core/foundation/schemas/index.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/adapters/videoProviderAdapter.ts",
+      "to": "features/platform/extensions/adapters/providerAbi.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/adapters/videoProviderAdapter.ts",
+      "to": "features/platform/extensions/adapters/types.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/adapters/webgpuOnnxLocalAdapter.ts",
+      "to": "core/foundation/schemas/index.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/adapters/webgpuOnnxLocalAdapter.ts",
+      "to": "features/platform/extensions/adapters/providerAbi.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/adapters/webgpuOnnxLocalAdapter.ts",
+      "to": "features/platform/extensions/adapters/types.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/commandExecutionPolicy.ts",
+      "to": "core/foundation/policies/rolePolicy.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/commandExecutionPolicy.ts",
+      "to": "core/runtime/command/commandBus.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/commandExecutionPolicy.ts",
+      "to": "features/governance/policy/policyShadow.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/commandExecutionPolicy.ts",
+      "to": "features/platform/observability/auditLogger.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/commandExecutionPolicy.ts",
+      "to": "features/platform/store/useLocalStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/commandExecutionPolicy.ts",
+      "to": "features/platform/store/useSyncStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/commands/commands.canvas.ts",
+      "to": "core/foundation/types/canvas.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/commands/commands.canvas.ts",
+      "to": "core/runtime/command/commandBus.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/commands/commands.canvas.ts",
+      "to": "features/platform/store/useCanvasStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/commands/commands.doc.ts",
+      "to": "core/foundation/types/canvas.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/commands/commands.doc.ts",
+      "to": "core/runtime/command/commandBus.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/commands/commands.doc.ts",
+      "to": "features/platform/store/useCanvasStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/commands/commands.doc.ts",
+      "to": "features/platform/store/useDocStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/commands/commands.playback.ts",
+      "to": "core/runtime/command/commandBus.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/commands/commands.playback.ts",
+      "to": "features/platform/store/useCanvasStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/commands/commands.playback.ts",
+      "to": "features/platform/store/useUIStoreBridge.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/commands/commands.tool.ts",
+      "to": "core/runtime/command/commandBus.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/commands/commands.tool.ts",
+      "to": "features/platform/store/useToolStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/commands/commands.tool.ts",
+      "to": "features/platform/store/useUIStoreBridge.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/commands/registerCoreCommands.ts",
+      "to": "core/runtime/command/commandBus.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/jobs/asyncJobOrchestrator.ts",
+      "to": "core/foundation/schemas/index.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/jobs/asyncJobOrchestrator.ts",
+      "to": "features/platform/extensions/jobs/types.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/jobs/types.ts",
+      "to": "core/foundation/schemas/index.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/marketplace/resolveMarketplaceCatalog.ts",
+      "to": "core/foundation/schemas/extensionMarketplace.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/marketplace/resolveMarketplaceCatalog.ts",
+      "to": "core/runtime/plugin-runtime/marketplaceCatalog.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/marketplace/useMarketplaceCatalog.ts",
+      "to": "core/foundation/schemas/extensionMarketplace.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/routing/capabilityRouter.ts",
+      "to": "core/foundation/schemas/index.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/routing/capabilityRouter.ts",
+      "to": "features/platform/extensions/routing/types.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/routing/localCloudFallback.ts",
+      "to": "features/platform/extensions/routing/types.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/routing/types.ts",
+      "to": "core/foundation/schemas/index.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/toolExecutionPolicy.ts",
+      "to": "core/foundation/policies/rolePolicy.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/toolExecutionPolicy.ts",
+      "to": "core/runtime/plugin-runtime/connectors.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/toolExecutionPolicy.ts",
+      "to": "features/governance/policy/policyShadow.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/toolExecutionPolicy.ts",
+      "to": "features/platform/observability/auditLogger.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/toolExecutionPolicy.ts",
+      "to": "features/platform/store/useLocalStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/toolExecutionPolicy.ts",
+      "to": "features/platform/store/useSyncStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/ui/CoreSlotComponents.tsx",
+      "to": "features/chrome/layout/DataInputPanel.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/ui/CoreSlotComponents.tsx",
+      "to": "features/chrome/layout/Prompter.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/ui/CoreSlotComponents.tsx",
+      "to": "features/chrome/toolbar/FloatingToolbar.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/ui/CoreSlotComponents.tsx",
+      "to": "features/platform/store/useUIStoreBridge.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/ui/coreTemplates.ts",
+      "to": "core/runtime/command/commandBus.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/ui/coreTemplates.ts",
+      "to": "core/runtime/plugin-runtime/registry.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/ui/coreTemplates.ts",
+      "to": "features/chrome/toolbar/atoms/ToolbarPanel.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/ui/coreTemplates.ts",
+      "to": "features/chrome/toolbar/atoms/ToolButton.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/ui/coreTemplates.ts",
+      "to": "features/chrome/toolbar/LaserControls.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/ui/coreTemplates.ts",
+      "to": "features/chrome/toolbar/PenControls.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/ui/coreTemplates.ts",
+      "to": "features/chrome/toolbar/PlaybackControls.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/ui/coreTemplates.ts",
+      "to": "features/platform/store/useUIStoreBridge.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/ui/coreTemplates.ts",
+      "to": "mod/bridge/packRegistryBridge.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/ui/coreTemplates.ts",
+      "to": "ui/components/popover.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/ui/ExtensionRuntimeBootstrap.tsx",
+      "to": "core/foundation/schemas/index.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/ui/ExtensionRuntimeBootstrap.tsx",
+      "to": "core/runtime/command/commandBus.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/ui/ExtensionRuntimeBootstrap.tsx",
+      "to": "core/runtime/plugin-runtime/connectors.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/ui/ExtensionRuntimeBootstrap.tsx",
+      "to": "core/runtime/plugin-runtime/localAiSandboxPolicy.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/ui/ExtensionRuntimeBootstrap.tsx",
+      "to": "core/runtime/plugin-runtime/localRuntimeHandshake.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/ui/ExtensionRuntimeBootstrap.tsx",
+      "to": "core/runtime/plugin-runtime/mcpGateway.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/ui/ExtensionRuntimeBootstrap.tsx",
+      "to": "core/runtime/plugin-runtime/pluginLoader.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/ui/ExtensionRuntimeBootstrap.tsx",
+      "to": "core/runtime/plugin-runtime/registry.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/ui/ExtensionRuntimeBootstrap.tsx",
+      "to": "features/editor/input-studio/llm/types.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/ui/ExtensionRuntimeBootstrap.tsx",
+      "to": "features/platform/extensions/adapters/index.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/ui/ExtensionRuntimeBootstrap.tsx",
+      "to": "features/platform/extensions/commandExecutionPolicy.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/ui/ExtensionRuntimeBootstrap.tsx",
+      "to": "features/platform/extensions/commands/registerCoreCommands.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/ui/ExtensionRuntimeBootstrap.tsx",
+      "to": "features/platform/extensions/routing/index.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/ui/ExtensionRuntimeBootstrap.tsx",
+      "to": "features/platform/extensions/toolExecutionPolicy.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/ui/ExtensionRuntimeBootstrap.tsx",
+      "to": "features/platform/extensions/ui/registerCoreSlots.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/ui/ExtensionRuntimeBootstrap.tsx",
+      "to": "features/platform/observability/auditLogger.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/ui/ExtensionRuntimeBootstrap.tsx",
+      "to": "features/platform/store/useLocalStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/ui/ExtensionRuntimeBootstrap.tsx",
+      "to": "ui/components/ErrorBoundary.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/ui/ExtensionSlot.tsx",
+      "to": "core/runtime/command/commandBus.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/ui/ExtensionSlot.tsx",
+      "to": "core/runtime/plugin-runtime/pluginLoader.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/ui/ExtensionSlot.tsx",
+      "to": "core/runtime/plugin-runtime/registry.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/ui/ExtensionSlot.tsx",
+      "to": "ui/components/button.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/ui/ExtensionSlot.tsx",
+      "to": "ui/components/ErrorBoundary.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/ui/registerCoreSlots.ts",
+      "to": "core/foundation/policies/panel-policy.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/ui/registerCoreSlots.ts",
+      "to": "core/runtime/plugin-runtime/registry.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/ui/registerCoreSlots.ts",
+      "to": "features/chrome/theming-ui/ThemePickerPanel.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/ui/registerCoreSlots.ts",
+      "to": "features/chrome/toolbar/PendingApprovalPanel.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/ui/registerCoreSlots.ts",
+      "to": "features/collaboration/sharing/HostLiveSessionPanel.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/ui/registerCoreSlots.ts",
+      "to": "features/governance/moderation/ModerationConsolePanel.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/ui/registerCoreSlots.ts",
+      "to": "features/platform/extensions/ui/CoreSlotComponents.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/platform/extensions/ui/registerCoreSlots.ts",
+      "to": "mod/bridge/packRegistryBridge.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/hooks/useBoardTransform.ts",
+      "to": "core/foundation/policies/boardSpec.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/hooks/useBoardTransform.ts",
+      "to": "features/platform/store/useUIStoreBridge.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/hooks/useCanvas.ts",
+      "to": "core/foundation/policies/boardSpec.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/hooks/useCanvas.ts",
+      "to": "core/foundation/policies/perfProfile.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/hooks/useCanvas.ts",
+      "to": "core/foundation/types/canvas.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/hooks/useCanvas.ts",
+      "to": "features/platform/store/useCanvasStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/hooks/useCanvas.ts",
+      "to": "features/platform/store/useLocalStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/hooks/useCanvas.ts",
+      "to": "features/platform/store/useSyncStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/hooks/useCanvas.ts",
+      "to": "features/platform/store/useUIStoreBridge.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/hooks/useDocumentOutline.ts",
+      "to": "core/runtime/command/commandBus.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/hooks/useDocumentOutline.ts",
+      "to": "features/editor/editor-core/outline/documentOutline.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/hooks/useDocumentOutline.ts",
+      "to": "features/platform/store/useCanvasStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/hooks/useFileIO.ts",
+      "to": "core/foundation/types/canvas.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/hooks/useFileIO.ts",
+      "to": "core/pipelines/migrations/migrateToV2.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/hooks/useFileIO.ts",
+      "to": "core/pipelines/persistence/buildPersistedDoc.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/hooks/useFileIO.ts",
+      "to": "features/platform/store/useCanvasStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/hooks/useFileIO.ts",
+      "to": "features/platform/store/useDocStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/hooks/useImageInsert.ts",
+      "to": "core/foundation/policies/boardSpec.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/hooks/useImageInsert.ts",
+      "to": "core/foundation/types/canvas.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/hooks/useImageInsert.ts",
+      "to": "features/platform/store/useCanvasStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/hooks/useImageInsert.ts",
+      "to": "features/platform/store/useUIStoreBridge.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/hooks/useOverlayCanvas.ts",
+      "to": "core/foundation/policies/perfProfile.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/hooks/useOverlayCanvas.ts",
+      "to": "core/foundation/types/canvas.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/hooks/useOverlayCanvas.ts",
+      "to": "features/platform/store/useUIStoreBridge.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/hooks/usePersistence.ts",
+      "to": "core/foundation/policies/boardSpec.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/hooks/usePersistence.ts",
+      "to": "core/foundation/types/canvas.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/hooks/usePersistence.ts",
+      "to": "core/pipelines/migrations/migrateToV2.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/hooks/usePersistence.ts",
+      "to": "core/pipelines/persistence/buildPersistedDoc.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/hooks/usePersistence.ts",
+      "to": "core/ui/theming/engine/typography.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/hooks/usePersistence.ts",
+      "to": "features/platform/store/useCanvasStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/hooks/usePersistence.ts",
+      "to": "features/platform/store/useDocStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/hooks/usePersistence.ts",
+      "to": "features/platform/store/useUIStoreBridge.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/hooks/useSequence.ts",
+      "to": "core/foundation/types/canvas.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/hooks/useSequence.ts",
+      "to": "core/runtime/command/commandBus.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/hooks/useSequence.ts",
+      "to": "core/ui/theming/presets/chalkTheme.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/hooks/useSequence.ts",
+      "to": "features/editor/canvas/actors/ActorLayer.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/platform/hooks/useSequence.ts",
+      "to": "features/platform/hooks/useAudioPlayer.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/hooks/useSequence.ts",
+      "to": "features/platform/hooks/useSFX.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/hooks/useSequence.ts",
+      "to": "features/platform/store/useCanvasStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/hooks/useSequence.ts",
+      "to": "features/platform/store/useUIStoreBridge.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/hooks/useSFX.ts",
+      "to": "features/platform/store/useUIStoreBridge.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/mod-studio/ai/AIModuleGenerationPanel.tsx",
+      "to": "features/platform/mod-studio/ai/AIModulePromptBar.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/platform/mod-studio/ai/AIModuleGenerationPanel.tsx",
+      "to": "features/platform/mod-studio/ai/useAIModuleGeneration.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/mod-studio/ai/useAIModuleGeneration.ts",
+      "to": "core/runtime/command/commandBus.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/mod-studio/ai/useAIModuleGeneration.ts",
+      "to": "core/runtime/plugin-runtime/registry.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/mod-studio/ai/useAIModuleGeneration.ts",
+      "to": "features/platform/mod-studio/core/types.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/mod-studio/ai/useAIModuleGeneration.ts",
+      "to": "features/platform/store/useModStudioStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/mod-studio/core/ModStudioPanel.tsx",
+      "to": "features/platform/mod-studio/core/types.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/mod-studio/core/ModStudioPanel.tsx",
+      "to": "features/platform/mod-studio/io/IoStudioSection.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/platform/mod-studio/core/ModStudioPanel.tsx",
+      "to": "features/platform/mod-studio/layout/LayoutStudioSection.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/platform/mod-studio/core/ModStudioPanel.tsx",
+      "to": "features/platform/mod-studio/modules/ModuleStudioSection.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/platform/mod-studio/core/ModStudioPanel.tsx",
+      "to": "features/platform/mod-studio/policy/PolicyStudioSection.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/platform/mod-studio/core/ModStudioPanel.tsx",
+      "to": "features/platform/mod-studio/publish/PublishStudioSection.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/platform/mod-studio/core/ModStudioPanel.tsx",
+      "to": "features/platform/mod-studio/theme/ThemeStudioSection.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/platform/mod-studio/core/ModStudioPanel.tsx",
+      "to": "features/platform/store/useModStudioStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/mod-studio/core/ModStudioShell.tsx",
+      "to": "features/platform/mod-studio/core/ModStudioPanel.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/platform/mod-studio/core/ModStudioShell.tsx",
+      "to": "features/platform/store/useLocalStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/mod-studio/core/ModStudioShell.tsx",
+      "to": "features/platform/store/useModStudioStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/mod-studio/core/types.ts",
+      "to": "core/foundation/policies/rolePolicyGuards.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/mod-studio/core/types.ts",
+      "to": "core/runtime/plugin-runtime/registry.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/mod-studio/core/types.ts",
+      "to": "core/ui/theming/tokens/themeTokens.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/mod-studio/io/ioStudio.ts",
+      "to": "core/foundation/policies/rolePolicy.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/mod-studio/io/ioStudio.ts",
+      "to": "core/pipelines/migrations/modStudioMigration.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/mod-studio/io/ioStudio.ts",
+      "to": "core/runtime/plugin-runtime/registry.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/mod-studio/io/ioStudio.ts",
+      "to": "core/ui/theming/tokens/themeTokens.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/mod-studio/io/ioStudio.ts",
+      "to": "features/platform/mod-studio/core/types.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/mod-studio/io/ioStudio.ts",
+      "to": "features/platform/mod-studio/modules/moduleDiagnostics.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/mod-studio/io/IoStudioSection.tsx",
+      "to": "features/platform/mod-studio/ai/AIModuleGenerationPanel.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/platform/mod-studio/io/IoStudioSection.tsx",
+      "to": "features/platform/mod-studio/io/ioStudio.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/mod-studio/io/IoStudioSection.tsx",
+      "to": "features/platform/store/useModStudioStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/mod-studio/layout/LayoutStudioSection.tsx",
+      "to": "core/runtime/plugin-runtime/registry.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/mod-studio/layout/LayoutStudioSection.tsx",
+      "to": "features/platform/store/useModStudioStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/mod-studio/modules/moduleDiagnostics.ts",
+      "to": "core/runtime/modding/api/index.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/mod-studio/modules/moduleDiagnostics.ts",
+      "to": "core/runtime/modding/package/index.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/mod-studio/modules/moduleDiagnostics.ts",
+      "to": "features/platform/mod-studio/core/types.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/mod-studio/modules/ModuleStudioAuthorPanel.tsx",
+      "to": "core/runtime/command/commandBus.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/mod-studio/modules/ModuleStudioAuthorPanel.tsx",
+      "to": "core/runtime/plugin-runtime/registry.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/mod-studio/modules/ModuleStudioAuthorPanel.tsx",
+      "to": "features/platform/mod-studio/core/types.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/mod-studio/modules/ModuleStudioAuthorPanel.tsx",
+      "to": "features/platform/mod-studio/modules/moduleDiagnostics.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/mod-studio/modules/ModuleStudioManagerPanel.tsx",
+      "to": "core/runtime/modding/package/index.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/mod-studio/modules/ModuleStudioManagerPanel.tsx",
+      "to": "features/platform/mod-studio/core/types.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/mod-studio/modules/ModuleStudioManagerPanel.tsx",
+      "to": "features/platform/mod-studio/modules/moduleDiagnostics.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/mod-studio/modules/ModuleStudioSection.tsx",
+      "to": "core/runtime/command/commandBus.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/mod-studio/modules/ModuleStudioSection.tsx",
+      "to": "core/runtime/modding/host/index.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/mod-studio/modules/ModuleStudioSection.tsx",
+      "to": "core/runtime/modding/package/index.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/mod-studio/modules/ModuleStudioSection.tsx",
+      "to": "core/runtime/plugin-runtime/registry.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/mod-studio/modules/ModuleStudioSection.tsx",
+      "to": "features/chrome/toolbar/catalog/toolbarActionCatalog.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/mod-studio/modules/ModuleStudioSection.tsx",
+      "to": "features/chrome/toolbar/toolbarModePolicy.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/mod-studio/modules/ModuleStudioSection.tsx",
+      "to": "features/chrome/ui-host/modContributionBridge.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/mod-studio/modules/ModuleStudioSection.tsx",
+      "to": "features/platform/mod-studio/modules/moduleDiagnostics.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/mod-studio/modules/ModuleStudioSection.tsx",
+      "to": "features/platform/mod-studio/modules/ModuleStudioAuthorPanel.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/platform/mod-studio/modules/ModuleStudioSection.tsx",
+      "to": "features/platform/mod-studio/modules/ModuleStudioManagerPanel.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/platform/mod-studio/modules/ModuleStudioSection.tsx",
+      "to": "features/platform/store/useModStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/mod-studio/modules/ModuleStudioSection.tsx",
+      "to": "features/platform/store/useModStudioStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/mod-studio/policy/PolicyStudioSection.tsx",
+      "to": "core/foundation/policies/rolePolicy.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/mod-studio/policy/PolicyStudioSection.tsx",
+      "to": "features/platform/store/useModStudioStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/mod-studio/publish/publishStudioDraft.ts",
+      "to": "core/foundation/policies/rolePolicy.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/mod-studio/publish/publishStudioDraft.ts",
+      "to": "core/runtime/plugin-runtime/pluginLoader.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/mod-studio/publish/publishStudioDraft.ts",
+      "to": "features/platform/mod-studio/core/types.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/mod-studio/publish/publishStudioDraft.ts",
+      "to": "features/platform/mod-studio/modules/moduleDiagnostics.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/mod-studio/publish/publishStudioDraft.ts",
+      "to": "features/platform/mod-studio/theme/themeIsolation.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/mod-studio/publish/PublishStudioSection.tsx",
+      "to": "features/platform/mod-studio/publish/publishStudioDraft.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/mod-studio/publish/PublishStudioSection.tsx",
+      "to": "features/platform/observability/auditLogger.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/mod-studio/publish/PublishStudioSection.tsx",
+      "to": "features/platform/store/useModStudioStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/mod-studio/theme/AIThemeGenerationPanel.tsx",
+      "to": "features/platform/mod-studio/theme/AIThemePromptBar.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/platform/mod-studio/theme/AIThemeGenerationPanel.tsx",
+      "to": "features/platform/mod-studio/theme/useAIThemeGeneration.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/mod-studio/theme/ThemeExportButton.tsx",
+      "to": "core/ui/theming/tokens/themeTokens.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/mod-studio/theme/ThemeExportButton.tsx",
+      "to": "features/platform/mod-studio/theme/themeJsonIO.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/mod-studio/theme/ThemeImportButton.tsx",
+      "to": "features/platform/mod-studio/theme/themeJsonIO.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/mod-studio/theme/themeIsolation.ts",
+      "to": "core/ui/theming/engine/applyTheme.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/mod-studio/theme/themeIsolation.ts",
+      "to": "core/ui/theming/tokens/themeTokens.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/mod-studio/theme/themeJsonIO.ts",
+      "to": "core/ui/theming/tokens/themeTokens.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/mod-studio/theme/ThemeStudioSection.tsx",
+      "to": "core/ui/theming/presets/presets.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/mod-studio/theme/ThemeStudioSection.tsx",
+      "to": "core/ui/theming/tokens/themeTokens.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/mod-studio/theme/ThemeStudioSection.tsx",
+      "to": "features/platform/mod-studio/theme/AIThemeGenerationPanel.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/platform/mod-studio/theme/ThemeStudioSection.tsx",
+      "to": "features/platform/mod-studio/theme/ThemeExportButton.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/platform/mod-studio/theme/ThemeStudioSection.tsx",
+      "to": "features/platform/mod-studio/theme/ThemeImportButton.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/platform/mod-studio/theme/ThemeStudioSection.tsx",
+      "to": "features/platform/mod-studio/theme/themeIsolation.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/mod-studio/theme/ThemeStudioSection.tsx",
+      "to": "features/platform/mod-studio/theme/themeJsonIO.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/mod-studio/theme/ThemeStudioSection.tsx",
+      "to": "features/platform/mod-studio/theme/TokenEditorPanel.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/platform/mod-studio/theme/ThemeStudioSection.tsx",
+      "to": "features/platform/store/useModStudioStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/mod-studio/theme/ThemeStudioSection.tsx",
+      "to": "features/platform/store/useTokenDraftStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/mod-studio/theme/TokenColorPicker.tsx",
+      "to": "core/ui/theming/tokens/themeTokens.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/mod-studio/theme/TokenEditorPanel.tsx",
+      "to": "core/ui/theming/tokens/themeTokens.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/mod-studio/theme/TokenEditorPanel.tsx",
+      "to": "features/platform/mod-studio/theme/themeIsolation.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/mod-studio/theme/TokenEditorPanel.tsx",
+      "to": "features/platform/mod-studio/theme/TokenColorPicker.tsx",
+      "count": 1
+    },
+    {
+      "from": "features/platform/mod-studio/theme/useAIThemeGeneration.ts",
+      "to": "core/ui/theming/tokens/themeTokens.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/mod-studio/theme/useAIThemeGeneration.ts",
+      "to": "features/platform/mod-studio/theme/themeIsolation.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/mod-studio/theme/useAIThemeGeneration.ts",
+      "to": "features/platform/mod-studio/theme/themeJsonIO.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/mod-studio/theme/useAIThemeGeneration.ts",
+      "to": "features/platform/store/useModStudioStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/mod-studio/theme/useAIThemeGeneration.ts",
+      "to": "features/platform/store/useTokenDraftStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/observability/auditLogger.ts",
+      "to": "core/runtime/command/commandBus.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/store/useCanvasStore.ts",
+      "to": "core/foundation/policies/boardSpec.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/store/useCanvasStore.ts",
+      "to": "core/foundation/types/canvas.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/store/useCanvasStore.ts",
+      "to": "core/ui/theming/engine/typography.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/store/useCanvasStore.ts",
+      "to": "features/chrome/layout/autoLayout.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/store/useCanvasStore.ts",
+      "to": "features/platform/store/useUIStoreBridge.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/store/useCapabilityStore.ts",
+      "to": "core/foundation/policies/capabilities.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/store/useChromeStore.ts",
+      "to": "core/foundation/policies/panel-policy.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/store/useDocStore.ts",
+      "to": "core/foundation/types/canvas.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/store/useHostShareStore.ts",
+      "to": "core/foundation/types/snapshot.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/store/useModStore.ts",
+      "to": "core/runtime/modding/api/index.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/store/useModStore.ts",
+      "to": "core/runtime/modding/package/index.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/store/useModStudioStore.ts",
+      "to": "core/foundation/policies/rolePolicy.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/store/useModStudioStore.ts",
+      "to": "core/runtime/plugin-runtime/registry.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/store/useModStudioStore.ts",
+      "to": "core/ui/theming/presets/presets.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/store/useModStudioStore.ts",
+      "to": "core/ui/theming/tokens/themeTokens.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/store/useModStudioStore.ts",
+      "to": "features/platform/mod-studio/core/types.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/store/useSessionPolicyStore.ts",
+      "to": "core/foundation/policies/sessionPolicyTemplates.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/store/useSessionPolicyStore.ts",
+      "to": "core/foundation/types/sessionPolicy.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/store/useSyncStore.ts",
+      "to": "core/foundation/schemas/index.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/store/useSyncStore.ts",
+      "to": "features/collaboration/sync/realtime/conflictPolicy.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/store/useThemeStore.ts",
+      "to": "core/ui/theming/engine/applyTheme.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/store/useThemeStore.ts",
+      "to": "core/ui/theming/tokens/themeTokens.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/store/useTokenDraftStore.ts",
+      "to": "core/ui/theming/tokens/themeTokens.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/store/useToolStore.ts",
+      "to": "core/foundation/types/canvas.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/store/useToolStore.ts",
+      "to": "features/platform/store/useChromeStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/store/useUIStoreBridge.ts",
+      "to": "core/foundation/policies/capabilities.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/store/useUIStoreBridge.ts",
+      "to": "features/platform/hooks/useSnap.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/store/useUIStoreBridge.ts",
+      "to": "features/platform/store/useCapabilityStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/store/useUIStoreBridge.ts",
+      "to": "features/platform/store/useChromeStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/store/useUIStoreBridge.ts",
+      "to": "features/platform/store/useModStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/store/useUIStoreBridge.ts",
+      "to": "features/platform/store/usePlaybackStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/store/useUIStoreBridge.ts",
+      "to": "features/platform/store/useToolStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/store/useUIStoreBridge.ts",
+      "to": "features/platform/store/useViewportStore.ts",
+      "count": 1
+    },
+    {
+      "from": "features/platform/store/useViewportStore.ts",
+      "to": "features/platform/hooks/useSnap.ts",
+      "count": 1
+    },
+    {
+      "from": "mod/bridge/packRegistryBridge.ts",
+      "to": "core/runtime/modding/package/index.ts",
+      "count": 1
+    },
+    {
+      "from": "mod/bridge/packRegistryBridge.ts",
+      "to": "mod/packs/index.ts",
+      "count": 1
+    },
+    {
+      "from": "mod/packs/base-education/manifest.ts",
+      "to": "mod/packs/base-education/layout.ts",
+      "count": 1
+    },
+    {
+      "from": "mod/packs/base-education/manifest.ts",
+      "to": "mod/packs/base-education/theme.ts",
+      "count": 1
+    },
+    {
+      "from": "mod/packs/base-education/manifest.ts",
+      "to": "mod/packs/base-education/toolbarBaseDefinition.ts",
+      "count": 1
+    },
+    {
+      "from": "mod/packs/base-education/toolbarBaseDefinition.ts",
+      "to": "core/runtime/modding/package/index.ts",
+      "count": 1
+    },
+    {
+      "from": "mod/packs/index.ts",
+      "to": "mod/packs/base-education/manifest.ts",
+      "count": 1
+    },
+    {
+      "from": "mod/schema/templatePack.guards.ts",
+      "to": "core/runtime/plugin-runtime/registry.ts",
+      "count": 1
+    },
+    {
+      "from": "mod/schema/templatePack.types.ts",
+      "to": "core/runtime/modding/package/index.ts",
+      "count": 1
+    },
+    {
+      "from": "ui/components/button.tsx",
+      "to": "core/utils.ts",
+      "count": 1
+    },
+    {
+      "from": "ui/components/dialog.tsx",
+      "to": "core/utils.ts",
+      "count": 1
+    },
+    {
+      "from": "ui/components/popover.tsx",
+      "to": "core/utils.ts",
+      "count": 1
+    },
+    {
+      "from": "ui/components/separator.tsx",
+      "to": "core/utils.ts",
+      "count": 1
+    },
+    {
+      "from": "ui/components/slider.tsx",
+      "to": "core/utils.ts",
+      "count": 1
+    },
+    {
+      "from": "ui/components/toggle-group.tsx",
+      "to": "core/utils.ts",
+      "count": 1
+    },
+    {
+      "from": "ui/components/toggle-group.tsx",
+      "to": "ui/components/toggle.tsx",
+      "count": 1
+    },
+    {
+      "from": "ui/components/toggle.tsx",
+      "to": "core/utils.ts",
+      "count": 1
+    },
+    {
+      "from": "ui/components/tooltip.tsx",
+      "to": "core/utils.ts",
+      "count": 1
+    }
+  ]
+}
