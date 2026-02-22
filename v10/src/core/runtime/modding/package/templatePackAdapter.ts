@@ -175,7 +175,7 @@ export const adaptTemplatePackManifestToModPackageDefinition = (
 export const selectTemplatePackToolbarDefinition = (
   manifest: TemplatePackAdapterManifest
 ): TemplatePackToolbarDefinition | null => {
-  const toolbarValue = (manifest as Record<string, unknown>).toolbar;
+  const toolbarValue = manifest.toolbar;
   if (!isPlainRecord(toolbarValue)) return null;
 
   const modeDefinitions = parseToolbarModeDefinitions(toolbarValue.modeDefinitions);
@@ -188,9 +188,10 @@ export const selectTemplatePackToolbarDefinition = (
   );
   if (!actionCatalog) return null;
 
-  const actionSurfaceRules =
-    parseToolbarActionSurfaceRules(toolbarValue.actionSurfaceRules, modeIds) ??
-    parseToolbarActionSurfaceRules(manifest.actionSurfaceRules, modeIds);
+  const actionSurfaceRules = parseToolbarActionSurfaceRules(
+    toolbarValue.actionSurfaceRules,
+    modeIds
+  );
   if (!actionSurfaceRules) return null;
 
   return Object.freeze({

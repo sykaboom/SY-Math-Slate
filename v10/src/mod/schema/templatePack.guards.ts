@@ -70,6 +70,31 @@ const isValidActionRule = (value: unknown): value is TemplateActionSurfaceRule =
   return true;
 };
 
+const isValidToolbarMode = (value: unknown): value is "draw" | "playback" | "canvas" =>
+  value === "draw" || value === "playback" || value === "canvas";
+
+const isValidToolbarModeDefinition = (value: unknown): boolean => {
+  if (!isPlainRecord(value)) return false;
+  if (!isValidToolbarMode(value.id)) return false;
+  if (typeof value.label !== "string" || value.label.trim() === "") return false;
+  if (
+    typeof value.fallbackModId !== "string" ||
+    value.fallbackModId.trim() === ""
+  ) {
+    return false;
+  }
+  return true;
+};
+
+const isValidToolbarActionCatalogEntry = (value: unknown): boolean => {
+  if (!isPlainRecord(value)) return false;
+  if (typeof value.id !== "string" || value.id.trim() === "") return false;
+  if (typeof value.label !== "string" || value.label.trim() === "") return false;
+  if (!Array.isArray(value.modes) || value.modes.length === 0) return false;
+  if (!value.modes.every(isValidToolbarMode)) return false;
+  return true;
+};
+
 export const validateTemplatePackManifest = (
   value: unknown
 ): TemplatePackValidationResult => {
@@ -97,18 +122,57 @@ export const validateTemplatePackManifest = (
     return fail("invalid-kind", "manifest.kind", "kind must be 'base' or 'custom'.");
   }
 
-  if (!Array.isArray(value.actionSurfaceRules)) {
+  const toolbar = value.toolbar;
+  if (!isPlainRecord(toolbar)) {
     return fail(
       "invalid-action-rules",
-      "manifest.actionSurfaceRules",
-      "actionSurfaceRules must be an array."
+      "manifest.toolbar",
+      "toolbar must be an object."
     );
   }
-  if (!value.actionSurfaceRules.every(isValidActionRule)) {
+
+  if (!Array.isArray(toolbar.modeDefinitions)) {
     return fail(
       "invalid-action-rules",
-      "manifest.actionSurfaceRules",
-      "all actionSurfaceRules entries must be valid."
+      "manifest.toolbar.modeDefinitions",
+      "toolbar.modeDefinitions must be an array."
+    );
+  }
+  if (!toolbar.modeDefinitions.every(isValidToolbarModeDefinition)) {
+    return fail(
+      "invalid-action-rules",
+      "manifest.toolbar.modeDefinitions",
+      "all toolbar.modeDefinitions entries must be valid."
+    );
+  }
+
+  if (!Array.isArray(toolbar.actionCatalog)) {
+    return fail(
+      "invalid-action-rules",
+      "manifest.toolbar.actionCatalog",
+      "toolbar.actionCatalog must be an array."
+    );
+  }
+  if (!toolbar.actionCatalog.every(isValidToolbarActionCatalogEntry)) {
+    return fail(
+      "invalid-action-rules",
+      "manifest.toolbar.actionCatalog",
+      "all toolbar.actionCatalog entries must be valid."
+    );
+  }
+
+  if (!Array.isArray(toolbar.actionSurfaceRules)) {
+    return fail(
+      "invalid-action-rules",
+      "manifest.toolbar.actionSurfaceRules",
+      "toolbar.actionSurfaceRules must be an array."
+    );
+  }
+  if (!toolbar.actionSurfaceRules.every(isValidActionRule)) {
+    return fail(
+      "invalid-action-rules",
+      "manifest.toolbar.actionSurfaceRules",
+      "all toolbar.actionSurfaceRules entries must be valid."
     );
   }
 

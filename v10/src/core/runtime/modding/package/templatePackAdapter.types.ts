@@ -33,13 +33,27 @@ export type TemplatePackAdapterSlotComponentEntry = {
   component: UISlotComponent;
 };
 
+export type TemplatePackAdapterToolbarDefinition = {
+  modeDefinitions: readonly {
+    id: TemplatePackAdapterToolbarMode;
+    label: string;
+    fallbackModId: string;
+  }[];
+  actionCatalog: readonly {
+    id: string;
+    label: string;
+    modes: readonly TemplatePackAdapterToolbarMode[];
+  }[];
+  actionSurfaceRules: readonly TemplatePackAdapterActionSurfaceRule[];
+};
+
 export type TemplatePackAdapterManifest = {
   manifestVersion: number;
   packId: string;
   title: string;
   description: string;
   kind: "base" | "custom";
-  actionSurfaceRules: readonly TemplatePackAdapterActionSurfaceRule[];
+  toolbar: TemplatePackAdapterToolbarDefinition;
   layout: readonly TemplatePackAdapterLayoutSlot[];
   slotComponents?: readonly TemplatePackAdapterSlotComponentEntry[];
   theme?: TemplatePackAdapterThemeDraft;

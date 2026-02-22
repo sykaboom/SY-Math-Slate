@@ -5,6 +5,10 @@ import path from "node:path";
 const repoRoot = process.cwd();
 
 const files = {
+  adapterTypes: path.join(
+    repoRoot,
+    "v10/src/core/runtime/modding/package/templatePackAdapter.types.ts"
+  ),
   types: path.join(repoRoot, "v10/src/mod/schema/templatePack.types.ts"),
   guards: path.join(repoRoot, "v10/src/mod/schema/templatePack.guards.ts"),
   index: path.join(repoRoot, "v10/src/mod/packs/index.ts"),
@@ -24,6 +28,11 @@ if (missing.length > 0) {
 }
 
 const checks = [
+  {
+    file: files.adapterTypes,
+    pattern: /toolbar:\s*TemplatePackAdapterToolbarDefinition;/,
+    error: "TemplatePackAdapterManifest toolbar contract missing",
+  },
   {
     file: files.types,
     pattern: /export type TemplatePackManifest =/,
@@ -51,8 +60,13 @@ const checks = [
   },
   {
     file: files.manifest,
-    pattern: /actionSurfaceRules:/,
-    error: "base manifest actionSurfaceRules missing",
+    pattern: /toolbar:\s*BASE_EDUCATION_TOOLBAR_DEFINITION/,
+    error: "base manifest toolbar definition binding missing",
+  },
+  {
+    file: files.manifest,
+    pattern: /BASE_EDUCATION_TOOLBAR_ACTION_SURFACE_RULES/,
+    error: "base manifest toolbar action surface definition missing",
   },
 ];
 

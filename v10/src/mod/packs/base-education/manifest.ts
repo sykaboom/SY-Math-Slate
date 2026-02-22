@@ -22,7 +22,6 @@ const baseEducationTemplatePackWithToolbar = {
   title: "Base Education Template",
   description: "Default education-focused toolbar/session composition.",
   kind: "base" as const,
-  actionSurfaceRules: BASE_EDUCATION_TOOLBAR_ACTION_SURFACE_RULES,
   toolbar: BASE_EDUCATION_TOOLBAR_DEFINITION,
   layout: BASE_EDUCATION_LAYOUT,
   theme: BASE_EDUCATION_THEME,

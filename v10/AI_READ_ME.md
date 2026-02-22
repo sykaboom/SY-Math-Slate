@@ -98,6 +98,7 @@ Template pack runtime:
 - `src/mod/packs/*`: folder-based template packs (active path).
 - `src/mod/schema/*`: pack contract guards/types (active path).
 - `src/mod/bridge/packRegistryBridge.ts`: runtime bridge authority (active path).
+  - pack toolbar contract SSOT: `manifest.toolbar.{modeDefinitions,actionCatalog,actionSurfaceRules}` only (legacy top-level `actionSurfaceRules` path retired).
   - `NEXT_PUBLIC_TEMPLATE_PACK_BOOTSTRAP=0`이면 기본 템플릿팩 자동 부트스트랩을 끈다(no-mod boot certification path).
 
 ## 5) Store Authorities (SSOT)

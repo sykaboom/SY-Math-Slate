@@ -2,6 +2,7 @@ import type {
   TemplatePackAdapterActionSurfaceRule,
   TemplatePackAdapterLayoutSlot,
   TemplatePackAdapterManifest,
+  TemplatePackAdapterToolbarDefinition,
   TemplatePackAdapterSlotComponentEntry,
   TemplatePackAdapterSurface,
   TemplatePackAdapterThemeDraft,
@@ -16,6 +17,8 @@ export type TemplateViewportProfile = TemplatePackAdapterViewportProfile;
 export type TemplateSurface = TemplatePackAdapterSurface;
 
 export type TemplateActionSurfaceRule = TemplatePackAdapterActionSurfaceRule;
+
+export type TemplateToolbarDefinition = TemplatePackAdapterToolbarDefinition;
 
 export type TemplateLayoutSlot = TemplatePackAdapterLayoutSlot;
 
