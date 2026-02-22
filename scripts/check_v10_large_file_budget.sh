@@ -54,6 +54,7 @@ selectors_toolbar_plan_surface_rules_keys_max="${SELECTORS_TOOLBAR_PLAN_SURFACE_
 selectors_toolbar_plan_surface_rules_merge_max="${SELECTORS_TOOLBAR_PLAN_SURFACE_RULES_MERGE_MAX:-0}"
 selectors_toolbar_plan_plan_resolution_surface_predicates_max="${SELECTORS_TOOLBAR_PLAN_PLAN_RESOLUTION_SURFACE_PREDICATES_MAX:-0}"
 selectors_toolbar_plan_plan_resolution_sections_max="${SELECTORS_TOOLBAR_PLAN_PLAN_RESOLUTION_SECTIONS_MAX:-0}"
+selectors_toolbar_plan_plan_resolution_sections_modes_max="${SELECTORS_TOOLBAR_PLAN_PLAN_RESOLUTION_SECTIONS_MODES_MAX:-0}"
 guards_resource_policy_command_rules_max="${GUARDS_RESOURCE_POLICY_COMMAND_RULES_MAX:-0}"
 guards_resource_policy_shortcut_rules_max="${GUARDS_RESOURCE_POLICY_SHORTCUT_RULES_MAX:-0}"
 guards_resource_policy_command_rules_parse_max="${GUARDS_RESOURCE_POLICY_COMMAND_RULES_PARSE_MAX:-0}"
@@ -101,6 +102,7 @@ template_pack_toolbar_definition_selector_max="${TEMPLATE_PACK_TOOLBAR_DEFINITIO
 selectors_active_package_rules_max="${SELECTORS_ACTIVE_PACKAGE_RULES_MAX:-0}"
 selectors_active_package_rules_direct_max="${SELECTORS_ACTIVE_PACKAGE_RULES_DIRECT_MAX:-0}"
 selectors_active_package_rules_active_max="${SELECTORS_ACTIVE_PACKAGE_RULES_ACTIVE_MAX:-0}"
+selectors_active_package_rules_active_selectors_max="${SELECTORS_ACTIVE_PACKAGE_RULES_ACTIVE_SELECTORS_MAX:-0}"
 selectors_active_package_rules_runtime_max="${SELECTORS_ACTIVE_PACKAGE_RULES_RUNTIME_MAX:-0}"
 guards_validate_definition_dependencies_finalize_max="${GUARDS_VALIDATE_DEFINITION_DEPENDENCIES_FINALIZE_MAX:-0}"
 guards_validate_definition_dependencies_finalize_dependencies_max="${GUARDS_VALIDATE_DEFINITION_DEPENDENCIES_FINALIZE_DEPENDENCIES_MAX:-0}"
@@ -153,6 +155,7 @@ template_pack_adaptation_index_max="${TEMPLATE_PACK_ADAPTATION_INDEX_MAX:-0}"
 template_pack_adaptation_types_max="${TEMPLATE_PACK_ADAPTATION_TYPES_MAX:-0}"
 template_pack_adaptation_runtime_mod_id_max="${TEMPLATE_PACK_ADAPTATION_RUNTIME_MOD_ID_MAX:-0}"
 template_pack_adaptation_definition_max="${TEMPLATE_PACK_ADAPTATION_DEFINITION_MAX:-0}"
+template_pack_adaptation_definition_helpers_max="${TEMPLATE_PACK_ADAPTATION_DEFINITION_HELPERS_MAX:-0}"
 template_pack_adaptation_validation_max="${TEMPLATE_PACK_ADAPTATION_VALIDATION_MAX:-0}"
 template_pack_manifest_selectors_index_max="${TEMPLATE_PACK_MANIFEST_SELECTORS_INDEX_MAX:-0}"
 template_pack_manifest_selectors_list_max="${TEMPLATE_PACK_MANIFEST_SELECTORS_LIST_MAX:-0}"
@@ -250,6 +253,7 @@ validate_int "SELECTORS_TOOLBAR_PLAN_SURFACE_RULES_KEYS_MAX" "$selectors_toolbar
 validate_int "SELECTORS_TOOLBAR_PLAN_SURFACE_RULES_MERGE_MAX" "$selectors_toolbar_plan_surface_rules_merge_max"
 validate_int "SELECTORS_TOOLBAR_PLAN_PLAN_RESOLUTION_SURFACE_PREDICATES_MAX" "$selectors_toolbar_plan_plan_resolution_surface_predicates_max"
 validate_int "SELECTORS_TOOLBAR_PLAN_PLAN_RESOLUTION_SECTIONS_MAX" "$selectors_toolbar_plan_plan_resolution_sections_max"
+validate_int "SELECTORS_TOOLBAR_PLAN_PLAN_RESOLUTION_SECTIONS_MODES_MAX" "$selectors_toolbar_plan_plan_resolution_sections_modes_max"
 validate_int "GUARDS_RESOURCE_POLICY_COMMAND_RULES_MAX" "$guards_resource_policy_command_rules_max"
 validate_int "GUARDS_RESOURCE_POLICY_SHORTCUT_RULES_MAX" "$guards_resource_policy_shortcut_rules_max"
 validate_int "GUARDS_RESOURCE_POLICY_COMMAND_RULES_PARSE_MAX" "$guards_resource_policy_command_rules_parse_max"
@@ -297,6 +301,7 @@ validate_int "TEMPLATE_PACK_TOOLBAR_DEFINITION_SELECTOR_MAX" "$template_pack_too
 validate_int "SELECTORS_ACTIVE_PACKAGE_RULES_MAX" "$selectors_active_package_rules_max"
 validate_int "SELECTORS_ACTIVE_PACKAGE_RULES_DIRECT_MAX" "$selectors_active_package_rules_direct_max"
 validate_int "SELECTORS_ACTIVE_PACKAGE_RULES_ACTIVE_MAX" "$selectors_active_package_rules_active_max"
+validate_int "SELECTORS_ACTIVE_PACKAGE_RULES_ACTIVE_SELECTORS_MAX" "$selectors_active_package_rules_active_selectors_max"
 validate_int "SELECTORS_ACTIVE_PACKAGE_RULES_RUNTIME_MAX" "$selectors_active_package_rules_runtime_max"
 validate_int "GUARDS_VALIDATE_DEFINITION_DEPENDENCIES_FINALIZE_MAX" "$guards_validate_definition_dependencies_finalize_max"
 validate_int "GUARDS_VALIDATE_DEFINITION_DEPENDENCIES_FINALIZE_DEPENDENCIES_MAX" "$guards_validate_definition_dependencies_finalize_dependencies_max"
@@ -349,6 +354,7 @@ validate_int "TEMPLATE_PACK_ADAPTATION_INDEX_MAX" "$template_pack_adaptation_ind
 validate_int "TEMPLATE_PACK_ADAPTATION_TYPES_MAX" "$template_pack_adaptation_types_max"
 validate_int "TEMPLATE_PACK_ADAPTATION_RUNTIME_MOD_ID_MAX" "$template_pack_adaptation_runtime_mod_id_max"
 validate_int "TEMPLATE_PACK_ADAPTATION_DEFINITION_MAX" "$template_pack_adaptation_definition_max"
+validate_int "TEMPLATE_PACK_ADAPTATION_DEFINITION_HELPERS_MAX" "$template_pack_adaptation_definition_helpers_max"
 validate_int "TEMPLATE_PACK_ADAPTATION_VALIDATION_MAX" "$template_pack_adaptation_validation_max"
 validate_int "TEMPLATE_PACK_MANIFEST_SELECTORS_INDEX_MAX" "$template_pack_manifest_selectors_index_max"
 validate_int "TEMPLATE_PACK_MANIFEST_SELECTORS_LIST_MAX" "$template_pack_manifest_selectors_list_max"
@@ -807,6 +813,19 @@ for file in "${wave29_extra_files[@]}"; do
   fi
 done
 
+wave30_extra_files=(
+  "v10/src/core/runtime/modding/package/selectors/activePackageRules/active/selectors.ts"
+  "v10/src/core/runtime/modding/package/selectors/toolbarPlan/planResolution/sections/modes.ts"
+  "v10/src/core/runtime/modding/package/templatePackAdapter/adaptation/definition/helpers.ts"
+)
+
+for file in "${wave30_extra_files[@]}"; do
+  if [[ ! -f "$file" ]]; then
+    echo "[check_v10_large_file_budget] FAIL: missing target file: $file"
+    exit 1
+  fi
+done
+
 app_layout_lines="$(wc -l < "${target_files[0]}")"
 ext_runtime_lines="$(wc -l < "${target_files[1]}")"
 data_input_lines="$(wc -l < "${target_files[2]}")"
@@ -830,6 +849,7 @@ selectors_toolbar_plan_surface_rules_keys_lines="$(wc -l < "v10/src/core/runtime
 selectors_toolbar_plan_surface_rules_merge_lines="$(wc -l < "v10/src/core/runtime/modding/package/selectors/toolbarPlan/surfaceRules/merge.ts")"
 selectors_toolbar_plan_plan_resolution_surface_predicates_lines="$(wc -l < "v10/src/core/runtime/modding/package/selectors/toolbarPlan/planResolution/surfacePredicates.ts")"
 selectors_toolbar_plan_plan_resolution_sections_lines="$(wc -l < "v10/src/core/runtime/modding/package/selectors/toolbarPlan/planResolution/sections.ts")"
+selectors_toolbar_plan_plan_resolution_sections_modes_lines="$(wc -l < "v10/src/core/runtime/modding/package/selectors/toolbarPlan/planResolution/sections/modes.ts")"
 guards_resource_policy_command_rules_lines="$(wc -l < "${target_files[18]}")"
 guards_resource_policy_shortcut_rules_lines="$(wc -l < "${target_files[19]}")"
 guards_resource_policy_command_rules_parse_lines="$(wc -l < "v10/src/core/runtime/modding/package/guards/resourcePolicy/commandRules/parse.ts")"
@@ -859,6 +879,7 @@ template_pack_toolbar_definition_selector_lines="$(wc -l < "${extra_target_files
 selectors_active_package_rules_lines="$(wc -l < "v10/src/core/runtime/modding/package/selectors/activePackageRules.ts")"
 selectors_active_package_rules_direct_lines="$(wc -l < "v10/src/core/runtime/modding/package/selectors/activePackageRules/direct.ts")"
 selectors_active_package_rules_active_lines="$(wc -l < "v10/src/core/runtime/modding/package/selectors/activePackageRules/active.ts")"
+selectors_active_package_rules_active_selectors_lines="$(wc -l < "v10/src/core/runtime/modding/package/selectors/activePackageRules/active/selectors.ts")"
 selectors_active_package_rules_runtime_lines="$(wc -l < "v10/src/core/runtime/modding/package/selectors/activePackageRules/runtime.ts")"
 selectors_resource_item_merge_model_lines="$(wc -l < "${extra_target_files[5]}")"
 selectors_resource_item_merge_helpers_lines="$(wc -l < "${extra_target_files[6]}")"
@@ -968,6 +989,7 @@ template_pack_adaptation_index_lines="$(wc -l < "v10/src/core/runtime/modding/pa
 template_pack_adaptation_types_lines="$(wc -l < "v10/src/core/runtime/modding/package/templatePackAdapter/adaptation/types.ts")"
 template_pack_adaptation_runtime_mod_id_lines="$(wc -l < "v10/src/core/runtime/modding/package/templatePackAdapter/adaptation/runtimeModId.ts")"
 template_pack_adaptation_definition_lines="$(wc -l < "v10/src/core/runtime/modding/package/templatePackAdapter/adaptation/definition.ts")"
+template_pack_adaptation_definition_helpers_lines="$(wc -l < "v10/src/core/runtime/modding/package/templatePackAdapter/adaptation/definition/helpers.ts")"
 template_pack_adaptation_validation_lines="$(wc -l < "v10/src/core/runtime/modding/package/templatePackAdapter/adaptation/validation.ts")"
 template_pack_manifest_selectors_index_lines="$(wc -l < "v10/src/core/runtime/modding/package/templatePackAdapter/manifestSelectors/index.ts")"
 template_pack_manifest_selectors_list_lines="$(wc -l < "v10/src/core/runtime/modding/package/templatePackAdapter/manifestSelectors/list.ts")"
@@ -1212,6 +1234,11 @@ printf '[check_v10_large_file_budget] wave29 root_fields_validate=%s/%s activati
   "$guards_validate_definition_base_fields_parse_activation_validate_lines" "$guards_validate_definition_base_fields_parse_activation_validate_max" \
   "$guards_validate_definition_base_fields_parse_parse_build_context_lines" "$guards_validate_definition_base_fields_parse_parse_build_context_max"
 
+printf '[check_v10_large_file_budget] wave30 active_selectors=%s/%s sections_modes=%s/%s adaptation_definition_helpers=%s/%s\n' \
+  "$selectors_active_package_rules_active_selectors_lines" "$selectors_active_package_rules_active_selectors_max" \
+  "$selectors_toolbar_plan_plan_resolution_sections_modes_lines" "$selectors_toolbar_plan_plan_resolution_sections_modes_max" \
+  "$template_pack_adaptation_definition_helpers_lines" "$template_pack_adaptation_definition_helpers_max"
+
 if (( app_layout_lines > app_layout_max )); then
   echo "[check_v10_large_file_budget] FAIL: AppLayout.tsx exceeded budget"
   exit 1
@@ -1334,6 +1361,11 @@ fi
 
 if (( selectors_toolbar_plan_plan_resolution_sections_lines > selectors_toolbar_plan_plan_resolution_sections_max )); then
   echo "[check_v10_large_file_budget] FAIL: toolbarPlan/planResolution/sections.ts exceeded budget"
+  exit 1
+fi
+
+if (( selectors_toolbar_plan_plan_resolution_sections_modes_lines > selectors_toolbar_plan_plan_resolution_sections_modes_max )); then
+  echo "[check_v10_large_file_budget] FAIL: toolbarPlan/planResolution/sections/modes.ts exceeded budget"
   exit 1
 fi
 
@@ -1479,6 +1511,11 @@ fi
 
 if (( selectors_active_package_rules_active_lines > selectors_active_package_rules_active_max )); then
   echo "[check_v10_large_file_budget] FAIL: selectors/activePackageRules/active.ts exceeded budget"
+  exit 1
+fi
+
+if (( selectors_active_package_rules_active_selectors_lines > selectors_active_package_rules_active_selectors_max )); then
+  echo "[check_v10_large_file_budget] FAIL: selectors/activePackageRules/active/selectors.ts exceeded budget"
   exit 1
 fi
 
@@ -2014,6 +2051,11 @@ fi
 
 if (( template_pack_adaptation_definition_lines > template_pack_adaptation_definition_max )); then
   echo "[check_v10_large_file_budget] FAIL: templatePackAdapter/adaptation/definition.ts exceeded budget"
+  exit 1
+fi
+
+if (( template_pack_adaptation_definition_helpers_lines > template_pack_adaptation_definition_helpers_max )); then
+  echo "[check_v10_large_file_budget] FAIL: templatePackAdapter/adaptation/definition/helpers.ts exceeded budget"
   exit 1
 fi
 
