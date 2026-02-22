@@ -74,6 +74,9 @@ Core subsystems:
     - ui/resource policy split (task_522): `src/core/runtime/modding/package/guards/validateDefinition/uiAndResourcePolicy.ts` is facade and parser modules live under `src/core/runtime/modding/package/guards/validateDefinition/uiAndResourcePolicy/*`.
     - resourcePolicy stage2 split (task_519): `src/core/runtime/modding/package/guards/resourcePolicy.ts` is facade and parser modules live under `src/core/runtime/modding/package/guards/resourcePolicy/*`.
     - template-pack adapter split (task_513): adapter modules live under `src/core/runtime/modding/package/templatePackAdapter/*`; `src/core/runtime/modding/package/templatePackAdapter.ts` is facade export only.
+    - toolbarDefinition split (task_524): `src/core/runtime/modding/package/templatePackAdapter/toolbarDefinition.ts` is facade and parser modules live under `src/core/runtime/modding/package/templatePackAdapter/toolbarDefinition/*`.
+    - resourceItemMerge split (task_525): `src/core/runtime/modding/package/selectors/resourceItemMerge.ts` is facade and merge modules live under `src/core/runtime/modding/package/selectors/resourceItemMerge/*`.
+    - resourceCommandMerge split (task_526): `src/core/runtime/modding/package/selectors/resourceCommandMerge.ts` is facade and merge modules live under `src/core/runtime/modding/package/selectors/resourceCommandMerge/*`.
     - legacy alias runtime path: retired (task_496).
     - legacy alias retire freeze gate:
       - budget: `codex_tasks/workflow/mod_alias_retire_budget.env`

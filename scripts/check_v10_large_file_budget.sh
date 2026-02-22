@@ -50,6 +50,16 @@ registry_runtime_state_max="${REGISTRY_RUNTIME_STATE_MAX:-0}"
 registry_resource_overrides_max="${REGISTRY_RESOURCE_OVERRIDES_MAX:-0}"
 guards_validate_definition_ui_policy_max="${GUARDS_VALIDATE_DEFINITION_UI_POLICY_MAX:-0}"
 guards_validate_definition_resource_policy_max="${GUARDS_VALIDATE_DEFINITION_RESOURCE_POLICY_MAX:-0}"
+selectors_resource_item_merge_max="${SELECTORS_RESOURCE_ITEM_MERGE_MAX:-0}"
+selectors_resource_command_merge_max="${SELECTORS_RESOURCE_COMMAND_MERGE_MAX:-0}"
+template_pack_toolbar_definition_guards_max="${TEMPLATE_PACK_TOOLBAR_DEFINITION_GUARDS_MAX:-0}"
+template_pack_toolbar_definition_parsers_max="${TEMPLATE_PACK_TOOLBAR_DEFINITION_PARSERS_MAX:-0}"
+template_pack_toolbar_definition_selector_max="${TEMPLATE_PACK_TOOLBAR_DEFINITION_SELECTOR_MAX:-0}"
+selectors_resource_item_merge_model_max="${SELECTORS_RESOURCE_ITEM_MERGE_MODEL_MAX:-0}"
+selectors_resource_item_merge_helpers_max="${SELECTORS_RESOURCE_ITEM_MERGE_HELPERS_MAX:-0}"
+selectors_resource_item_merge_merge_max="${SELECTORS_RESOURCE_ITEM_MERGE_MERGE_MAX:-0}"
+selectors_resource_command_merge_helpers_max="${SELECTORS_RESOURCE_COMMAND_MERGE_HELPERS_MAX:-0}"
+selectors_resource_command_merge_merge_max="${SELECTORS_RESOURCE_COMMAND_MERGE_MERGE_MAX:-0}"
 
 validate_int "APP_LAYOUT_MAX" "$app_layout_max"
 validate_int "EXTENSION_RUNTIME_BOOTSTRAP_MAX" "$ext_runtime_max"
@@ -77,6 +87,16 @@ validate_int "REGISTRY_RUNTIME_STATE_MAX" "$registry_runtime_state_max"
 validate_int "REGISTRY_RESOURCE_OVERRIDES_MAX" "$registry_resource_overrides_max"
 validate_int "GUARDS_VALIDATE_DEFINITION_UI_POLICY_MAX" "$guards_validate_definition_ui_policy_max"
 validate_int "GUARDS_VALIDATE_DEFINITION_RESOURCE_POLICY_MAX" "$guards_validate_definition_resource_policy_max"
+validate_int "SELECTORS_RESOURCE_ITEM_MERGE_MAX" "$selectors_resource_item_merge_max"
+validate_int "SELECTORS_RESOURCE_COMMAND_MERGE_MAX" "$selectors_resource_command_merge_max"
+validate_int "TEMPLATE_PACK_TOOLBAR_DEFINITION_GUARDS_MAX" "$template_pack_toolbar_definition_guards_max"
+validate_int "TEMPLATE_PACK_TOOLBAR_DEFINITION_PARSERS_MAX" "$template_pack_toolbar_definition_parsers_max"
+validate_int "TEMPLATE_PACK_TOOLBAR_DEFINITION_SELECTOR_MAX" "$template_pack_toolbar_definition_selector_max"
+validate_int "SELECTORS_RESOURCE_ITEM_MERGE_MODEL_MAX" "$selectors_resource_item_merge_model_max"
+validate_int "SELECTORS_RESOURCE_ITEM_MERGE_HELPERS_MAX" "$selectors_resource_item_merge_helpers_max"
+validate_int "SELECTORS_RESOURCE_ITEM_MERGE_MERGE_MAX" "$selectors_resource_item_merge_merge_max"
+validate_int "SELECTORS_RESOURCE_COMMAND_MERGE_HELPERS_MAX" "$selectors_resource_command_merge_helpers_max"
+validate_int "SELECTORS_RESOURCE_COMMAND_MERGE_MERGE_MAX" "$selectors_resource_command_merge_merge_max"
 
 target_files=(
   "v10/src/features/chrome/layout/AppLayout.tsx"
@@ -114,6 +134,26 @@ for file in "${target_files[@]}"; do
   fi
 done
 
+extra_target_files=(
+  "v10/src/core/runtime/modding/package/selectors/resourceItemMerge.ts"
+  "v10/src/core/runtime/modding/package/selectors/resourceCommandMerge.ts"
+  "v10/src/core/runtime/modding/package/templatePackAdapter/toolbarDefinition/guards.ts"
+  "v10/src/core/runtime/modding/package/templatePackAdapter/toolbarDefinition/parsers.ts"
+  "v10/src/core/runtime/modding/package/templatePackAdapter/toolbarDefinition/selector.ts"
+  "v10/src/core/runtime/modding/package/selectors/resourceItemMerge/model.ts"
+  "v10/src/core/runtime/modding/package/selectors/resourceItemMerge/helpers.ts"
+  "v10/src/core/runtime/modding/package/selectors/resourceItemMerge/merge.ts"
+  "v10/src/core/runtime/modding/package/selectors/resourceCommandMerge/helpers.ts"
+  "v10/src/core/runtime/modding/package/selectors/resourceCommandMerge/merge.ts"
+)
+
+for file in "${extra_target_files[@]}"; do
+  if [[ ! -f "$file" ]]; then
+    echo "[check_v10_large_file_budget] FAIL: missing target file: $file"
+    exit 1
+  fi
+done
+
 app_layout_lines="$(wc -l < "${target_files[0]}")"
 ext_runtime_lines="$(wc -l < "${target_files[1]}")"
 data_input_lines="$(wc -l < "${target_files[2]}")"
@@ -140,6 +180,16 @@ registry_runtime_state_lines="$(wc -l < "${target_files[22]}")"
 registry_resource_overrides_lines="$(wc -l < "${target_files[23]}")"
 guards_validate_definition_ui_policy_lines="$(wc -l < "${target_files[24]}")"
 guards_validate_definition_resource_policy_lines="$(wc -l < "${target_files[25]}")"
+selectors_resource_item_merge_lines="$(wc -l < "${extra_target_files[0]}")"
+selectors_resource_command_merge_lines="$(wc -l < "${extra_target_files[1]}")"
+template_pack_toolbar_definition_guards_lines="$(wc -l < "${extra_target_files[2]}")"
+template_pack_toolbar_definition_parsers_lines="$(wc -l < "${extra_target_files[3]}")"
+template_pack_toolbar_definition_selector_lines="$(wc -l < "${extra_target_files[4]}")"
+selectors_resource_item_merge_model_lines="$(wc -l < "${extra_target_files[5]}")"
+selectors_resource_item_merge_helpers_lines="$(wc -l < "${extra_target_files[6]}")"
+selectors_resource_item_merge_merge_lines="$(wc -l < "${extra_target_files[7]}")"
+selectors_resource_command_merge_helpers_lines="$(wc -l < "${extra_target_files[8]}")"
+selectors_resource_command_merge_merge_lines="$(wc -l < "${extra_target_files[9]}")"
 
 printf '[check_v10_large_file_budget] budget_wave=%s app_layout=%s/%s extension_runtime_bootstrap=%s/%s data_input_panel=%s/%s selectors_package_selection=%s/%s selectors_toolbar_plan=%s/%s guards_validate_definition=%s/%s guards_resource_policy=%s/%s registry=%s/%s guards_validate_definition_ui_resource_policy=%s/%s template_pack_adaptation=%s/%s template_pack_toolbar_definition=%s/%s selectors_package_selection_sorting_active=%s/%s selectors_package_selection_activation_mapping=%s/%s guards_validate_definition_index=%s/%s guards_validate_definition_base_fields=%s/%s selectors_toolbar_plan_provider=%s/%s selectors_toolbar_plan_surface_rules=%s/%s selectors_toolbar_plan_plan_resolution=%s/%s guards_resource_policy_command_rules=%s/%s guards_resource_policy_shortcut_rules=%s/%s guards_resource_policy_input_behavior_rule=%s/%s registry_class=%s/%s registry_runtime_state=%s/%s registry_resource_overrides=%s/%s guards_validate_definition_ui_policy=%s/%s guards_validate_definition_resource_policy=%s/%s\n' \
   "${BUDGET_WAVE:-unknown}" \
@@ -297,6 +347,56 @@ fi
 
 if (( guards_validate_definition_resource_policy_lines > guards_validate_definition_resource_policy_max )); then
   echo "[check_v10_large_file_budget] FAIL: uiAndResourcePolicy/resourcePolicy.ts exceeded budget"
+  exit 1
+fi
+
+if (( selectors_resource_item_merge_lines > selectors_resource_item_merge_max )); then
+  echo "[check_v10_large_file_budget] FAIL: selectors/resourceItemMerge.ts exceeded budget"
+  exit 1
+fi
+
+if (( selectors_resource_command_merge_lines > selectors_resource_command_merge_max )); then
+  echo "[check_v10_large_file_budget] FAIL: selectors/resourceCommandMerge.ts exceeded budget"
+  exit 1
+fi
+
+if (( template_pack_toolbar_definition_guards_lines > template_pack_toolbar_definition_guards_max )); then
+  echo "[check_v10_large_file_budget] FAIL: templatePackAdapter/toolbarDefinition/guards.ts exceeded budget"
+  exit 1
+fi
+
+if (( template_pack_toolbar_definition_parsers_lines > template_pack_toolbar_definition_parsers_max )); then
+  echo "[check_v10_large_file_budget] FAIL: templatePackAdapter/toolbarDefinition/parsers.ts exceeded budget"
+  exit 1
+fi
+
+if (( template_pack_toolbar_definition_selector_lines > template_pack_toolbar_definition_selector_max )); then
+  echo "[check_v10_large_file_budget] FAIL: templatePackAdapter/toolbarDefinition/selector.ts exceeded budget"
+  exit 1
+fi
+
+if (( selectors_resource_item_merge_model_lines > selectors_resource_item_merge_model_max )); then
+  echo "[check_v10_large_file_budget] FAIL: resourceItemMerge/model.ts exceeded budget"
+  exit 1
+fi
+
+if (( selectors_resource_item_merge_helpers_lines > selectors_resource_item_merge_helpers_max )); then
+  echo "[check_v10_large_file_budget] FAIL: resourceItemMerge/helpers.ts exceeded budget"
+  exit 1
+fi
+
+if (( selectors_resource_item_merge_merge_lines > selectors_resource_item_merge_merge_max )); then
+  echo "[check_v10_large_file_budget] FAIL: resourceItemMerge/merge.ts exceeded budget"
+  exit 1
+fi
+
+if (( selectors_resource_command_merge_helpers_lines > selectors_resource_command_merge_helpers_max )); then
+  echo "[check_v10_large_file_budget] FAIL: resourceCommandMerge/helpers.ts exceeded budget"
+  exit 1
+fi
+
+if (( selectors_resource_command_merge_merge_lines > selectors_resource_command_merge_merge_max )); then
+  echo "[check_v10_large_file_budget] FAIL: resourceCommandMerge/merge.ts exceeded budget"
   exit 1
 fi
 
