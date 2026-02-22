@@ -33,6 +33,10 @@ guards_validate_definition_max="${GUARDS_VALIDATE_DEFINITION_MAX:-0}"
 guards_resource_policy_max="${GUARDS_RESOURCE_POLICY_MAX:-0}"
 template_pack_adaptation_max="${TEMPLATE_PACK_ADAPTATION_MAX:-0}"
 template_pack_toolbar_definition_max="${TEMPLATE_PACK_TOOLBAR_DEFINITION_MAX:-0}"
+selectors_package_selection_sorting_active_max="${SELECTORS_PACKAGE_SELECTION_SORTING_ACTIVE_MAX:-0}"
+selectors_package_selection_activation_mapping_max="${SELECTORS_PACKAGE_SELECTION_ACTIVATION_MAPPING_MAX:-0}"
+guards_validate_definition_index_max="${GUARDS_VALIDATE_DEFINITION_INDEX_MAX:-0}"
+guards_validate_definition_base_fields_max="${GUARDS_VALIDATE_DEFINITION_BASE_FIELDS_MAX:-0}"
 
 validate_int "APP_LAYOUT_MAX" "$app_layout_max"
 validate_int "EXTENSION_RUNTIME_BOOTSTRAP_MAX" "$ext_runtime_max"
@@ -43,6 +47,10 @@ validate_int "GUARDS_VALIDATE_DEFINITION_MAX" "$guards_validate_definition_max"
 validate_int "GUARDS_RESOURCE_POLICY_MAX" "$guards_resource_policy_max"
 validate_int "TEMPLATE_PACK_ADAPTATION_MAX" "$template_pack_adaptation_max"
 validate_int "TEMPLATE_PACK_TOOLBAR_DEFINITION_MAX" "$template_pack_toolbar_definition_max"
+validate_int "SELECTORS_PACKAGE_SELECTION_SORTING_ACTIVE_MAX" "$selectors_package_selection_sorting_active_max"
+validate_int "SELECTORS_PACKAGE_SELECTION_ACTIVATION_MAPPING_MAX" "$selectors_package_selection_activation_mapping_max"
+validate_int "GUARDS_VALIDATE_DEFINITION_INDEX_MAX" "$guards_validate_definition_index_max"
+validate_int "GUARDS_VALIDATE_DEFINITION_BASE_FIELDS_MAX" "$guards_validate_definition_base_fields_max"
 
 target_files=(
   "v10/src/features/chrome/layout/AppLayout.tsx"
@@ -54,6 +62,10 @@ target_files=(
   "v10/src/core/runtime/modding/package/guards/resourcePolicy.ts"
   "v10/src/core/runtime/modding/package/templatePackAdapter/adaptation.ts"
   "v10/src/core/runtime/modding/package/templatePackAdapter/toolbarDefinition.ts"
+  "v10/src/core/runtime/modding/package/selectors/packageSelection/sortingAndActive.ts"
+  "v10/src/core/runtime/modding/package/selectors/packageSelection/activationMapping.ts"
+  "v10/src/core/runtime/modding/package/guards/validateDefinition/index.ts"
+  "v10/src/core/runtime/modding/package/guards/validateDefinition/baseFields.ts"
 )
 
 for file in "${target_files[@]}"; do
@@ -72,8 +84,12 @@ guards_validate_definition_lines="$(wc -l < "${target_files[5]}")"
 guards_resource_policy_lines="$(wc -l < "${target_files[6]}")"
 template_pack_adaptation_lines="$(wc -l < "${target_files[7]}")"
 template_pack_toolbar_definition_lines="$(wc -l < "${target_files[8]}")"
+selectors_package_selection_sorting_active_lines="$(wc -l < "${target_files[9]}")"
+selectors_package_selection_activation_mapping_lines="$(wc -l < "${target_files[10]}")"
+guards_validate_definition_index_lines="$(wc -l < "${target_files[11]}")"
+guards_validate_definition_base_fields_lines="$(wc -l < "${target_files[12]}")"
 
-printf '[check_v10_large_file_budget] budget_wave=%s app_layout=%s/%s extension_runtime_bootstrap=%s/%s data_input_panel=%s/%s selectors_package_selection=%s/%s selectors_toolbar_plan=%s/%s guards_validate_definition=%s/%s guards_resource_policy=%s/%s template_pack_adaptation=%s/%s template_pack_toolbar_definition=%s/%s\n' \
+printf '[check_v10_large_file_budget] budget_wave=%s app_layout=%s/%s extension_runtime_bootstrap=%s/%s data_input_panel=%s/%s selectors_package_selection=%s/%s selectors_toolbar_plan=%s/%s guards_validate_definition=%s/%s guards_resource_policy=%s/%s template_pack_adaptation=%s/%s template_pack_toolbar_definition=%s/%s selectors_package_selection_sorting_active=%s/%s selectors_package_selection_activation_mapping=%s/%s guards_validate_definition_index=%s/%s guards_validate_definition_base_fields=%s/%s\n' \
   "${BUDGET_WAVE:-unknown}" \
   "$app_layout_lines" "$app_layout_max" \
   "$ext_runtime_lines" "$ext_runtime_max" \
@@ -83,7 +99,11 @@ printf '[check_v10_large_file_budget] budget_wave=%s app_layout=%s/%s extension_
   "$guards_validate_definition_lines" "$guards_validate_definition_max" \
   "$guards_resource_policy_lines" "$guards_resource_policy_max" \
   "$template_pack_adaptation_lines" "$template_pack_adaptation_max" \
-  "$template_pack_toolbar_definition_lines" "$template_pack_toolbar_definition_max"
+  "$template_pack_toolbar_definition_lines" "$template_pack_toolbar_definition_max" \
+  "$selectors_package_selection_sorting_active_lines" "$selectors_package_selection_sorting_active_max" \
+  "$selectors_package_selection_activation_mapping_lines" "$selectors_package_selection_activation_mapping_max" \
+  "$guards_validate_definition_index_lines" "$guards_validate_definition_index_max" \
+  "$guards_validate_definition_base_fields_lines" "$guards_validate_definition_base_fields_max"
 
 if (( app_layout_lines > app_layout_max )); then
   echo "[check_v10_large_file_budget] FAIL: AppLayout.tsx exceeded budget"
@@ -127,6 +147,26 @@ fi
 
 if (( template_pack_toolbar_definition_lines > template_pack_toolbar_definition_max )); then
   echo "[check_v10_large_file_budget] FAIL: templatePackAdapter/toolbarDefinition.ts exceeded budget"
+  exit 1
+fi
+
+if (( selectors_package_selection_sorting_active_lines > selectors_package_selection_sorting_active_max )); then
+  echo "[check_v10_large_file_budget] FAIL: packageSelection/sortingAndActive.ts exceeded budget"
+  exit 1
+fi
+
+if (( selectors_package_selection_activation_mapping_lines > selectors_package_selection_activation_mapping_max )); then
+  echo "[check_v10_large_file_budget] FAIL: packageSelection/activationMapping.ts exceeded budget"
+  exit 1
+fi
+
+if (( guards_validate_definition_index_lines > guards_validate_definition_index_max )); then
+  echo "[check_v10_large_file_budget] FAIL: validateDefinition/index.ts exceeded budget"
+  exit 1
+fi
+
+if (( guards_validate_definition_base_fields_lines > guards_validate_definition_base_fields_max )); then
+  echo "[check_v10_large_file_budget] FAIL: validateDefinition/baseFields.ts exceeded budget"
   exit 1
 fi
 
