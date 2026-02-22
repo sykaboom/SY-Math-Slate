@@ -259,12 +259,15 @@ Execution planning sources:
 - roadmap-level: `PROJECT_ROADMAP.md`
 - execution-level: approved `codex_tasks/task_*.md`
 - architecture-level: `v10/docs/architecture/ModEngine.md` (canonical active path)
-- large-file slicing wave (latest): `W-P6-SLICE-W27`
+- large-file slicing wave (latest): `W-P6-SLICE-W28`
   - split targets:
-    - `selectors/resourcePolicyMerge/merge.ts` + `resourcePolicyMerge/applyLayer.ts`
-    - `selectors/resourceItemMerge/merge/run.ts` + `resourceItemMerge/merge/runLayerItem.ts`
-    - `selectors/resourceCommandMerge/merge/run.ts` + `resourceCommandMerge/merge/runLayerRule.ts`
+    - `selectors/toolbarPlan/provider/baseProvider.ts` + `baseProvider/compat.ts`
+    - `guards/uiPolicy/parseUIItemRules/parse.ts` + `parse/entry.ts`
+    - `guards/validateDefinition/baseFields/parse/modIds.ts` + `modIds/validate.ts`
     - (previous wave continuity)
+      - `selectors/resourcePolicyMerge/merge.ts` + `resourcePolicyMerge/applyLayer.ts`
+      - `selectors/resourceItemMerge/merge/run.ts` + `resourceItemMerge/merge/runLayerItem.ts`
+      - `selectors/resourceCommandMerge/merge/run.ts` + `resourceCommandMerge/merge/runLayerRule.ts`
       - `registry/classRegistry/registryClass.ts` + `registryClass/{register,queries}.ts`
       - `guards/validateDefinition/activation.ts` + `activation/entry.ts`
       - `selectors/resourceInputBehaviorMerge/merge.ts` + `merge/applyLayer.ts`

@@ -1,5 +1,6 @@
 import type { ModPackageId } from "../../../../types";
-import { fail, hasDuplicateStrings, toStringArray } from "../../../utils";
+import { fail, toStringArray } from "../../../utils";
+import { validateModIdsArray } from "./modIds/validate";
 
 export type ParsedModIds = {
   modIds: ModPackageId[];
@@ -20,27 +21,8 @@ export const parseModIds = (
   }
 
   const modIds = modIdsResult.value as ModPackageId[];
-  if (modIds.length === 0) {
-    return {
-      ok: false,
-      value: fail(
-        "invalid-mod-ids",
-        "manifest.modIds",
-        "modIds must contain at least one entry."
-      ),
-    };
-  }
-
-  if (hasDuplicateStrings(modIds)) {
-    return {
-      ok: false,
-      value: fail(
-        "invalid-mod-ids",
-        "manifest.modIds",
-        "modIds must not contain duplicates."
-      ),
-    };
-  }
+  const validation = validateModIdsArray(modIds);
+  if (!validation.ok) return { ok: false, value: validation.value };
 
   return {
     ok: true,

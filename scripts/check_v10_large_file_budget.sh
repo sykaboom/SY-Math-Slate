@@ -159,6 +159,7 @@ template_pack_manifest_selectors_list_max="${TEMPLATE_PACK_MANIFEST_SELECTORS_LI
 template_pack_manifest_selectors_select_by_id_max="${TEMPLATE_PACK_MANIFEST_SELECTORS_SELECT_BY_ID_MAX:-0}"
 template_pack_manifest_selectors_select_primary_max="${TEMPLATE_PACK_MANIFEST_SELECTORS_SELECT_PRIMARY_MAX:-0}"
 selectors_toolbar_plan_provider_base_provider_max="${SELECTORS_TOOLBAR_PLAN_PROVIDER_BASE_PROVIDER_MAX:-0}"
+selectors_toolbar_plan_provider_base_provider_compat_max="${SELECTORS_TOOLBAR_PLAN_PROVIDER_BASE_PROVIDER_COMPAT_MAX:-0}"
 selectors_toolbar_plan_provider_constants_max="${SELECTORS_TOOLBAR_PLAN_PROVIDER_CONSTANTS_MAX:-0}"
 selectors_toolbar_plan_provider_plan_max="${SELECTORS_TOOLBAR_PLAN_PROVIDER_PLAN_MAX:-0}"
 guards_ui_policy_parse_max="${GUARDS_UI_POLICY_PARSE_MAX:-0}"
@@ -186,6 +187,7 @@ guards_resource_policy_input_behavior_rule_parse_object_max="${GUARDS_RESOURCE_P
 guards_resource_policy_input_behavior_rule_parse_strategy_max="${GUARDS_RESOURCE_POLICY_INPUT_BEHAVIOR_RULE_PARSE_STRATEGY_MAX:-0}"
 guards_ui_policy_parse_validators_max="${GUARDS_UI_POLICY_PARSE_VALIDATORS_MAX:-0}"
 guards_ui_policy_parse_parse_max="${GUARDS_UI_POLICY_PARSE_PARSE_MAX:-0}"
+guards_ui_policy_parse_parse_entry_max="${GUARDS_UI_POLICY_PARSE_PARSE_ENTRY_MAX:-0}"
 guards_ui_policy_parse_validators_validate_record_max="${GUARDS_UI_POLICY_PARSE_VALIDATORS_VALIDATE_RECORD_MAX:-0}"
 guards_ui_policy_parse_validators_validate_base_fields_max="${GUARDS_UI_POLICY_PARSE_VALIDATORS_VALIDATE_BASE_FIELDS_MAX:-0}"
 guards_ui_policy_parse_validators_apply_optional_fields_max="${GUARDS_UI_POLICY_PARSE_VALIDATORS_APPLY_OPTIONAL_FIELDS_MAX:-0}"
@@ -209,6 +211,7 @@ guards_utils_json_max="${GUARDS_UTILS_JSON_MAX:-0}"
 guards_utils_predicates_max="${GUARDS_UTILS_PREDICATES_MAX:-0}"
 guards_validate_definition_base_fields_parse_root_fields_max="${GUARDS_VALIDATE_DEFINITION_BASE_FIELDS_PARSE_ROOT_FIELDS_MAX:-0}"
 guards_validate_definition_base_fields_parse_mod_ids_max="${GUARDS_VALIDATE_DEFINITION_BASE_FIELDS_PARSE_MOD_IDS_MAX:-0}"
+guards_validate_definition_base_fields_parse_mod_ids_validate_max="${GUARDS_VALIDATE_DEFINITION_BASE_FIELDS_PARSE_MOD_IDS_VALIDATE_MAX:-0}"
 guards_validate_definition_base_fields_parse_activation_max="${GUARDS_VALIDATE_DEFINITION_BASE_FIELDS_PARSE_ACTIVATION_MAX:-0}"
 guards_validate_definition_base_fields_parse_parse_max="${GUARDS_VALIDATE_DEFINITION_BASE_FIELDS_PARSE_PARSE_MAX:-0}"
 guards_validate_definition_activation_max="${GUARDS_VALIDATE_DEFINITION_ACTIVATION_MAX:-0}"
@@ -349,6 +352,7 @@ validate_int "TEMPLATE_PACK_MANIFEST_SELECTORS_LIST_MAX" "$template_pack_manifes
 validate_int "TEMPLATE_PACK_MANIFEST_SELECTORS_SELECT_BY_ID_MAX" "$template_pack_manifest_selectors_select_by_id_max"
 validate_int "TEMPLATE_PACK_MANIFEST_SELECTORS_SELECT_PRIMARY_MAX" "$template_pack_manifest_selectors_select_primary_max"
 validate_int "SELECTORS_TOOLBAR_PLAN_PROVIDER_BASE_PROVIDER_MAX" "$selectors_toolbar_plan_provider_base_provider_max"
+validate_int "SELECTORS_TOOLBAR_PLAN_PROVIDER_BASE_PROVIDER_COMPAT_MAX" "$selectors_toolbar_plan_provider_base_provider_compat_max"
 validate_int "SELECTORS_TOOLBAR_PLAN_PROVIDER_CONSTANTS_MAX" "$selectors_toolbar_plan_provider_constants_max"
 validate_int "SELECTORS_TOOLBAR_PLAN_PROVIDER_PLAN_MAX" "$selectors_toolbar_plan_provider_plan_max"
 validate_int "GUARDS_UI_POLICY_PARSE_MAX" "$guards_ui_policy_parse_max"
@@ -376,6 +380,7 @@ validate_int "GUARDS_RESOURCE_POLICY_INPUT_BEHAVIOR_RULE_PARSE_OBJECT_MAX" "$gua
 validate_int "GUARDS_RESOURCE_POLICY_INPUT_BEHAVIOR_RULE_PARSE_STRATEGY_MAX" "$guards_resource_policy_input_behavior_rule_parse_strategy_max"
 validate_int "GUARDS_UI_POLICY_PARSE_VALIDATORS_MAX" "$guards_ui_policy_parse_validators_max"
 validate_int "GUARDS_UI_POLICY_PARSE_PARSE_MAX" "$guards_ui_policy_parse_parse_max"
+validate_int "GUARDS_UI_POLICY_PARSE_PARSE_ENTRY_MAX" "$guards_ui_policy_parse_parse_entry_max"
 validate_int "GUARDS_UI_POLICY_PARSE_VALIDATORS_VALIDATE_RECORD_MAX" "$guards_ui_policy_parse_validators_validate_record_max"
 validate_int "GUARDS_UI_POLICY_PARSE_VALIDATORS_VALIDATE_BASE_FIELDS_MAX" "$guards_ui_policy_parse_validators_validate_base_fields_max"
 validate_int "GUARDS_UI_POLICY_PARSE_VALIDATORS_APPLY_OPTIONAL_FIELDS_MAX" "$guards_ui_policy_parse_validators_apply_optional_fields_max"
@@ -399,6 +404,7 @@ validate_int "GUARDS_UTILS_JSON_MAX" "$guards_utils_json_max"
 validate_int "GUARDS_UTILS_PREDICATES_MAX" "$guards_utils_predicates_max"
 validate_int "GUARDS_VALIDATE_DEFINITION_BASE_FIELDS_PARSE_ROOT_FIELDS_MAX" "$guards_validate_definition_base_fields_parse_root_fields_max"
 validate_int "GUARDS_VALIDATE_DEFINITION_BASE_FIELDS_PARSE_MOD_IDS_MAX" "$guards_validate_definition_base_fields_parse_mod_ids_max"
+validate_int "GUARDS_VALIDATE_DEFINITION_BASE_FIELDS_PARSE_MOD_IDS_VALIDATE_MAX" "$guards_validate_definition_base_fields_parse_mod_ids_validate_max"
 validate_int "GUARDS_VALIDATE_DEFINITION_BASE_FIELDS_PARSE_ACTIVATION_MAX" "$guards_validate_definition_base_fields_parse_activation_max"
 validate_int "GUARDS_VALIDATE_DEFINITION_BASE_FIELDS_PARSE_PARSE_MAX" "$guards_validate_definition_base_fields_parse_parse_max"
 validate_int "GUARDS_VALIDATE_DEFINITION_ACTIVATION_MAX" "$guards_validate_definition_activation_max"
@@ -769,6 +775,19 @@ for file in "${wave27_extra_files[@]}"; do
   fi
 done
 
+wave28_extra_files=(
+  "v10/src/core/runtime/modding/package/selectors/toolbarPlan/provider/baseProvider/compat.ts"
+  "v10/src/core/runtime/modding/package/guards/uiPolicy/parseUIItemRules/parse/entry.ts"
+  "v10/src/core/runtime/modding/package/guards/validateDefinition/baseFields/parse/modIds/validate.ts"
+)
+
+for file in "${wave28_extra_files[@]}"; do
+  if [[ ! -f "$file" ]]; then
+    echo "[check_v10_large_file_budget] FAIL: missing target file: $file"
+    exit 1
+  fi
+done
+
 app_layout_lines="$(wc -l < "${target_files[0]}")"
 ext_runtime_lines="$(wc -l < "${target_files[1]}")"
 data_input_lines="$(wc -l < "${target_files[2]}")"
@@ -850,6 +869,7 @@ selectors_package_selection_activation_mapping_base_lines="$(wc -l < "${extra_ta
 selectors_package_selection_activation_mapping_active_lines="$(wc -l < "${extra_target_files[29]}")"
 selectors_package_selection_activation_mapping_reverse_lines="$(wc -l < "${extra_target_files[30]}")"
 selectors_toolbar_plan_provider_base_provider_lines="$(wc -l < "${extra_target_files[31]}")"
+selectors_toolbar_plan_provider_base_provider_compat_lines="$(wc -l < "v10/src/core/runtime/modding/package/selectors/toolbarPlan/provider/baseProvider/compat.ts")"
 selectors_toolbar_plan_provider_constants_lines="$(wc -l < "${extra_target_files[32]}")"
 selectors_toolbar_plan_provider_plan_lines="$(wc -l < "${extra_target_files[33]}")"
 guards_ui_policy_parse_lines="$(wc -l < "${extra_target_files[34]}")"
@@ -877,8 +897,10 @@ guards_resource_policy_input_behavior_rule_parse_object_lines="$(wc -l < "v10/sr
 guards_resource_policy_input_behavior_rule_parse_strategy_lines="$(wc -l < "v10/src/core/runtime/modding/package/guards/resourcePolicy/inputBehaviorRule/parse/strategy.ts")"
 guards_ui_policy_parse_validators_lines="$(wc -l < "${extra_target_files[45]}")"
 guards_ui_policy_parse_parse_lines="$(wc -l < "${extra_target_files[46]}")"
+guards_ui_policy_parse_parse_entry_lines="$(wc -l < "v10/src/core/runtime/modding/package/guards/uiPolicy/parseUIItemRules/parse/entry.ts")"
 guards_validate_definition_base_fields_parse_root_fields_lines="$(wc -l < "${extra_target_files[47]}")"
 guards_validate_definition_base_fields_parse_mod_ids_lines="$(wc -l < "${extra_target_files[48]}")"
+guards_validate_definition_base_fields_parse_mod_ids_validate_lines="$(wc -l < "v10/src/core/runtime/modding/package/guards/validateDefinition/baseFields/parse/modIds/validate.ts")"
 guards_validate_definition_base_fields_parse_activation_lines="$(wc -l < "${extra_target_files[49]}")"
 guards_validate_definition_base_fields_parse_parse_lines="$(wc -l < "${extra_target_files[50]}")"
 guards_ui_policy_parse_validators_validate_record_lines="$(wc -l < "v10/src/core/runtime/modding/package/guards/uiPolicy/parseUIItemRules/validators/validateRecord.ts")"
@@ -1157,6 +1179,11 @@ printf '[check_v10_large_file_budget] wave27 policy_merge_apply_layer=%s/%s item
   "$selectors_resource_policy_merge_apply_layer_lines" "$selectors_resource_policy_merge_apply_layer_max" \
   "$selectors_resource_item_merge_run_layer_item_lines" "$selectors_resource_item_merge_run_layer_item_max" \
   "$selectors_resource_command_merge_run_layer_rule_lines" "$selectors_resource_command_merge_run_layer_rule_max"
+
+printf '[check_v10_large_file_budget] wave28 provider_compat=%s/%s ui_parse_entry=%s/%s mod_ids_validate=%s/%s\n' \
+  "$selectors_toolbar_plan_provider_base_provider_compat_lines" "$selectors_toolbar_plan_provider_base_provider_compat_max" \
+  "$guards_ui_policy_parse_parse_entry_lines" "$guards_ui_policy_parse_parse_entry_max" \
+  "$guards_validate_definition_base_fields_parse_mod_ids_validate_lines" "$guards_validate_definition_base_fields_parse_mod_ids_validate_max"
 
 if (( app_layout_lines > app_layout_max )); then
   echo "[check_v10_large_file_budget] FAIL: AppLayout.tsx exceeded budget"
@@ -1563,6 +1590,11 @@ if (( selectors_toolbar_plan_provider_base_provider_lines > selectors_toolbar_pl
   exit 1
 fi
 
+if (( selectors_toolbar_plan_provider_base_provider_compat_lines > selectors_toolbar_plan_provider_base_provider_compat_max )); then
+  echo "[check_v10_large_file_budget] FAIL: toolbarPlan/provider/baseProvider/compat.ts exceeded budget"
+  exit 1
+fi
+
 if (( selectors_toolbar_plan_provider_constants_lines > selectors_toolbar_plan_provider_constants_max )); then
   echo "[check_v10_large_file_budget] FAIL: toolbarPlan/provider/constants.ts exceeded budget"
   exit 1
@@ -1713,6 +1745,11 @@ if (( guards_ui_policy_parse_parse_lines > guards_ui_policy_parse_parse_max )); 
   exit 1
 fi
 
+if (( guards_ui_policy_parse_parse_entry_lines > guards_ui_policy_parse_parse_entry_max )); then
+  echo "[check_v10_large_file_budget] FAIL: uiPolicy/parseUIItemRules/parse/entry.ts exceeded budget"
+  exit 1
+fi
+
 if (( guards_validate_definition_base_fields_parse_root_fields_lines > guards_validate_definition_base_fields_parse_root_fields_max )); then
   echo "[check_v10_large_file_budget] FAIL: baseFields/parse/rootFields.ts exceeded budget"
   exit 1
@@ -1720,6 +1757,11 @@ fi
 
 if (( guards_validate_definition_base_fields_parse_mod_ids_lines > guards_validate_definition_base_fields_parse_mod_ids_max )); then
   echo "[check_v10_large_file_budget] FAIL: baseFields/parse/modIds.ts exceeded budget"
+  exit 1
+fi
+
+if (( guards_validate_definition_base_fields_parse_mod_ids_validate_lines > guards_validate_definition_base_fields_parse_mod_ids_validate_max )); then
+  echo "[check_v10_large_file_budget] FAIL: baseFields/parse/modIds/validate.ts exceeded budget"
   exit 1
 fi
 
