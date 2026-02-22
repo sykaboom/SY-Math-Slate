@@ -79,6 +79,14 @@ selectors_resource_input_behavior_merge_merge_max="${SELECTORS_RESOURCE_INPUT_BE
 selectors_package_selection_activation_mapping_base_max="${SELECTORS_PACKAGE_SELECTION_ACTIVATION_MAPPING_BASE_MAX:-0}"
 selectors_package_selection_activation_mapping_active_max="${SELECTORS_PACKAGE_SELECTION_ACTIVATION_MAPPING_ACTIVE_MAX:-0}"
 selectors_package_selection_activation_mapping_reverse_max="${SELECTORS_PACKAGE_SELECTION_ACTIVATION_MAPPING_REVERSE_MAX:-0}"
+selectors_package_selection_sorting_active_index_max="${SELECTORS_PACKAGE_SELECTION_SORTING_ACTIVE_INDEX_MAX:-0}"
+selectors_package_selection_sorting_active_comparators_max="${SELECTORS_PACKAGE_SELECTION_SORTING_ACTIVE_COMPARATORS_MAX:-0}"
+selectors_package_selection_sorting_active_selection_max="${SELECTORS_PACKAGE_SELECTION_SORTING_ACTIVE_SELECTION_MAX:-0}"
+selectors_package_selection_sorting_active_resolution_max="${SELECTORS_PACKAGE_SELECTION_SORTING_ACTIVE_RESOLUTION_MAX:-0}"
+selectors_package_selection_activation_mapping_base_index_max="${SELECTORS_PACKAGE_SELECTION_ACTIVATION_MAPPING_BASE_INDEX_MAX:-0}"
+selectors_package_selection_activation_mapping_base_defaults_max="${SELECTORS_PACKAGE_SELECTION_ACTIVATION_MAPPING_BASE_DEFAULTS_MAX:-0}"
+selectors_package_selection_activation_mapping_base_map_to_mod_max="${SELECTORS_PACKAGE_SELECTION_ACTIVATION_MAPPING_BASE_MAP_TO_MOD_MAX:-0}"
+selectors_package_selection_activation_mapping_base_map_to_toolbar_max="${SELECTORS_PACKAGE_SELECTION_ACTIVATION_MAPPING_BASE_MAP_TO_TOOLBAR_MAX:-0}"
 selectors_toolbar_plan_provider_base_provider_max="${SELECTORS_TOOLBAR_PLAN_PROVIDER_BASE_PROVIDER_MAX:-0}"
 selectors_toolbar_plan_provider_constants_max="${SELECTORS_TOOLBAR_PLAN_PROVIDER_CONSTANTS_MAX:-0}"
 selectors_toolbar_plan_provider_plan_max="${SELECTORS_TOOLBAR_PLAN_PROVIDER_PLAN_MAX:-0}"
@@ -168,6 +176,14 @@ validate_int "SELECTORS_RESOURCE_INPUT_BEHAVIOR_MERGE_MERGE_MAX" "$selectors_res
 validate_int "SELECTORS_PACKAGE_SELECTION_ACTIVATION_MAPPING_BASE_MAX" "$selectors_package_selection_activation_mapping_base_max"
 validate_int "SELECTORS_PACKAGE_SELECTION_ACTIVATION_MAPPING_ACTIVE_MAX" "$selectors_package_selection_activation_mapping_active_max"
 validate_int "SELECTORS_PACKAGE_SELECTION_ACTIVATION_MAPPING_REVERSE_MAX" "$selectors_package_selection_activation_mapping_reverse_max"
+validate_int "SELECTORS_PACKAGE_SELECTION_SORTING_ACTIVE_INDEX_MAX" "$selectors_package_selection_sorting_active_index_max"
+validate_int "SELECTORS_PACKAGE_SELECTION_SORTING_ACTIVE_COMPARATORS_MAX" "$selectors_package_selection_sorting_active_comparators_max"
+validate_int "SELECTORS_PACKAGE_SELECTION_SORTING_ACTIVE_SELECTION_MAX" "$selectors_package_selection_sorting_active_selection_max"
+validate_int "SELECTORS_PACKAGE_SELECTION_SORTING_ACTIVE_RESOLUTION_MAX" "$selectors_package_selection_sorting_active_resolution_max"
+validate_int "SELECTORS_PACKAGE_SELECTION_ACTIVATION_MAPPING_BASE_INDEX_MAX" "$selectors_package_selection_activation_mapping_base_index_max"
+validate_int "SELECTORS_PACKAGE_SELECTION_ACTIVATION_MAPPING_BASE_DEFAULTS_MAX" "$selectors_package_selection_activation_mapping_base_defaults_max"
+validate_int "SELECTORS_PACKAGE_SELECTION_ACTIVATION_MAPPING_BASE_MAP_TO_MOD_MAX" "$selectors_package_selection_activation_mapping_base_map_to_mod_max"
+validate_int "SELECTORS_PACKAGE_SELECTION_ACTIVATION_MAPPING_BASE_MAP_TO_TOOLBAR_MAX" "$selectors_package_selection_activation_mapping_base_map_to_toolbar_max"
 validate_int "SELECTORS_TOOLBAR_PLAN_PROVIDER_BASE_PROVIDER_MAX" "$selectors_toolbar_plan_provider_base_provider_max"
 validate_int "SELECTORS_TOOLBAR_PLAN_PROVIDER_CONSTANTS_MAX" "$selectors_toolbar_plan_provider_constants_max"
 validate_int "SELECTORS_TOOLBAR_PLAN_PROVIDER_PLAN_MAX" "$selectors_toolbar_plan_provider_plan_max"
@@ -330,6 +346,24 @@ for file in "${wave13_extra_files[@]}"; do
   fi
 done
 
+wave14_extra_files=(
+  "v10/src/core/runtime/modding/package/selectors/packageSelection/sortingAndActive/index.ts"
+  "v10/src/core/runtime/modding/package/selectors/packageSelection/sortingAndActive/comparators.ts"
+  "v10/src/core/runtime/modding/package/selectors/packageSelection/sortingAndActive/selection.ts"
+  "v10/src/core/runtime/modding/package/selectors/packageSelection/sortingAndActive/resolution.ts"
+  "v10/src/core/runtime/modding/package/selectors/packageSelection/activationMapping/base/index.ts"
+  "v10/src/core/runtime/modding/package/selectors/packageSelection/activationMapping/base/defaults.ts"
+  "v10/src/core/runtime/modding/package/selectors/packageSelection/activationMapping/base/mapToMod.ts"
+  "v10/src/core/runtime/modding/package/selectors/packageSelection/activationMapping/base/mapToToolbar.ts"
+)
+
+for file in "${wave14_extra_files[@]}"; do
+  if [[ ! -f "$file" ]]; then
+    echo "[check_v10_large_file_budget] FAIL: missing target file: $file"
+    exit 1
+  fi
+done
+
 app_layout_lines="$(wc -l < "${target_files[0]}")"
 ext_runtime_lines="$(wc -l < "${target_files[1]}")"
 data_input_lines="$(wc -l < "${target_files[2]}")"
@@ -418,6 +452,14 @@ package_types_toolbar_plan_base_catalog_lines="$(wc -l < "v10/src/core/runtime/m
 package_types_toolbar_plan_resource_overrides_lines="$(wc -l < "v10/src/core/runtime/modding/package/types/toolbarPlan/resourceOverrides.ts")"
 selectors_resource_shortcut_merge_merge_run_lines="$(wc -l < "v10/src/core/runtime/modding/package/selectors/resourceShortcutMerge/merge/run.ts")"
 selectors_resource_shortcut_merge_merge_operations_lines="$(wc -l < "v10/src/core/runtime/modding/package/selectors/resourceShortcutMerge/merge/operations.ts")"
+selectors_package_selection_sorting_active_index_lines="$(wc -l < "v10/src/core/runtime/modding/package/selectors/packageSelection/sortingAndActive/index.ts")"
+selectors_package_selection_sorting_active_comparators_lines="$(wc -l < "v10/src/core/runtime/modding/package/selectors/packageSelection/sortingAndActive/comparators.ts")"
+selectors_package_selection_sorting_active_selection_lines="$(wc -l < "v10/src/core/runtime/modding/package/selectors/packageSelection/sortingAndActive/selection.ts")"
+selectors_package_selection_sorting_active_resolution_lines="$(wc -l < "v10/src/core/runtime/modding/package/selectors/packageSelection/sortingAndActive/resolution.ts")"
+selectors_package_selection_activation_mapping_base_index_lines="$(wc -l < "v10/src/core/runtime/modding/package/selectors/packageSelection/activationMapping/base/index.ts")"
+selectors_package_selection_activation_mapping_base_defaults_lines="$(wc -l < "v10/src/core/runtime/modding/package/selectors/packageSelection/activationMapping/base/defaults.ts")"
+selectors_package_selection_activation_mapping_base_map_to_mod_lines="$(wc -l < "v10/src/core/runtime/modding/package/selectors/packageSelection/activationMapping/base/mapToMod.ts")"
+selectors_package_selection_activation_mapping_base_map_to_toolbar_lines="$(wc -l < "v10/src/core/runtime/modding/package/selectors/packageSelection/activationMapping/base/mapToToolbar.ts")"
 
 printf '[check_v10_large_file_budget] budget_wave=%s app_layout=%s/%s extension_runtime_bootstrap=%s/%s data_input_panel=%s/%s selectors_package_selection=%s/%s selectors_toolbar_plan=%s/%s guards_validate_definition=%s/%s guards_resource_policy=%s/%s registry=%s/%s guards_validate_definition_ui_resource_policy=%s/%s template_pack_adaptation=%s/%s template_pack_toolbar_definition=%s/%s selectors_package_selection_sorting_active=%s/%s selectors_package_selection_activation_mapping=%s/%s guards_validate_definition_index=%s/%s guards_validate_definition_base_fields=%s/%s selectors_toolbar_plan_provider=%s/%s selectors_toolbar_plan_surface_rules=%s/%s selectors_toolbar_plan_plan_resolution=%s/%s guards_resource_policy_command_rules=%s/%s guards_resource_policy_shortcut_rules=%s/%s guards_resource_policy_input_behavior_rule=%s/%s registry_class=%s/%s registry_runtime_state=%s/%s registry_resource_overrides=%s/%s guards_validate_definition_ui_policy=%s/%s guards_validate_definition_resource_policy=%s/%s types_facade=%s/%s types_toolbar_plan=%s/%s resource_policy_merge=%s/%s resource_shortcut_merge=%s/%s resource_input_behavior_merge=%s/%s activation_mapping_base=%s/%s provider_base=%s/%s ui_policy_parse=%s/%s base_fields_parse=%s/%s registry_class_comparators=%s/%s registry_class_types=%s/%s registry_class_core=%s/%s command_merge_operations=%s/%s command_merge_run=%s/%s item_merge_operations=%s/%s item_merge_run=%s/%s input_behavior_normalize=%s/%s input_behavior_parse=%s/%s ui_policy_validators=%s/%s ui_policy_parser=%s/%s base_root_fields=%s/%s base_mod_ids=%s/%s base_activation=%s/%s base_parse=%s/%s\n' \
   "${BUDGET_WAVE:-unknown}" \
@@ -488,6 +530,16 @@ printf '[check_v10_large_file_budget] wave13 toolbar_plan_mode_viewport=%s/%s to
   "$package_types_toolbar_plan_resource_overrides_lines" "$package_types_toolbar_plan_resource_overrides_max" \
   "$selectors_resource_shortcut_merge_merge_run_lines" "$selectors_resource_shortcut_merge_merge_run_max" \
   "$selectors_resource_shortcut_merge_merge_operations_lines" "$selectors_resource_shortcut_merge_merge_operations_max"
+
+printf '[check_v10_large_file_budget] wave14 sorting_active_index=%s/%s sorting_active_comparators=%s/%s sorting_active_selection=%s/%s sorting_active_resolution=%s/%s activation_base_index=%s/%s activation_base_defaults=%s/%s activation_base_map_to_mod=%s/%s activation_base_map_to_toolbar=%s/%s\n' \
+  "$selectors_package_selection_sorting_active_index_lines" "$selectors_package_selection_sorting_active_index_max" \
+  "$selectors_package_selection_sorting_active_comparators_lines" "$selectors_package_selection_sorting_active_comparators_max" \
+  "$selectors_package_selection_sorting_active_selection_lines" "$selectors_package_selection_sorting_active_selection_max" \
+  "$selectors_package_selection_sorting_active_resolution_lines" "$selectors_package_selection_sorting_active_resolution_max" \
+  "$selectors_package_selection_activation_mapping_base_index_lines" "$selectors_package_selection_activation_mapping_base_index_max" \
+  "$selectors_package_selection_activation_mapping_base_defaults_lines" "$selectors_package_selection_activation_mapping_base_defaults_max" \
+  "$selectors_package_selection_activation_mapping_base_map_to_mod_lines" "$selectors_package_selection_activation_mapping_base_map_to_mod_max" \
+  "$selectors_package_selection_activation_mapping_base_map_to_toolbar_lines" "$selectors_package_selection_activation_mapping_base_map_to_toolbar_max"
 
 if (( app_layout_lines > app_layout_max )); then
   echo "[check_v10_large_file_budget] FAIL: AppLayout.tsx exceeded budget"
@@ -926,6 +978,46 @@ fi
 
 if (( selectors_resource_shortcut_merge_merge_operations_lines > selectors_resource_shortcut_merge_merge_operations_max )); then
   echo "[check_v10_large_file_budget] FAIL: resourceShortcutMerge/merge/operations.ts exceeded budget"
+  exit 1
+fi
+
+if (( selectors_package_selection_sorting_active_index_lines > selectors_package_selection_sorting_active_index_max )); then
+  echo "[check_v10_large_file_budget] FAIL: packageSelection/sortingAndActive/index.ts exceeded budget"
+  exit 1
+fi
+
+if (( selectors_package_selection_sorting_active_comparators_lines > selectors_package_selection_sorting_active_comparators_max )); then
+  echo "[check_v10_large_file_budget] FAIL: packageSelection/sortingAndActive/comparators.ts exceeded budget"
+  exit 1
+fi
+
+if (( selectors_package_selection_sorting_active_selection_lines > selectors_package_selection_sorting_active_selection_max )); then
+  echo "[check_v10_large_file_budget] FAIL: packageSelection/sortingAndActive/selection.ts exceeded budget"
+  exit 1
+fi
+
+if (( selectors_package_selection_sorting_active_resolution_lines > selectors_package_selection_sorting_active_resolution_max )); then
+  echo "[check_v10_large_file_budget] FAIL: packageSelection/sortingAndActive/resolution.ts exceeded budget"
+  exit 1
+fi
+
+if (( selectors_package_selection_activation_mapping_base_index_lines > selectors_package_selection_activation_mapping_base_index_max )); then
+  echo "[check_v10_large_file_budget] FAIL: packageSelection/activationMapping/base/index.ts exceeded budget"
+  exit 1
+fi
+
+if (( selectors_package_selection_activation_mapping_base_defaults_lines > selectors_package_selection_activation_mapping_base_defaults_max )); then
+  echo "[check_v10_large_file_budget] FAIL: packageSelection/activationMapping/base/defaults.ts exceeded budget"
+  exit 1
+fi
+
+if (( selectors_package_selection_activation_mapping_base_map_to_mod_lines > selectors_package_selection_activation_mapping_base_map_to_mod_max )); then
+  echo "[check_v10_large_file_budget] FAIL: packageSelection/activationMapping/base/mapToMod.ts exceeded budget"
+  exit 1
+fi
+
+if (( selectors_package_selection_activation_mapping_base_map_to_toolbar_lines > selectors_package_selection_activation_mapping_base_map_to_toolbar_max )); then
+  echo "[check_v10_large_file_budget] FAIL: packageSelection/activationMapping/base/mapToToolbar.ts exceeded budget"
   exit 1
 fi
 
