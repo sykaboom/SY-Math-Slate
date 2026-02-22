@@ -117,9 +117,8 @@ if [ -n "$PUBLIC_SECRETS" ]; then
   echo "$PUBLIC_SECRETS" | head -10
   FAIL=1
 elif [ -n "$PUBLIC_SECRET_CANDIDATES" ]; then
-  echo "  [WARN] 허용된 공개 토큰만 발견됨 (allowlist):"
+  echo "  [PASS] 허용된 공개 토큰만 발견됨 (allowlist, informational):"
   echo "$PUBLIC_SECRET_CANDIDATES" | head -10
-  WARN=$((WARN + 1))
 else
   echo "  [PASS] NEXT_PUBLIC_ 비밀 키 없음"
 fi
