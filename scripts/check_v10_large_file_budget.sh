@@ -52,6 +52,7 @@ selectors_toolbar_plan_surface_rules_max="${SELECTORS_TOOLBAR_PLAN_SURFACE_RULES
 selectors_toolbar_plan_plan_resolution_max="${SELECTORS_TOOLBAR_PLAN_PLAN_RESOLUTION_MAX:-0}"
 selectors_toolbar_plan_surface_rules_keys_max="${SELECTORS_TOOLBAR_PLAN_SURFACE_RULES_KEYS_MAX:-0}"
 selectors_toolbar_plan_surface_rules_merge_max="${SELECTORS_TOOLBAR_PLAN_SURFACE_RULES_MERGE_MAX:-0}"
+selectors_toolbar_plan_surface_rules_merge_helpers_max="${SELECTORS_TOOLBAR_PLAN_SURFACE_RULES_MERGE_HELPERS_MAX:-0}"
 selectors_toolbar_plan_plan_resolution_surface_predicates_max="${SELECTORS_TOOLBAR_PLAN_PLAN_RESOLUTION_SURFACE_PREDICATES_MAX:-0}"
 selectors_toolbar_plan_plan_resolution_sections_max="${SELECTORS_TOOLBAR_PLAN_PLAN_RESOLUTION_SECTIONS_MAX:-0}"
 selectors_toolbar_plan_plan_resolution_sections_modes_max="${SELECTORS_TOOLBAR_PLAN_PLAN_RESOLUTION_SECTIONS_MODES_MAX:-0}"
@@ -75,12 +76,14 @@ guards_validate_definition_ui_policy_max="${GUARDS_VALIDATE_DEFINITION_UI_POLICY
 guards_validate_definition_resource_policy_max="${GUARDS_VALIDATE_DEFINITION_RESOURCE_POLICY_MAX:-0}"
 guards_validate_definition_ui_policy_index_max="${GUARDS_VALIDATE_DEFINITION_UI_POLICY_INDEX_MAX:-0}"
 guards_validate_definition_ui_policy_parse_max="${GUARDS_VALIDATE_DEFINITION_UI_POLICY_PARSE_MAX:-0}"
+guards_validate_definition_ui_policy_parse_helpers_max="${GUARDS_VALIDATE_DEFINITION_UI_POLICY_PARSE_HELPERS_MAX:-0}"
 guards_validate_definition_ui_policy_sections_max="${GUARDS_VALIDATE_DEFINITION_UI_POLICY_SECTIONS_MAX:-0}"
 guards_validate_definition_ui_policy_sections_common_max="${GUARDS_VALIDATE_DEFINITION_UI_POLICY_SECTIONS_COMMON_MAX:-0}"
 guards_validate_definition_ui_policy_sections_groups_and_slots_max="${GUARDS_VALIDATE_DEFINITION_UI_POLICY_SECTIONS_GROUPS_AND_SLOTS_MAX:-0}"
 guards_validate_definition_ui_policy_sections_items_max="${GUARDS_VALIDATE_DEFINITION_UI_POLICY_SECTIONS_ITEMS_MAX:-0}"
 guards_validate_definition_resource_policy_index_max="${GUARDS_VALIDATE_DEFINITION_RESOURCE_POLICY_INDEX_MAX:-0}"
 guards_validate_definition_resource_policy_parse_max="${GUARDS_VALIDATE_DEFINITION_RESOURCE_POLICY_PARSE_MAX:-0}"
+guards_validate_definition_resource_policy_parse_helpers_max="${GUARDS_VALIDATE_DEFINITION_RESOURCE_POLICY_PARSE_HELPERS_MAX:-0}"
 guards_validate_definition_resource_policy_sections_max="${GUARDS_VALIDATE_DEFINITION_RESOURCE_POLICY_SECTIONS_MAX:-0}"
 guards_validate_definition_resource_policy_sections_common_max="${GUARDS_VALIDATE_DEFINITION_RESOURCE_POLICY_SECTIONS_COMMON_MAX:-0}"
 guards_validate_definition_resource_policy_sections_policy_patch_max="${GUARDS_VALIDATE_DEFINITION_RESOURCE_POLICY_SECTIONS_POLICY_PATCH_MAX:-0}"
@@ -251,6 +254,7 @@ validate_int "SELECTORS_TOOLBAR_PLAN_SURFACE_RULES_MAX" "$selectors_toolbar_plan
 validate_int "SELECTORS_TOOLBAR_PLAN_PLAN_RESOLUTION_MAX" "$selectors_toolbar_plan_plan_resolution_max"
 validate_int "SELECTORS_TOOLBAR_PLAN_SURFACE_RULES_KEYS_MAX" "$selectors_toolbar_plan_surface_rules_keys_max"
 validate_int "SELECTORS_TOOLBAR_PLAN_SURFACE_RULES_MERGE_MAX" "$selectors_toolbar_plan_surface_rules_merge_max"
+validate_int "SELECTORS_TOOLBAR_PLAN_SURFACE_RULES_MERGE_HELPERS_MAX" "$selectors_toolbar_plan_surface_rules_merge_helpers_max"
 validate_int "SELECTORS_TOOLBAR_PLAN_PLAN_RESOLUTION_SURFACE_PREDICATES_MAX" "$selectors_toolbar_plan_plan_resolution_surface_predicates_max"
 validate_int "SELECTORS_TOOLBAR_PLAN_PLAN_RESOLUTION_SECTIONS_MAX" "$selectors_toolbar_plan_plan_resolution_sections_max"
 validate_int "SELECTORS_TOOLBAR_PLAN_PLAN_RESOLUTION_SECTIONS_MODES_MAX" "$selectors_toolbar_plan_plan_resolution_sections_modes_max"
@@ -274,12 +278,14 @@ validate_int "GUARDS_VALIDATE_DEFINITION_UI_POLICY_MAX" "$guards_validate_defini
 validate_int "GUARDS_VALIDATE_DEFINITION_RESOURCE_POLICY_MAX" "$guards_validate_definition_resource_policy_max"
 validate_int "GUARDS_VALIDATE_DEFINITION_UI_POLICY_INDEX_MAX" "$guards_validate_definition_ui_policy_index_max"
 validate_int "GUARDS_VALIDATE_DEFINITION_UI_POLICY_PARSE_MAX" "$guards_validate_definition_ui_policy_parse_max"
+validate_int "GUARDS_VALIDATE_DEFINITION_UI_POLICY_PARSE_HELPERS_MAX" "$guards_validate_definition_ui_policy_parse_helpers_max"
 validate_int "GUARDS_VALIDATE_DEFINITION_UI_POLICY_SECTIONS_MAX" "$guards_validate_definition_ui_policy_sections_max"
 validate_int "GUARDS_VALIDATE_DEFINITION_UI_POLICY_SECTIONS_COMMON_MAX" "$guards_validate_definition_ui_policy_sections_common_max"
 validate_int "GUARDS_VALIDATE_DEFINITION_UI_POLICY_SECTIONS_GROUPS_AND_SLOTS_MAX" "$guards_validate_definition_ui_policy_sections_groups_and_slots_max"
 validate_int "GUARDS_VALIDATE_DEFINITION_UI_POLICY_SECTIONS_ITEMS_MAX" "$guards_validate_definition_ui_policy_sections_items_max"
 validate_int "GUARDS_VALIDATE_DEFINITION_RESOURCE_POLICY_INDEX_MAX" "$guards_validate_definition_resource_policy_index_max"
 validate_int "GUARDS_VALIDATE_DEFINITION_RESOURCE_POLICY_PARSE_MAX" "$guards_validate_definition_resource_policy_parse_max"
+validate_int "GUARDS_VALIDATE_DEFINITION_RESOURCE_POLICY_PARSE_HELPERS_MAX" "$guards_validate_definition_resource_policy_parse_helpers_max"
 validate_int "GUARDS_VALIDATE_DEFINITION_RESOURCE_POLICY_SECTIONS_MAX" "$guards_validate_definition_resource_policy_sections_max"
 validate_int "GUARDS_VALIDATE_DEFINITION_RESOURCE_POLICY_SECTIONS_COMMON_MAX" "$guards_validate_definition_resource_policy_sections_common_max"
 validate_int "GUARDS_VALIDATE_DEFINITION_RESOURCE_POLICY_SECTIONS_POLICY_PATCH_MAX" "$guards_validate_definition_resource_policy_sections_policy_patch_max"
@@ -826,6 +832,19 @@ for file in "${wave30_extra_files[@]}"; do
   fi
 done
 
+wave31_extra_files=(
+  "v10/src/core/runtime/modding/package/selectors/toolbarPlan/surfaceRules/merge/helpers.ts"
+  "v10/src/core/runtime/modding/package/guards/validateDefinition/uiAndResourcePolicy/uiPolicy/parse/helpers.ts"
+  "v10/src/core/runtime/modding/package/guards/validateDefinition/uiAndResourcePolicy/resourcePolicy/parse/helpers.ts"
+)
+
+for file in "${wave31_extra_files[@]}"; do
+  if [[ ! -f "$file" ]]; then
+    echo "[check_v10_large_file_budget] FAIL: missing target file: $file"
+    exit 1
+  fi
+done
+
 app_layout_lines="$(wc -l < "${target_files[0]}")"
 ext_runtime_lines="$(wc -l < "${target_files[1]}")"
 data_input_lines="$(wc -l < "${target_files[2]}")"
@@ -847,6 +866,7 @@ selectors_toolbar_plan_surface_rules_lines="$(wc -l < "${target_files[16]}")"
 selectors_toolbar_plan_plan_resolution_lines="$(wc -l < "${target_files[17]}")"
 selectors_toolbar_plan_surface_rules_keys_lines="$(wc -l < "v10/src/core/runtime/modding/package/selectors/toolbarPlan/surfaceRules/keys.ts")"
 selectors_toolbar_plan_surface_rules_merge_lines="$(wc -l < "v10/src/core/runtime/modding/package/selectors/toolbarPlan/surfaceRules/merge.ts")"
+selectors_toolbar_plan_surface_rules_merge_helpers_lines="$(wc -l < "v10/src/core/runtime/modding/package/selectors/toolbarPlan/surfaceRules/merge/helpers.ts")"
 selectors_toolbar_plan_plan_resolution_surface_predicates_lines="$(wc -l < "v10/src/core/runtime/modding/package/selectors/toolbarPlan/planResolution/surfacePredicates.ts")"
 selectors_toolbar_plan_plan_resolution_sections_lines="$(wc -l < "v10/src/core/runtime/modding/package/selectors/toolbarPlan/planResolution/sections.ts")"
 selectors_toolbar_plan_plan_resolution_sections_modes_lines="$(wc -l < "v10/src/core/runtime/modding/package/selectors/toolbarPlan/planResolution/sections/modes.ts")"
@@ -1008,12 +1028,14 @@ guards_validate_definition_dependencies_finalize_types_lines="$(wc -l < "v10/src
 guards_validate_definition_index_predicate_lines="$(wc -l < "v10/src/core/runtime/modding/package/guards/validateDefinition/index/predicate.ts")"
 guards_validate_definition_ui_policy_index_lines="$(wc -l < "v10/src/core/runtime/modding/package/guards/validateDefinition/uiAndResourcePolicy/uiPolicy/index.ts")"
 guards_validate_definition_ui_policy_parse_lines="$(wc -l < "v10/src/core/runtime/modding/package/guards/validateDefinition/uiAndResourcePolicy/uiPolicy/parse.ts")"
+guards_validate_definition_ui_policy_parse_helpers_lines="$(wc -l < "v10/src/core/runtime/modding/package/guards/validateDefinition/uiAndResourcePolicy/uiPolicy/parse/helpers.ts")"
 guards_validate_definition_ui_policy_sections_lines="$(wc -l < "v10/src/core/runtime/modding/package/guards/validateDefinition/uiAndResourcePolicy/uiPolicy/sections.ts")"
 guards_validate_definition_ui_policy_sections_common_lines="$(wc -l < "v10/src/core/runtime/modding/package/guards/validateDefinition/uiAndResourcePolicy/uiPolicy/sections/common.ts")"
 guards_validate_definition_ui_policy_sections_groups_and_slots_lines="$(wc -l < "v10/src/core/runtime/modding/package/guards/validateDefinition/uiAndResourcePolicy/uiPolicy/sections/groupsAndSlots.ts")"
 guards_validate_definition_ui_policy_sections_items_lines="$(wc -l < "v10/src/core/runtime/modding/package/guards/validateDefinition/uiAndResourcePolicy/uiPolicy/sections/items.ts")"
 guards_validate_definition_resource_policy_index_lines="$(wc -l < "v10/src/core/runtime/modding/package/guards/validateDefinition/uiAndResourcePolicy/resourcePolicy/index.ts")"
 guards_validate_definition_resource_policy_parse_lines="$(wc -l < "v10/src/core/runtime/modding/package/guards/validateDefinition/uiAndResourcePolicy/resourcePolicy/parse.ts")"
+guards_validate_definition_resource_policy_parse_helpers_lines="$(wc -l < "v10/src/core/runtime/modding/package/guards/validateDefinition/uiAndResourcePolicy/resourcePolicy/parse/helpers.ts")"
 guards_validate_definition_resource_policy_sections_lines="$(wc -l < "v10/src/core/runtime/modding/package/guards/validateDefinition/uiAndResourcePolicy/resourcePolicy/sections.ts")"
 guards_validate_definition_resource_policy_sections_common_lines="$(wc -l < "v10/src/core/runtime/modding/package/guards/validateDefinition/uiAndResourcePolicy/resourcePolicy/sections/common.ts")"
 guards_validate_definition_resource_policy_sections_policy_patch_lines="$(wc -l < "v10/src/core/runtime/modding/package/guards/validateDefinition/uiAndResourcePolicy/resourcePolicy/sections/policyPatch.ts")"
@@ -1239,6 +1261,11 @@ printf '[check_v10_large_file_budget] wave30 active_selectors=%s/%s sections_mod
   "$selectors_toolbar_plan_plan_resolution_sections_modes_lines" "$selectors_toolbar_plan_plan_resolution_sections_modes_max" \
   "$template_pack_adaptation_definition_helpers_lines" "$template_pack_adaptation_definition_helpers_max"
 
+printf '[check_v10_large_file_budget] wave31 surface_merge_helpers=%s/%s ui_policy_parse_helpers=%s/%s resource_policy_parse_helpers=%s/%s\n' \
+  "$selectors_toolbar_plan_surface_rules_merge_helpers_lines" "$selectors_toolbar_plan_surface_rules_merge_helpers_max" \
+  "$guards_validate_definition_ui_policy_parse_helpers_lines" "$guards_validate_definition_ui_policy_parse_helpers_max" \
+  "$guards_validate_definition_resource_policy_parse_helpers_lines" "$guards_validate_definition_resource_policy_parse_helpers_max"
+
 if (( app_layout_lines > app_layout_max )); then
   echo "[check_v10_large_file_budget] FAIL: AppLayout.tsx exceeded budget"
   exit 1
@@ -1351,6 +1378,11 @@ fi
 
 if (( selectors_toolbar_plan_surface_rules_merge_lines > selectors_toolbar_plan_surface_rules_merge_max )); then
   echo "[check_v10_large_file_budget] FAIL: toolbarPlan/surfaceRules/merge.ts exceeded budget"
+  exit 1
+fi
+
+if (( selectors_toolbar_plan_surface_rules_merge_helpers_lines > selectors_toolbar_plan_surface_rules_merge_helpers_max )); then
+  echo "[check_v10_large_file_budget] FAIL: toolbarPlan/surfaceRules/merge/helpers.ts exceeded budget"
   exit 1
 fi
 
@@ -2149,6 +2181,11 @@ if (( guards_validate_definition_ui_policy_parse_lines > guards_validate_definit
   exit 1
 fi
 
+if (( guards_validate_definition_ui_policy_parse_helpers_lines > guards_validate_definition_ui_policy_parse_helpers_max )); then
+  echo "[check_v10_large_file_budget] FAIL: uiAndResourcePolicy/uiPolicy/parse/helpers.ts exceeded budget"
+  exit 1
+fi
+
 if (( guards_validate_definition_ui_policy_sections_lines > guards_validate_definition_ui_policy_sections_max )); then
   echo "[check_v10_large_file_budget] FAIL: uiAndResourcePolicy/uiPolicy/sections.ts exceeded budget"
   exit 1
@@ -2176,6 +2213,11 @@ fi
 
 if (( guards_validate_definition_resource_policy_parse_lines > guards_validate_definition_resource_policy_parse_max )); then
   echo "[check_v10_large_file_budget] FAIL: uiAndResourcePolicy/resourcePolicy/parse.ts exceeded budget"
+  exit 1
+fi
+
+if (( guards_validate_definition_resource_policy_parse_helpers_lines > guards_validate_definition_resource_policy_parse_helpers_max )); then
+  echo "[check_v10_large_file_budget] FAIL: uiAndResourcePolicy/resourcePolicy/parse/helpers.ts exceeded budget"
   exit 1
 fi
 

@@ -259,12 +259,15 @@ Execution planning sources:
 - roadmap-level: `PROJECT_ROADMAP.md`
 - execution-level: approved `codex_tasks/task_*.md`
 - architecture-level: `v10/docs/architecture/ModEngine.md` (canonical active path)
-- large-file slicing wave (latest): `W-P6-SLICE-W30`
+- large-file slicing wave (latest): `W-P6-SLICE-W31`
   - split targets:
-    - `selectors/activePackageRules/active.ts` + `active/selectors.ts`
-    - `selectors/toolbarPlan/planResolution/sections.ts` + `sections/modes.ts`
-    - `templatePackAdapter/adaptation/definition.ts` + `definition/helpers.ts`
+    - `selectors/toolbarPlan/surfaceRules/merge.ts` + `merge/helpers.ts`
+    - `guards/validateDefinition/uiAndResourcePolicy/uiPolicy/parse.ts` + `uiPolicy/parse/helpers.ts`
+    - `guards/validateDefinition/uiAndResourcePolicy/resourcePolicy/parse.ts` + `resourcePolicy/parse/helpers.ts`
     - (previous wave continuity)
+      - `selectors/activePackageRules/active.ts` + `active/selectors.ts`
+      - `selectors/toolbarPlan/planResolution/sections.ts` + `sections/modes.ts`
+      - `templatePackAdapter/adaptation/definition.ts` + `definition/helpers.ts`
       - `guards/validateDefinition/baseFields/parse/rootFields.ts` + `rootFields/validate.ts`
       - `guards/validateDefinition/baseFields/parse/activation.ts` + `activation/validate.ts`
       - `guards/validateDefinition/baseFields/parse/parse.ts` + `parse/buildContext.ts`
