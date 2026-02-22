@@ -3,6 +3,7 @@ import {
   selectActiveModPackageAllowedPanelSlots,
   selectActiveModPackageAllowedToolbarContributionGroups,
 } from "./active";
+import { allowsValueWhenDefined } from "./checks/helpers";
 import {
   selectModPackageAllowedPanelSlots,
   selectModPackageAllowedToolbarContributionGroups,
@@ -11,43 +12,27 @@ import {
 export const selectModPackageAllowsToolbarContributionGroup = (
   definition: ModPackageDefinition | null | undefined,
   group: string
-): boolean => {
-  const allowedGroups = selectModPackageAllowedToolbarContributionGroups(definition);
-  if (!allowedGroups) return true;
-  return allowedGroups.includes(group);
-};
+): boolean =>
+  allowsValueWhenDefined(selectModPackageAllowedToolbarContributionGroups(definition), group);
 
 export const selectModPackageAllowsPanelSlot = (
   definition: ModPackageDefinition | null | undefined,
   slot: string
-): boolean => {
-  const allowedSlots = selectModPackageAllowedPanelSlots(definition);
-  if (!allowedSlots) return true;
-  return allowedSlots.includes(slot);
-};
+): boolean => allowsValueWhenDefined(selectModPackageAllowedPanelSlots(definition), slot);
 
 export const selectActiveModPackageAllowsToolbarContributionGroup = (
   definitions: readonly ModPackageDefinition[],
   activePackageId: ModPackageId | null | undefined,
   group: string
-): boolean => {
-  const allowedGroups = selectActiveModPackageAllowedToolbarContributionGroups(
-    definitions,
-    activePackageId
+): boolean =>
+  allowsValueWhenDefined(
+    selectActiveModPackageAllowedToolbarContributionGroups(definitions, activePackageId),
+    group
   );
-  if (!allowedGroups) return true;
-  return allowedGroups.includes(group);
-};
 
 export const selectActiveModPackageAllowsPanelSlot = (
   definitions: readonly ModPackageDefinition[],
   activePackageId: ModPackageId | null | undefined,
   slot: string
-): boolean => {
-  const allowedSlots = selectActiveModPackageAllowedPanelSlots(
-    definitions,
-    activePackageId
-  );
-  if (!allowedSlots) return true;
-  return allowedSlots.includes(slot);
-};
+): boolean =>
+  allowsValueWhenDefined(selectActiveModPackageAllowedPanelSlots(definitions, activePackageId), slot);

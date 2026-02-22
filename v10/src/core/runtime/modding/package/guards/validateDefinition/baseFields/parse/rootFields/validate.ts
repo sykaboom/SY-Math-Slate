@@ -1,4 +1,9 @@
-import { fail, isNonEmptyString, isPlainRecord } from "../../../../utils";
+import { fail } from "../../../../utils";
+import {
+  buildParsedBaseManifestRoot,
+  parseRootFieldString,
+  parseRootManifestRecord,
+} from "./validate/helpers";
 
 export type ParsedBaseManifestRoot = {
   manifest: Record<string, unknown>;
@@ -10,41 +15,20 @@ export type ParsedBaseManifestRoot = {
 export const validateBaseManifestRoot = (
   value: unknown
 ): { ok: true; value: ParsedBaseManifestRoot } | { ok: false; value: ReturnType<typeof fail> } => {
-  if (!isPlainRecord(value)) {
-    return {
-      ok: false,
-      value: fail("invalid-root", "manifest", "manifest must be a plain object."),
-    };
-  }
+  const manifest = parseRootManifestRecord(value);
+  if (!manifest.ok) return manifest;
 
-  if (!isNonEmptyString(value.packId)) {
-    return {
-      ok: false,
-      value: fail("invalid-pack-id", "manifest.packId", "packId must be a string."),
-    };
-  }
+  const packId = parseRootFieldString(manifest.value, "packId", "invalid-pack-id");
+  if (!packId.ok) return packId;
 
-  if (!isNonEmptyString(value.version)) {
-    return {
-      ok: false,
-      value: fail("invalid-version", "manifest.version", "version must be a string."),
-    };
-  }
+  const version = parseRootFieldString(manifest.value, "version", "invalid-version");
+  if (!version.ok) return version;
 
-  if (!isNonEmptyString(value.label)) {
-    return {
-      ok: false,
-      value: fail("invalid-label", "manifest.label", "label must be a string."),
-    };
-  }
+  const label = parseRootFieldString(manifest.value, "label", "invalid-label");
+  if (!label.ok) return label;
 
   return {
     ok: true,
-    value: {
-      manifest: value,
-      packId: value.packId,
-      version: value.version,
-      label: value.label,
-    },
+    value: buildParsedBaseManifestRoot(manifest.value, packId.value, version.value, label.value),
   };
 };

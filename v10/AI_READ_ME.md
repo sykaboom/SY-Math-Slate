@@ -259,12 +259,15 @@ Execution planning sources:
 - roadmap-level: `PROJECT_ROADMAP.md`
 - execution-level: approved `codex_tasks/task_*.md`
 - architecture-level: `v10/docs/architecture/ModEngine.md` (canonical active path)
-- large-file slicing wave (latest): `W-P6-SLICE-W32`
+- large-file slicing wave (latest): `W-P6-SLICE-W33`
   - split targets:
-    - `selectors/packageSelection/conflicts/summary.ts` + `summary/helpers.ts`
-    - `guards/resourcePolicy/commandRules/validators/entry.ts` + `entry/helpers.ts`
-    - `guards/resourcePolicy/shortcutRules/validators/entry.ts` + `entry/helpers.ts`
+    - `selectors/activePackageRules/active/selectors.ts` + `active/selectors/helpers.ts`
+    - `guards/validateDefinition/baseFields/parse/rootFields/validate.ts` + `rootFields/validate/helpers.ts`
+    - `selectors/packageSelection/uiPolicyAccess/checks.ts` + `uiPolicyAccess/checks/helpers.ts`
     - (previous wave continuity)
+      - `selectors/packageSelection/conflicts/summary.ts` + `summary/helpers.ts`
+      - `guards/resourcePolicy/commandRules/validators/entry.ts` + `entry/helpers.ts`
+      - `guards/resourcePolicy/shortcutRules/validators/entry.ts` + `entry/helpers.ts`
       - `selectors/toolbarPlan/surfaceRules/merge.ts` + `merge/helpers.ts`
       - `guards/validateDefinition/uiAndResourcePolicy/uiPolicy/parse.ts` + `uiPolicy/parse/helpers.ts`
       - `guards/validateDefinition/uiAndResourcePolicy/resourcePolicy/parse.ts` + `resourcePolicy/parse/helpers.ts`
