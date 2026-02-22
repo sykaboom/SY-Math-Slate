@@ -259,12 +259,15 @@ Execution planning sources:
 - roadmap-level: `PROJECT_ROADMAP.md`
 - execution-level: approved `codex_tasks/task_*.md`
 - architecture-level: `v10/docs/architecture/ModEngine.md` (canonical active path)
-- large-file slicing wave (latest): `W-P6-SLICE-W33`
+- large-file slicing wave (latest): `W-P6-SLICE-W34`
   - split targets:
-    - `selectors/activePackageRules/active/selectors.ts` + `active/selectors/helpers.ts`
-    - `guards/validateDefinition/baseFields/parse/rootFields/validate.ts` + `rootFields/validate/helpers.ts`
-    - `selectors/packageSelection/uiPolicyAccess/checks.ts` + `uiPolicyAccess/checks/helpers.ts`
+    - `selectors/activePackageRules/active/selectors/helpers.ts` + `helpers/{selectors.ts,withActiveDefinition.ts}`
+    - `guards/resourcePolicy/commandRules/validators/entry/helpers.ts` + `entry/helpers/{shape.ts,build.ts}`
+    - `guards/resourcePolicy/shortcutRules/validators/entry/helpers.ts` + `entry/helpers/{shape.ts,build.ts}`
     - (previous wave continuity)
+      - `selectors/activePackageRules/active/selectors.ts` + `active/selectors/helpers.ts`
+      - `guards/validateDefinition/baseFields/parse/rootFields/validate.ts` + `rootFields/validate/helpers.ts`
+      - `selectors/packageSelection/uiPolicyAccess/checks.ts` + `uiPolicyAccess/checks/helpers.ts`
       - `selectors/packageSelection/conflicts/summary.ts` + `summary/helpers.ts`
       - `guards/resourcePolicy/commandRules/validators/entry.ts` + `entry/helpers.ts`
       - `guards/resourcePolicy/shortcutRules/validators/entry.ts` + `entry/helpers.ts`
