@@ -68,6 +68,9 @@ guards_validate_definition_resource_policy_max="${GUARDS_VALIDATE_DEFINITION_RES
 guards_validate_definition_ui_policy_index_max="${GUARDS_VALIDATE_DEFINITION_UI_POLICY_INDEX_MAX:-0}"
 guards_validate_definition_ui_policy_parse_max="${GUARDS_VALIDATE_DEFINITION_UI_POLICY_PARSE_MAX:-0}"
 guards_validate_definition_ui_policy_sections_max="${GUARDS_VALIDATE_DEFINITION_UI_POLICY_SECTIONS_MAX:-0}"
+guards_validate_definition_ui_policy_sections_common_max="${GUARDS_VALIDATE_DEFINITION_UI_POLICY_SECTIONS_COMMON_MAX:-0}"
+guards_validate_definition_ui_policy_sections_groups_and_slots_max="${GUARDS_VALIDATE_DEFINITION_UI_POLICY_SECTIONS_GROUPS_AND_SLOTS_MAX:-0}"
+guards_validate_definition_ui_policy_sections_items_max="${GUARDS_VALIDATE_DEFINITION_UI_POLICY_SECTIONS_ITEMS_MAX:-0}"
 guards_validate_definition_resource_policy_index_max="${GUARDS_VALIDATE_DEFINITION_RESOURCE_POLICY_INDEX_MAX:-0}"
 guards_validate_definition_resource_policy_parse_max="${GUARDS_VALIDATE_DEFINITION_RESOURCE_POLICY_PARSE_MAX:-0}"
 guards_validate_definition_resource_policy_sections_max="${GUARDS_VALIDATE_DEFINITION_RESOURCE_POLICY_SECTIONS_MAX:-0}"
@@ -137,6 +140,9 @@ selectors_resource_command_merge_run_max="${SELECTORS_RESOURCE_COMMAND_MERGE_RUN
 selectors_resource_item_merge_operations_max="${SELECTORS_RESOURCE_ITEM_MERGE_OPERATIONS_MAX:-0}"
 selectors_resource_item_merge_run_max="${SELECTORS_RESOURCE_ITEM_MERGE_RUN_MAX:-0}"
 guards_resource_policy_input_behavior_rule_normalize_max="${GUARDS_RESOURCE_POLICY_INPUT_BEHAVIOR_RULE_NORMALIZE_MAX:-0}"
+guards_resource_policy_input_behavior_rule_normalize_mod_id_max="${GUARDS_RESOURCE_POLICY_INPUT_BEHAVIOR_RULE_NORMALIZE_MOD_ID_MAX:-0}"
+guards_resource_policy_input_behavior_rule_normalize_chain_max="${GUARDS_RESOURCE_POLICY_INPUT_BEHAVIOR_RULE_NORMALIZE_CHAIN_MAX:-0}"
+guards_resource_policy_input_behavior_rule_normalize_rule_max="${GUARDS_RESOURCE_POLICY_INPUT_BEHAVIOR_RULE_NORMALIZE_RULE_MAX:-0}"
 guards_resource_policy_input_behavior_rule_parse_max="${GUARDS_RESOURCE_POLICY_INPUT_BEHAVIOR_RULE_PARSE_MAX:-0}"
 guards_ui_policy_parse_validators_max="${GUARDS_UI_POLICY_PARSE_VALIDATORS_MAX:-0}"
 guards_ui_policy_parse_parse_max="${GUARDS_UI_POLICY_PARSE_PARSE_MAX:-0}"
@@ -202,6 +208,9 @@ validate_int "GUARDS_VALIDATE_DEFINITION_RESOURCE_POLICY_MAX" "$guards_validate_
 validate_int "GUARDS_VALIDATE_DEFINITION_UI_POLICY_INDEX_MAX" "$guards_validate_definition_ui_policy_index_max"
 validate_int "GUARDS_VALIDATE_DEFINITION_UI_POLICY_PARSE_MAX" "$guards_validate_definition_ui_policy_parse_max"
 validate_int "GUARDS_VALIDATE_DEFINITION_UI_POLICY_SECTIONS_MAX" "$guards_validate_definition_ui_policy_sections_max"
+validate_int "GUARDS_VALIDATE_DEFINITION_UI_POLICY_SECTIONS_COMMON_MAX" "$guards_validate_definition_ui_policy_sections_common_max"
+validate_int "GUARDS_VALIDATE_DEFINITION_UI_POLICY_SECTIONS_GROUPS_AND_SLOTS_MAX" "$guards_validate_definition_ui_policy_sections_groups_and_slots_max"
+validate_int "GUARDS_VALIDATE_DEFINITION_UI_POLICY_SECTIONS_ITEMS_MAX" "$guards_validate_definition_ui_policy_sections_items_max"
 validate_int "GUARDS_VALIDATE_DEFINITION_RESOURCE_POLICY_INDEX_MAX" "$guards_validate_definition_resource_policy_index_max"
 validate_int "GUARDS_VALIDATE_DEFINITION_RESOURCE_POLICY_PARSE_MAX" "$guards_validate_definition_resource_policy_parse_max"
 validate_int "GUARDS_VALIDATE_DEFINITION_RESOURCE_POLICY_SECTIONS_MAX" "$guards_validate_definition_resource_policy_sections_max"
@@ -271,6 +280,9 @@ validate_int "SELECTORS_RESOURCE_COMMAND_MERGE_RUN_MAX" "$selectors_resource_com
 validate_int "SELECTORS_RESOURCE_ITEM_MERGE_OPERATIONS_MAX" "$selectors_resource_item_merge_operations_max"
 validate_int "SELECTORS_RESOURCE_ITEM_MERGE_RUN_MAX" "$selectors_resource_item_merge_run_max"
 validate_int "GUARDS_RESOURCE_POLICY_INPUT_BEHAVIOR_RULE_NORMALIZE_MAX" "$guards_resource_policy_input_behavior_rule_normalize_max"
+validate_int "GUARDS_RESOURCE_POLICY_INPUT_BEHAVIOR_RULE_NORMALIZE_MOD_ID_MAX" "$guards_resource_policy_input_behavior_rule_normalize_mod_id_max"
+validate_int "GUARDS_RESOURCE_POLICY_INPUT_BEHAVIOR_RULE_NORMALIZE_CHAIN_MAX" "$guards_resource_policy_input_behavior_rule_normalize_chain_max"
+validate_int "GUARDS_RESOURCE_POLICY_INPUT_BEHAVIOR_RULE_NORMALIZE_RULE_MAX" "$guards_resource_policy_input_behavior_rule_normalize_rule_max"
 validate_int "GUARDS_RESOURCE_POLICY_INPUT_BEHAVIOR_RULE_PARSE_MAX" "$guards_resource_policy_input_behavior_rule_parse_max"
 validate_int "GUARDS_UI_POLICY_PARSE_VALIDATORS_MAX" "$guards_ui_policy_parse_validators_max"
 validate_int "GUARDS_UI_POLICY_PARSE_PARSE_MAX" "$guards_ui_policy_parse_parse_max"
@@ -525,6 +537,22 @@ for file in "${wave19_extra_files[@]}"; do
   fi
 done
 
+wave20_extra_files=(
+  "v10/src/core/runtime/modding/package/guards/validateDefinition/uiAndResourcePolicy/uiPolicy/sections/common.ts"
+  "v10/src/core/runtime/modding/package/guards/validateDefinition/uiAndResourcePolicy/uiPolicy/sections/groupsAndSlots.ts"
+  "v10/src/core/runtime/modding/package/guards/validateDefinition/uiAndResourcePolicy/uiPolicy/sections/items.ts"
+  "v10/src/core/runtime/modding/package/guards/resourcePolicy/inputBehaviorRule/normalize/modId.ts"
+  "v10/src/core/runtime/modding/package/guards/resourcePolicy/inputBehaviorRule/normalize/chain.ts"
+  "v10/src/core/runtime/modding/package/guards/resourcePolicy/inputBehaviorRule/normalize/rule.ts"
+)
+
+for file in "${wave20_extra_files[@]}"; do
+  if [[ ! -f "$file" ]]; then
+    echo "[check_v10_large_file_budget] FAIL: missing target file: $file"
+    exit 1
+  fi
+done
+
 app_layout_lines="$(wc -l < "${target_files[0]}")"
 ext_runtime_lines="$(wc -l < "${target_files[1]}")"
 data_input_lines="$(wc -l < "${target_files[2]}")"
@@ -606,6 +634,9 @@ selectors_resource_command_merge_run_lines="$(wc -l < "${extra_target_files[40]}
 selectors_resource_item_merge_operations_lines="$(wc -l < "${extra_target_files[41]}")"
 selectors_resource_item_merge_run_lines="$(wc -l < "${extra_target_files[42]}")"
 guards_resource_policy_input_behavior_rule_normalize_lines="$(wc -l < "${extra_target_files[43]}")"
+guards_resource_policy_input_behavior_rule_normalize_mod_id_lines="$(wc -l < "v10/src/core/runtime/modding/package/guards/resourcePolicy/inputBehaviorRule/normalize/modId.ts")"
+guards_resource_policy_input_behavior_rule_normalize_chain_lines="$(wc -l < "v10/src/core/runtime/modding/package/guards/resourcePolicy/inputBehaviorRule/normalize/chain.ts")"
+guards_resource_policy_input_behavior_rule_normalize_rule_lines="$(wc -l < "v10/src/core/runtime/modding/package/guards/resourcePolicy/inputBehaviorRule/normalize/rule.ts")"
 guards_resource_policy_input_behavior_rule_parse_lines="$(wc -l < "${extra_target_files[44]}")"
 guards_ui_policy_parse_validators_lines="$(wc -l < "${extra_target_files[45]}")"
 guards_ui_policy_parse_parse_lines="$(wc -l < "${extra_target_files[46]}")"
@@ -655,6 +686,9 @@ guards_validate_definition_index_predicate_lines="$(wc -l < "v10/src/core/runtim
 guards_validate_definition_ui_policy_index_lines="$(wc -l < "v10/src/core/runtime/modding/package/guards/validateDefinition/uiAndResourcePolicy/uiPolicy/index.ts")"
 guards_validate_definition_ui_policy_parse_lines="$(wc -l < "v10/src/core/runtime/modding/package/guards/validateDefinition/uiAndResourcePolicy/uiPolicy/parse.ts")"
 guards_validate_definition_ui_policy_sections_lines="$(wc -l < "v10/src/core/runtime/modding/package/guards/validateDefinition/uiAndResourcePolicy/uiPolicy/sections.ts")"
+guards_validate_definition_ui_policy_sections_common_lines="$(wc -l < "v10/src/core/runtime/modding/package/guards/validateDefinition/uiAndResourcePolicy/uiPolicy/sections/common.ts")"
+guards_validate_definition_ui_policy_sections_groups_and_slots_lines="$(wc -l < "v10/src/core/runtime/modding/package/guards/validateDefinition/uiAndResourcePolicy/uiPolicy/sections/groupsAndSlots.ts")"
+guards_validate_definition_ui_policy_sections_items_lines="$(wc -l < "v10/src/core/runtime/modding/package/guards/validateDefinition/uiAndResourcePolicy/uiPolicy/sections/items.ts")"
 guards_validate_definition_resource_policy_index_lines="$(wc -l < "v10/src/core/runtime/modding/package/guards/validateDefinition/uiAndResourcePolicy/resourcePolicy/index.ts")"
 guards_validate_definition_resource_policy_parse_lines="$(wc -l < "v10/src/core/runtime/modding/package/guards/validateDefinition/uiAndResourcePolicy/resourcePolicy/parse.ts")"
 guards_validate_definition_resource_policy_sections_lines="$(wc -l < "v10/src/core/runtime/modding/package/guards/validateDefinition/uiAndResourcePolicy/resourcePolicy/sections.ts")"
@@ -783,6 +817,14 @@ printf '[check_v10_large_file_budget] wave19 cmd_val_entry=%s/%s cmd_val_operati
   "$guards_resource_policy_shortcut_rules_validators_entry_lines" "$guards_resource_policy_shortcut_rules_validators_entry_max" \
   "$guards_resource_policy_shortcut_rules_validators_operation_lines" "$guards_resource_policy_shortcut_rules_validators_operation_max" \
   "$guards_resource_policy_shortcut_rules_validators_when_lines" "$guards_resource_policy_shortcut_rules_validators_when_max"
+
+printf '[check_v10_large_file_budget] wave20 ui_sections_common=%s/%s ui_sections_groups_slots=%s/%s ui_sections_items=%s/%s input_norm_mod_id=%s/%s input_norm_chain=%s/%s input_norm_rule=%s/%s\n' \
+  "$guards_validate_definition_ui_policy_sections_common_lines" "$guards_validate_definition_ui_policy_sections_common_max" \
+  "$guards_validate_definition_ui_policy_sections_groups_and_slots_lines" "$guards_validate_definition_ui_policy_sections_groups_and_slots_max" \
+  "$guards_validate_definition_ui_policy_sections_items_lines" "$guards_validate_definition_ui_policy_sections_items_max" \
+  "$guards_resource_policy_input_behavior_rule_normalize_mod_id_lines" "$guards_resource_policy_input_behavior_rule_normalize_mod_id_max" \
+  "$guards_resource_policy_input_behavior_rule_normalize_chain_lines" "$guards_resource_policy_input_behavior_rule_normalize_chain_max" \
+  "$guards_resource_policy_input_behavior_rule_normalize_rule_lines" "$guards_resource_policy_input_behavior_rule_normalize_rule_max"
 
 if (( app_layout_lines > app_layout_max )); then
   echo "[check_v10_large_file_budget] FAIL: AppLayout.tsx exceeded budget"
@@ -1189,6 +1231,21 @@ if (( guards_resource_policy_input_behavior_rule_normalize_lines > guards_resour
   exit 1
 fi
 
+if (( guards_resource_policy_input_behavior_rule_normalize_mod_id_lines > guards_resource_policy_input_behavior_rule_normalize_mod_id_max )); then
+  echo "[check_v10_large_file_budget] FAIL: resourcePolicy/inputBehaviorRule/normalize/modId.ts exceeded budget"
+  exit 1
+fi
+
+if (( guards_resource_policy_input_behavior_rule_normalize_chain_lines > guards_resource_policy_input_behavior_rule_normalize_chain_max )); then
+  echo "[check_v10_large_file_budget] FAIL: resourcePolicy/inputBehaviorRule/normalize/chain.ts exceeded budget"
+  exit 1
+fi
+
+if (( guards_resource_policy_input_behavior_rule_normalize_rule_lines > guards_resource_policy_input_behavior_rule_normalize_rule_max )); then
+  echo "[check_v10_large_file_budget] FAIL: resourcePolicy/inputBehaviorRule/normalize/rule.ts exceeded budget"
+  exit 1
+fi
+
 if (( guards_resource_policy_input_behavior_rule_parse_lines > guards_resource_policy_input_behavior_rule_parse_max )); then
   echo "[check_v10_large_file_budget] FAIL: resourcePolicy/inputBehaviorRule/parse.ts exceeded budget"
   exit 1
@@ -1431,6 +1488,21 @@ fi
 
 if (( guards_validate_definition_ui_policy_sections_lines > guards_validate_definition_ui_policy_sections_max )); then
   echo "[check_v10_large_file_budget] FAIL: uiAndResourcePolicy/uiPolicy/sections.ts exceeded budget"
+  exit 1
+fi
+
+if (( guards_validate_definition_ui_policy_sections_common_lines > guards_validate_definition_ui_policy_sections_common_max )); then
+  echo "[check_v10_large_file_budget] FAIL: uiAndResourcePolicy/uiPolicy/sections/common.ts exceeded budget"
+  exit 1
+fi
+
+if (( guards_validate_definition_ui_policy_sections_groups_and_slots_lines > guards_validate_definition_ui_policy_sections_groups_and_slots_max )); then
+  echo "[check_v10_large_file_budget] FAIL: uiAndResourcePolicy/uiPolicy/sections/groupsAndSlots.ts exceeded budget"
+  exit 1
+fi
+
+if (( guards_validate_definition_ui_policy_sections_items_lines > guards_validate_definition_ui_policy_sections_items_max )); then
+  echo "[check_v10_large_file_budget] FAIL: uiAndResourcePolicy/uiPolicy/sections/items.ts exceeded budget"
   exit 1
 fi
 
