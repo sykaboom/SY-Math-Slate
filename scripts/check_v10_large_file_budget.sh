@@ -47,6 +47,10 @@ guards_validate_definition_index_predicate_max="${GUARDS_VALIDATE_DEFINITION_IND
 selectors_toolbar_plan_provider_max="${SELECTORS_TOOLBAR_PLAN_PROVIDER_MAX:-0}"
 selectors_toolbar_plan_surface_rules_max="${SELECTORS_TOOLBAR_PLAN_SURFACE_RULES_MAX:-0}"
 selectors_toolbar_plan_plan_resolution_max="${SELECTORS_TOOLBAR_PLAN_PLAN_RESOLUTION_MAX:-0}"
+selectors_toolbar_plan_surface_rules_keys_max="${SELECTORS_TOOLBAR_PLAN_SURFACE_RULES_KEYS_MAX:-0}"
+selectors_toolbar_plan_surface_rules_merge_max="${SELECTORS_TOOLBAR_PLAN_SURFACE_RULES_MERGE_MAX:-0}"
+selectors_toolbar_plan_plan_resolution_surface_predicates_max="${SELECTORS_TOOLBAR_PLAN_PLAN_RESOLUTION_SURFACE_PREDICATES_MAX:-0}"
+selectors_toolbar_plan_plan_resolution_sections_max="${SELECTORS_TOOLBAR_PLAN_PLAN_RESOLUTION_SECTIONS_MAX:-0}"
 guards_resource_policy_command_rules_max="${GUARDS_RESOURCE_POLICY_COMMAND_RULES_MAX:-0}"
 guards_resource_policy_shortcut_rules_max="${GUARDS_RESOURCE_POLICY_SHORTCUT_RULES_MAX:-0}"
 guards_resource_policy_command_rules_parse_max="${GUARDS_RESOURCE_POLICY_COMMAND_RULES_PARSE_MAX:-0}"
@@ -196,6 +200,10 @@ validate_int "GUARDS_VALIDATE_DEFINITION_INDEX_PREDICATE_MAX" "$guards_validate_
 validate_int "SELECTORS_TOOLBAR_PLAN_PROVIDER_MAX" "$selectors_toolbar_plan_provider_max"
 validate_int "SELECTORS_TOOLBAR_PLAN_SURFACE_RULES_MAX" "$selectors_toolbar_plan_surface_rules_max"
 validate_int "SELECTORS_TOOLBAR_PLAN_PLAN_RESOLUTION_MAX" "$selectors_toolbar_plan_plan_resolution_max"
+validate_int "SELECTORS_TOOLBAR_PLAN_SURFACE_RULES_KEYS_MAX" "$selectors_toolbar_plan_surface_rules_keys_max"
+validate_int "SELECTORS_TOOLBAR_PLAN_SURFACE_RULES_MERGE_MAX" "$selectors_toolbar_plan_surface_rules_merge_max"
+validate_int "SELECTORS_TOOLBAR_PLAN_PLAN_RESOLUTION_SURFACE_PREDICATES_MAX" "$selectors_toolbar_plan_plan_resolution_surface_predicates_max"
+validate_int "SELECTORS_TOOLBAR_PLAN_PLAN_RESOLUTION_SECTIONS_MAX" "$selectors_toolbar_plan_plan_resolution_sections_max"
 validate_int "GUARDS_RESOURCE_POLICY_COMMAND_RULES_MAX" "$guards_resource_policy_command_rules_max"
 validate_int "GUARDS_RESOURCE_POLICY_SHORTCUT_RULES_MAX" "$guards_resource_policy_shortcut_rules_max"
 validate_int "GUARDS_RESOURCE_POLICY_COMMAND_RULES_PARSE_MAX" "$guards_resource_policy_command_rules_parse_max"
@@ -590,6 +598,20 @@ for file in "${wave21_extra_files[@]}"; do
   fi
 done
 
+wave22_extra_files=(
+  "v10/src/core/runtime/modding/package/selectors/toolbarPlan/surfaceRules/keys.ts"
+  "v10/src/core/runtime/modding/package/selectors/toolbarPlan/surfaceRules/merge.ts"
+  "v10/src/core/runtime/modding/package/selectors/toolbarPlan/planResolution/surfacePredicates.ts"
+  "v10/src/core/runtime/modding/package/selectors/toolbarPlan/planResolution/sections.ts"
+)
+
+for file in "${wave22_extra_files[@]}"; do
+  if [[ ! -f "$file" ]]; then
+    echo "[check_v10_large_file_budget] FAIL: missing target file: $file"
+    exit 1
+  fi
+done
+
 app_layout_lines="$(wc -l < "${target_files[0]}")"
 ext_runtime_lines="$(wc -l < "${target_files[1]}")"
 data_input_lines="$(wc -l < "${target_files[2]}")"
@@ -609,6 +631,10 @@ guards_validate_definition_base_fields_lines="$(wc -l < "${target_files[14]}")"
 selectors_toolbar_plan_provider_lines="$(wc -l < "${target_files[15]}")"
 selectors_toolbar_plan_surface_rules_lines="$(wc -l < "${target_files[16]}")"
 selectors_toolbar_plan_plan_resolution_lines="$(wc -l < "${target_files[17]}")"
+selectors_toolbar_plan_surface_rules_keys_lines="$(wc -l < "v10/src/core/runtime/modding/package/selectors/toolbarPlan/surfaceRules/keys.ts")"
+selectors_toolbar_plan_surface_rules_merge_lines="$(wc -l < "v10/src/core/runtime/modding/package/selectors/toolbarPlan/surfaceRules/merge.ts")"
+selectors_toolbar_plan_plan_resolution_surface_predicates_lines="$(wc -l < "v10/src/core/runtime/modding/package/selectors/toolbarPlan/planResolution/surfacePredicates.ts")"
+selectors_toolbar_plan_plan_resolution_sections_lines="$(wc -l < "v10/src/core/runtime/modding/package/selectors/toolbarPlan/planResolution/sections.ts")"
 guards_resource_policy_command_rules_lines="$(wc -l < "${target_files[18]}")"
 guards_resource_policy_shortcut_rules_lines="$(wc -l < "${target_files[19]}")"
 guards_resource_policy_command_rules_parse_lines="$(wc -l < "v10/src/core/runtime/modding/package/guards/resourcePolicy/commandRules/parse.ts")"
@@ -883,6 +909,12 @@ printf '[check_v10_large_file_budget] wave21 resource_sections_common=%s/%s reso
   "$registry_resource_overrides_layer_lines" "$registry_resource_overrides_layer_max" \
   "$registry_resource_overrides_state_lines" "$registry_resource_overrides_state_max"
 
+printf '[check_v10_large_file_budget] wave22 surface_rules_keys=%s/%s surface_rules_merge=%s/%s plan_resolution_surface_predicates=%s/%s plan_resolution_sections=%s/%s\n' \
+  "$selectors_toolbar_plan_surface_rules_keys_lines" "$selectors_toolbar_plan_surface_rules_keys_max" \
+  "$selectors_toolbar_plan_surface_rules_merge_lines" "$selectors_toolbar_plan_surface_rules_merge_max" \
+  "$selectors_toolbar_plan_plan_resolution_surface_predicates_lines" "$selectors_toolbar_plan_plan_resolution_surface_predicates_max" \
+  "$selectors_toolbar_plan_plan_resolution_sections_lines" "$selectors_toolbar_plan_plan_resolution_sections_max"
+
 if (( app_layout_lines > app_layout_max )); then
   echo "[check_v10_large_file_budget] FAIL: AppLayout.tsx exceeded budget"
   exit 1
@@ -985,6 +1017,26 @@ fi
 
 if (( selectors_toolbar_plan_plan_resolution_lines > selectors_toolbar_plan_plan_resolution_max )); then
   echo "[check_v10_large_file_budget] FAIL: toolbarPlan/planResolution.ts exceeded budget"
+  exit 1
+fi
+
+if (( selectors_toolbar_plan_surface_rules_keys_lines > selectors_toolbar_plan_surface_rules_keys_max )); then
+  echo "[check_v10_large_file_budget] FAIL: toolbarPlan/surfaceRules/keys.ts exceeded budget"
+  exit 1
+fi
+
+if (( selectors_toolbar_plan_surface_rules_merge_lines > selectors_toolbar_plan_surface_rules_merge_max )); then
+  echo "[check_v10_large_file_budget] FAIL: toolbarPlan/surfaceRules/merge.ts exceeded budget"
+  exit 1
+fi
+
+if (( selectors_toolbar_plan_plan_resolution_surface_predicates_lines > selectors_toolbar_plan_plan_resolution_surface_predicates_max )); then
+  echo "[check_v10_large_file_budget] FAIL: toolbarPlan/planResolution/surfacePredicates.ts exceeded budget"
+  exit 1
+fi
+
+if (( selectors_toolbar_plan_plan_resolution_sections_lines > selectors_toolbar_plan_plan_resolution_sections_max )); then
+  echo "[check_v10_large_file_budget] FAIL: toolbarPlan/planResolution/sections.ts exceeded budget"
   exit 1
 fi
 

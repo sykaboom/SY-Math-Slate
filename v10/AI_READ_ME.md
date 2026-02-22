@@ -95,6 +95,7 @@ Core subsystems:
     - resource policy validator stage11 split (task_561, task_562): `.../commandRules/validators.ts` and `.../shortcutRules/validators.ts` are facade-only exports; validator internals live under `.../validators/*`.
     - ui-policy/input-behavior stage12 split (task_564, task_565): `.../uiPolicy/sections.ts` and `.../inputBehaviorRule/normalize.ts` are facade-only exports; internals live under `.../sections/*` and `.../normalize/*`.
     - resource-policy/registry stage13 split (task_567, task_568, task_569): `.../resourcePolicy/sections.ts`, `registry/runtimeRegistryState.ts`, and `registry/resourceOverrides.ts` are facade-only exports; internals moved under `.../resourcePolicy/sections/*`, `.../runtimeRegistryState/*`, and `.../resourceOverrides/*`.
+    - toolbar-plan stage14 split (task_571, task_572): `selectors/toolbarPlan/surfaceRules.ts` and `selectors/toolbarPlan/planResolution.ts` are facade-only exports; internals moved under `.../surfaceRules/*` and `.../planResolution/*`.
     - legacy alias runtime path: retired (task_496).
     - legacy alias retire freeze gate:
       - budget: `codex_tasks/workflow/mod_alias_retire_budget.env`
