@@ -85,6 +85,7 @@ Core subsystems:
     - merge core split (task_534): `resourceCommandMerge/merge.ts` and `resourceItemMerge/merge.ts` are facades with operation modules under `.../merge/*`.
     - inputBehavior guard split (task_535): `guards/resourcePolicy/inputBehaviorRule.ts` is facade and parser modules live under `.../inputBehaviorRule/*`.
     - parser stage3 split (task_537, task_538): `guards/uiPolicy/parseUIItemRules.ts` and `guards/validateDefinition/baseFields/parse.ts` are facade-only exports; parser internals live under `.../parseUIItemRules/*` and `.../baseFields/parse/*`.
+    - parser stage4 split (task_540, task_541): `guards/uiPolicy/parseUIItemRules/validators.ts` and `selectors/resourceCommandMerge/merge/operations.ts` are facade-only exports; internals live under `.../validators/*` and `.../merge/operations/*`.
     - legacy alias runtime path: retired (task_496).
     - legacy alias retire freeze gate:
       - budget: `codex_tasks/workflow/mod_alias_retire_budget.env`
