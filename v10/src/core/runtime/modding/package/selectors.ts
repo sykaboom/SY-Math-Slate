@@ -27,12 +27,6 @@ import {
   getRuntimeModResourceLayerOverrides,
   getRuntimeToolbarBaseProvider,
 } from "./registry";
-import {
-  LEGACY_MOD_ID_TO_TOOLBAR_MODE_ALIAS_FALLBACK_SOURCE,
-  LEGACY_TOOLBAR_MODE_TO_MOD_ID_ALIAS_FALLBACK_SOURCE,
-  selectLegacyAliasModIdForToolbarMode,
-  selectLegacyAliasToolbarModeForModId,
-} from "./legacyAlias";
 
 const EMPTY_TOOLBAR_BASE_MODE_DEFINITIONS: readonly ToolbarBaseModeDefinition[] =
   Object.freeze([]);
@@ -232,15 +226,6 @@ export const selectModPackageActivationModIdResolutionForToolbarMode = (
     };
   }
 
-  const fallbackModId = selectLegacyAliasModIdForToolbarMode(toolbarMode);
-  if (fallbackModId) {
-    return {
-      modId: fallbackModId,
-      source: "legacy-alias-fallback",
-      aliasFallbackSource: LEGACY_TOOLBAR_MODE_TO_MOD_ID_ALIAS_FALLBACK_SOURCE,
-    };
-  }
-
   return {
     modId: null,
     source: "none",
@@ -309,14 +294,6 @@ export const selectModPackageToolbarModeResolutionForActivationModId = (
     }
   }
 
-  const compatToolbarMode = selectLegacyAliasToolbarModeForModId(modId);
-  if (compatToolbarMode) {
-    return {
-      toolbarMode: compatToolbarMode,
-      source: "legacy-alias-fallback",
-      aliasFallbackSource: LEGACY_MOD_ID_TO_TOOLBAR_MODE_ALIAS_FALLBACK_SOURCE,
-    };
-  }
   return {
     toolbarMode: null,
     source: "none",

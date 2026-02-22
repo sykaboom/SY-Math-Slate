@@ -22,7 +22,7 @@ Scope: 목표(TO-BE)와 현재(AS-IS)의 어긋남을 우선순위와 리스크�
 | G-01 | Host 영역에 정책/행동 비중 잔존 | High | `features/chrome/layout/AppLayout.tsx`, `features/chrome/toolbar/FloatingToolbar.tsx` | mod 교체 시 host 회귀 위험 증가 | host는 resolved plan 렌더만 담당 |
 | G-02 | Toolbar 정책 SSOT 분산 | High | `features/chrome/toolbar/toolbarModePolicy.ts`, `features/chrome/toolbar/catalog/toolbarActionCatalog.ts`, `features/chrome/toolbar/catalog/toolbarSurfacePolicy.ts`, `core/runtime/modding/package/selectors.ts` | drift/불일치 발생 가능 | resolver 중심 단일 정책 체인 |
 | G-03 | Pack 정의와 런타임 반영 간 dead config 가능성 | High | `mod/packs/base-education/*` + selector/runtime 매핑 경로 | 선언과 동작 불일치 위험 | pack 정의=런타임 반영 계약 보장 |
-| G-04 | Legacy alias fallback 잔존 | Medium | `core/runtime/modding/package/selectors.ts` (compat alias), `features/chrome/toolbar/toolbarModePolicy.ts` | 최종 전환 지연, hidden coupling 유지 | alias 격리 + telemetry 후 제거 |
+| G-04 | Legacy alias fallback 런타임 경로 | Resolved | `core/runtime/modding/package/selectors.ts`, `features/chrome/toolbar/toolbarModePolicy.ts` | 제거 완료(재유입 방지 필요) | zero-budget freeze guardrail 유지 |
 | G-05 | 대형 파일 집중으로 변경 충돌 위험 | Medium | `features/chrome/layout/AppLayout.tsx`, `features/chrome/toolbar/FloatingToolbar.tsx` 외 900+ 파일군 | 작은 변경도 회귀/충돌 증가 | 책임 분해 및 경계 강화 |
 | G-06 | mod 0개 부팅 보장 테스트 미고정 | Medium | 테스트/런북 레벨 근거 부재 | core always-on 보장 불명확 | no-mod boot test를 게이트화 |
 
@@ -36,7 +36,7 @@ Scope: 목표(TO-BE)와 현재(AS-IS)의 어긋남을 우선순위와 리스크�
 3. 선언적 pack 설정이 실제 런타임에 반영되지 않는 silent failure
 
 ### Medium risks
-1. legacy alias 의존 장기화
+1. legacy alias 재유입(guardrail 미준수)
 2. 대형 파일 중심 변경 시 회귀 확률 상승
 3. no-mod 부팅 보장 부재로 엔진 독립성 검증 불가
 
@@ -54,7 +54,7 @@ Scope: 목표(TO-BE)와 현재(AS-IS)의 어긋남을 우선순위와 리스크�
 3. 계약 고정:
    - pack 정의 -> runtime 반영 검증 체크 추가
 4. legacy 축소:
-   - alias fallback telemetry 후 단계 제거
+   - alias runtime 제거 유지 + zero-budget guardrail 고정
 5. 검증 고정:
    - no-mod boot + import boundary + resolver consistency 테스트
 

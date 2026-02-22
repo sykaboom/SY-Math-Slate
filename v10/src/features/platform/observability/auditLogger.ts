@@ -183,14 +183,6 @@ export type ModerationDecisionAuditPayload = {
   moderationNote?: string | null;
 };
 
-export type ModAliasFallbackHitAuditPayload = {
-  toolbarMode: string;
-  activePackageId: string | null;
-  requestedModId: string | null;
-  fallbackModId: string;
-  source: string;
-};
-
 const toSafeSupports = (supports: string[]): string[] =>
   supports
     .filter((item) => typeof item === "string")
@@ -290,25 +282,6 @@ export const emitModerationDecisionAuditEvent = (
       status: payload.status,
       moderatorId: payload.moderatorId,
       moderationNote: payload.moderationNote ?? null,
-    })
-  );
-};
-
-export const emitModAliasFallbackHitAuditEvent = (
-  payload: ModAliasFallbackHitAuditPayload
-): void => {
-  emitAuditEvent(
-    "policy",
-    "mod.alias_fallback_hit",
-    `mod.alias_fallback_hit:${payload.toolbarMode}:${
-      payload.activePackageId ?? "none"
-    }:${Date.now()}`,
-    toJsonSafeAuditPayload({
-      toolbarMode: payload.toolbarMode,
-      activePackageId: payload.activePackageId ?? null,
-      requestedModId: payload.requestedModId ?? null,
-      fallbackModId: payload.fallbackModId,
-      source: payload.source,
     })
   );
 };

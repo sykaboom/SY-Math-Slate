@@ -136,6 +136,6 @@ UI는 분리해도 되지만, 계약은 동일 runtime resolver를 공유해야 
 
 1. Host에서 툴바/레이아웃 정책 하드코딩 참조가 0.
 2. `ResolvedToolbarPlan` 없이 host 렌더가 불가능(컴파일 타임 계약).
-3. legacy alias fallback 발동 시 telemetry/warn이 기록.
+3. legacy alias fallback runtime path가 존재하지 않고, zero-budget guardrail이 PASS.
 4. 모드 0개 부팅 테스트가 통과.
 5. guardrail 스크립트에서 one-way import 규칙 위반이 0.

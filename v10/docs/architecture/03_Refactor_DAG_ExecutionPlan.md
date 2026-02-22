@@ -74,7 +74,7 @@ flowchart TD
 - Blocking risk:
   - 기존 사용자 흐름 회귀
 - Verify:
-  - alias fallback telemetry 경고 + 점진 제거
+  - alias runtime path 부재 + zero-budget guard PASS
 
 ### P5 — No-mod Boot Certification
 - Goal:
@@ -114,7 +114,7 @@ flowchart TD
 | P1 | resolver 경로 일원화 증거(rg + unit/manual) |
 | P2 | host 정책 하드코딩 참조 0 또는 명시적 예외만 |
 | P3 | pack 선언-반영 일치 체크 |
-| P4 | alias fallback metric/warn 확인 |
+| P4 | alias runtime path 부재 + zero-budget guard 확인 |
 | P5 | no-mod boot pass |
 | P6 | `check_layer_rules`, `check_mod_contract`, lint/build pass |
 

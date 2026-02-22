@@ -11,17 +11,10 @@ export type ModPackageToolbarMode =
 
 export type ModPackageId = string;
 
-export const MOD_PACKAGE_ALIAS_FALLBACK_SOURCES = [
-  "legacy.toolbar-mode-to-mod-id",
-  "legacy.mod-id-to-toolbar-mode",
-] as const;
-
-export type ModPackageAliasFallbackSource =
-  (typeof MOD_PACKAGE_ALIAS_FALLBACK_SOURCES)[number];
+export type ModPackageAliasFallbackSource = never;
 
 export type ModPackageResolutionSource =
   | "package-map"
-  | "legacy-alias-fallback"
   | "none";
 
 export type ModPackageActivationModIdResolution = {

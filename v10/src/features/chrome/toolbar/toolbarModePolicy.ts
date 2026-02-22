@@ -1,6 +1,5 @@
 import {
   listRuntimeModPackages,
-  selectActiveModPackage,
   selectActiveModPackageActivationModIdResolutionForToolbarMode,
   selectActiveModPackageToolbarModeForActivationModId,
   selectActiveModPackageToolbarModeResolutionForActivationModId,
@@ -13,7 +12,6 @@ import {
   type ModPackageId,
   type ToolbarBaseModeDefinition,
 } from "@core/runtime/modding/package";
-import { emitModAliasFallbackHitAuditEvent } from "@features/platform/observability";
 import type { ModId } from "@core/runtime/modding/api";
 
 export type ToolbarMod = "draw" | "playback" | "canvas";
@@ -39,10 +37,6 @@ export const resolveActiveModIdFromToolbarMode = (
   activationContext: ToolbarModeActivationContext = {}
 ): ModId => {
   const packageDefinitions = resolvePackageDefinitions(activationContext);
-  const activeDefinition = selectActiveModPackage(
-    packageDefinitions,
-    activationContext.activePackageId
-  );
   const activationPolicyResolution =
     selectActiveModPackageActivationModIdResolutionForToolbarMode(
       packageDefinitions,
@@ -50,17 +44,6 @@ export const resolveActiveModIdFromToolbarMode = (
       mode
     );
   if (activationPolicyResolution.modId) {
-    if (activationPolicyResolution.source === "legacy-alias-fallback") {
-      emitModAliasFallbackHitAuditEvent({
-        toolbarMode: mode,
-        activePackageId: activeDefinition?.packId ?? null,
-        requestedModId: activeDefinition?.activation.toolbarModeMap?.[mode] ?? null,
-        fallbackModId: activationPolicyResolution.modId,
-        source:
-          activationPolicyResolution.aliasFallbackSource ??
-          "legacy.toolbar-mode-to-mod-id",
-      });
-    }
     return activationPolicyResolution.modId;
   }
   return (
@@ -75,10 +58,6 @@ export const resolveToolbarModeFromActiveModId = (
 ): ToolbarMode => {
   if (!activeModId) return selectToolbarDefaultModeWithCompatFallback();
   const packageDefinitions = resolvePackageDefinitions(activationContext);
-  const activeDefinition = selectActiveModPackage(
-    packageDefinitions,
-    activationContext.activePackageId
-  );
   const activationPolicyModeResolution =
     selectActiveModPackageToolbarModeResolutionForActivationModId(
       packageDefinitions,
@@ -86,17 +65,6 @@ export const resolveToolbarModeFromActiveModId = (
       activeModId
     );
   if (activationPolicyModeResolution.toolbarMode) {
-    if (activationPolicyModeResolution.source === "legacy-alias-fallback") {
-      emitModAliasFallbackHitAuditEvent({
-        toolbarMode: activationPolicyModeResolution.toolbarMode,
-        activePackageId: activeDefinition?.packId ?? null,
-        requestedModId: activeModId,
-        fallbackModId: activeModId,
-        source:
-          activationPolicyModeResolution.aliasFallbackSource ??
-          "legacy.mod-id-to-toolbar-mode",
-      });
-    }
     return activationPolicyModeResolution.toolbarMode;
   }
   const fallbackModId = selectToolbarDefaultFallbackModIdWithCompatFallback();

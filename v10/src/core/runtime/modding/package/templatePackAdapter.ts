@@ -160,12 +160,24 @@ export const adaptTemplatePackManifestToModPackageDefinition = (
   manifest: TemplatePackAdapterManifest
 ): ModPackageDefinition => {
   const runtimeModId = buildTemplatePackRuntimeModId(manifest.packId);
+  const toolbarDefinition = selectTemplatePackToolbarDefinition(manifest);
+  const activationToolbarModeMap = toolbarDefinition
+    ? Object.fromEntries(
+        toolbarDefinition.modeDefinitions.map((definition) => [
+          definition.id,
+          definition.fallbackModId,
+        ])
+      )
+    : undefined;
   return {
     packId: manifest.packId,
     version: `template-pack-manifest-v${manifest.manifestVersion}`,
     label: manifest.title,
     modIds: [runtimeModId],
     activation: {
+      ...(activationToolbarModeMap
+        ? { toolbarModeMap: activationToolbarModeMap }
+        : {}),
       defaultModId: runtimeModId,
     },
     defaultEnabled: manifest.defaultEnabled,

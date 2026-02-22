@@ -174,11 +174,11 @@ check_alias_retire_budget() {
   local mapping_toolbar_to_mod_const_count
   local mapping_mod_to_toolbar_const_count
 
-  source_tag_count="$(rg -n --no-heading "legacy-alias-fallback" v10/src | wc -l | tr -d ' ')"
-  toolbar_to_mod_source_count="$(rg -n --no-heading "legacy\\.toolbar-mode-to-mod-id" v10/src | wc -l | tr -d ' ')"
-  mod_to_toolbar_source_count="$(rg -n --no-heading "legacy\\.mod-id-to-toolbar-mode" v10/src | wc -l | tr -d ' ')"
-  mapping_toolbar_to_mod_const_count="$(rg -n --no-heading "^const LEGACY_TOOLBAR_MODE_TO_MOD_ID\\b" v10/src | wc -l | tr -d ' ')"
-  mapping_mod_to_toolbar_const_count="$(rg -n --no-heading "^const LEGACY_MOD_ID_TO_TOOLBAR_MODE\\b" v10/src | wc -l | tr -d ' ')"
+  source_tag_count="$( (rg -n --no-heading "legacy-alias-fallback" v10/src || true) | wc -l | tr -d ' ')"
+  toolbar_to_mod_source_count="$( (rg -n --no-heading "legacy\\.toolbar-mode-to-mod-id" v10/src || true) | wc -l | tr -d ' ')"
+  mod_to_toolbar_source_count="$( (rg -n --no-heading "legacy\\.mod-id-to-toolbar-mode" v10/src || true) | wc -l | tr -d ' ')"
+  mapping_toolbar_to_mod_const_count="$( (rg -n --no-heading "^const LEGACY_TOOLBAR_MODE_TO_MOD_ID\\b" v10/src || true) | wc -l | tr -d ' ')"
+  mapping_mod_to_toolbar_const_count="$( (rg -n --no-heading "^const LEGACY_MOD_ID_TO_TOOLBAR_MODE\\b" v10/src || true) | wc -l | tr -d ' ')"
 
   if (( source_tag_count <= alias_fallback_source_tag_max )); then
     echo "[PASS] alias source tag budget count=${source_tag_count} threshold<=${alias_fallback_source_tag_max}"

@@ -156,7 +156,7 @@ flowchart TD
 
 - Layer guard script: PASS
   - `scripts/check_layer_rules.sh`
-- Mod contract guard script: PASS (with WARN for legacy compat alias usage)
+- Mod contract guard script: PASS (legacy alias runtime path removed; zero-budget freeze active)
   - `scripts/check_mod_contract.sh`
 
 ---
@@ -165,6 +165,6 @@ flowchart TD
 
 1. Toolbar policy path가 여러 파일에 분산되어 유지비용 높음.
 2. `features/chrome`가 여전히 정책/행동 일부를 보유한 하이브리드 상태.
-3. legacy alias fallback 경로가 남아 있어 완전한 pack-first로 아직 고정되지 않음.
+3. legacy alias runtime path는 제거되었고, zero-budget guardrail 운영으로 재유입만 방지하면 된다.
 
 상세 갭/리스크는 `02_Gap_Register_And_RiskMap.md` 참조.
