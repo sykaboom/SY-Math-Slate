@@ -94,7 +94,20 @@ selectors_resource_item_merge_max="${SELECTORS_RESOURCE_ITEM_MERGE_MAX:-0}"
 selectors_resource_command_merge_max="${SELECTORS_RESOURCE_COMMAND_MERGE_MAX:-0}"
 template_pack_toolbar_definition_guards_max="${TEMPLATE_PACK_TOOLBAR_DEFINITION_GUARDS_MAX:-0}"
 template_pack_toolbar_definition_parsers_max="${TEMPLATE_PACK_TOOLBAR_DEFINITION_PARSERS_MAX:-0}"
+template_pack_toolbar_definition_parsers_mode_definitions_max="${TEMPLATE_PACK_TOOLBAR_DEFINITION_PARSERS_MODE_DEFINITIONS_MAX:-0}"
+template_pack_toolbar_definition_parsers_action_catalog_max="${TEMPLATE_PACK_TOOLBAR_DEFINITION_PARSERS_ACTION_CATALOG_MAX:-0}"
+template_pack_toolbar_definition_parsers_action_surface_rules_max="${TEMPLATE_PACK_TOOLBAR_DEFINITION_PARSERS_ACTION_SURFACE_RULES_MAX:-0}"
 template_pack_toolbar_definition_selector_max="${TEMPLATE_PACK_TOOLBAR_DEFINITION_SELECTOR_MAX:-0}"
+selectors_active_package_rules_max="${SELECTORS_ACTIVE_PACKAGE_RULES_MAX:-0}"
+selectors_active_package_rules_direct_max="${SELECTORS_ACTIVE_PACKAGE_RULES_DIRECT_MAX:-0}"
+selectors_active_package_rules_active_max="${SELECTORS_ACTIVE_PACKAGE_RULES_ACTIVE_MAX:-0}"
+selectors_active_package_rules_runtime_max="${SELECTORS_ACTIVE_PACKAGE_RULES_RUNTIME_MAX:-0}"
+guards_validate_definition_dependencies_finalize_max="${GUARDS_VALIDATE_DEFINITION_DEPENDENCIES_FINALIZE_MAX:-0}"
+guards_validate_definition_dependencies_finalize_dependencies_max="${GUARDS_VALIDATE_DEFINITION_DEPENDENCIES_FINALIZE_DEPENDENCIES_MAX:-0}"
+guards_validate_definition_dependencies_finalize_conflicts_max="${GUARDS_VALIDATE_DEFINITION_DEPENDENCIES_FINALIZE_CONFLICTS_MAX:-0}"
+guards_validate_definition_dependencies_finalize_default_enabled_max="${GUARDS_VALIDATE_DEFINITION_DEPENDENCIES_FINALIZE_DEFAULT_ENABLED_MAX:-0}"
+guards_validate_definition_dependencies_finalize_build_definition_max="${GUARDS_VALIDATE_DEFINITION_DEPENDENCIES_FINALIZE_BUILD_DEFINITION_MAX:-0}"
+guards_validate_definition_dependencies_finalize_types_max="${GUARDS_VALIDATE_DEFINITION_DEPENDENCIES_FINALIZE_TYPES_MAX:-0}"
 selectors_resource_item_merge_model_max="${SELECTORS_RESOURCE_ITEM_MERGE_MODEL_MAX:-0}"
 selectors_resource_item_merge_helpers_max="${SELECTORS_RESOURCE_ITEM_MERGE_HELPERS_MAX:-0}"
 selectors_resource_item_merge_merge_max="${SELECTORS_RESOURCE_ITEM_MERGE_MERGE_MAX:-0}"
@@ -253,7 +266,20 @@ validate_int "SELECTORS_RESOURCE_ITEM_MERGE_MAX" "$selectors_resource_item_merge
 validate_int "SELECTORS_RESOURCE_COMMAND_MERGE_MAX" "$selectors_resource_command_merge_max"
 validate_int "TEMPLATE_PACK_TOOLBAR_DEFINITION_GUARDS_MAX" "$template_pack_toolbar_definition_guards_max"
 validate_int "TEMPLATE_PACK_TOOLBAR_DEFINITION_PARSERS_MAX" "$template_pack_toolbar_definition_parsers_max"
+validate_int "TEMPLATE_PACK_TOOLBAR_DEFINITION_PARSERS_MODE_DEFINITIONS_MAX" "$template_pack_toolbar_definition_parsers_mode_definitions_max"
+validate_int "TEMPLATE_PACK_TOOLBAR_DEFINITION_PARSERS_ACTION_CATALOG_MAX" "$template_pack_toolbar_definition_parsers_action_catalog_max"
+validate_int "TEMPLATE_PACK_TOOLBAR_DEFINITION_PARSERS_ACTION_SURFACE_RULES_MAX" "$template_pack_toolbar_definition_parsers_action_surface_rules_max"
 validate_int "TEMPLATE_PACK_TOOLBAR_DEFINITION_SELECTOR_MAX" "$template_pack_toolbar_definition_selector_max"
+validate_int "SELECTORS_ACTIVE_PACKAGE_RULES_MAX" "$selectors_active_package_rules_max"
+validate_int "SELECTORS_ACTIVE_PACKAGE_RULES_DIRECT_MAX" "$selectors_active_package_rules_direct_max"
+validate_int "SELECTORS_ACTIVE_PACKAGE_RULES_ACTIVE_MAX" "$selectors_active_package_rules_active_max"
+validate_int "SELECTORS_ACTIVE_PACKAGE_RULES_RUNTIME_MAX" "$selectors_active_package_rules_runtime_max"
+validate_int "GUARDS_VALIDATE_DEFINITION_DEPENDENCIES_FINALIZE_MAX" "$guards_validate_definition_dependencies_finalize_max"
+validate_int "GUARDS_VALIDATE_DEFINITION_DEPENDENCIES_FINALIZE_DEPENDENCIES_MAX" "$guards_validate_definition_dependencies_finalize_dependencies_max"
+validate_int "GUARDS_VALIDATE_DEFINITION_DEPENDENCIES_FINALIZE_CONFLICTS_MAX" "$guards_validate_definition_dependencies_finalize_conflicts_max"
+validate_int "GUARDS_VALIDATE_DEFINITION_DEPENDENCIES_FINALIZE_DEFAULT_ENABLED_MAX" "$guards_validate_definition_dependencies_finalize_default_enabled_max"
+validate_int "GUARDS_VALIDATE_DEFINITION_DEPENDENCIES_FINALIZE_BUILD_DEFINITION_MAX" "$guards_validate_definition_dependencies_finalize_build_definition_max"
+validate_int "GUARDS_VALIDATE_DEFINITION_DEPENDENCIES_FINALIZE_TYPES_MAX" "$guards_validate_definition_dependencies_finalize_types_max"
 validate_int "SELECTORS_RESOURCE_ITEM_MERGE_MODEL_MAX" "$selectors_resource_item_merge_model_max"
 validate_int "SELECTORS_RESOURCE_ITEM_MERGE_HELPERS_MAX" "$selectors_resource_item_merge_helpers_max"
 validate_int "SELECTORS_RESOURCE_ITEM_MERGE_MERGE_MAX" "$selectors_resource_item_merge_merge_max"
@@ -640,6 +666,27 @@ for file in "${wave23_extra_files[@]}"; do
   fi
 done
 
+wave24_extra_files=(
+  "v10/src/core/runtime/modding/package/templatePackAdapter/toolbarDefinition/parsers/modeDefinitions.ts"
+  "v10/src/core/runtime/modding/package/templatePackAdapter/toolbarDefinition/parsers/actionCatalog.ts"
+  "v10/src/core/runtime/modding/package/templatePackAdapter/toolbarDefinition/parsers/actionSurfaceRules.ts"
+  "v10/src/core/runtime/modding/package/selectors/activePackageRules/direct.ts"
+  "v10/src/core/runtime/modding/package/selectors/activePackageRules/active.ts"
+  "v10/src/core/runtime/modding/package/selectors/activePackageRules/runtime.ts"
+  "v10/src/core/runtime/modding/package/guards/validateDefinition/dependenciesAndFinalize/parseDependencies.ts"
+  "v10/src/core/runtime/modding/package/guards/validateDefinition/dependenciesAndFinalize/parseConflicts.ts"
+  "v10/src/core/runtime/modding/package/guards/validateDefinition/dependenciesAndFinalize/parseDefaultEnabled.ts"
+  "v10/src/core/runtime/modding/package/guards/validateDefinition/dependenciesAndFinalize/buildDefinition.ts"
+  "v10/src/core/runtime/modding/package/guards/validateDefinition/dependenciesAndFinalize/types.ts"
+)
+
+for file in "${wave24_extra_files[@]}"; do
+  if [[ ! -f "$file" ]]; then
+    echo "[check_v10_large_file_budget] FAIL: missing target file: $file"
+    exit 1
+  fi
+done
+
 app_layout_lines="$(wc -l < "${target_files[0]}")"
 ext_runtime_lines="$(wc -l < "${target_files[1]}")"
 data_input_lines="$(wc -l < "${target_files[2]}")"
@@ -685,7 +732,14 @@ selectors_resource_item_merge_lines="$(wc -l < "${extra_target_files[0]}")"
 selectors_resource_command_merge_lines="$(wc -l < "${extra_target_files[1]}")"
 template_pack_toolbar_definition_guards_lines="$(wc -l < "${extra_target_files[2]}")"
 template_pack_toolbar_definition_parsers_lines="$(wc -l < "${extra_target_files[3]}")"
+template_pack_toolbar_definition_parsers_mode_definitions_lines="$(wc -l < "v10/src/core/runtime/modding/package/templatePackAdapter/toolbarDefinition/parsers/modeDefinitions.ts")"
+template_pack_toolbar_definition_parsers_action_catalog_lines="$(wc -l < "v10/src/core/runtime/modding/package/templatePackAdapter/toolbarDefinition/parsers/actionCatalog.ts")"
+template_pack_toolbar_definition_parsers_action_surface_rules_lines="$(wc -l < "v10/src/core/runtime/modding/package/templatePackAdapter/toolbarDefinition/parsers/actionSurfaceRules.ts")"
 template_pack_toolbar_definition_selector_lines="$(wc -l < "${extra_target_files[4]}")"
+selectors_active_package_rules_lines="$(wc -l < "v10/src/core/runtime/modding/package/selectors/activePackageRules.ts")"
+selectors_active_package_rules_direct_lines="$(wc -l < "v10/src/core/runtime/modding/package/selectors/activePackageRules/direct.ts")"
+selectors_active_package_rules_active_lines="$(wc -l < "v10/src/core/runtime/modding/package/selectors/activePackageRules/active.ts")"
+selectors_active_package_rules_runtime_lines="$(wc -l < "v10/src/core/runtime/modding/package/selectors/activePackageRules/runtime.ts")"
 selectors_resource_item_merge_model_lines="$(wc -l < "${extra_target_files[5]}")"
 selectors_resource_item_merge_helpers_lines="$(wc -l < "${extra_target_files[6]}")"
 selectors_resource_item_merge_merge_lines="$(wc -l < "${extra_target_files[7]}")"
@@ -779,6 +833,12 @@ guards_validate_definition_index_validate_lines="$(wc -l < "v10/src/core/runtime
 guards_validate_definition_index_validate_policies_lines="$(wc -l < "v10/src/core/runtime/modding/package/guards/validateDefinition/index/validate/policies.ts")"
 guards_validate_definition_index_validate_relations_lines="$(wc -l < "v10/src/core/runtime/modding/package/guards/validateDefinition/index/validate/relations.ts")"
 guards_validate_definition_index_validate_finalize_lines="$(wc -l < "v10/src/core/runtime/modding/package/guards/validateDefinition/index/validate/finalize.ts")"
+guards_validate_definition_dependencies_finalize_lines="$(wc -l < "v10/src/core/runtime/modding/package/guards/validateDefinition/dependenciesAndFinalize.ts")"
+guards_validate_definition_dependencies_finalize_dependencies_lines="$(wc -l < "v10/src/core/runtime/modding/package/guards/validateDefinition/dependenciesAndFinalize/parseDependencies.ts")"
+guards_validate_definition_dependencies_finalize_conflicts_lines="$(wc -l < "v10/src/core/runtime/modding/package/guards/validateDefinition/dependenciesAndFinalize/parseConflicts.ts")"
+guards_validate_definition_dependencies_finalize_default_enabled_lines="$(wc -l < "v10/src/core/runtime/modding/package/guards/validateDefinition/dependenciesAndFinalize/parseDefaultEnabled.ts")"
+guards_validate_definition_dependencies_finalize_build_definition_lines="$(wc -l < "v10/src/core/runtime/modding/package/guards/validateDefinition/dependenciesAndFinalize/buildDefinition.ts")"
+guards_validate_definition_dependencies_finalize_types_lines="$(wc -l < "v10/src/core/runtime/modding/package/guards/validateDefinition/dependenciesAndFinalize/types.ts")"
 guards_validate_definition_index_predicate_lines="$(wc -l < "v10/src/core/runtime/modding/package/guards/validateDefinition/index/predicate.ts")"
 guards_validate_definition_ui_policy_index_lines="$(wc -l < "v10/src/core/runtime/modding/package/guards/validateDefinition/uiAndResourcePolicy/uiPolicy/index.ts")"
 guards_validate_definition_ui_policy_parse_lines="$(wc -l < "v10/src/core/runtime/modding/package/guards/validateDefinition/uiAndResourcePolicy/uiPolicy/parse.ts")"
@@ -956,6 +1016,21 @@ printf '[check_v10_large_file_budget] wave23 validate_policies=%s/%s validate_re
   "$selectors_resource_item_merge_operations_remove_lines" "$selectors_resource_item_merge_operations_remove_max" \
   "$selectors_resource_item_merge_operations_upsert_lines" "$selectors_resource_item_merge_operations_upsert_max" \
   "$selectors_resource_item_merge_operations_result_lines" "$selectors_resource_item_merge_operations_result_max"
+
+printf '[check_v10_large_file_budget] wave24 toolbar_parsers_mode=%s/%s toolbar_parsers_catalog=%s/%s toolbar_parsers_surface=%s/%s active_rules_facade=%s/%s active_rules_direct=%s/%s active_rules_active=%s/%s active_rules_runtime=%s/%s dep_finalize_facade=%s/%s dep_finalize_dep=%s/%s dep_finalize_conflicts=%s/%s dep_finalize_default=%s/%s dep_finalize_build=%s/%s dep_finalize_types=%s/%s\n' \
+  "$template_pack_toolbar_definition_parsers_mode_definitions_lines" "$template_pack_toolbar_definition_parsers_mode_definitions_max" \
+  "$template_pack_toolbar_definition_parsers_action_catalog_lines" "$template_pack_toolbar_definition_parsers_action_catalog_max" \
+  "$template_pack_toolbar_definition_parsers_action_surface_rules_lines" "$template_pack_toolbar_definition_parsers_action_surface_rules_max" \
+  "$selectors_active_package_rules_lines" "$selectors_active_package_rules_max" \
+  "$selectors_active_package_rules_direct_lines" "$selectors_active_package_rules_direct_max" \
+  "$selectors_active_package_rules_active_lines" "$selectors_active_package_rules_active_max" \
+  "$selectors_active_package_rules_runtime_lines" "$selectors_active_package_rules_runtime_max" \
+  "$guards_validate_definition_dependencies_finalize_lines" "$guards_validate_definition_dependencies_finalize_max" \
+  "$guards_validate_definition_dependencies_finalize_dependencies_lines" "$guards_validate_definition_dependencies_finalize_dependencies_max" \
+  "$guards_validate_definition_dependencies_finalize_conflicts_lines" "$guards_validate_definition_dependencies_finalize_conflicts_max" \
+  "$guards_validate_definition_dependencies_finalize_default_enabled_lines" "$guards_validate_definition_dependencies_finalize_default_enabled_max" \
+  "$guards_validate_definition_dependencies_finalize_build_definition_lines" "$guards_validate_definition_dependencies_finalize_build_definition_max" \
+  "$guards_validate_definition_dependencies_finalize_types_lines" "$guards_validate_definition_dependencies_finalize_types_max"
 
 if (( app_layout_lines > app_layout_max )); then
   echo "[check_v10_large_file_budget] FAIL: AppLayout.tsx exceeded budget"
@@ -1192,8 +1267,43 @@ if (( template_pack_toolbar_definition_parsers_lines > template_pack_toolbar_def
   exit 1
 fi
 
+if (( template_pack_toolbar_definition_parsers_mode_definitions_lines > template_pack_toolbar_definition_parsers_mode_definitions_max )); then
+  echo "[check_v10_large_file_budget] FAIL: templatePackAdapter/toolbarDefinition/parsers/modeDefinitions.ts exceeded budget"
+  exit 1
+fi
+
+if (( template_pack_toolbar_definition_parsers_action_catalog_lines > template_pack_toolbar_definition_parsers_action_catalog_max )); then
+  echo "[check_v10_large_file_budget] FAIL: templatePackAdapter/toolbarDefinition/parsers/actionCatalog.ts exceeded budget"
+  exit 1
+fi
+
+if (( template_pack_toolbar_definition_parsers_action_surface_rules_lines > template_pack_toolbar_definition_parsers_action_surface_rules_max )); then
+  echo "[check_v10_large_file_budget] FAIL: templatePackAdapter/toolbarDefinition/parsers/actionSurfaceRules.ts exceeded budget"
+  exit 1
+fi
+
 if (( template_pack_toolbar_definition_selector_lines > template_pack_toolbar_definition_selector_max )); then
   echo "[check_v10_large_file_budget] FAIL: templatePackAdapter/toolbarDefinition/selector.ts exceeded budget"
+  exit 1
+fi
+
+if (( selectors_active_package_rules_lines > selectors_active_package_rules_max )); then
+  echo "[check_v10_large_file_budget] FAIL: selectors/activePackageRules.ts exceeded budget"
+  exit 1
+fi
+
+if (( selectors_active_package_rules_direct_lines > selectors_active_package_rules_direct_max )); then
+  echo "[check_v10_large_file_budget] FAIL: selectors/activePackageRules/direct.ts exceeded budget"
+  exit 1
+fi
+
+if (( selectors_active_package_rules_active_lines > selectors_active_package_rules_active_max )); then
+  echo "[check_v10_large_file_budget] FAIL: selectors/activePackageRules/active.ts exceeded budget"
+  exit 1
+fi
+
+if (( selectors_active_package_rules_runtime_lines > selectors_active_package_rules_runtime_max )); then
+  echo "[check_v10_large_file_budget] FAIL: selectors/activePackageRules/runtime.ts exceeded budget"
   exit 1
 fi
 
@@ -1649,6 +1759,36 @@ fi
 
 if (( guards_validate_definition_index_validate_finalize_lines > guards_validate_definition_index_validate_finalize_max )); then
   echo "[check_v10_large_file_budget] FAIL: validateDefinition/index/validate/finalize.ts exceeded budget"
+  exit 1
+fi
+
+if (( guards_validate_definition_dependencies_finalize_lines > guards_validate_definition_dependencies_finalize_max )); then
+  echo "[check_v10_large_file_budget] FAIL: validateDefinition/dependenciesAndFinalize.ts exceeded budget"
+  exit 1
+fi
+
+if (( guards_validate_definition_dependencies_finalize_dependencies_lines > guards_validate_definition_dependencies_finalize_dependencies_max )); then
+  echo "[check_v10_large_file_budget] FAIL: validateDefinition/dependenciesAndFinalize/parseDependencies.ts exceeded budget"
+  exit 1
+fi
+
+if (( guards_validate_definition_dependencies_finalize_conflicts_lines > guards_validate_definition_dependencies_finalize_conflicts_max )); then
+  echo "[check_v10_large_file_budget] FAIL: validateDefinition/dependenciesAndFinalize/parseConflicts.ts exceeded budget"
+  exit 1
+fi
+
+if (( guards_validate_definition_dependencies_finalize_default_enabled_lines > guards_validate_definition_dependencies_finalize_default_enabled_max )); then
+  echo "[check_v10_large_file_budget] FAIL: validateDefinition/dependenciesAndFinalize/parseDefaultEnabled.ts exceeded budget"
+  exit 1
+fi
+
+if (( guards_validate_definition_dependencies_finalize_build_definition_lines > guards_validate_definition_dependencies_finalize_build_definition_max )); then
+  echo "[check_v10_large_file_budget] FAIL: validateDefinition/dependenciesAndFinalize/buildDefinition.ts exceeded budget"
+  exit 1
+fi
+
+if (( guards_validate_definition_dependencies_finalize_types_lines > guards_validate_definition_dependencies_finalize_types_max )); then
+  echo "[check_v10_large_file_budget] FAIL: validateDefinition/dependenciesAndFinalize/types.ts exceeded budget"
   exit 1
 fi
 
