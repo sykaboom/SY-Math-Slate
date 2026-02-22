@@ -89,6 +89,7 @@ Core subsystems:
     - type/merge stage5 split (task_543, task_544): `types/toolbarPlan.ts` and `selectors/resourceShortcutMerge/merge.ts` are facade-only exports; internals live under `.../types/toolbarPlan/*` and `.../resourceShortcutMerge/merge/*`.
     - selection/mapping stage6 split (task_546, task_547): `packageSelection/sortingAndActive.ts` and `packageSelection/activationMapping/base.ts` are facade-only exports; internals live under `.../sortingAndActive/*` and `.../activationMapping/base/*`.
     - selection policy stage7 split (task_549, task_550): `packageSelection/conflicts.ts` and `packageSelection/uiPolicyAccess.ts` are facade-only exports; internals live under `.../conflicts/*` and `.../uiPolicyAccess/*`.
+    - template adapter stage8 split (task_552, task_553): `templatePackAdapter/adaptation.ts` and `templatePackAdapter/manifestSelectors.ts` are facade-only exports; internals live under `.../adaptation/*` and `.../manifestSelectors/*`.
     - legacy alias runtime path: retired (task_496).
     - legacy alias retire freeze gate:
       - budget: `codex_tasks/workflow/mod_alias_retire_budget.env`
