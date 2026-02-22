@@ -1,4 +1,4 @@
-# Task 510: Large-file Budget Wave2 (selectors split guard update)
+# Task 523: Large-file Budget Wave7 (registry + ui/resource split guard update)
 
 Status: COMPLETED
 Owner: Codex (spec / review / implementation)
@@ -9,8 +9,8 @@ Date: 2026-02-23
 
 ## Goal (Base Required)
 - What to change:
-  - Wave2 기준 대형 파일 budget에 `selectors.ts`를 추가하고 임계치를 고정한다.
-  - 검증 체인에서 budget regression을 즉시 잡도록 보강한다.
+  - Wave7 기준 large-file budget에 registry/uiAndResourcePolicy split 파일 budget을 추가한다.
+  - facade 파일(`registry.ts`, `uiAndResourcePolicy.ts`) budget을 tighten한다.
 - What must NOT change:
   - runtime behavior 변경 금지.
 
@@ -21,7 +21,7 @@ Date: 2026-02-23
 Touched files/directories:
 - `scripts/check_v10_large_file_budget.sh`
 - `codex_tasks/workflow/large_file_budget.env`
-- `codex_tasks/task_510_large_file_budget_wave2_selectors.md`
+- `codex_tasks/task_523_large_file_budget_wave7_registry_uiresource.md`
 
 Out of scope:
 - app/runtime source 코드 변경
@@ -32,20 +32,20 @@ Out of scope:
 
 - New dependencies allowed: NO
 - Boundary rules:
-  - shell script/env only
+  - shell script/env only.
 
 ---
 
 ## DAG / Wave Metadata (Base Required)
 
 - Wave ID:
-  - W-P6-SLICE-SELECTORS-2
+  - W-P6-SLICE-W7
 - Depends on tasks:
-  - `task_509`
+  - `task_521`, `task_522`
 - Enables tasks:
   - `[]`
 - Parallel group:
-  - G-P6-SLICE-W2
+  - G-P6-SLICE-W7
 - Max parallel slots:
   - 6
 - Verification stage for this task:
@@ -109,8 +109,8 @@ If NO:
 
 ## Acceptance Criteria (Base Required)
 
-- [ ] AC-1: `check_v10_large_file_budget.sh`가 selectors 파일도 budget 대상으로 검사한다.
-- [ ] AC-2: Wave2 budget env 값 기준 PASS.
+- [x] AC-1: `check_v10_large_file_budget.sh`가 registry/uiAndResource split 파일도 budget 대상으로 검사한다.
+- [x] AC-2: Wave7 budget env 기준 PASS.
 
 ---
 
@@ -128,9 +128,9 @@ If NO:
 ## Risks / Roll-back Notes (Base Required)
 
 - Risks:
-  - budget 과도 설정 시 개발 속도 저하
+  - budget 과도 설정 시 개발 속도 저하.
 - Roll-back:
-  - env threshold 조정 또는 selectors 항목 제거
+  - env threshold 조정 또는 split 항목 제거.
 
 ---
 
@@ -150,13 +150,12 @@ Status: COMPLETED
 Changed files:
 - `scripts/check_v10_large_file_budget.sh`
 - `codex_tasks/workflow/large_file_budget.env`
-- `codex_tasks/task_510_large_file_budget_wave2_selectors.md`
+- `codex_tasks/task_523_large_file_budget_wave7_registry_uiresource.md`
 
 Commands run (only if user asked or required by spec):
 - `bash scripts/check_v10_large_file_budget.sh`
 - `bash scripts/check_mod_contract.sh`
-- `cd v10 && npm run lint`
-- `cd v10 && npm run build`
+- `cd v10 && npm run lint && npm run build`
 - `bash scripts/run_repo_verifications.sh --stage end`
 
 ## Gate Results (Codex fills)
@@ -171,10 +170,10 @@ Commands run (only if user asked or required by spec):
 ## Failure Classification (Codex fills when any gate fails)
 
 - Pre-existing failures:
-  - ...
+  - none
 - Newly introduced failures:
-  - ...
+  - none
 - Blocking:
-  - YES | NO
+  - NO
 - Mitigation:
-  - ...
+  - n/a

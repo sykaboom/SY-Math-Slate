@@ -67,8 +67,12 @@ Core subsystems:
   - `core/runtime/modding/package`: package contracts/registry/selectors/guards + template-pack adapter.
     - selector split (task_509): domain selectors live under `src/core/runtime/modding/package/selectors/*`; `src/core/runtime/modding/package/selectors.ts` is facade export only.
     - packageSelection stage2 split (task_515): `src/core/runtime/modding/package/selectors/packageSelection.ts` is facade and detailed selectors live under `src/core/runtime/modding/package/selectors/packageSelection/*`.
+    - toolbarPlan stage2 split (task_518): `src/core/runtime/modding/package/selectors/toolbarPlan.ts` is facade and resolver modules live under `src/core/runtime/modding/package/selectors/toolbarPlan/*`.
+    - registry split (task_521): `src/core/runtime/modding/package/registry.ts` is facade and runtime registry modules live under `src/core/runtime/modding/package/registry/*`.
     - guard split (task_511): domain validators live under `src/core/runtime/modding/package/guards/*`; `src/core/runtime/modding/package/guards.ts` is facade export only.
     - validateDefinition stage2 split (task_516): `src/core/runtime/modding/package/guards/validateDefinition.ts` is facade and validation stages live under `src/core/runtime/modding/package/guards/validateDefinition/*`.
+    - ui/resource policy split (task_522): `src/core/runtime/modding/package/guards/validateDefinition/uiAndResourcePolicy.ts` is facade and parser modules live under `src/core/runtime/modding/package/guards/validateDefinition/uiAndResourcePolicy/*`.
+    - resourcePolicy stage2 split (task_519): `src/core/runtime/modding/package/guards/resourcePolicy.ts` is facade and parser modules live under `src/core/runtime/modding/package/guards/resourcePolicy/*`.
     - template-pack adapter split (task_513): adapter modules live under `src/core/runtime/modding/package/templatePackAdapter/*`; `src/core/runtime/modding/package/templatePackAdapter.ts` is facade export only.
     - legacy alias runtime path: retired (task_496).
     - legacy alias retire freeze gate:
@@ -180,7 +184,7 @@ Fallback rule:
 - Toolbar runtime policy:
 - `src/core/runtime/modding/package/selectors.ts` (`selectRuntimeToolbarCutoverEnabled`) is the single env/cutover resolver for toolbar plan input.
 - `src/features/chrome/toolbar/toolbarModePolicy.ts` is now a thin host bridge for alias-telemetry + package-aware mode resolution.
-  - `src/core/runtime/modding/package/selectors.ts` facade + `src/core/runtime/modding/package/selectors/toolbarPlan.ts` is the single source for mode/viewport/action surface plan resolution.
+  - `src/core/runtime/modding/package/selectors.ts` facade + `src/core/runtime/modding/package/selectors/toolbarPlan/*` is the single source for mode/viewport/action surface plan resolution.
 - Navigation copy policy:
   - `src/features/chrome/toolbar/navigationLabels.ts` is the shared vocabulary source for Page/Outline/Playback step labels.
 

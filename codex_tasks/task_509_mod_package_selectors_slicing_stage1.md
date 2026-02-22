@@ -1,6 +1,6 @@
 # Task 509: Mod Package Selectors Slicing Stage 1 (domain module split)
 
-Status: PENDING
+Status: COMPLETED
 Owner: Codex (spec / review / implementation)
 Target: v10/
 Date: 2026-02-23
