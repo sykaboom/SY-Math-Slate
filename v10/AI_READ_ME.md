@@ -259,11 +259,14 @@ Execution planning sources:
 - roadmap-level: `PROJECT_ROADMAP.md`
 - execution-level: approved `codex_tasks/task_*.md`
 - architecture-level: `v10/docs/architecture/ModEngine.md` (canonical active path)
-- large-file slicing wave (latest): `W-P6-SLICE-W24`
+- large-file slicing wave (latest): `W-P6-SLICE-W25`
   - split targets:
     - `templatePackAdapter/toolbarDefinition/parsers.ts` + `parsers/*`
     - `selectors/activePackageRules.ts` + `activePackageRules/*`
     - `guards/validateDefinition/dependenciesAndFinalize.ts` + `dependenciesAndFinalize/*`
+    - `guards/utils.ts` + `guards/utils/*`
+    - `selectors/resourceShortcutMerge/merge/operations.ts` + `operations/*`
+    - `guards/resourcePolicy/inputBehaviorRule/parse.ts` + `parse/*`
 - phase9 ops docs:
   - `v10/docs/telemetry/README.md`
   - `v10/docs/trust/README.md`

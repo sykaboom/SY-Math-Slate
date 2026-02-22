@@ -1,10 +1,7 @@
 import type { ModPackageInputBehaviorRule } from "../../../types";
 import type { ModPackageValidationFailure } from "../../types";
-import {
-  KNOWN_INPUT_BEHAVIOR_STRATEGIES,
-  fail,
-  isPlainRecord,
-} from "../../utils";
+import { ensureInputBehaviorRecord } from "./parse/object";
+import { validateInputBehaviorStrategy } from "./parse/strategy";
 import {
   buildInputBehaviorRule,
   normalizeChain,
@@ -17,47 +14,17 @@ export const parseInputBehaviorRule = (
 ):
   | { ok: true; value: ModPackageInputBehaviorRule }
   | { ok: false; value: ModPackageValidationFailure } => {
-  if (!isPlainRecord(value)) {
-    return {
-      ok: false,
-      value: fail(
-        "invalid-resource-policy",
-        "manifest.resourcePolicy.inputBehavior",
-        "inputBehavior must be an object."
-      ),
-    };
-  }
+  const objectResult = ensureInputBehaviorRecord(value);
+  if (!objectResult.ok) return { ok: false, value: objectResult.value };
+  const record = objectResult.value;
 
-  if (
-    typeof value.strategy !== "string" ||
-    !KNOWN_INPUT_BEHAVIOR_STRATEGIES.has(value.strategy)
-  ) {
-    return {
-      ok: false,
-      value: fail(
-        "invalid-resource-policy",
-        "manifest.resourcePolicy.inputBehavior.strategy",
-        "strategy must be one of exclusive/handled-pass-chain."
-      ),
-    };
-  }
+  const strategyResult = validateInputBehaviorStrategy(record.strategy);
+  if (!strategyResult.ok) return { ok: false, value: strategyResult.value };
 
-  const modIdResult = normalizeModId(value.modId, modIdSet);
-  if (!modIdResult.ok) {
-    return { ok: false, value: modIdResult.value };
-  }
+  const modIdResult = normalizeModId(record.modId, modIdSet);
+  if (!modIdResult.ok) return { ok: false, value: modIdResult.value };
 
-  const chainResult = normalizeChain(value.chain, modIdSet);
-  if (!chainResult.ok) {
-    return { ok: false, value: chainResult.value };
-  }
-
-  return {
-    ok: true,
-    value: buildInputBehaviorRule(
-      value.strategy as ModPackageInputBehaviorRule["strategy"],
-      modIdResult.value,
-      chainResult.value
-    ),
-  };
+  const chainResult = normalizeChain(record.chain, modIdSet);
+  if (!chainResult.ok) return { ok: false, value: chainResult.value };
+  return { ok: true, value: buildInputBehaviorRule(strategyResult.value, modIdResult.value, chainResult.value) };
 };
