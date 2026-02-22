@@ -26,11 +26,17 @@ Audience: Codex/Claude/Gemini-style coding agents, not human narrative reading.
 Allowed imports:
 - `core` -> `core` only
 - `ui` -> `ui`, `core`
-- `features` -> `core`, `ui`
-- `app` -> `features`, `ui`
+- `features` -> `features`, `ui`, `core`, `mod`
+- `app` -> `app`, `features`, `ui`, `mod`
+- `mod` -> `mod`, `core`, `features`, `ui`
 
 Forbidden:
 - `ui` importing `features`
+- `core/runtime/**` importing `@features/*` or relative `features/*`
+- `features|app|mod` deep-importing `@core/runtime/modding/package/*` or `@core/runtime/modding/host/inputRoutingBridge`
+- `features|app|mod` importing deprecated alias lanes (`@core/mod*`, `@core/{config,contracts,engine,extensions,math,migrations,persistence,sanitize,theme,themes,types}*`)
+- importing deprecated legacy feature compat roots (`@features/{layout,toolbar,ui-host,shortcuts,theme,viewer,sharing,sync,canvas,editor-core,animation,input-studio,community,moderation,policy,extensions,mod-studio,observability,store,experiments,hooks}`)
+- toolbar host renderer files (`FloatingToolbar.tsx`, `DrawModeTools.tsx`, `PlaybackModeTools.tsx`, `CanvasModeTools.tsx`) referencing `TOOLBAR_ACTION_CATALOG`, `FALLBACK_RULES`, or `TOOLBAR_MODES`
 - resurrecting `src/lib`
 - tracked Prisma client/generated code under `v10/src`
 
@@ -187,6 +193,9 @@ Primary checks used by hooks/CI:
 - `scripts/check_template_pack_contract.mjs`
 - `scripts/scan_guardrails.sh`
 - `scripts/run_repo_verifications.sh`
+
+Verification runner invariant:
+- `scripts/run_repo_verifications.sh` must always execute `scripts/check_layer_rules.sh` and `scripts/check_mod_contract.sh` as required guardrail checks.
 
 Toolbar dedup verifier expectation:
 - `node scripts/check_toolbar_surface_uniqueness.mjs` => PASS in normal runtime analysis.

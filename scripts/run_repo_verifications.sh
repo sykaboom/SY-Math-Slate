@@ -17,6 +17,11 @@ fi
 export VERIFY_STAGE="$verify_stage"
 echo "[verify-sh] Stage: ${verify_stage}"
 
+required_scripts=(
+  "scripts/check_layer_rules.sh"
+  "scripts/check_mod_contract.sh"
+)
+
 mapfile -t candidates < <(
   {
     find scripts -maxdepth 1 -type f -name "*.sh" 2>/dev/null
@@ -35,6 +40,29 @@ for script in "${candidates[@]}"; do
   fi
 done
 
+contains_selected_script() {
+  local needle="$1"
+  local item
+  for item in "${selected[@]}"; do
+    if [[ "$item" == "$needle" ]]; then
+      return 0
+    fi
+  done
+  return 1
+}
+
+for script in "${required_scripts[@]}"; do
+  if [[ ! -f "$script" ]]; then
+    echo "[verify-sh] FAIL: required verification script missing: $script"
+    exit 1
+  fi
+  if ! contains_selected_script "$script"; then
+    selected+=("$script")
+  fi
+done
+
+mapfile -t selected < <(printf '%s\n' "${selected[@]}" | sort -u)
+
 if ((${#selected[@]} == 0)); then
   echo "[verify-sh] No verification scripts matched."
   exit 0
@@ -42,22 +70,21 @@ fi
 
 for script in "${selected[@]}"; do
   if [[ ! -x "$script" ]]; then
-    echo "[verify-sh] Skipping non-executable script: $script"
-    continue
+    echo "[verify-sh] Note: running non-executable script via bash: $script"
   fi
   echo "[verify-sh] Running: $script"
   if [[ "$(basename "$script")" == "check_v10_changed_lint.sh" ]]; then
     if [[ "$verify_stage" == "end" ]]; then
       VERIFY_LINT_SCOPE="${VERIFY_LINT_SCOPE:-full}" \
       VERIFY_FULL_BUILD="${VERIFY_FULL_BUILD:-1}" \
-      "$script"
+      bash "$script"
     else
       VERIFY_LINT_SCOPE="${VERIFY_LINT_SCOPE:-changed}" \
       VERIFY_FULL_BUILD="${VERIFY_FULL_BUILD:-0}" \
-      "$script"
+      bash "$script"
     fi
   else
-    "$script"
+    bash "$script"
   fi
 done
 

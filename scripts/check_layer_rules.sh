@@ -159,7 +159,7 @@ for (const filePath of files) {
             lineNo,
             sourceLayer,
             spec,
-            detail: "alias target is outside known layers (core/ui/features/app).",
+            detail: "alias target is outside known layers (core/ui/features/app/mod).",
           });
         }
         continue;

@@ -9,6 +9,10 @@ import {
   configureRuntimeModManager,
   type ModManager,
 } from "@core/runtime/modding/host";
+import {
+  selectResolvedToolbarPlanInputFromBaseProvider,
+  type ResolvedToolbarPlan,
+} from "@core/runtime/modding/package";
 import { Popover, PopoverTrigger } from "@ui/components/popover";
 import { useFileIO } from "@features/platform/hooks/useFileIO";
 import { useImageInsert } from "@features/platform/hooks/useImageInsert";
@@ -20,6 +24,7 @@ import { useModStore } from "@features/platform/store/useModStore";
 import { dispatchCommand } from "@core/runtime/command/commandBus";
 import { cn } from "@core/utils";
 import { useUIStore } from "@features/platform/store/useUIStoreBridge";
+import { getPrimaryRuntimeTemplatePack } from "@/mod/bridge/packRegistryBridge";
 import {
   ClipboardList,
   Image as ImageIcon,
@@ -33,12 +38,7 @@ import { DrawModeTools } from "./DrawModeTools";
 import { MorePanel } from "./MorePanel";
 import { PlaybackModeTools } from "./PlaybackModeTools";
 import { COMPACT_TOOLBAR_SCROLL_HINT } from "./compactToolbarSections";
-import {
-  selectCanvasToolbarActions,
-  selectDrawToolbarActions,
-  selectMorePanelActions,
-  selectPlaybackToolbarActions,
-} from "./catalog/toolbarActionSelectors";
+import { selectResolvedToolbarPlanInput as selectFallbackResolvedToolbarPlanInput } from "./catalog/toolbarActionSelectors";
 import { listToolbarActionIdsByMode } from "./catalog/toolbarActionCatalog";
 import {
   getToolbarViewportProfileSnapshot,
@@ -46,6 +46,7 @@ import {
   type ToolbarViewportProfile,
 } from "./catalog/toolbarViewportProfile";
 import {
+  listToolbarModeDefinitions,
   resolveActiveModIdFromToolbarMode,
   resolveToolbarModeFromActiveModId,
   resolveToolbarRenderPolicy,
@@ -72,14 +73,9 @@ type ToolbarNotice = {
   message: string;
 };
 
-const TOOLBAR_MODES: ReadonlyArray<{
-  id: ToolbarMode;
-  label: string;
-}> = [
-  { id: "draw", label: "Draw" },
-  { id: "playback", label: "Playback" },
-  { id: "canvas", label: "Canvas" },
-];
+const ensureToolbarPackRuntimeReady = (): void => {
+  getPrimaryRuntimeTemplatePack();
+};
 
 const publishToolbarRequestFailureNotice = (): void => {
   publishToolbarNotice({
@@ -154,6 +150,7 @@ const activateToolbarRuntimeMod = (manager: ModManager, modId: ModId): void => {
 };
 
 export function FloatingToolbar(props: FloatingToolbarProps = {}) {
+  ensureToolbarPackRuntimeReady();
   const { mountMode = "legacy-shell", className } = props;
   const [modRuntimeManager] = useState<ModManager>(createToolbarModManager);
   const viewportProfile = useSyncExternalStore<ToolbarViewportProfile>(
@@ -184,23 +181,32 @@ export function FloatingToolbar(props: FloatingToolbarProps = {}) {
     openPasteHelper,
   } = useUIStore();
 
-  const isDrawMode = toolbarMode === "draw";
-  const isPlaybackMode = toolbarMode === "playback";
-  const isCanvasMode = toolbarMode === "canvas";
+  const toolbarRenderPolicy = resolveToolbarRenderPolicy(toolbarMode);
+  const toolbarModes = listToolbarModeDefinitions();
+  const toolbarPlanInput = {
+    mode: toolbarMode,
+    viewport: viewportProfile,
+    cutoverEnabled: toolbarRenderPolicy.cutoverEnabled,
+  } as const;
+  const fallbackResolvedToolbarPlan = selectFallbackResolvedToolbarPlanInput(
+    toolbarPlanInput
+  );
+  const resolvedToolbarPlan: ResolvedToolbarPlan =
+    selectResolvedToolbarPlanInputFromBaseProvider(toolbarPlanInput) ??
+    fallbackResolvedToolbarPlan;
+  const resolvedToolbarMode = resolvedToolbarPlan.mode;
+  const drawToolbarActions = resolvedToolbarPlan.draw;
+  const playbackToolbarActions = resolvedToolbarPlan.playback;
+  const canvasToolbarActions = resolvedToolbarPlan.canvas;
+  const morePanelActions = resolvedToolbarPlan.morePanel;
+  const isDrawMode = resolvedToolbarMode === "draw";
+  const isPlaybackMode = resolvedToolbarMode === "playback";
+  const isCanvasMode = resolvedToolbarMode === "canvas";
   const isFullscreenInkActive = fullscreenInkMode !== "off";
   const isNativeFullscreen = fullscreenInkMode === "native";
-  const toolbarRenderPolicy = resolveToolbarRenderPolicy(toolbarMode);
-  const drawToolbarActions = selectDrawToolbarActions(
-    viewportProfile,
-    toolbarRenderPolicy.cutoverEnabled
+  const reservedToolbarActionIds = new Set(
+    listToolbarActionIdsByMode(resolvedToolbarMode)
   );
-  const playbackToolbarActions = selectPlaybackToolbarActions(
-    viewportProfile,
-    toolbarRenderPolicy.cutoverEnabled
-  );
-  const canvasToolbarActions = selectCanvasToolbarActions(viewportProfile);
-  const morePanelActions = selectMorePanelActions(toolbarMode, viewportProfile);
-  const reservedToolbarActionIds = new Set(listToolbarActionIdsByMode(toolbarMode));
   const activeModToolbarContributions = listResolvedModToolbarContributions({
     mountMode,
     role: resolveToolbarRuntimeRole(),
@@ -223,7 +229,7 @@ export function FloatingToolbar(props: FloatingToolbarProps = {}) {
       meta: {
         source: "toolbar.mod-contribution",
         contributionId: contribution.id,
-        mode: toolbarMode,
+        mode: resolvedToolbarMode,
       },
     })
       .then((result) => {
@@ -345,8 +351,8 @@ export function FloatingToolbar(props: FloatingToolbarProps = {}) {
 
   const toolbarModeSelector = (
     <div className="flex items-center gap-1 rounded-full border border-toolbar-border/10 bg-toolbar-chip/5 p-1">
-      {TOOLBAR_MODES.map((mode) => {
-        const isActive = toolbarMode === mode.id;
+      {toolbarModes.map((mode) => {
+        const isActive = resolvedToolbarMode === mode.id;
         return (
           <button
             key={mode.id}

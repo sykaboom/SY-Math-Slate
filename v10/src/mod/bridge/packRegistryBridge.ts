@@ -1,12 +1,17 @@
 import {
   clearRuntimeModPackageRegistry,
+  clearRuntimeToolbarBaseProvider,
   listRuntimeModPackages,
   listTemplatePackManifestsFromModPackagesTyped,
+  resolveToolbarPlanFromActionSurfaceRules,
   registerRuntimeModPackages,
+  registerRuntimeToolbarBaseProvider,
   selectPrimaryTemplatePackManifestFromModPackagesTyped,
+  selectTemplatePackToolbarDefinition,
   selectTemplatePackManifestByModPackageIdTyped,
   validateTemplatePackAdapterManifest,
   type ModPackageDefinition,
+  type ToolbarBaseProvider,
 } from "@core/runtime/modding/package";
 import {
   isTemplatePackManifest,
@@ -31,14 +36,43 @@ const toTemplatePackRegistryFailure = (
   message,
 });
 
+const resolvePrimaryTemplatePackToolbarBaseProvider = (): ToolbarBaseProvider | null => {
+  const primaryManifest = selectPrimaryTemplatePackManifestFromModPackagesTyped(
+    listRuntimeTemplatePackDefinitions(),
+    runtimeTemplatePackManifestRegistry
+  );
+  if (!primaryManifest) return null;
+  const toolbarDefinition = selectTemplatePackToolbarDefinition(primaryManifest);
+  if (!toolbarDefinition) return null;
+  const actionSurfaceRules = toolbarDefinition.actionSurfaceRules;
+  return Object.freeze({
+    modeDefinitions: toolbarDefinition.modeDefinitions,
+    actionCatalog: toolbarDefinition.actionCatalog,
+    actionSurfaceRules,
+    resolvePlan: (input) =>
+      resolveToolbarPlanFromActionSurfaceRules(input, actionSurfaceRules),
+  });
+};
+
+const syncRuntimeToolbarBaseProviderFromTemplatePacks = (): void => {
+  const provider = resolvePrimaryTemplatePackToolbarBaseProvider();
+  if (!provider) {
+    clearRuntimeToolbarBaseProvider();
+    return;
+  }
+  registerRuntimeToolbarBaseProvider(provider);
+};
+
 const syncRuntimeModPackageRegistryFromTemplatePacks = (): TemplatePackValidationFailure | null => {
   clearRuntimeModPackageRegistry();
+  clearRuntimeToolbarBaseProvider();
   const adaptedDefinitions: ModPackageDefinition[] = [];
 
   for (const manifest of runtimeTemplatePackManifestRegistry.values()) {
     const adapted = validateTemplatePackAdapterManifest(manifest);
     if (!adapted.ok) {
       clearRuntimeModPackageRegistry();
+      clearRuntimeToolbarBaseProvider();
       return toTemplatePackRegistryFailure(adapted.path, adapted.message);
     }
     adaptedDefinitions.push(adapted.value);
@@ -47,12 +81,15 @@ const syncRuntimeModPackageRegistryFromTemplatePacks = (): TemplatePackValidatio
   for (const registration of registerRuntimeModPackages(adaptedDefinitions)) {
     if (!registration.result.ok) {
       clearRuntimeModPackageRegistry();
+      clearRuntimeToolbarBaseProvider();
       return toTemplatePackRegistryFailure(
         registration.result.path,
         registration.result.message
       );
     }
   }
+
+  syncRuntimeToolbarBaseProviderFromTemplatePacks();
 
   return null;
 };
@@ -138,6 +175,7 @@ export const getPrimaryRuntimeTemplatePack = (): TemplatePackManifest | null => 
 export const clearRuntimeTemplatePackRegistry = (): void => {
   runtimeTemplatePackManifestRegistry.clear();
   clearRuntimeModPackageRegistry();
+  clearRuntimeToolbarBaseProvider();
   hasBootstrappedDefaultPacks = false;
 };
 

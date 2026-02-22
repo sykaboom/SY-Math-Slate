@@ -6,6 +6,10 @@ import {
   type TemplateViewportProfile,
 } from "../../schema/templatePack.types";
 import { BASE_EDUCATION_LAYOUT } from "./layout";
+import {
+  BASE_EDUCATION_TOOLBAR_ACTION_CATALOG,
+  BASE_EDUCATION_TOOLBAR_MODE_DEFINITIONS,
+} from "./modules";
 import { BASE_EDUCATION_THEME } from "./theme";
 
 const VIEWPORTS: readonly TemplateViewportProfile[] = [
@@ -81,6 +85,7 @@ pushRules(
     "playback.undo",
     "playback.redo",
     "playback.sound.toggle",
+    "playback.extras",
   ],
   "primary"
 );
@@ -139,14 +144,28 @@ pushRules(
   "more"
 );
 
-export const BASE_EDUCATION_TEMPLATE_PACK: TemplatePackManifest = {
+const BASE_EDUCATION_TOOLBAR_ACTION_SURFACE_RULES = Object.freeze(
+  [...rules]
+) as readonly TemplateActionSurfaceRule[];
+
+const BASE_EDUCATION_TOOLBAR_DEFINITION = Object.freeze({
+  modeDefinitions: BASE_EDUCATION_TOOLBAR_MODE_DEFINITIONS,
+  actionCatalog: BASE_EDUCATION_TOOLBAR_ACTION_CATALOG,
+  actionSurfaceRules: BASE_EDUCATION_TOOLBAR_ACTION_SURFACE_RULES,
+});
+
+const baseEducationTemplatePackWithToolbar = {
   manifestVersion: TEMPLATE_PACK_MANIFEST_VERSION,
   packId: "base-education",
   title: "Base Education Template",
   description: "Default education-focused toolbar/session composition.",
-  kind: "base",
-  actionSurfaceRules: rules,
+  kind: "base" as const,
+  actionSurfaceRules: BASE_EDUCATION_TOOLBAR_ACTION_SURFACE_RULES,
+  toolbar: BASE_EDUCATION_TOOLBAR_DEFINITION,
   layout: BASE_EDUCATION_LAYOUT,
   theme: BASE_EDUCATION_THEME,
   defaultEnabled: true,
 };
+
+export const BASE_EDUCATION_TEMPLATE_PACK: TemplatePackManifest =
+  baseEducationTemplatePackWithToolbar;

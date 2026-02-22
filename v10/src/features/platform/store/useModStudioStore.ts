@@ -25,6 +25,10 @@ import {
   type ThemeDraft,
 } from "@features/platform/mod-studio/core/types";
 
+export const MOD_STUDIO_MODULE_WORKSPACES = ["author", "manager"] as const;
+export type ModStudioModuleWorkspace =
+  (typeof MOD_STUDIO_MODULE_WORKSPACES)[number];
+
 const cloneLayoutSlotDraft = (slot: LayoutSlotDraft): LayoutSlotDraft => ({
   slot: slot.slot,
   moduleOrder: [...slot.moduleOrder],
@@ -149,6 +153,15 @@ const normalizeTab = (tab: ModStudioTab): ModStudioTab => {
   return "policy";
 };
 
+const normalizeModuleWorkspace = (
+  workspace: ModStudioModuleWorkspace
+): ModStudioModuleWorkspace => {
+  if ((MOD_STUDIO_MODULE_WORKSPACES as readonly string[]).includes(workspace)) {
+    return workspace;
+  }
+  return "author";
+};
+
 const createSnapshotId = (): string => {
   if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
     return crypto.randomUUID();
@@ -159,6 +172,7 @@ const createSnapshotId = (): string => {
 type ModStudioState = {
   isOpen: boolean;
   activeTab: ModStudioTab;
+  moduleWorkspace: ModStudioModuleWorkspace;
   draft: StudioDraftBundle;
   snapshots: StudioSnapshot[];
   lastPublishResult: StudioPublishResult | null;
@@ -166,6 +180,7 @@ type ModStudioState = {
   close: () => void;
   toggle: () => void;
   setActiveTab: (tab: ModStudioTab) => void;
+  setModuleWorkspace: (workspace: ModStudioModuleWorkspace) => void;
   resetDraft: () => void;
   setDraftBundle: (next: StudioDraftBundle) => void;
   updatePolicyDraft: (policy: StudioDraftBundle["policy"]) => void;
@@ -176,6 +191,9 @@ type ModStudioState = {
   updateTemplateDraft: (template: Partial<TemplateDraft>) => void;
   upsertModuleDraft: (module: ModuleDraft) => void;
   removeModuleDraft: (moduleId: string) => void;
+  setModuleEnabled: (moduleId: string, enabled: boolean) => void;
+  setModuleOrder: (moduleId: string, order: number) => void;
+  moveModuleOrder: (moduleId: string, direction: "up" | "down") => void;
   setThemePreset: (presetId: ThemePresetId) => void;
   setThemeToken: (tokenKey: string, tokenValue: string) => void;
   setModuleThemeToken: (
@@ -191,6 +209,7 @@ type ModStudioState = {
 export const useModStudioStore = create<ModStudioState>((set, get) => ({
   isOpen: false,
   activeTab: "policy",
+  moduleWorkspace: "author",
   draft: createDefaultDraftBundle(),
   snapshots: [],
   lastPublishResult: null,
@@ -198,6 +217,8 @@ export const useModStudioStore = create<ModStudioState>((set, get) => ({
   close: () => set(() => ({ isOpen: false })),
   toggle: () => set((state) => ({ isOpen: !state.isOpen })),
   setActiveTab: (tab) => set(() => ({ activeTab: normalizeTab(tab) })),
+  setModuleWorkspace: (workspace) =>
+    set(() => ({ moduleWorkspace: normalizeModuleWorkspace(workspace) })),
   resetDraft: () =>
     set(() => ({
       draft: createDefaultDraftBundle(),
@@ -275,6 +296,100 @@ export const useModStudioStore = create<ModStudioState>((set, get) => ({
         modules: state.draft.modules.filter((entry) => entry.id !== moduleId),
       },
     })),
+  setModuleEnabled: (moduleId, enabled) =>
+    set((state) => {
+      const normalizedModuleId = moduleId.trim();
+      if (!normalizedModuleId) return state;
+      let changed = false;
+      const nextModules = state.draft.modules.map((module) => {
+        if (module.id !== normalizedModuleId) return module;
+        if (module.enabled === enabled) return module;
+        changed = true;
+        return {
+          ...module,
+          enabled,
+        };
+      });
+      if (!changed) return state;
+      return {
+        draft: {
+          ...state.draft,
+          modules: nextModules,
+        },
+      };
+    }),
+  setModuleOrder: (moduleId, order) =>
+    set((state) => {
+      const normalizedModuleId = moduleId.trim();
+      if (!normalizedModuleId) return state;
+      const normalizedOrder = Number.isFinite(order) ? Math.trunc(order) : 0;
+      let changed = false;
+      const nextModules = state.draft.modules.map((module) => {
+        if (module.id !== normalizedModuleId) return module;
+        if (module.order === normalizedOrder) return module;
+        changed = true;
+        return {
+          ...module,
+          order: normalizedOrder,
+        };
+      });
+      if (!changed) return state;
+      return {
+        draft: {
+          ...state.draft,
+          modules: nextModules,
+        },
+      };
+    }),
+  moveModuleOrder: (moduleId, direction) =>
+    set((state) => {
+      const normalizedModuleId = moduleId.trim();
+      if (!normalizedModuleId) return state;
+      const ordered = state.draft.modules
+        .map((module) => ({
+          id: module.id,
+          order: module.order,
+        }))
+        .sort((left, right) => {
+          const orderDelta = left.order - right.order;
+          if (orderDelta !== 0) return orderDelta;
+          return left.id.localeCompare(right.id);
+        });
+
+      const currentIndex = ordered.findIndex(
+        (entry) => entry.id === normalizedModuleId
+      );
+      if (currentIndex < 0) return state;
+      const targetIndex = direction === "up" ? currentIndex - 1 : currentIndex + 1;
+      if (targetIndex < 0 || targetIndex >= ordered.length) {
+        return state;
+      }
+
+      const current = ordered[currentIndex];
+      const target = ordered[targetIndex];
+      const nextModules = state.draft.modules.map((module) => {
+        if (module.id === current.id) {
+          return {
+            ...module,
+            order: target.order,
+          };
+        }
+        if (module.id === target.id) {
+          return {
+            ...module,
+            order: current.order,
+          };
+        }
+        return module;
+      });
+
+      return {
+        draft: {
+          ...state.draft,
+          modules: nextModules,
+        },
+      };
+    }),
   setThemePreset: (presetId) =>
     set((state) => {
       const preset = getThemePreset(presetId);

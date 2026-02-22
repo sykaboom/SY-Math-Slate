@@ -1,14 +1,29 @@
 import type { ModuleDraft } from "@features/platform/mod-studio/core/types";
 import type { ModDefinition, ModToolbarItem } from "@core/runtime/modding/api";
 import {
+  mergeCommandsByResourceLayerLoadOrder,
+  mergeInputBehaviorByResourceLayerLoadOrder,
+  mergeShortcutsByResourceLayerLoadOrder,
+  mergeUIItemsByResourceLayerLoadOrder,
   selectActiveModPackage,
   selectActiveModPackageConflictSummary,
   selectActiveModPackageContainsModId,
+  selectActiveModPackageResourceCommandRules,
+  selectActiveModPackageResourceInputBehaviorRule,
+  selectActiveModPackageResourceShortcutRules,
   selectActiveModPackageResolution,
+  selectActiveModPackageToolbarItemRules,
   selectModPackageActivationModIdForToolbarMode,
+  selectRuntimeModResourceOverridesForLayer,
   type ModPackageDefinition,
   type ModPackageId,
+  type ModPackageShortcutRule,
   type ModPackageToolbarMode,
+  type ModPackageUIItemRule,
+  type ModResourceLayer,
+  type ModResourceMergeDiagnostic,
+  type ModResourceMergeDiagnosticKind,
+  type ModResourceMergeDiagnosticResourceType,
 } from "@core/runtime/modding/package";
 
 export type ModuleDiagnostic = {
@@ -20,6 +35,22 @@ export type ModuleDiagnostic = {
 export type RuntimeModOrderEntry = {
   id: string;
   priority: number;
+};
+
+export type RuntimeMergeDiagnosticEntry = {
+  kind: ModResourceMergeDiagnosticKind;
+  resourceType: ModResourceMergeDiagnosticResourceType;
+  key: string;
+  source: ModResourceLayer;
+  againstSource: ModResourceLayer | null;
+  reason: string;
+};
+
+export type RuntimeToolbarContributionPreview = {
+  id: string;
+  commandId: string;
+  group: string;
+  order: number | null;
 };
 
 export type RuntimeModDiagnostics = {
@@ -36,6 +67,12 @@ export type RuntimeModDiagnostics = {
   expectedActiveModIdForToolbarMode: string | null;
   orderedMods: RuntimeModOrderEntry[];
   blockedContributionIds: string[];
+  blockedCommandIds: string[];
+  shortcutConflictKeys: string[];
+  mergeDiagnostics: RuntimeMergeDiagnosticEntry[];
+  resolvedToolbarContributionOrder: RuntimeToolbarContributionPreview[];
+  resolvedInputBehaviorStrategy: "exclusive" | "handled-pass-chain";
+  resolvedInputBehaviorSource: ModResourceLayer;
   diagnostics: ModuleDiagnostic[];
 };
 
@@ -139,6 +176,96 @@ const collectDuplicateKeys = (
     .sort((left, right) => left.localeCompare(right));
 };
 
+const hasNonEmpty = (value: unknown): value is string =>
+  typeof value === "string" && value.trim().length > 0;
+
+const normalizeContributionGroup = (value: string | undefined): string =>
+  hasNonEmpty(value) ? value.trim() : "";
+
+const toToolbarContributionFromPolicyRule = (
+  rule: ModPackageUIItemRule
+): ModToolbarItem => ({
+  id: rule.itemId.trim(),
+  commandId: hasNonEmpty(rule.commandId) ? rule.commandId.trim() : "",
+  label: hasNonEmpty(rule.label) ? rule.label.trim() : rule.itemId.trim(),
+  ...(hasNonEmpty(rule.group)
+    ? { group: normalizeContributionGroup(rule.group) }
+    : { group: normalizeContributionGroup(rule.slotId) }),
+  ...(typeof rule.order === "number" ? { order: rule.order } : {}),
+  ...(hasNonEmpty(rule.when) ? { when: rule.when.trim() } : {}),
+});
+
+const toToolbarMergeEntry = (
+  contribution: ModToolbarItem,
+  operation?: ModPackageUIItemRule["operation"]
+) => ({
+  slotId: normalizeContributionGroup(contribution.group),
+  itemId: contribution.id.trim(),
+  ...(operation ? { operation } : {}),
+  value: contribution,
+});
+
+const mergeDiagnosticsToModuleDiagnostics = (
+  items: readonly ModResourceMergeDiagnostic[]
+): ModuleDiagnostic[] =>
+  items.map((item) => ({
+    level: item.kind === "blocked" ? "warning" : "warning",
+    code: `merge-${item.resourceType}-${item.kind}`,
+    message: `${item.resourceType} ${item.kind} [${item.key}] (${item.source}${item.againstSource ? ` <- ${item.againstSource}` : ""}): ${item.reason}`,
+  }));
+
+const toRuntimeMergeDiagnosticEntries = (
+  items: readonly ModResourceMergeDiagnostic[]
+): RuntimeMergeDiagnosticEntry[] =>
+  [...items]
+    .map((item) => ({
+      kind: item.kind,
+      resourceType: item.resourceType,
+      key: item.key,
+      source: item.source,
+      againstSource: item.againstSource ?? null,
+      reason: item.reason,
+    }))
+    .sort((left, right) => {
+      const resourceTypeDelta = left.resourceType.localeCompare(right.resourceType);
+      if (resourceTypeDelta !== 0) return resourceTypeDelta;
+      const keyDelta = left.key.localeCompare(right.key);
+      if (keyDelta !== 0) return keyDelta;
+      return left.kind.localeCompare(right.kind);
+    });
+
+const normalizeContributionOrder = (value: number | undefined): number | null =>
+  typeof value === "number" && Number.isFinite(value) ? value : null;
+
+const toRuntimeToolbarContributionOrder = (
+  items: readonly ModToolbarItem[]
+): RuntimeToolbarContributionPreview[] =>
+  [...items]
+    .filter((item) => hasNonEmpty(item.id))
+    .map((item) => ({
+      id: item.id.trim(),
+      commandId: hasNonEmpty(item.commandId) ? item.commandId.trim() : "(none)",
+      group: hasNonEmpty(item.group) ? item.group.trim() : "(ungrouped)",
+      order: normalizeContributionOrder(item.order),
+    }))
+    .sort((left, right) => {
+      const leftOrder = left.order ?? Number.MAX_SAFE_INTEGER;
+      const rightOrder = right.order ?? Number.MAX_SAFE_INTEGER;
+      const orderDelta = leftOrder - rightOrder;
+      if (orderDelta !== 0) return orderDelta;
+      return left.id.localeCompare(right.id);
+    });
+
+const BASE_AUTHORING_SHORTCUT_RULES: readonly ModPackageShortcutRule[] = [
+  { shortcut: "mod+z", commandId: "undo" },
+  { shortcut: "mod+shift+z", commandId: "redo" },
+  { shortcut: "mod+y", commandId: "redo" },
+  { shortcut: "alt+arrowleft", commandId: "prevStep" },
+  { shortcut: "alt+arrowright", commandId: "nextStep" },
+  { shortcut: "pageup", commandId: "prevPage" },
+  { shortcut: "pagedown", commandId: "nextPage" },
+] as const;
+
 export const getRuntimeModDiagnostics = (
   input: RuntimeModDiagnosticsInput
 ): RuntimeModDiagnostics => {
@@ -178,6 +305,8 @@ export const getRuntimeModDiagnostics = (
     input.activePackageId,
     input.activeModId
   );
+  const modLayerOverrides = selectRuntimeModResourceOverridesForLayer("mod");
+  const userLayerOverrides = selectRuntimeModResourceOverridesForLayer("user");
 
   const modsByPriority = new Map<number, string[]>();
   for (const mod of orderedMods) {
@@ -231,6 +360,102 @@ export const getRuntimeModDiagnostics = (
       message: `${blockedContributionIds.length} toolbar contributions were filtered by host/package policy.`,
     });
   }
+
+  const packageToolbarItemRules = selectActiveModPackageToolbarItemRules(
+    input.registeredPackages,
+    input.activePackageId
+  );
+  const uiItemMerge = mergeUIItemsByResourceLayerLoadOrder({
+    package: packageToolbarItemRules.map((rule) =>
+      toToolbarMergeEntry(toToolbarContributionFromPolicyRule(rule), rule.operation)
+    ),
+    mod: input.rawToolbarContributions
+      .filter(
+        (item) =>
+          hasNonEmpty(item.id) &&
+          hasNonEmpty(item.commandId) &&
+          hasNonEmpty(item.label)
+      )
+      .map((item) =>
+        toToolbarMergeEntry({
+          ...item,
+          id: item.id.trim(),
+          commandId: item.commandId.trim(),
+          label: item.label.trim(),
+          group: normalizeContributionGroup(item.group),
+        })
+      ),
+    user: (userLayerOverrides?.toolbarItems ?? []).map((rule) =>
+      toToolbarMergeEntry(toToolbarContributionFromPolicyRule(rule), rule.operation)
+    ),
+  });
+
+  const packageCommandRules = selectActiveModPackageResourceCommandRules(
+    input.registeredPackages,
+    input.activePackageId
+  );
+  const modCommandRules = input.rawToolbarContributions
+    .map((item) => item.commandId.trim())
+    .filter((commandId) => commandId.length > 0)
+    .map((commandId) => ({
+      commandId,
+      operation: "upsert" as const,
+    }));
+  const commandMerge = mergeCommandsByResourceLayerLoadOrder({
+    package: packageCommandRules,
+    mod: [...modCommandRules, ...(modLayerOverrides?.commands ?? [])],
+    user: userLayerOverrides?.commands ?? [],
+  });
+
+  const packageShortcutRules = selectActiveModPackageResourceShortcutRules(
+    input.registeredPackages,
+    input.activePackageId
+  );
+  const shortcutMerge = mergeShortcutsByResourceLayerLoadOrder({
+    base: BASE_AUTHORING_SHORTCUT_RULES,
+    package: packageShortcutRules,
+    mod: modLayerOverrides?.shortcuts ?? [],
+    user: userLayerOverrides?.shortcuts ?? [],
+  });
+
+  const inputBehaviorMerge = mergeInputBehaviorByResourceLayerLoadOrder({
+    base: { strategy: "exclusive" },
+    package: selectActiveModPackageResourceInputBehaviorRule(
+      input.registeredPackages,
+      input.activePackageId
+    ),
+    mod: modLayerOverrides?.inputBehavior,
+    user: userLayerOverrides?.inputBehavior,
+  });
+
+  const mergeDiagnostics = [
+    ...uiItemMerge.diagnostics,
+    ...commandMerge.diagnostics,
+    ...shortcutMerge.diagnostics,
+    ...inputBehaviorMerge.diagnostics,
+  ];
+  const mergeDiagnosticEntries = toRuntimeMergeDiagnosticEntries(mergeDiagnostics);
+  const resolvedToolbarContributionOrder = toRuntimeToolbarContributionOrder(
+    input.resolvedToolbarContributions
+  );
+  diagnostics.push(...mergeDiagnosticsToModuleDiagnostics(mergeDiagnostics));
+
+  if (commandMerge.blockedCommandIds.length > 0) {
+    diagnostics.push({
+      level: "warning",
+      code: "merge-command-conflict-blocked",
+      message: `blocked command conflicts: ${commandMerge.blockedCommandIds.join(", ")}`,
+    });
+  }
+
+  const shortcutConflictKeys = [
+    ...new Set(
+      shortcutMerge.diagnostics
+        .filter((item) => item.resourceType === "shortcut")
+        .filter((item) => item.kind === "winner" || item.kind === "loser")
+        .map((item) => item.key)
+    ),
+  ].sort((left, right) => left.localeCompare(right));
 
   if (
     activePackageResolution.fallbackToPrimary &&
@@ -304,6 +529,12 @@ export const getRuntimeModDiagnostics = (
     expectedActiveModIdForToolbarMode,
     orderedMods,
     blockedContributionIds,
+    blockedCommandIds: commandMerge.blockedCommandIds,
+    shortcutConflictKeys,
+    mergeDiagnostics: mergeDiagnosticEntries,
+    resolvedToolbarContributionOrder,
+    resolvedInputBehaviorStrategy: inputBehaviorMerge.inputBehavior.strategy,
+    resolvedInputBehaviorSource: inputBehaviorMerge.inputBehavior.source,
     diagnostics,
   };
 };

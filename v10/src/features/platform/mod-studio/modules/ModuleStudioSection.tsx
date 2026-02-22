@@ -1,59 +1,72 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 
 import { listAppCommands } from "@core/runtime/command/commandBus";
-import { listKnownUISlotNames, type UISlotName } from "@core/runtime/plugin-runtime/registry";
+import { listKnownUISlotNames } from "@core/runtime/plugin-runtime/registry";
 import { getRuntimeModManager, getRuntimeModRegistry } from "@core/runtime/modding/host";
 import { listRuntimeModPackages } from "@core/runtime/modding/package";
-import type { ModuleDraft } from "@features/platform/mod-studio/core/types";
 import {
   getModuleDiagnostics,
   getRuntimeModDiagnostics,
 } from "@features/platform/mod-studio/modules/moduleDiagnostics";
+import { ModuleStudioAuthorPanel } from "@features/platform/mod-studio/modules/ModuleStudioAuthorPanel";
+import { ModuleStudioManagerPanel } from "@features/platform/mod-studio/modules/ModuleStudioManagerPanel";
 import { useModStore } from "@features/platform/store/useModStore";
+import {
+  useModStudioStore,
+  type ModStudioModuleWorkspace,
+} from "@features/platform/store/useModStudioStore";
 import { resolveToolbarModeFromActiveModId } from "@features/chrome/toolbar/toolbarModePolicy";
 import { listToolbarActionIdsByMode } from "@features/chrome/toolbar/catalog/toolbarActionCatalog";
 import { listResolvedModToolbarContributions } from "@features/chrome/ui-host/modContributionBridge";
-import { useModStudioStore } from "@features/platform/store/useModStudioStore";
 
-const createModuleSeed = (): ModuleDraft => ({
-  id: "",
-  label: "",
-  slot: listKnownUISlotNames()[0],
-  enabled: true,
-  order: 0,
-  action: {
-    commandId: "nextStep",
-    payload: {},
-  },
-});
+const MODULE_WORKSPACE_LABELS: Record<ModStudioModuleWorkspace, string> = {
+  author: "Author",
+  manager: "Manager",
+};
+
+const MODULE_WORKSPACE_HINTS: Record<ModStudioModuleWorkspace, string> = {
+  author: "Create and edit module drafts.",
+  manager: "Apply runtime enable/order controls and inspect conflicts.",
+};
 
 export function ModuleStudioSection() {
   const modules = useModStudioStore((state) => state.draft.modules);
   const template = useModStudioStore((state) => state.draft.template);
+  const moduleWorkspace = useModStudioStore((state) => state.moduleWorkspace);
+  const setModuleWorkspace = useModStudioStore((state) => state.setModuleWorkspace);
   const upsertModuleDraft = useModStudioStore((state) => state.upsertModuleDraft);
   const removeModuleDraft = useModStudioStore((state) => state.removeModuleDraft);
+  const setModuleEnabled = useModStudioStore((state) => state.setModuleEnabled);
+  const setModuleOrder = useModStudioStore((state) => state.setModuleOrder);
+  const moveModuleOrder = useModStudioStore((state) => state.moveModuleOrder);
+
   const activePackageId = useModStore((state) => state.activePackageId);
   const activeModId = useModStore((state) => state.activeModId);
-  const [seed, setSeed] = useState<ModuleDraft>(createModuleSeed);
+  const setActivePackageContext = useModStore(
+    (state) => state.setActivePackageContext
+  );
+  const setActiveModId = useModStore((state) => state.setActiveModId);
 
   const knownCommands = listAppCommands();
   const knownCommandIds = useMemo(
     () => new Set(knownCommands.map((command) => command.id)),
     [knownCommands]
   );
-  const diagnostics = useMemo(
+  const moduleDiagnostics = useMemo(
     () => getModuleDiagnostics(modules, knownCommandIds),
     [modules, knownCommandIds]
   );
-  const runtimeModDiagnostics = useMemo(() => {
+
+  const runtimeSnapshot = useMemo(() => {
     const runtimeRegistry = getRuntimeModRegistry();
     const runtimeManager = getRuntimeModManager();
-    const registeredPackages = listRuntimeModPackages();
+    const runtimePackages = listRuntimeModPackages();
+    const registeredMods = runtimeRegistry.list();
     const toolbarMode = resolveToolbarModeFromActiveModId(activeModId, {
       activePackageId,
-      packageDefinitions: registeredPackages,
+      packageDefinitions: runtimePackages,
     });
     const reservedActionIds = new Set(listToolbarActionIdsByMode(toolbarMode));
     const rawToolbarContributions = runtimeManager.listToolbarContributions();
@@ -63,27 +76,20 @@ export function ModuleStudioSection() {
       reservedActionIds,
       activePackageId,
     });
-    return getRuntimeModDiagnostics({
-      activeModId,
-      activePackageId,
-      registeredPackages,
-      toolbarMode,
-      registeredMods: runtimeRegistry.list(),
-      rawToolbarContributions,
-      resolvedToolbarContributions,
-    });
-  }, [activeModId, activePackageId]);
 
-  const handleAdd = () => {
-    const normalizedId = seed.id.trim();
-    if (!normalizedId) return;
-    upsertModuleDraft({
-      ...seed,
-      id: normalizedId,
-      label: seed.label.trim() || normalizedId,
-    });
-    setSeed(createModuleSeed());
-  };
+    return {
+      runtimePackages,
+      runtimeModDiagnostics: getRuntimeModDiagnostics({
+        activeModId,
+        activePackageId,
+        registeredPackages: runtimePackages,
+        toolbarMode,
+        registeredMods,
+        rawToolbarContributions,
+        resolvedToolbarContributions,
+      }),
+    };
+  }, [activeModId, activePackageId]);
 
   const knownSlots = listKnownUISlotNames();
 
@@ -98,247 +104,56 @@ export function ModuleStudioSection() {
       </div>
 
       <section className="grid gap-2 rounded border border-theme-border/10 bg-theme-surface-soft p-2">
-        <div className="grid grid-cols-2 gap-2">
-          <input
-            type="text"
-            placeholder="module id"
-            value={seed.id}
-            onChange={(event) => setSeed((prev) => ({ ...prev, id: event.target.value }))}
-            className="rounded border border-theme-border/20 bg-theme-surface/40 px-2 py-1 text-xs text-theme-text"
-          />
-          <input
-            type="text"
-            placeholder="label"
-            value={seed.label}
-            onChange={(event) =>
-              setSeed((prev) => ({ ...prev, label: event.target.value }))
-            }
-            className="rounded border border-theme-border/20 bg-theme-surface/40 px-2 py-1 text-xs text-theme-text"
-          />
-          <select
-            value={seed.slot}
-            onChange={(event) =>
-              setSeed((prev) => ({ ...prev, slot: event.target.value as UISlotName }))
-            }
-            className="rounded border border-theme-border/20 bg-theme-surface/40 px-2 py-1 text-xs text-theme-text"
-          >
-            {knownSlots.map((slotName) => (
-              <option key={slotName} value={slotName}>
-                {slotName}
-              </option>
-            ))}
-          </select>
-          <input
-            type="number"
-            value={seed.order}
-            onChange={(event) =>
-              setSeed((prev) => ({
-                ...prev,
-                order: Number.parseInt(event.target.value, 10) || 0,
-              }))
-            }
-            className="rounded border border-theme-border/20 bg-theme-surface/40 px-2 py-1 text-xs text-theme-text"
-          />
-          {knownCommands.length > 0 ? (
-            <select
-              value={seed.action.commandId}
-              onChange={(event) =>
-                setSeed((prev) => ({
-                  ...prev,
-                  action: { ...prev.action, commandId: event.target.value },
-                }))
-              }
-              className="col-span-2 rounded border border-theme-border/20 bg-theme-surface/40 px-2 py-1 text-xs text-theme-text"
-            >
-              {knownCommands.map((command) => (
-                <option key={command.id} value={command.id}>
-                  {command.id}
-                </option>
-              ))}
-            </select>
-          ) : (
-            <input
-              type="text"
-              placeholder="command id (command catalog empty)"
-              value={seed.action.commandId}
-              onChange={(event) =>
-                setSeed((prev) => ({
-                  ...prev,
-                  action: { ...prev.action, commandId: event.target.value },
-                }))
-              }
-              className="col-span-2 rounded border border-theme-border/20 bg-theme-surface/40 px-2 py-1 text-xs text-theme-text"
-            />
-          )}
-        </div>
-        <button
-          type="button"
-          onClick={handleAdd}
-          className="w-fit rounded border border-theme-border/20 px-2 py-1 text-[11px] text-theme-text/80 hover:bg-theme-surface-soft"
-        >
-          Upsert Module
-        </button>
-      </section>
-
-      <section className="grid gap-2">
-        {modules
-          .slice()
-          .sort((a, b) => a.order - b.order)
-          .map((module) => (
-            <article
-              key={module.id}
-              className="grid gap-2 rounded border border-theme-border/10 bg-theme-surface/30 p-2"
-            >
-              <div className="flex items-center justify-between gap-2">
-                <div className="text-[11px] font-semibold text-theme-text/80">
-                  {module.label} ({module.id})
-                </div>
+        <div className="flex flex-wrap items-center gap-2">
+          {(Object.keys(MODULE_WORKSPACE_LABELS) as ModStudioModuleWorkspace[]).map(
+            (workspace) => {
+              const active = workspace === moduleWorkspace;
+              return (
                 <button
+                  key={workspace}
                   type="button"
-                  onClick={() => removeModuleDraft(module.id)}
-                  className="rounded border border-theme-border/20 px-2 py-0.5 text-[11px] text-theme-text/70 hover:bg-theme-surface-soft"
+                  onClick={() => setModuleWorkspace(workspace)}
+                  className={
+                    active
+                      ? "rounded border border-theme-border/25 bg-theme-surface/20 px-2 py-1 text-[11px] text-theme-text"
+                      : "rounded border border-theme-border/20 px-2 py-1 text-[11px] text-theme-text/70 hover:bg-theme-surface/20"
+                  }
                 >
-                  Remove
+                  {MODULE_WORKSPACE_LABELS[workspace]}
                 </button>
-              </div>
-              <div className="flex flex-wrap items-center gap-3 text-[11px] text-theme-text/65">
-                <span>slot: {module.slot}</span>
-                <span>order: {module.order}</span>
-                <span>command: {module.action.commandId}</span>
-              </div>
-            </article>
-          ))}
-      </section>
-
-      <section className="grid gap-1 rounded border border-theme-border/10 bg-theme-surface-soft p-2">
-        <div className="text-[11px] font-semibold text-theme-text/75">Diagnostics</div>
-        {diagnostics.length === 0 ? (
-          <div className="text-[11px] text-[var(--theme-success)]">no conflicts</div>
-        ) : (
-          diagnostics.map((item, index) => (
-            <div
-              key={`${item.code}-${index}`}
-              className={
-                item.level === "error"
-                  ? "text-[11px] text-[var(--theme-danger)]"
-                  : "text-[11px] text-[var(--theme-warning)]"
-              }
-            >
-              [{item.code}] {item.message}
-            </div>
-          ))
-        )}
-      </section>
-
-      <section className="grid gap-1 rounded border border-theme-border/10 bg-theme-surface-soft p-2">
-        <div className="text-[11px] font-semibold text-theme-text/75">
-          Runtime Mod Diagnostics
-        </div>
-        <div className="text-[11px] text-theme-text/70">
-          active mod:{" "}
-          <span className="font-semibold text-theme-text/85">
-            {runtimeModDiagnostics.activeModId ?? "(none)"}
-          </span>
-        </div>
-        <div className="text-[11px] text-theme-text/70">
-          active package:{" "}
-          <span className="font-semibold text-theme-text/85">
-            {runtimeModDiagnostics.resolvedActivePackageId ?? "(none)"}
-          </span>
-          {runtimeModDiagnostics.activePackageFallbackToPrimary ? (
-            <span className="text-[var(--theme-warning)]">
-              {" "}
-              (fallback from {runtimeModDiagnostics.requestedActivePackageId ?? "(none)"})
-            </span>
-          ) : null}
-        </div>
-        <div className="text-[11px] text-theme-text/70">
-          package mods:{" "}
-          {runtimeModDiagnostics.activePackageModIds.length > 0 ? (
-            runtimeModDiagnostics.activePackageModIds.join(", ")
-          ) : (
-            <span className="text-theme-text/55">(none)</span>
+              );
+            }
           )}
         </div>
-        <div className="text-[11px] text-theme-text/70">
-          policy target ({runtimeModDiagnostics.toolbarMode}):{" "}
-          <span className="font-semibold text-theme-text/85">
-            {runtimeModDiagnostics.expectedActiveModIdForToolbarMode ?? "(none)"}
-          </span>
+        <div className="text-[11px] text-theme-text/65">
+          {MODULE_WORKSPACE_HINTS[moduleWorkspace]}
         </div>
-        <div className="flex flex-wrap items-center gap-2 text-[11px] text-theme-text/70">
-          {runtimeModDiagnostics.orderedMods.length === 0 ? (
-            <span>no registered mods</span>
-          ) : (
-            runtimeModDiagnostics.orderedMods.map((mod) => (
-              <span
-                key={`${mod.id}-${mod.priority}`}
-                className="rounded border border-theme-border/20 bg-theme-surface/40 px-2 py-0.5"
-              >
-                {mod.id} (p{mod.priority})
-              </span>
-            ))
-          )}
-        </div>
-        {runtimeModDiagnostics.declaredConflictPackageIds.length > 0 ? (
-          <div className="text-[11px] text-theme-text/70">
-            declared package conflicts:{" "}
-            {runtimeModDiagnostics.declaredConflictPackageIds.join(", ")}
-          </div>
-        ) : (
-          <div className="text-[11px] text-[var(--theme-success)]">
-            no declared package conflicts
-          </div>
-        )}
-        {runtimeModDiagnostics.reverseConflictPackageIds.length > 0 ? (
-          <div className="text-[11px] text-[var(--theme-warning)]">
-            incoming conflicts from other packages:{" "}
-            {runtimeModDiagnostics.reverseConflictPackageIds.join(", ")}
-          </div>
-        ) : null}
-        {runtimeModDiagnostics.conflictPackageIds.length > 0 ? (
-          <div className="text-[11px] text-[var(--theme-warning)]">
-            active conflicts in registry: {runtimeModDiagnostics.conflictPackageIds.join(", ")}
-          </div>
-        ) : (
-          <div className="text-[11px] text-[var(--theme-success)]">
-            no active package conflicts
-          </div>
-        )}
-        {runtimeModDiagnostics.missingConflictPackageIds.length > 0 ? (
-          <div className="text-[11px] text-[var(--theme-warning)]">
-            unknown conflict targets:{" "}
-            {runtimeModDiagnostics.missingConflictPackageIds.join(", ")}
-          </div>
-        ) : null}
-        {runtimeModDiagnostics.blockedContributionIds.length > 0 ? (
-          <div className="text-[11px] text-[var(--theme-warning)]">
-            blocked contributions: {runtimeModDiagnostics.blockedContributionIds.join(", ")}
-          </div>
-        ) : (
-          <div className="text-[11px] text-[var(--theme-success)]">
-            no blocked contributions
-          </div>
-        )}
-        {runtimeModDiagnostics.diagnostics.length > 0 ? (
-          runtimeModDiagnostics.diagnostics.map((item, index) => (
-            <div
-              key={`runtime-${item.code}-${index}`}
-              className={
-                item.level === "error"
-                  ? "text-[11px] text-[var(--theme-danger)]"
-                  : "text-[11px] text-[var(--theme-warning)]"
-              }
-            >
-              [{item.code}] {item.message}
-            </div>
-          ))
-        ) : (
-          <div className="text-[11px] text-[var(--theme-success)]">
-            runtime mod diagnostics clean
-          </div>
-        )}
       </section>
+
+      {moduleWorkspace === "author" ? (
+        <ModuleStudioAuthorPanel
+          modules={modules}
+          moduleDiagnostics={moduleDiagnostics}
+          knownSlots={knownSlots}
+          knownCommands={knownCommands}
+          onUpsertModuleDraft={upsertModuleDraft}
+          onRemoveModuleDraft={removeModuleDraft}
+        />
+      ) : (
+        <ModuleStudioManagerPanel
+          modules={modules}
+          moduleDiagnostics={moduleDiagnostics}
+          runtimeModDiagnostics={runtimeSnapshot.runtimeModDiagnostics}
+          activePackageId={activePackageId}
+          activeModId={activeModId}
+          runtimePackages={runtimeSnapshot.runtimePackages}
+          onSetActivePackageContext={setActivePackageContext}
+          onSetActiveModId={setActiveModId}
+          onSetModuleEnabled={setModuleEnabled}
+          onSetModuleOrder={setModuleOrder}
+          onMoveModuleOrder={moveModuleOrder}
+        />
+      )}
     </div>
   );
 }

@@ -1,10 +1,12 @@
 import type { ModPackageValidationFailure } from "./guards";
 import { validateModPackageDefinition } from "./guards";
-import {
-  compareModPackageDefinitions,
-  selectPrimaryModPackage,
-} from "./selectors";
-import type { ModPackageDefinition, ModPackageId } from "./types";
+import type {
+  ModPackageDefinition,
+  ModPackageId,
+  RuntimeModResourceLayerOverrides,
+  RuntimeModResourceOverrides,
+  ToolbarBaseProvider,
+} from "./types";
 
 export type ModPackageRegistryRegisterSuccess = {
   ok: true;
@@ -28,6 +30,30 @@ export type ModPackageRegistryRegisterResult =
 export type RuntimeModPackageRegistrationEntry = {
   packId: ModPackageId;
   result: ModPackageRegistryRegisterResult;
+};
+
+const comparePackIds = (left: string, right: string): number => {
+  if (left < right) return -1;
+  if (left > right) return 1;
+  return 0;
+};
+
+const compareModPackageDefinitions = (
+  left: ModPackageDefinition,
+  right: ModPackageDefinition
+): number => {
+  const defaultEnabledDelta = Number(Boolean(right.defaultEnabled)) - Number(Boolean(left.defaultEnabled));
+  if (defaultEnabledDelta !== 0) {
+    return defaultEnabledDelta;
+  }
+  return comparePackIds(left.packId, right.packId);
+};
+
+const selectPrimaryModPackage = (
+  definitions: readonly ModPackageDefinition[]
+): ModPackageDefinition | null => {
+  const ordered = [...definitions].sort(compareModPackageDefinitions);
+  return ordered[0] ?? null;
 };
 
 export class ModPackageRegistry {
@@ -87,18 +113,14 @@ export class ModPackageRegistry {
   }
 }
 
-const comparePackIds = (left: string, right: string): number => {
-  if (left < right) return -1;
-  if (left > right) return 1;
-  return 0;
-};
-
 const compareByPackId = (
   left: ModPackageDefinition,
   right: ModPackageDefinition
 ): number => comparePackIds(left.packId, right.packId);
 
 let runtimeModPackageRegistrySingleton: ModPackageRegistry | null = null;
+let runtimeToolbarBaseProviderSingleton: ToolbarBaseProvider | null = null;
+let runtimeModResourceOverridesSingleton: RuntimeModResourceOverrides = {};
 
 const ensureRuntimeModPackageRegistry = (): ModPackageRegistry => {
   if (!runtimeModPackageRegistrySingleton) {
@@ -142,4 +164,89 @@ export const clearRuntimeModPackageRegistry = (): void => {
 
 export const resetRuntimeModPackageRegistry = (): void => {
   runtimeModPackageRegistrySingleton = null;
+  runtimeToolbarBaseProviderSingleton = null;
+  runtimeModResourceOverridesSingleton = {};
+};
+
+export const registerRuntimeToolbarBaseProvider = (
+  provider: ToolbarBaseProvider
+): ToolbarBaseProvider => {
+  runtimeToolbarBaseProviderSingleton = provider;
+  return provider;
+};
+
+export const getRuntimeToolbarBaseProvider = (): ToolbarBaseProvider | null =>
+  runtimeToolbarBaseProviderSingleton;
+
+export const clearRuntimeToolbarBaseProvider = (): void => {
+  runtimeToolbarBaseProviderSingleton = null;
+};
+
+const resolveMergeLayerName = (
+  layer: string
+): layer is keyof RuntimeModResourceOverrides => layer === "mod" || layer === "user";
+
+const sanitizeRuntimeLayerOverrides = (
+  value: RuntimeModResourceLayerOverrides
+): RuntimeModResourceLayerOverrides => {
+  const sanitized: RuntimeModResourceLayerOverrides = {};
+  if (value.policyPatch) sanitized.policyPatch = value.policyPatch;
+  if (value.toolbarItems) sanitized.toolbarItems = [...value.toolbarItems];
+  if (value.panelItems) sanitized.panelItems = [...value.panelItems];
+  if (value.commands) sanitized.commands = [...value.commands];
+  if (value.shortcuts) sanitized.shortcuts = [...value.shortcuts];
+  if (value.inputBehavior) {
+    sanitized.inputBehavior = {
+      ...value.inputBehavior,
+      ...(value.inputBehavior.chain
+        ? { chain: [...value.inputBehavior.chain] }
+        : {}),
+    };
+  }
+  if (value.toolbarSurfaceRules) {
+    sanitized.toolbarSurfaceRules = [...value.toolbarSurfaceRules];
+  }
+  return sanitized;
+};
+
+export const registerRuntimeModResourceOverrides = (
+  value: RuntimeModResourceOverrides
+): RuntimeModResourceOverrides => {
+  const next: RuntimeModResourceOverrides = {};
+  for (const [layer, overrides] of Object.entries(value)) {
+    if (!resolveMergeLayerName(layer)) continue;
+    if (!overrides) continue;
+    next[layer] = sanitizeRuntimeLayerOverrides(overrides);
+  }
+  runtimeModResourceOverridesSingleton = next;
+  return runtimeModResourceOverridesSingleton;
+};
+
+export const setRuntimeModResourceLayerOverrides = (
+  layer: "mod" | "user",
+  overrides: RuntimeModResourceLayerOverrides | null
+): RuntimeModResourceLayerOverrides | null => {
+  if (overrides === null) {
+    delete runtimeModResourceOverridesSingleton[layer];
+    return null;
+  }
+  const sanitized = sanitizeRuntimeLayerOverrides(overrides);
+  runtimeModResourceOverridesSingleton = {
+    ...runtimeModResourceOverridesSingleton,
+    [layer]: sanitized,
+  };
+  return sanitized;
+};
+
+export const getRuntimeModResourceOverrides = (): RuntimeModResourceOverrides => ({
+  ...runtimeModResourceOverridesSingleton,
+});
+
+export const getRuntimeModResourceLayerOverrides = (
+  layer: "mod" | "user"
+): RuntimeModResourceLayerOverrides | null =>
+  runtimeModResourceOverridesSingleton[layer] ?? null;
+
+export const clearRuntimeModResourceOverrides = (): void => {
+  runtimeModResourceOverridesSingleton = {};
 };

@@ -3,10 +3,15 @@ import { isKnownUISlotName, type UISlotName } from "@core/runtime/plugin-runtime
 import { getRuntimeModManager } from "@core/runtime/modding/host";
 import {
   listRuntimeModPackages,
+  mergeUIItemsByResourceLayerLoadOrder,
   selectActiveModPackageAllowsPanelSlot,
   selectActiveModPackageAllowsToolbarContributionGroup,
+  selectActiveModPackagePanelItemRules,
+  selectActiveModPackageToolbarItemRules,
+  selectRuntimeModResourceOverridesForLayer,
   type ModPackageDefinition,
   type ModPackageId,
+  type ModPackageUIItemRule,
 } from "@core/runtime/modding/package";
 import type { PanelRuntimeRole } from "@features/chrome/layout/windowing/panelBehavior.types";
 import { useModStore } from "@features/platform/store/useModStore";
@@ -53,17 +58,6 @@ const compareContributionByOrderThenId = <
   return left.id.localeCompare(right.id);
 };
 
-const dedupeById = <T extends { id: string }>(entries: readonly T[]): T[] => {
-  const seen = new Set<string>();
-  const deduped: T[] = [];
-  for (const entry of entries) {
-    if (seen.has(entry.id)) continue;
-    seen.add(entry.id);
-    deduped.push(entry);
-  }
-  return deduped;
-};
-
 const hasNonEmpty = (value: unknown): value is string =>
   typeof value === "string" && value.trim().length > 0;
 
@@ -80,6 +74,87 @@ const resolveActivePackagePolicyContext = (
   };
 };
 
+const normalizeToolbarContribution = (
+  entry: ModToolbarItem
+): ModToolbarItem | null => {
+  if (!hasNonEmpty(entry.id) || !hasNonEmpty(entry.commandId) || !hasNonEmpty(entry.label)) {
+    return null;
+  }
+  return {
+    ...entry,
+    id: entry.id.trim(),
+    commandId: entry.commandId.trim(),
+    label: entry.label.trim(),
+    ...(entry.group ? { group: normalizeContributionGroup(entry.group) } : {}),
+  };
+};
+
+const toToolbarContributionFromPolicyRule = (
+  rule: ModPackageUIItemRule
+): ModToolbarItem => ({
+  id: rule.itemId.trim(),
+  commandId: hasNonEmpty(rule.commandId) ? rule.commandId.trim() : "",
+  label: hasNonEmpty(rule.label) ? rule.label.trim() : rule.itemId.trim(),
+  ...(hasNonEmpty(rule.icon) ? { icon: rule.icon.trim() } : {}),
+  ...(hasNonEmpty(rule.group)
+    ? { group: normalizeContributionGroup(rule.group) }
+    : { group: normalizeContributionGroup(rule.slotId) }),
+  ...(typeof rule.order === "number" ? { order: rule.order } : {}),
+  ...(hasNonEmpty(rule.when) ? { when: rule.when.trim() } : {}),
+});
+
+const toToolbarMergeEntry = (
+  contribution: ModToolbarItem,
+  operation?: ModPackageUIItemRule["operation"]
+) => ({
+  slotId: normalizeContributionGroup(contribution.group),
+  itemId: contribution.id,
+  ...(operation ? { operation } : {}),
+  value: contribution,
+});
+
+const normalizePanelContribution = (
+  entry: ModPanelContribution
+): ResolvedModPanelContribution | null => {
+  if (!hasNonEmpty(entry.id) || !hasNonEmpty(entry.title) || !hasNonEmpty(entry.slot)) {
+    return null;
+  }
+  const slot = entry.slot.trim();
+  if (!isKnownUISlotName(slot)) return null;
+  return {
+    ...entry,
+    id: entry.id.trim(),
+    title: entry.title.trim(),
+    slot,
+  };
+};
+
+const toPanelContributionFromPolicyRule = (
+  rule: ModPackageUIItemRule
+): ResolvedModPanelContribution | null => {
+  const slot = rule.slotId.trim();
+  if (!isKnownUISlotName(slot)) return null;
+  return {
+    id: rule.itemId.trim(),
+    title: hasNonEmpty(rule.title) ? rule.title.trim() : rule.itemId.trim(),
+    slot,
+    ...(typeof rule.defaultOpen === "boolean"
+      ? { defaultOpen: rule.defaultOpen }
+      : {}),
+    ...(typeof rule.order === "number" ? { order: rule.order } : {}),
+  };
+};
+
+const toPanelMergeEntry = (
+  contribution: ResolvedModPanelContribution,
+  operation?: ModPackageUIItemRule["operation"]
+) => ({
+  slotId: contribution.slot,
+  itemId: contribution.id,
+  ...(operation ? { operation } : {}),
+  value: contribution,
+});
+
 export const listResolvedModToolbarContributions = (
   options: ToolbarBridgeOptions
 ): readonly ModToolbarItem[] => {
@@ -88,17 +163,50 @@ export const listResolvedModToolbarContributions = (
 
   const policyContext = resolveActivePackagePolicyContext(options.activePackageId);
   const manager = getRuntimeModManager();
-  const raw = manager.listToolbarContributions();
-  const normalized = raw
-    .filter(
-      (entry) => hasNonEmpty(entry.id) && hasNonEmpty(entry.commandId) && hasNonEmpty(entry.label)
+
+  const modLayer = manager
+    .listToolbarContributions()
+    .map((entry) => normalizeToolbarContribution(entry))
+    .filter((entry): entry is ModToolbarItem => entry !== null)
+    .filter((entry) =>
+      selectActiveModPackageAllowsToolbarContributionGroup(
+        policyContext.definitions,
+        policyContext.activePackageId,
+        normalizeContributionGroup(entry.group)
+      )
     )
+    .sort(compareContributionByOrderThenId)
+    .map((entry) => toToolbarMergeEntry(entry));
+
+  const packageLayer = selectActiveModPackageToolbarItemRules(
+    policyContext.definitions,
+    policyContext.activePackageId
+  ).map((rule) =>
+    toToolbarMergeEntry(toToolbarContributionFromPolicyRule(rule), rule.operation)
+  );
+
+  const userLayer = (
+    selectRuntimeModResourceOverridesForLayer("user")?.toolbarItems ?? []
+  ).map((rule) =>
+    toToolbarMergeEntry(toToolbarContributionFromPolicyRule(rule), rule.operation)
+  );
+
+  const merged = mergeUIItemsByResourceLayerLoadOrder({
+    package: packageLayer,
+    mod: modLayer,
+    user: userLayer,
+  });
+
+  const normalized = merged.items
     .map((entry) => ({
-      ...entry,
-      id: entry.id.trim(),
-      commandId: entry.commandId.trim(),
-      label: entry.label.trim(),
+      ...entry.value,
+      id: entry.itemId,
+      group: entry.slotId,
     }))
+    .filter(
+      (entry) =>
+        hasNonEmpty(entry.id) && hasNonEmpty(entry.commandId) && hasNonEmpty(entry.label)
+    )
     .filter((entry) =>
       selectActiveModPackageAllowsToolbarContributionGroup(
         policyContext.definitions,
@@ -108,12 +216,11 @@ export const listResolvedModToolbarContributions = (
     )
     .sort(compareContributionByOrderThenId);
 
-  const deduped = dedupeById(normalized);
   const reserved = options.reservedActionIds;
   if (!reserved || reserved.size === 0) {
-    return deduped;
+    return normalized;
   }
-  return deduped.filter((entry) => !reserved.has(entry.id));
+  return normalized.filter((entry) => !reserved.has(entry.id));
 };
 
 export const listResolvedModPanelContributions = (
@@ -123,32 +230,71 @@ export const listResolvedModPanelContributions = (
 
   const policyContext = resolveActivePackagePolicyContext(options.activePackageId);
   const manager = getRuntimeModManager();
-  const raw = manager.listPanelContributions();
-  const normalized: ResolvedModPanelContribution[] = [];
 
-  for (const entry of raw) {
-    if (!hasNonEmpty(entry.id) || !hasNonEmpty(entry.title) || !hasNonEmpty(entry.slot)) {
-      continue;
-    }
-    const slot = entry.slot.trim();
-    if (!isKnownUISlotName(slot)) continue;
-    if (
-      !selectActiveModPackageAllowsPanelSlot(
+  const modLayer = manager
+    .listPanelContributions()
+    .map((entry) => normalizePanelContribution(entry))
+    .filter((entry): entry is ResolvedModPanelContribution => entry !== null)
+    .filter((entry) =>
+      selectActiveModPackageAllowsPanelSlot(
         policyContext.definitions,
         policyContext.activePackageId,
-        slot
+        entry.slot
       )
-    ) {
-      continue;
-    }
-    normalized.push({
-      ...entry,
-      id: entry.id.trim(),
-      title: entry.title.trim(),
-      slot,
-    });
-  }
+    )
+    .sort(compareContributionByOrderThenId)
+    .map((entry) => toPanelMergeEntry(entry));
 
-  const ordered = normalized.sort(compareContributionByOrderThenId);
-  return dedupeById(ordered);
+  const packageLayer = selectActiveModPackagePanelItemRules(
+    policyContext.definitions,
+    policyContext.activePackageId
+  )
+    .map((rule) => ({
+      rule,
+      contribution: toPanelContributionFromPolicyRule(rule),
+    }))
+    .filter(
+      (
+        entry
+      ): entry is {
+        rule: ModPackageUIItemRule;
+        contribution: ResolvedModPanelContribution;
+      } => entry.contribution !== null
+    )
+    .map(({ rule, contribution }) => toPanelMergeEntry(contribution, rule.operation));
+
+  const userLayer = (
+    selectRuntimeModResourceOverridesForLayer("user")?.panelItems ?? []
+  )
+    .map((rule) => ({
+      rule,
+      contribution: toPanelContributionFromPolicyRule(rule),
+    }))
+    .filter(
+      (
+        entry
+      ): entry is {
+        rule: ModPackageUIItemRule;
+        contribution: ResolvedModPanelContribution;
+      } => entry.contribution !== null
+    )
+    .map(({ rule, contribution }) => toPanelMergeEntry(contribution, rule.operation));
+
+  const merged = mergeUIItemsByResourceLayerLoadOrder({
+    package: packageLayer,
+    mod: modLayer,
+    user: userLayer,
+  });
+
+  return merged.items
+    .map((entry) => entry.value)
+    .filter((entry) => isKnownUISlotName(entry.slot))
+    .filter((entry) =>
+      selectActiveModPackageAllowsPanelSlot(
+        policyContext.definitions,
+        policyContext.activePackageId,
+        entry.slot
+      )
+    )
+    .sort(compareContributionByOrderThenId);
 };

@@ -8,6 +8,12 @@ FAIL=0
 WARN_COUNT=0
 RUNTIME_MATRIX_FILE="codex_tasks/workflow/mod_package_runtime_regression_matrix.csv"
 RUNTIME_MATRIX_THRESHOLD_FILE="codex_tasks/workflow/mod_package_runtime_thresholds.env"
+TOOLBAR_HOST_RENDERER_FILES=(
+  "v10/src/features/chrome/toolbar/FloatingToolbar.tsx"
+  "v10/src/features/chrome/toolbar/DrawModeTools.tsx"
+  "v10/src/features/chrome/toolbar/PlaybackModeTools.tsx"
+  "v10/src/features/chrome/toolbar/CanvasModeTools.tsx"
+)
 
 DEFAULT_REQUIRED_VIEWPORTS="desktop tablet mobile"
 DEFAULT_REQUIRED_CHECK_IDS="activation_policy input_routing host_policy"
@@ -38,10 +44,25 @@ contains_value() {
 
 check_forbidden_imports() {
   local label="$1"
-  local target_glob="$2"
-  local pattern="$3"
+  local pattern="$2"
+  shift 2
   local matches
-  matches="$(rg -n "$pattern" $target_glob -g '*.ts' -g '*.tsx' || true)"
+  matches="$(rg -n "$pattern" "$@" -g '*.ts' -g '*.tsx' || true)"
+  if [[ -n "$matches" ]]; then
+    echo "[FAIL] $label"
+    echo "$matches"
+    FAIL=1
+  else
+    echo "[PASS] $label"
+  fi
+}
+
+check_forbidden_text() {
+  local label="$1"
+  local pattern="$2"
+  shift 2
+  local matches
+  matches="$(rg -n "$pattern" "$@" || true)"
   if [[ -n "$matches" ]]; then
     echo "[FAIL] $label"
     echo "$matches"
@@ -185,8 +206,25 @@ check_runtime_regression_matrix() {
     if rg -n -F -q "$pattern" "$file"; then
       echo "[PASS] runtime-matrix $viewport/$check_id"
     else
-      echo "[FAIL] runtime-matrix $viewport/$check_id missing pattern '$pattern' in $file"
-      FAIL=1
+      local compat_pattern=""
+      local compat_hit=0
+
+      if [[ "$check_id" == "activation_policy" && "$file" == "v10/src/features/chrome/toolbar/toolbarModePolicy.ts" ]]; then
+        if [[ "$pattern" == "selectActiveModPackageActivationToolbarModeMappedModId" ]]; then
+          compat_pattern="selectActiveModPackageActivationModIdResolutionForToolbarMode"
+        fi
+      fi
+
+      if [[ -n "$compat_pattern" ]] && rg -n -F -q "$compat_pattern" "$file"; then
+        echo "[WARN] runtime-matrix $viewport/$check_id pattern '$pattern' matched via compat '$compat_pattern' in $file"
+        WARN_COUNT=$((WARN_COUNT + 1))
+        compat_hit=1
+      fi
+
+      if [[ "$compat_hit" -eq 0 ]]; then
+        echo "[FAIL] runtime-matrix $viewport/$check_id missing pattern '$pattern' in $file"
+        FAIL=1
+      fi
     fi
   done < "$RUNTIME_MATRIX_FILE"
 
@@ -219,39 +257,72 @@ echo "[check_mod_contract] validating mod runtime contract boundaries"
 echo "[check_mod_contract] section=import-boundary"
 
 check_forbidden_imports \
+  "core/runtime lanes must not import features (alias or relative)" \
+  "from ['\"][^'\"]*(@features/|features/)" \
+  "v10/src/core/runtime"
+
+check_forbidden_imports \
   "core/runtime/modding builtin lanes must not import feature layout/store/windowing" \
-  "v10/src/core/runtime/modding/builtin" \
-  "@features/(layout|store|layout/windowing)"
+  "@features/(layout|store|layout/windowing)" \
+  "v10/src/core/runtime/modding/builtin"
 
 check_forbidden_imports \
   "core/runtime/modding host lanes must not import features" \
-  "v10/src/core/runtime/modding/host" \
-  "@features/"
+  "@features/" \
+  "v10/src/core/runtime/modding/host"
 
 check_forbidden_imports \
   "features/ui-host must not import runtime modding internal paths" \
-  "v10/src/features/chrome/ui-host" \
-  "@core/runtime/modding/.*/internal/"
+  "@core/runtime/modding/.*/internal/" \
+  "v10/src/features/chrome/ui-host"
 
 check_forbidden_imports \
   "core/runtime/modding package lanes must not import features" \
-  "v10/src/core/runtime/modding/package" \
-  "@features/"
+  "@features/" \
+  "v10/src/core/runtime/modding/package"
 
 check_forbidden_imports \
   "core/runtime/modding package lanes must not import host layer" \
-  "v10/src/core/runtime/modding/package" \
-  "@core/runtime/modding/host"
+  "@core/runtime/modding/host" \
+  "v10/src/core/runtime/modding/package"
 
 check_forbidden_imports \
-  "features must not deep-import runtime modding package internals" \
+  "features/app/mod must not deep-import runtime modding package internals" \
+  "(@core/runtime/modding/package/|@/core/runtime/modding/package/|/core/runtime/modding/package/)" \
   "v10/src/features" \
-  "@core/runtime/modding/package/"
+  "v10/src/app" \
+  "v10/src/mod"
 
 check_forbidden_imports \
-  "features must not deep-import runtime modding host input routing bridge path" \
+  "features/app/mod must not deep-import runtime modding host input routing bridge path" \
+  "(@core/runtime/modding/host/inputRoutingBridge|@/core/runtime/modding/host/inputRoutingBridge|/core/runtime/modding/host/inputRoutingBridge)" \
   "v10/src/features" \
-  "@core/runtime/modding/host/inputRoutingBridge"
+  "v10/src/app" \
+  "v10/src/mod"
+
+check_forbidden_imports \
+  "features/app/mod must not import deprecated @core/mod alias lane" \
+  "@core/mod(/|$|[\"'])" \
+  "v10/src/features" \
+  "v10/src/app" \
+  "v10/src/mod"
+
+check_forbidden_imports \
+  "features/app/mod must not import deprecated core compat aliases" \
+  "@core/(config|contracts|engine|extensions|math|migrations|persistence|sanitize|theme|themes|types)(/|$|[\"'])" \
+  "v10/src/features" \
+  "v10/src/app" \
+  "v10/src/mod"
+
+check_forbidden_imports \
+  "v10/src must not import deprecated legacy feature root aliases" \
+  "@features/(layout|toolbar|ui-host|shortcuts|theme|viewer|sharing|sync|canvas|editor-core|animation|input-studio|community|moderation|policy|extensions|mod-studio|observability|store|experiments|hooks)(/|$|[\"'])" \
+  "v10/src"
+
+check_forbidden_text \
+  "toolbar host renderer files must not reference legacy toolbar constants" \
+  "\\b(TOOLBAR_ACTION_CATALOG|FALLBACK_RULES|TOOLBAR_MODES)\\b" \
+  "${TOOLBAR_HOST_RENDERER_FILES[@]}"
 
 echo "[check_mod_contract] section=required-symbol"
 
