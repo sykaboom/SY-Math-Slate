@@ -66,6 +66,9 @@ Core subsystems:
   - `core/runtime/modding/api`: mod runtime contracts and normalized event/context types.
   - `core/runtime/modding/package`: package contracts/registry/selectors/guards + template-pack adapter.
     - legacy alias mapping SSOT: `core/runtime/modding/package/legacyAlias.ts` (feature-layer redefinition 금지).
+    - legacy alias retire freeze gate:
+      - budget: `codex_tasks/workflow/mod_alias_retire_budget.env`
+      - operator plan: `codex_tasks/workflow/mod_alias_retire_plan.md`
   - `core/runtime/modding/host`: mod runtime manager/registry and normalized routing bridge.
   - `core/runtime/modding/builtin`: builtin mods (`draw`, `playback`, `canvas`, `lecture`) under one contract.
 - Legacy compat lanes (temporary):
