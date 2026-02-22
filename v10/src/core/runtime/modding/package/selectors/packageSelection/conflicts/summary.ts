@@ -1,6 +1,6 @@
 import type { ModPackageDefinition, ModPackageId } from "../../../types";
-import { comparePackIds, selectActiveModPackage } from "../sortingAndActive";
-import { selectModPackageConflictIds } from "./normalize";
+import { selectActiveModPackage } from "../sortingAndActive";
+import { buildEmptyConflictSummary, buildRegisteredAndMissingConflictIds, selectDeclaredConflictIds, selectReverseConflictIds } from "./summary/helpers";
 
 export type ActiveModPackageConflictSummary = {
   declaredConflictIds: ModPackageId[];
@@ -15,40 +15,18 @@ export const selectActiveModPackageConflictSummary = (
 ): ActiveModPackageConflictSummary => {
   const activeDefinition = selectActiveModPackage(definitions, activePackageId);
   if (!activeDefinition) {
-    return {
-      declaredConflictIds: [],
-      reverseConflictIds: [],
-      registeredConflictIds: [],
-      missingConflictIds: [],
-    };
+    return buildEmptyConflictSummary();
   }
 
   const activePackId = activeDefinition.packId;
-  const declaredConflictIds = selectModPackageConflictIds(activeDefinition).filter(
-    (packId) => packId !== activePackId
-  );
+  const declaredConflictIds = selectDeclaredConflictIds(activeDefinition, activePackId);
   const registeredPackIds = new Set(definitions.map((definition) => definition.packId));
-  const reverseConflictIds = definitions
-    .filter((definition) => definition.packId !== activePackId)
-    .filter((definition) =>
-      selectModPackageConflictIds(definition).includes(activePackId)
-    )
-    .map((definition) => definition.packId)
-    .sort(comparePackIds);
-
-  const registeredConflictIds = [...new Set<ModPackageId>([
-    ...declaredConflictIds.filter((packId) => registeredPackIds.has(packId)),
-    ...reverseConflictIds,
-  ])].sort(comparePackIds);
-
-  const missingConflictIds = declaredConflictIds
-    .filter((packId) => !registeredPackIds.has(packId))
-    .sort(comparePackIds);
-
-  return {
+  const reverseConflictIds = selectReverseConflictIds(definitions, activePackId);
+  const { registeredConflictIds, missingConflictIds } = buildRegisteredAndMissingConflictIds(
     declaredConflictIds,
     reverseConflictIds,
-    registeredConflictIds,
-    missingConflictIds,
-  };
+    registeredPackIds
+  );
+
+  return { declaredConflictIds, reverseConflictIds, registeredConflictIds, missingConflictIds };
 };

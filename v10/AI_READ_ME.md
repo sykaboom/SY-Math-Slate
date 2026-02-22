@@ -259,12 +259,15 @@ Execution planning sources:
 - roadmap-level: `PROJECT_ROADMAP.md`
 - execution-level: approved `codex_tasks/task_*.md`
 - architecture-level: `v10/docs/architecture/ModEngine.md` (canonical active path)
-- large-file slicing wave (latest): `W-P6-SLICE-W31`
+- large-file slicing wave (latest): `W-P6-SLICE-W32`
   - split targets:
-    - `selectors/toolbarPlan/surfaceRules/merge.ts` + `merge/helpers.ts`
-    - `guards/validateDefinition/uiAndResourcePolicy/uiPolicy/parse.ts` + `uiPolicy/parse/helpers.ts`
-    - `guards/validateDefinition/uiAndResourcePolicy/resourcePolicy/parse.ts` + `resourcePolicy/parse/helpers.ts`
+    - `selectors/packageSelection/conflicts/summary.ts` + `summary/helpers.ts`
+    - `guards/resourcePolicy/commandRules/validators/entry.ts` + `entry/helpers.ts`
+    - `guards/resourcePolicy/shortcutRules/validators/entry.ts` + `entry/helpers.ts`
     - (previous wave continuity)
+      - `selectors/toolbarPlan/surfaceRules/merge.ts` + `merge/helpers.ts`
+      - `guards/validateDefinition/uiAndResourcePolicy/uiPolicy/parse.ts` + `uiPolicy/parse/helpers.ts`
+      - `guards/validateDefinition/uiAndResourcePolicy/resourcePolicy/parse.ts` + `resourcePolicy/parse/helpers.ts`
       - `selectors/activePackageRules/active.ts` + `active/selectors.ts`
       - `selectors/toolbarPlan/planResolution/sections.ts` + `sections/modes.ts`
       - `templatePackAdapter/adaptation/definition.ts` + `definition/helpers.ts`

@@ -1,48 +1,39 @@
 import type { ModPackageShortcutRule } from "../../../../types";
 import type { ModPackageValidationFailure } from "../../../types";
-import { fail, isNonEmptyString, isPlainRecord } from "../../../utils";
 import { parseShortcutOperation } from "./operation";
 import { parseShortcutWhen } from "./when";
+import {
+  buildShortcutRule,
+  validateShortcutRuleEntryShape,
+} from "./entry/helpers";
 
 export const parseShortcutRuleEntry = (
   entry: unknown,
   index: number
-):
+): 
   | { ok: true; value: ModPackageShortcutRule }
   | { ok: false; value: ModPackageValidationFailure } => {
   const entryPath = `manifest.resourcePolicy.shortcuts.${index}`;
-  if (
-    !isPlainRecord(entry) ||
-    !isNonEmptyString(entry.shortcut) ||
-    !isNonEmptyString(entry.commandId)
-  ) {
-    return {
-      ok: false,
-      value: fail(
-        "invalid-resource-policy",
-        entryPath,
-        "shortcut and commandId must be non-empty strings."
-      ),
-    };
-  }
+  const entryShape = validateShortcutRuleEntryShape(entry, entryPath);
+  if (!entryShape.ok) return entryShape;
 
-  const parsedOperation = parseShortcutOperation(entry.operation, entryPath);
+  const parsedOperation = parseShortcutOperation(entryShape.value.operation, entryPath);
   if (!parsedOperation.ok) {
     return parsedOperation;
   }
 
-  const parsedWhen = parseShortcutWhen(entry.when, entryPath);
+  const parsedWhen = parseShortcutWhen(entryShape.value.when, entryPath);
   if (!parsedWhen.ok) {
     return parsedWhen;
   }
 
   return {
     ok: true,
-    value: {
-      shortcut: entry.shortcut.trim(),
-      commandId: entry.commandId.trim(),
-      ...(parsedWhen.value ? { when: parsedWhen.value } : {}),
-      ...(parsedOperation.value ? { operation: parsedOperation.value } : {}),
-    },
+    value: buildShortcutRule(
+      entryShape.value.shortcut,
+      entryShape.value.commandId,
+      parsedWhen.value,
+      parsedOperation.value
+    ),
   };
 };
