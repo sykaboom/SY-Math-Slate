@@ -36,6 +36,8 @@ guards_validate_definition_ui_resource_policy_max="${GUARDS_VALIDATE_DEFINITION_
 template_pack_adaptation_max="${TEMPLATE_PACK_ADAPTATION_MAX:-0}"
 template_pack_toolbar_definition_max="${TEMPLATE_PACK_TOOLBAR_DEFINITION_MAX:-0}"
 selectors_package_selection_sorting_active_max="${SELECTORS_PACKAGE_SELECTION_SORTING_ACTIVE_MAX:-0}"
+selectors_package_selection_conflicts_max="${SELECTORS_PACKAGE_SELECTION_CONFLICTS_MAX:-0}"
+selectors_package_selection_ui_policy_access_max="${SELECTORS_PACKAGE_SELECTION_UI_POLICY_ACCESS_MAX:-0}"
 selectors_package_selection_activation_mapping_max="${SELECTORS_PACKAGE_SELECTION_ACTIVATION_MAPPING_MAX:-0}"
 guards_validate_definition_index_max="${GUARDS_VALIDATE_DEFINITION_INDEX_MAX:-0}"
 guards_validate_definition_base_fields_max="${GUARDS_VALIDATE_DEFINITION_BASE_FIELDS_MAX:-0}"
@@ -87,6 +89,13 @@ selectors_package_selection_activation_mapping_base_index_max="${SELECTORS_PACKA
 selectors_package_selection_activation_mapping_base_defaults_max="${SELECTORS_PACKAGE_SELECTION_ACTIVATION_MAPPING_BASE_DEFAULTS_MAX:-0}"
 selectors_package_selection_activation_mapping_base_map_to_mod_max="${SELECTORS_PACKAGE_SELECTION_ACTIVATION_MAPPING_BASE_MAP_TO_MOD_MAX:-0}"
 selectors_package_selection_activation_mapping_base_map_to_toolbar_max="${SELECTORS_PACKAGE_SELECTION_ACTIVATION_MAPPING_BASE_MAP_TO_TOOLBAR_MAX:-0}"
+selectors_package_selection_conflicts_index_max="${SELECTORS_PACKAGE_SELECTION_CONFLICTS_INDEX_MAX:-0}"
+selectors_package_selection_conflicts_normalize_max="${SELECTORS_PACKAGE_SELECTION_CONFLICTS_NORMALIZE_MAX:-0}"
+selectors_package_selection_conflicts_summary_max="${SELECTORS_PACKAGE_SELECTION_CONFLICTS_SUMMARY_MAX:-0}"
+selectors_package_selection_ui_policy_access_index_max="${SELECTORS_PACKAGE_SELECTION_UI_POLICY_ACCESS_INDEX_MAX:-0}"
+selectors_package_selection_ui_policy_access_base_max="${SELECTORS_PACKAGE_SELECTION_UI_POLICY_ACCESS_BASE_MAX:-0}"
+selectors_package_selection_ui_policy_access_active_max="${SELECTORS_PACKAGE_SELECTION_UI_POLICY_ACCESS_ACTIVE_MAX:-0}"
+selectors_package_selection_ui_policy_access_checks_max="${SELECTORS_PACKAGE_SELECTION_UI_POLICY_ACCESS_CHECKS_MAX:-0}"
 selectors_toolbar_plan_provider_base_provider_max="${SELECTORS_TOOLBAR_PLAN_PROVIDER_BASE_PROVIDER_MAX:-0}"
 selectors_toolbar_plan_provider_constants_max="${SELECTORS_TOOLBAR_PLAN_PROVIDER_CONSTANTS_MAX:-0}"
 selectors_toolbar_plan_provider_plan_max="${SELECTORS_TOOLBAR_PLAN_PROVIDER_PLAN_MAX:-0}"
@@ -133,6 +142,8 @@ validate_int "GUARDS_VALIDATE_DEFINITION_UI_RESOURCE_POLICY_MAX" "$guards_valida
 validate_int "TEMPLATE_PACK_ADAPTATION_MAX" "$template_pack_adaptation_max"
 validate_int "TEMPLATE_PACK_TOOLBAR_DEFINITION_MAX" "$template_pack_toolbar_definition_max"
 validate_int "SELECTORS_PACKAGE_SELECTION_SORTING_ACTIVE_MAX" "$selectors_package_selection_sorting_active_max"
+validate_int "SELECTORS_PACKAGE_SELECTION_CONFLICTS_MAX" "$selectors_package_selection_conflicts_max"
+validate_int "SELECTORS_PACKAGE_SELECTION_UI_POLICY_ACCESS_MAX" "$selectors_package_selection_ui_policy_access_max"
 validate_int "SELECTORS_PACKAGE_SELECTION_ACTIVATION_MAPPING_MAX" "$selectors_package_selection_activation_mapping_max"
 validate_int "GUARDS_VALIDATE_DEFINITION_INDEX_MAX" "$guards_validate_definition_index_max"
 validate_int "GUARDS_VALIDATE_DEFINITION_BASE_FIELDS_MAX" "$guards_validate_definition_base_fields_max"
@@ -184,6 +195,13 @@ validate_int "SELECTORS_PACKAGE_SELECTION_ACTIVATION_MAPPING_BASE_INDEX_MAX" "$s
 validate_int "SELECTORS_PACKAGE_SELECTION_ACTIVATION_MAPPING_BASE_DEFAULTS_MAX" "$selectors_package_selection_activation_mapping_base_defaults_max"
 validate_int "SELECTORS_PACKAGE_SELECTION_ACTIVATION_MAPPING_BASE_MAP_TO_MOD_MAX" "$selectors_package_selection_activation_mapping_base_map_to_mod_max"
 validate_int "SELECTORS_PACKAGE_SELECTION_ACTIVATION_MAPPING_BASE_MAP_TO_TOOLBAR_MAX" "$selectors_package_selection_activation_mapping_base_map_to_toolbar_max"
+validate_int "SELECTORS_PACKAGE_SELECTION_CONFLICTS_INDEX_MAX" "$selectors_package_selection_conflicts_index_max"
+validate_int "SELECTORS_PACKAGE_SELECTION_CONFLICTS_NORMALIZE_MAX" "$selectors_package_selection_conflicts_normalize_max"
+validate_int "SELECTORS_PACKAGE_SELECTION_CONFLICTS_SUMMARY_MAX" "$selectors_package_selection_conflicts_summary_max"
+validate_int "SELECTORS_PACKAGE_SELECTION_UI_POLICY_ACCESS_INDEX_MAX" "$selectors_package_selection_ui_policy_access_index_max"
+validate_int "SELECTORS_PACKAGE_SELECTION_UI_POLICY_ACCESS_BASE_MAX" "$selectors_package_selection_ui_policy_access_base_max"
+validate_int "SELECTORS_PACKAGE_SELECTION_UI_POLICY_ACCESS_ACTIVE_MAX" "$selectors_package_selection_ui_policy_access_active_max"
+validate_int "SELECTORS_PACKAGE_SELECTION_UI_POLICY_ACCESS_CHECKS_MAX" "$selectors_package_selection_ui_policy_access_checks_max"
 validate_int "SELECTORS_TOOLBAR_PLAN_PROVIDER_BASE_PROVIDER_MAX" "$selectors_toolbar_plan_provider_base_provider_max"
 validate_int "SELECTORS_TOOLBAR_PLAN_PROVIDER_CONSTANTS_MAX" "$selectors_toolbar_plan_provider_constants_max"
 validate_int "SELECTORS_TOOLBAR_PLAN_PROVIDER_PLAN_MAX" "$selectors_toolbar_plan_provider_plan_max"
@@ -281,6 +299,8 @@ extra_target_files=(
   "v10/src/core/runtime/modding/package/selectors/resourceInputBehaviorMerge.ts"
   "v10/src/core/runtime/modding/package/selectors/resourceInputBehaviorMerge/helpers.ts"
   "v10/src/core/runtime/modding/package/selectors/resourceInputBehaviorMerge/merge.ts"
+  "v10/src/core/runtime/modding/package/selectors/packageSelection/conflicts.ts"
+  "v10/src/core/runtime/modding/package/selectors/packageSelection/uiPolicyAccess.ts"
   "v10/src/core/runtime/modding/package/selectors/packageSelection/activationMapping/base.ts"
   "v10/src/core/runtime/modding/package/selectors/packageSelection/activationMapping/active.ts"
   "v10/src/core/runtime/modding/package/selectors/packageSelection/activationMapping/reverse.ts"
@@ -364,6 +384,23 @@ for file in "${wave14_extra_files[@]}"; do
   fi
 done
 
+wave15_extra_files=(
+  "v10/src/core/runtime/modding/package/selectors/packageSelection/conflicts/index.ts"
+  "v10/src/core/runtime/modding/package/selectors/packageSelection/conflicts/normalize.ts"
+  "v10/src/core/runtime/modding/package/selectors/packageSelection/conflicts/summary.ts"
+  "v10/src/core/runtime/modding/package/selectors/packageSelection/uiPolicyAccess/index.ts"
+  "v10/src/core/runtime/modding/package/selectors/packageSelection/uiPolicyAccess/base.ts"
+  "v10/src/core/runtime/modding/package/selectors/packageSelection/uiPolicyAccess/active.ts"
+  "v10/src/core/runtime/modding/package/selectors/packageSelection/uiPolicyAccess/checks.ts"
+)
+
+for file in "${wave15_extra_files[@]}"; do
+  if [[ ! -f "$file" ]]; then
+    echo "[check_v10_large_file_budget] FAIL: missing target file: $file"
+    exit 1
+  fi
+done
+
 app_layout_lines="$(wc -l < "${target_files[0]}")"
 ext_runtime_lines="$(wc -l < "${target_files[1]}")"
 data_input_lines="$(wc -l < "${target_files[2]}")"
@@ -416,29 +453,31 @@ selectors_resource_shortcut_merge_merge_lines="$(wc -l < "${extra_target_files[2
 selectors_resource_input_behavior_merge_facade_lines="$(wc -l < "${extra_target_files[23]}")"
 selectors_resource_input_behavior_merge_helpers_lines="$(wc -l < "${extra_target_files[24]}")"
 selectors_resource_input_behavior_merge_merge_lines="$(wc -l < "${extra_target_files[25]}")"
-selectors_package_selection_activation_mapping_base_lines="$(wc -l < "${extra_target_files[26]}")"
-selectors_package_selection_activation_mapping_active_lines="$(wc -l < "${extra_target_files[27]}")"
-selectors_package_selection_activation_mapping_reverse_lines="$(wc -l < "${extra_target_files[28]}")"
-selectors_toolbar_plan_provider_base_provider_lines="$(wc -l < "${extra_target_files[29]}")"
-selectors_toolbar_plan_provider_constants_lines="$(wc -l < "${extra_target_files[30]}")"
-selectors_toolbar_plan_provider_plan_lines="$(wc -l < "${extra_target_files[31]}")"
-guards_ui_policy_parse_lines="$(wc -l < "${extra_target_files[32]}")"
-guards_validate_definition_base_fields_parse_lines="$(wc -l < "${extra_target_files[33]}")"
-registry_class_comparators_lines="$(wc -l < "${extra_target_files[34]}")"
-registry_class_types_lines="$(wc -l < "${extra_target_files[35]}")"
-registry_class_registry_class_lines="$(wc -l < "${extra_target_files[36]}")"
-selectors_resource_command_merge_operations_lines="$(wc -l < "${extra_target_files[37]}")"
-selectors_resource_command_merge_run_lines="$(wc -l < "${extra_target_files[38]}")"
-selectors_resource_item_merge_operations_lines="$(wc -l < "${extra_target_files[39]}")"
-selectors_resource_item_merge_run_lines="$(wc -l < "${extra_target_files[40]}")"
-guards_resource_policy_input_behavior_rule_normalize_lines="$(wc -l < "${extra_target_files[41]}")"
-guards_resource_policy_input_behavior_rule_parse_lines="$(wc -l < "${extra_target_files[42]}")"
-guards_ui_policy_parse_validators_lines="$(wc -l < "${extra_target_files[43]}")"
-guards_ui_policy_parse_parse_lines="$(wc -l < "${extra_target_files[44]}")"
-guards_validate_definition_base_fields_parse_root_fields_lines="$(wc -l < "${extra_target_files[45]}")"
-guards_validate_definition_base_fields_parse_mod_ids_lines="$(wc -l < "${extra_target_files[46]}")"
-guards_validate_definition_base_fields_parse_activation_lines="$(wc -l < "${extra_target_files[47]}")"
-guards_validate_definition_base_fields_parse_parse_lines="$(wc -l < "${extra_target_files[48]}")"
+selectors_package_selection_conflicts_lines="$(wc -l < "${extra_target_files[26]}")"
+selectors_package_selection_ui_policy_access_lines="$(wc -l < "${extra_target_files[27]}")"
+selectors_package_selection_activation_mapping_base_lines="$(wc -l < "${extra_target_files[28]}")"
+selectors_package_selection_activation_mapping_active_lines="$(wc -l < "${extra_target_files[29]}")"
+selectors_package_selection_activation_mapping_reverse_lines="$(wc -l < "${extra_target_files[30]}")"
+selectors_toolbar_plan_provider_base_provider_lines="$(wc -l < "${extra_target_files[31]}")"
+selectors_toolbar_plan_provider_constants_lines="$(wc -l < "${extra_target_files[32]}")"
+selectors_toolbar_plan_provider_plan_lines="$(wc -l < "${extra_target_files[33]}")"
+guards_ui_policy_parse_lines="$(wc -l < "${extra_target_files[34]}")"
+guards_validate_definition_base_fields_parse_lines="$(wc -l < "${extra_target_files[35]}")"
+registry_class_comparators_lines="$(wc -l < "${extra_target_files[36]}")"
+registry_class_types_lines="$(wc -l < "${extra_target_files[37]}")"
+registry_class_registry_class_lines="$(wc -l < "${extra_target_files[38]}")"
+selectors_resource_command_merge_operations_lines="$(wc -l < "${extra_target_files[39]}")"
+selectors_resource_command_merge_run_lines="$(wc -l < "${extra_target_files[40]}")"
+selectors_resource_item_merge_operations_lines="$(wc -l < "${extra_target_files[41]}")"
+selectors_resource_item_merge_run_lines="$(wc -l < "${extra_target_files[42]}")"
+guards_resource_policy_input_behavior_rule_normalize_lines="$(wc -l < "${extra_target_files[43]}")"
+guards_resource_policy_input_behavior_rule_parse_lines="$(wc -l < "${extra_target_files[44]}")"
+guards_ui_policy_parse_validators_lines="$(wc -l < "${extra_target_files[45]}")"
+guards_ui_policy_parse_parse_lines="$(wc -l < "${extra_target_files[46]}")"
+guards_validate_definition_base_fields_parse_root_fields_lines="$(wc -l < "${extra_target_files[47]}")"
+guards_validate_definition_base_fields_parse_mod_ids_lines="$(wc -l < "${extra_target_files[48]}")"
+guards_validate_definition_base_fields_parse_activation_lines="$(wc -l < "${extra_target_files[49]}")"
+guards_validate_definition_base_fields_parse_parse_lines="$(wc -l < "${extra_target_files[50]}")"
 guards_ui_policy_parse_validators_validate_record_lines="$(wc -l < "v10/src/core/runtime/modding/package/guards/uiPolicy/parseUIItemRules/validators/validateRecord.ts")"
 guards_ui_policy_parse_validators_validate_base_fields_lines="$(wc -l < "v10/src/core/runtime/modding/package/guards/uiPolicy/parseUIItemRules/validators/validateBaseFields.ts")"
 guards_ui_policy_parse_validators_apply_optional_fields_lines="$(wc -l < "v10/src/core/runtime/modding/package/guards/uiPolicy/parseUIItemRules/validators/applyOptionalFields.ts")"
@@ -460,6 +499,13 @@ selectors_package_selection_activation_mapping_base_index_lines="$(wc -l < "v10/
 selectors_package_selection_activation_mapping_base_defaults_lines="$(wc -l < "v10/src/core/runtime/modding/package/selectors/packageSelection/activationMapping/base/defaults.ts")"
 selectors_package_selection_activation_mapping_base_map_to_mod_lines="$(wc -l < "v10/src/core/runtime/modding/package/selectors/packageSelection/activationMapping/base/mapToMod.ts")"
 selectors_package_selection_activation_mapping_base_map_to_toolbar_lines="$(wc -l < "v10/src/core/runtime/modding/package/selectors/packageSelection/activationMapping/base/mapToToolbar.ts")"
+selectors_package_selection_conflicts_index_lines="$(wc -l < "v10/src/core/runtime/modding/package/selectors/packageSelection/conflicts/index.ts")"
+selectors_package_selection_conflicts_normalize_lines="$(wc -l < "v10/src/core/runtime/modding/package/selectors/packageSelection/conflicts/normalize.ts")"
+selectors_package_selection_conflicts_summary_lines="$(wc -l < "v10/src/core/runtime/modding/package/selectors/packageSelection/conflicts/summary.ts")"
+selectors_package_selection_ui_policy_access_index_lines="$(wc -l < "v10/src/core/runtime/modding/package/selectors/packageSelection/uiPolicyAccess/index.ts")"
+selectors_package_selection_ui_policy_access_base_lines="$(wc -l < "v10/src/core/runtime/modding/package/selectors/packageSelection/uiPolicyAccess/base.ts")"
+selectors_package_selection_ui_policy_access_active_lines="$(wc -l < "v10/src/core/runtime/modding/package/selectors/packageSelection/uiPolicyAccess/active.ts")"
+selectors_package_selection_ui_policy_access_checks_lines="$(wc -l < "v10/src/core/runtime/modding/package/selectors/packageSelection/uiPolicyAccess/checks.ts")"
 
 printf '[check_v10_large_file_budget] budget_wave=%s app_layout=%s/%s extension_runtime_bootstrap=%s/%s data_input_panel=%s/%s selectors_package_selection=%s/%s selectors_toolbar_plan=%s/%s guards_validate_definition=%s/%s guards_resource_policy=%s/%s registry=%s/%s guards_validate_definition_ui_resource_policy=%s/%s template_pack_adaptation=%s/%s template_pack_toolbar_definition=%s/%s selectors_package_selection_sorting_active=%s/%s selectors_package_selection_activation_mapping=%s/%s guards_validate_definition_index=%s/%s guards_validate_definition_base_fields=%s/%s selectors_toolbar_plan_provider=%s/%s selectors_toolbar_plan_surface_rules=%s/%s selectors_toolbar_plan_plan_resolution=%s/%s guards_resource_policy_command_rules=%s/%s guards_resource_policy_shortcut_rules=%s/%s guards_resource_policy_input_behavior_rule=%s/%s registry_class=%s/%s registry_runtime_state=%s/%s registry_resource_overrides=%s/%s guards_validate_definition_ui_policy=%s/%s guards_validate_definition_resource_policy=%s/%s types_facade=%s/%s types_toolbar_plan=%s/%s resource_policy_merge=%s/%s resource_shortcut_merge=%s/%s resource_input_behavior_merge=%s/%s activation_mapping_base=%s/%s provider_base=%s/%s ui_policy_parse=%s/%s base_fields_parse=%s/%s registry_class_comparators=%s/%s registry_class_types=%s/%s registry_class_core=%s/%s command_merge_operations=%s/%s command_merge_run=%s/%s item_merge_operations=%s/%s item_merge_run=%s/%s input_behavior_normalize=%s/%s input_behavior_parse=%s/%s ui_policy_validators=%s/%s ui_policy_parser=%s/%s base_root_fields=%s/%s base_mod_ids=%s/%s base_activation=%s/%s base_parse=%s/%s\n' \
   "${BUDGET_WAVE:-unknown}" \
@@ -541,6 +587,15 @@ printf '[check_v10_large_file_budget] wave14 sorting_active_index=%s/%s sorting_
   "$selectors_package_selection_activation_mapping_base_map_to_mod_lines" "$selectors_package_selection_activation_mapping_base_map_to_mod_max" \
   "$selectors_package_selection_activation_mapping_base_map_to_toolbar_lines" "$selectors_package_selection_activation_mapping_base_map_to_toolbar_max"
 
+printf '[check_v10_large_file_budget] wave15 conflicts_index=%s/%s conflicts_normalize=%s/%s conflicts_summary=%s/%s ui_policy_access_index=%s/%s ui_policy_access_base=%s/%s ui_policy_access_active=%s/%s ui_policy_access_checks=%s/%s\n' \
+  "$selectors_package_selection_conflicts_index_lines" "$selectors_package_selection_conflicts_index_max" \
+  "$selectors_package_selection_conflicts_normalize_lines" "$selectors_package_selection_conflicts_normalize_max" \
+  "$selectors_package_selection_conflicts_summary_lines" "$selectors_package_selection_conflicts_summary_max" \
+  "$selectors_package_selection_ui_policy_access_index_lines" "$selectors_package_selection_ui_policy_access_index_max" \
+  "$selectors_package_selection_ui_policy_access_base_lines" "$selectors_package_selection_ui_policy_access_base_max" \
+  "$selectors_package_selection_ui_policy_access_active_lines" "$selectors_package_selection_ui_policy_access_active_max" \
+  "$selectors_package_selection_ui_policy_access_checks_lines" "$selectors_package_selection_ui_policy_access_checks_max"
+
 if (( app_layout_lines > app_layout_max )); then
   echo "[check_v10_large_file_budget] FAIL: AppLayout.tsx exceeded budget"
   exit 1
@@ -598,6 +653,16 @@ fi
 
 if (( selectors_package_selection_sorting_active_lines > selectors_package_selection_sorting_active_max )); then
   echo "[check_v10_large_file_budget] FAIL: packageSelection/sortingAndActive.ts exceeded budget"
+  exit 1
+fi
+
+if (( selectors_package_selection_conflicts_lines > selectors_package_selection_conflicts_max )); then
+  echo "[check_v10_large_file_budget] FAIL: packageSelection/conflicts.ts exceeded budget"
+  exit 1
+fi
+
+if (( selectors_package_selection_ui_policy_access_lines > selectors_package_selection_ui_policy_access_max )); then
+  echo "[check_v10_large_file_budget] FAIL: packageSelection/uiPolicyAccess.ts exceeded budget"
   exit 1
 fi
 
@@ -1018,6 +1083,41 @@ fi
 
 if (( selectors_package_selection_activation_mapping_base_map_to_toolbar_lines > selectors_package_selection_activation_mapping_base_map_to_toolbar_max )); then
   echo "[check_v10_large_file_budget] FAIL: packageSelection/activationMapping/base/mapToToolbar.ts exceeded budget"
+  exit 1
+fi
+
+if (( selectors_package_selection_conflicts_index_lines > selectors_package_selection_conflicts_index_max )); then
+  echo "[check_v10_large_file_budget] FAIL: packageSelection/conflicts/index.ts exceeded budget"
+  exit 1
+fi
+
+if (( selectors_package_selection_conflicts_normalize_lines > selectors_package_selection_conflicts_normalize_max )); then
+  echo "[check_v10_large_file_budget] FAIL: packageSelection/conflicts/normalize.ts exceeded budget"
+  exit 1
+fi
+
+if (( selectors_package_selection_conflicts_summary_lines > selectors_package_selection_conflicts_summary_max )); then
+  echo "[check_v10_large_file_budget] FAIL: packageSelection/conflicts/summary.ts exceeded budget"
+  exit 1
+fi
+
+if (( selectors_package_selection_ui_policy_access_index_lines > selectors_package_selection_ui_policy_access_index_max )); then
+  echo "[check_v10_large_file_budget] FAIL: packageSelection/uiPolicyAccess/index.ts exceeded budget"
+  exit 1
+fi
+
+if (( selectors_package_selection_ui_policy_access_base_lines > selectors_package_selection_ui_policy_access_base_max )); then
+  echo "[check_v10_large_file_budget] FAIL: packageSelection/uiPolicyAccess/base.ts exceeded budget"
+  exit 1
+fi
+
+if (( selectors_package_selection_ui_policy_access_active_lines > selectors_package_selection_ui_policy_access_active_max )); then
+  echo "[check_v10_large_file_budget] FAIL: packageSelection/uiPolicyAccess/active.ts exceeded budget"
+  exit 1
+fi
+
+if (( selectors_package_selection_ui_policy_access_checks_lines > selectors_package_selection_ui_policy_access_checks_max )); then
+  echo "[check_v10_large_file_budget] FAIL: packageSelection/uiPolicyAccess/checks.ts exceeded budget"
   exit 1
 fi
 
