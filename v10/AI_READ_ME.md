@@ -77,6 +77,10 @@ Core subsystems:
     - toolbarDefinition split (task_524): `src/core/runtime/modding/package/templatePackAdapter/toolbarDefinition.ts` is facade and parser modules live under `src/core/runtime/modding/package/templatePackAdapter/toolbarDefinition/*`.
     - resourceItemMerge split (task_525): `src/core/runtime/modding/package/selectors/resourceItemMerge.ts` is facade and merge modules live under `src/core/runtime/modding/package/selectors/resourceItemMerge/*`.
     - resourceCommandMerge split (task_526): `src/core/runtime/modding/package/selectors/resourceCommandMerge.ts` is facade and merge modules live under `src/core/runtime/modding/package/selectors/resourceCommandMerge/*`.
+    - package types split (task_528): `src/core/runtime/modding/package/types.ts` is facade and canonical type groups live under `src/core/runtime/modding/package/types/*`.
+    - policy merge selectors split (task_529): `resourcePolicyMerge.ts`, `resourceShortcutMerge.ts`, `resourceInputBehaviorMerge.ts` are facades and merge helpers live under sibling module folders.
+    - activation/provider split (task_530): `packageSelection/activationMapping.ts` and `toolbarPlan/provider.ts` are facades and resolver steps live under `.../activationMapping/*`, `.../provider/*`.
+    - guard parser split (task_531): `guards/uiPolicy.ts` and `guards/validateDefinition/baseFields.ts` are facades and parser modules live under `.../uiPolicy/*`, `.../baseFields/*`.
     - legacy alias runtime path: retired (task_496).
     - legacy alias retire freeze gate:
       - budget: `codex_tasks/workflow/mod_alias_retire_budget.env`
