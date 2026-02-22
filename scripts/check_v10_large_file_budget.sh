@@ -44,6 +44,9 @@ guards_validate_definition_index_max="${GUARDS_VALIDATE_DEFINITION_INDEX_MAX:-0}
 guards_validate_definition_base_fields_max="${GUARDS_VALIDATE_DEFINITION_BASE_FIELDS_MAX:-0}"
 guards_validate_definition_index_validate_max="${GUARDS_VALIDATE_DEFINITION_INDEX_VALIDATE_MAX:-0}"
 guards_validate_definition_index_predicate_max="${GUARDS_VALIDATE_DEFINITION_INDEX_PREDICATE_MAX:-0}"
+guards_validate_definition_index_validate_policies_max="${GUARDS_VALIDATE_DEFINITION_INDEX_VALIDATE_POLICIES_MAX:-0}"
+guards_validate_definition_index_validate_relations_max="${GUARDS_VALIDATE_DEFINITION_INDEX_VALIDATE_RELATIONS_MAX:-0}"
+guards_validate_definition_index_validate_finalize_max="${GUARDS_VALIDATE_DEFINITION_INDEX_VALIDATE_FINALIZE_MAX:-0}"
 selectors_toolbar_plan_provider_max="${SELECTORS_TOOLBAR_PLAN_PROVIDER_MAX:-0}"
 selectors_toolbar_plan_surface_rules_max="${SELECTORS_TOOLBAR_PLAN_SURFACE_RULES_MAX:-0}"
 selectors_toolbar_plan_plan_resolution_max="${SELECTORS_TOOLBAR_PLAN_PLAN_RESOLUTION_MAX:-0}"
@@ -152,6 +155,9 @@ selectors_resource_command_merge_operations_max="${SELECTORS_RESOURCE_COMMAND_ME
 selectors_resource_command_merge_run_max="${SELECTORS_RESOURCE_COMMAND_MERGE_RUN_MAX:-0}"
 selectors_resource_item_merge_operations_max="${SELECTORS_RESOURCE_ITEM_MERGE_OPERATIONS_MAX:-0}"
 selectors_resource_item_merge_run_max="${SELECTORS_RESOURCE_ITEM_MERGE_RUN_MAX:-0}"
+selectors_resource_item_merge_operations_remove_max="${SELECTORS_RESOURCE_ITEM_MERGE_OPERATIONS_REMOVE_MAX:-0}"
+selectors_resource_item_merge_operations_upsert_max="${SELECTORS_RESOURCE_ITEM_MERGE_OPERATIONS_UPSERT_MAX:-0}"
+selectors_resource_item_merge_operations_result_max="${SELECTORS_RESOURCE_ITEM_MERGE_OPERATIONS_RESULT_MAX:-0}"
 guards_resource_policy_input_behavior_rule_normalize_max="${GUARDS_RESOURCE_POLICY_INPUT_BEHAVIOR_RULE_NORMALIZE_MAX:-0}"
 guards_resource_policy_input_behavior_rule_normalize_mod_id_max="${GUARDS_RESOURCE_POLICY_INPUT_BEHAVIOR_RULE_NORMALIZE_MOD_ID_MAX:-0}"
 guards_resource_policy_input_behavior_rule_normalize_chain_max="${GUARDS_RESOURCE_POLICY_INPUT_BEHAVIOR_RULE_NORMALIZE_CHAIN_MAX:-0}"
@@ -197,6 +203,9 @@ validate_int "GUARDS_VALIDATE_DEFINITION_INDEX_MAX" "$guards_validate_definition
 validate_int "GUARDS_VALIDATE_DEFINITION_BASE_FIELDS_MAX" "$guards_validate_definition_base_fields_max"
 validate_int "GUARDS_VALIDATE_DEFINITION_INDEX_VALIDATE_MAX" "$guards_validate_definition_index_validate_max"
 validate_int "GUARDS_VALIDATE_DEFINITION_INDEX_PREDICATE_MAX" "$guards_validate_definition_index_predicate_max"
+validate_int "GUARDS_VALIDATE_DEFINITION_INDEX_VALIDATE_POLICIES_MAX" "$guards_validate_definition_index_validate_policies_max"
+validate_int "GUARDS_VALIDATE_DEFINITION_INDEX_VALIDATE_RELATIONS_MAX" "$guards_validate_definition_index_validate_relations_max"
+validate_int "GUARDS_VALIDATE_DEFINITION_INDEX_VALIDATE_FINALIZE_MAX" "$guards_validate_definition_index_validate_finalize_max"
 validate_int "SELECTORS_TOOLBAR_PLAN_PROVIDER_MAX" "$selectors_toolbar_plan_provider_max"
 validate_int "SELECTORS_TOOLBAR_PLAN_SURFACE_RULES_MAX" "$selectors_toolbar_plan_surface_rules_max"
 validate_int "SELECTORS_TOOLBAR_PLAN_PLAN_RESOLUTION_MAX" "$selectors_toolbar_plan_plan_resolution_max"
@@ -305,6 +314,9 @@ validate_int "SELECTORS_RESOURCE_COMMAND_MERGE_OPERATIONS_MAX" "$selectors_resou
 validate_int "SELECTORS_RESOURCE_COMMAND_MERGE_RUN_MAX" "$selectors_resource_command_merge_run_max"
 validate_int "SELECTORS_RESOURCE_ITEM_MERGE_OPERATIONS_MAX" "$selectors_resource_item_merge_operations_max"
 validate_int "SELECTORS_RESOURCE_ITEM_MERGE_RUN_MAX" "$selectors_resource_item_merge_run_max"
+validate_int "SELECTORS_RESOURCE_ITEM_MERGE_OPERATIONS_REMOVE_MAX" "$selectors_resource_item_merge_operations_remove_max"
+validate_int "SELECTORS_RESOURCE_ITEM_MERGE_OPERATIONS_UPSERT_MAX" "$selectors_resource_item_merge_operations_upsert_max"
+validate_int "SELECTORS_RESOURCE_ITEM_MERGE_OPERATIONS_RESULT_MAX" "$selectors_resource_item_merge_operations_result_max"
 validate_int "GUARDS_RESOURCE_POLICY_INPUT_BEHAVIOR_RULE_NORMALIZE_MAX" "$guards_resource_policy_input_behavior_rule_normalize_max"
 validate_int "GUARDS_RESOURCE_POLICY_INPUT_BEHAVIOR_RULE_NORMALIZE_MOD_ID_MAX" "$guards_resource_policy_input_behavior_rule_normalize_mod_id_max"
 validate_int "GUARDS_RESOURCE_POLICY_INPUT_BEHAVIOR_RULE_NORMALIZE_CHAIN_MAX" "$guards_resource_policy_input_behavior_rule_normalize_chain_max"
@@ -612,6 +624,22 @@ for file in "${wave22_extra_files[@]}"; do
   fi
 done
 
+wave23_extra_files=(
+  "v10/src/core/runtime/modding/package/guards/validateDefinition/index/validate/policies.ts"
+  "v10/src/core/runtime/modding/package/guards/validateDefinition/index/validate/relations.ts"
+  "v10/src/core/runtime/modding/package/guards/validateDefinition/index/validate/finalize.ts"
+  "v10/src/core/runtime/modding/package/selectors/resourceItemMerge/merge/operations/remove.ts"
+  "v10/src/core/runtime/modding/package/selectors/resourceItemMerge/merge/operations/upsert.ts"
+  "v10/src/core/runtime/modding/package/selectors/resourceItemMerge/merge/operations/result.ts"
+)
+
+for file in "${wave23_extra_files[@]}"; do
+  if [[ ! -f "$file" ]]; then
+    echo "[check_v10_large_file_budget] FAIL: missing target file: $file"
+    exit 1
+  fi
+done
+
 app_layout_lines="$(wc -l < "${target_files[0]}")"
 ext_runtime_lines="$(wc -l < "${target_files[1]}")"
 data_input_lines="$(wc -l < "${target_files[2]}")"
@@ -696,6 +724,9 @@ selectors_resource_command_merge_operations_lines="$(wc -l < "${extra_target_fil
 selectors_resource_command_merge_run_lines="$(wc -l < "${extra_target_files[40]}")"
 selectors_resource_item_merge_operations_lines="$(wc -l < "${extra_target_files[41]}")"
 selectors_resource_item_merge_run_lines="$(wc -l < "${extra_target_files[42]}")"
+selectors_resource_item_merge_operations_remove_lines="$(wc -l < "v10/src/core/runtime/modding/package/selectors/resourceItemMerge/merge/operations/remove.ts")"
+selectors_resource_item_merge_operations_upsert_lines="$(wc -l < "v10/src/core/runtime/modding/package/selectors/resourceItemMerge/merge/operations/upsert.ts")"
+selectors_resource_item_merge_operations_result_lines="$(wc -l < "v10/src/core/runtime/modding/package/selectors/resourceItemMerge/merge/operations/result.ts")"
 guards_resource_policy_input_behavior_rule_normalize_lines="$(wc -l < "${extra_target_files[43]}")"
 guards_resource_policy_input_behavior_rule_normalize_mod_id_lines="$(wc -l < "v10/src/core/runtime/modding/package/guards/resourcePolicy/inputBehaviorRule/normalize/modId.ts")"
 guards_resource_policy_input_behavior_rule_normalize_chain_lines="$(wc -l < "v10/src/core/runtime/modding/package/guards/resourcePolicy/inputBehaviorRule/normalize/chain.ts")"
@@ -745,6 +776,9 @@ template_pack_manifest_selectors_list_lines="$(wc -l < "v10/src/core/runtime/mod
 template_pack_manifest_selectors_select_by_id_lines="$(wc -l < "v10/src/core/runtime/modding/package/templatePackAdapter/manifestSelectors/selectById.ts")"
 template_pack_manifest_selectors_select_primary_lines="$(wc -l < "v10/src/core/runtime/modding/package/templatePackAdapter/manifestSelectors/selectPrimary.ts")"
 guards_validate_definition_index_validate_lines="$(wc -l < "v10/src/core/runtime/modding/package/guards/validateDefinition/index/validate.ts")"
+guards_validate_definition_index_validate_policies_lines="$(wc -l < "v10/src/core/runtime/modding/package/guards/validateDefinition/index/validate/policies.ts")"
+guards_validate_definition_index_validate_relations_lines="$(wc -l < "v10/src/core/runtime/modding/package/guards/validateDefinition/index/validate/relations.ts")"
+guards_validate_definition_index_validate_finalize_lines="$(wc -l < "v10/src/core/runtime/modding/package/guards/validateDefinition/index/validate/finalize.ts")"
 guards_validate_definition_index_predicate_lines="$(wc -l < "v10/src/core/runtime/modding/package/guards/validateDefinition/index/predicate.ts")"
 guards_validate_definition_ui_policy_index_lines="$(wc -l < "v10/src/core/runtime/modding/package/guards/validateDefinition/uiAndResourcePolicy/uiPolicy/index.ts")"
 guards_validate_definition_ui_policy_parse_lines="$(wc -l < "v10/src/core/runtime/modding/package/guards/validateDefinition/uiAndResourcePolicy/uiPolicy/parse.ts")"
@@ -914,6 +948,14 @@ printf '[check_v10_large_file_budget] wave22 surface_rules_keys=%s/%s surface_ru
   "$selectors_toolbar_plan_surface_rules_merge_lines" "$selectors_toolbar_plan_surface_rules_merge_max" \
   "$selectors_toolbar_plan_plan_resolution_surface_predicates_lines" "$selectors_toolbar_plan_plan_resolution_surface_predicates_max" \
   "$selectors_toolbar_plan_plan_resolution_sections_lines" "$selectors_toolbar_plan_plan_resolution_sections_max"
+
+printf '[check_v10_large_file_budget] wave23 validate_policies=%s/%s validate_relations=%s/%s validate_finalize=%s/%s item_ops_remove=%s/%s item_ops_upsert=%s/%s item_ops_result=%s/%s\n' \
+  "$guards_validate_definition_index_validate_policies_lines" "$guards_validate_definition_index_validate_policies_max" \
+  "$guards_validate_definition_index_validate_relations_lines" "$guards_validate_definition_index_validate_relations_max" \
+  "$guards_validate_definition_index_validate_finalize_lines" "$guards_validate_definition_index_validate_finalize_max" \
+  "$selectors_resource_item_merge_operations_remove_lines" "$selectors_resource_item_merge_operations_remove_max" \
+  "$selectors_resource_item_merge_operations_upsert_lines" "$selectors_resource_item_merge_operations_upsert_max" \
+  "$selectors_resource_item_merge_operations_result_lines" "$selectors_resource_item_merge_operations_result_max"
 
 if (( app_layout_lines > app_layout_max )); then
   echo "[check_v10_large_file_budget] FAIL: AppLayout.tsx exceeded budget"
@@ -1330,6 +1372,21 @@ if (( selectors_resource_item_merge_operations_lines > selectors_resource_item_m
   exit 1
 fi
 
+if (( selectors_resource_item_merge_operations_remove_lines > selectors_resource_item_merge_operations_remove_max )); then
+  echo "[check_v10_large_file_budget] FAIL: resourceItemMerge/merge/operations/remove.ts exceeded budget"
+  exit 1
+fi
+
+if (( selectors_resource_item_merge_operations_upsert_lines > selectors_resource_item_merge_operations_upsert_max )); then
+  echo "[check_v10_large_file_budget] FAIL: resourceItemMerge/merge/operations/upsert.ts exceeded budget"
+  exit 1
+fi
+
+if (( selectors_resource_item_merge_operations_result_lines > selectors_resource_item_merge_operations_result_max )); then
+  echo "[check_v10_large_file_budget] FAIL: resourceItemMerge/merge/operations/result.ts exceeded budget"
+  exit 1
+fi
+
 if (( selectors_resource_item_merge_run_lines > selectors_resource_item_merge_run_max )); then
   echo "[check_v10_large_file_budget] FAIL: resourceItemMerge/merge/run.ts exceeded budget"
   exit 1
@@ -1577,6 +1634,21 @@ fi
 
 if (( guards_validate_definition_index_validate_lines > guards_validate_definition_index_validate_max )); then
   echo "[check_v10_large_file_budget] FAIL: validateDefinition/index/validate.ts exceeded budget"
+  exit 1
+fi
+
+if (( guards_validate_definition_index_validate_policies_lines > guards_validate_definition_index_validate_policies_max )); then
+  echo "[check_v10_large_file_budget] FAIL: validateDefinition/index/validate/policies.ts exceeded budget"
+  exit 1
+fi
+
+if (( guards_validate_definition_index_validate_relations_lines > guards_validate_definition_index_validate_relations_max )); then
+  echo "[check_v10_large_file_budget] FAIL: validateDefinition/index/validate/relations.ts exceeded budget"
+  exit 1
+fi
+
+if (( guards_validate_definition_index_validate_finalize_lines > guards_validate_definition_index_validate_finalize_max )); then
+  echo "[check_v10_large_file_budget] FAIL: validateDefinition/index/validate/finalize.ts exceeded budget"
   exit 1
 fi
 
