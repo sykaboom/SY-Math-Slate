@@ -1,11 +1,8 @@
 import { MOD_RESOURCE_LAYER_LOAD_ORDER } from "../../../types";
 import { dedupeCommandRulesWithinLayer } from "../helpers";
 import type { ModResourceCommandLayers, ModResourceCommandMergeResult } from "./model";
-import {
-  applyRemoveCommandRule,
-  applyUpsertCommandRule,
-  toCommandMergeResult,
-} from "./operations";
+import { toCommandMergeResult } from "./operations";
+import { applyLayerCommandRule } from "./runLayerRule";
 
 export const mergeCommandsByResourceLayerLoadOrder = (
   layers: ModResourceCommandLayers
@@ -18,22 +15,7 @@ export const mergeCommandsByResourceLayerLoadOrder = (
     const layerRules = layers[layer];
     if (!layerRules || layerRules.length === 0) continue;
     for (const rule of dedupeCommandRulesWithinLayer(layerRules)) {
-      const commandId = rule.commandId;
-      const operation = rule.operation ?? "upsert";
-
-      if (operation === "remove") {
-        applyRemoveCommandRule(merged, diagnostics, layer, commandId);
-        continue;
-      }
-
-      applyUpsertCommandRule(
-        merged,
-        diagnostics,
-        blockedCommandIds,
-        layer,
-        rule,
-        commandId
-      );
+      applyLayerCommandRule(merged, diagnostics, blockedCommandIds, layer, rule);
     }
   }
 

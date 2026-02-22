@@ -259,12 +259,15 @@ Execution planning sources:
 - roadmap-level: `PROJECT_ROADMAP.md`
 - execution-level: approved `codex_tasks/task_*.md`
 - architecture-level: `v10/docs/architecture/ModEngine.md` (canonical active path)
-- large-file slicing wave (latest): `W-P6-SLICE-W26`
+- large-file slicing wave (latest): `W-P6-SLICE-W27`
   - split targets:
-    - `registry/classRegistry/registryClass.ts` + `registryClass/{register,queries}.ts`
-    - `guards/validateDefinition/activation.ts` + `activation/entry.ts`
-    - `selectors/resourceInputBehaviorMerge/merge.ts` + `merge/applyLayer.ts`
+    - `selectors/resourcePolicyMerge/merge.ts` + `resourcePolicyMerge/applyLayer.ts`
+    - `selectors/resourceItemMerge/merge/run.ts` + `resourceItemMerge/merge/runLayerItem.ts`
+    - `selectors/resourceCommandMerge/merge/run.ts` + `resourceCommandMerge/merge/runLayerRule.ts`
     - (previous wave continuity)
+      - `registry/classRegistry/registryClass.ts` + `registryClass/{register,queries}.ts`
+      - `guards/validateDefinition/activation.ts` + `activation/entry.ts`
+      - `selectors/resourceInputBehaviorMerge/merge.ts` + `merge/applyLayer.ts`
       - `templatePackAdapter/toolbarDefinition/parsers.ts` + `parsers/*`
       - `selectors/activePackageRules.ts` + `activePackageRules/*`
       - `guards/validateDefinition/dependenciesAndFinalize.ts` + `dependenciesAndFinalize/*`

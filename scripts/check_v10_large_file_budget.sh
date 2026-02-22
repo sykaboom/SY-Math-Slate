@@ -123,6 +123,7 @@ package_types_ui_policy_max="${PACKAGE_TYPES_UI_POLICY_MAX:-0}"
 selectors_resource_policy_merge_facade_max="${SELECTORS_RESOURCE_POLICY_MERGE_FACADE_MAX:-0}"
 selectors_resource_policy_merge_helpers_max="${SELECTORS_RESOURCE_POLICY_MERGE_HELPERS_MAX:-0}"
 selectors_resource_policy_merge_merge_max="${SELECTORS_RESOURCE_POLICY_MERGE_MERGE_MAX:-0}"
+selectors_resource_policy_merge_apply_layer_max="${SELECTORS_RESOURCE_POLICY_MERGE_APPLY_LAYER_MAX:-0}"
 selectors_resource_shortcut_merge_facade_max="${SELECTORS_RESOURCE_SHORTCUT_MERGE_FACADE_MAX:-0}"
 selectors_resource_shortcut_merge_helpers_max="${SELECTORS_RESOURCE_SHORTCUT_MERGE_HELPERS_MAX:-0}"
 selectors_resource_shortcut_merge_merge_max="${SELECTORS_RESOURCE_SHORTCUT_MERGE_MERGE_MAX:-0}"
@@ -169,8 +170,10 @@ registry_class_registry_register_max="${REGISTRY_CLASS_REGISTRY_REGISTER_MAX:-0}
 registry_class_registry_queries_max="${REGISTRY_CLASS_REGISTRY_QUERIES_MAX:-0}"
 selectors_resource_command_merge_operations_max="${SELECTORS_RESOURCE_COMMAND_MERGE_OPERATIONS_MAX:-0}"
 selectors_resource_command_merge_run_max="${SELECTORS_RESOURCE_COMMAND_MERGE_RUN_MAX:-0}"
+selectors_resource_command_merge_run_layer_rule_max="${SELECTORS_RESOURCE_COMMAND_MERGE_RUN_LAYER_RULE_MAX:-0}"
 selectors_resource_item_merge_operations_max="${SELECTORS_RESOURCE_ITEM_MERGE_OPERATIONS_MAX:-0}"
 selectors_resource_item_merge_run_max="${SELECTORS_RESOURCE_ITEM_MERGE_RUN_MAX:-0}"
+selectors_resource_item_merge_run_layer_item_max="${SELECTORS_RESOURCE_ITEM_MERGE_RUN_LAYER_ITEM_MAX:-0}"
 selectors_resource_item_merge_operations_remove_max="${SELECTORS_RESOURCE_ITEM_MERGE_OPERATIONS_REMOVE_MAX:-0}"
 selectors_resource_item_merge_operations_upsert_max="${SELECTORS_RESOURCE_ITEM_MERGE_OPERATIONS_UPSERT_MAX:-0}"
 selectors_resource_item_merge_operations_result_max="${SELECTORS_RESOURCE_ITEM_MERGE_OPERATIONS_RESULT_MAX:-0}"
@@ -310,6 +313,7 @@ validate_int "PACKAGE_TYPES_UI_POLICY_MAX" "$package_types_ui_policy_max"
 validate_int "SELECTORS_RESOURCE_POLICY_MERGE_FACADE_MAX" "$selectors_resource_policy_merge_facade_max"
 validate_int "SELECTORS_RESOURCE_POLICY_MERGE_HELPERS_MAX" "$selectors_resource_policy_merge_helpers_max"
 validate_int "SELECTORS_RESOURCE_POLICY_MERGE_MERGE_MAX" "$selectors_resource_policy_merge_merge_max"
+validate_int "SELECTORS_RESOURCE_POLICY_MERGE_APPLY_LAYER_MAX" "$selectors_resource_policy_merge_apply_layer_max"
 validate_int "SELECTORS_RESOURCE_SHORTCUT_MERGE_FACADE_MAX" "$selectors_resource_shortcut_merge_facade_max"
 validate_int "SELECTORS_RESOURCE_SHORTCUT_MERGE_HELPERS_MAX" "$selectors_resource_shortcut_merge_helpers_max"
 validate_int "SELECTORS_RESOURCE_SHORTCUT_MERGE_MERGE_MAX" "$selectors_resource_shortcut_merge_merge_max"
@@ -356,8 +360,10 @@ validate_int "REGISTRY_CLASS_REGISTRY_REGISTER_MAX" "$registry_class_registry_re
 validate_int "REGISTRY_CLASS_REGISTRY_QUERIES_MAX" "$registry_class_registry_queries_max"
 validate_int "SELECTORS_RESOURCE_COMMAND_MERGE_OPERATIONS_MAX" "$selectors_resource_command_merge_operations_max"
 validate_int "SELECTORS_RESOURCE_COMMAND_MERGE_RUN_MAX" "$selectors_resource_command_merge_run_max"
+validate_int "SELECTORS_RESOURCE_COMMAND_MERGE_RUN_LAYER_RULE_MAX" "$selectors_resource_command_merge_run_layer_rule_max"
 validate_int "SELECTORS_RESOURCE_ITEM_MERGE_OPERATIONS_MAX" "$selectors_resource_item_merge_operations_max"
 validate_int "SELECTORS_RESOURCE_ITEM_MERGE_RUN_MAX" "$selectors_resource_item_merge_run_max"
+validate_int "SELECTORS_RESOURCE_ITEM_MERGE_RUN_LAYER_ITEM_MAX" "$selectors_resource_item_merge_run_layer_item_max"
 validate_int "SELECTORS_RESOURCE_ITEM_MERGE_OPERATIONS_REMOVE_MAX" "$selectors_resource_item_merge_operations_remove_max"
 validate_int "SELECTORS_RESOURCE_ITEM_MERGE_OPERATIONS_UPSERT_MAX" "$selectors_resource_item_merge_operations_upsert_max"
 validate_int "SELECTORS_RESOURCE_ITEM_MERGE_OPERATIONS_RESULT_MAX" "$selectors_resource_item_merge_operations_result_max"
@@ -750,6 +756,19 @@ for file in "${wave26_extra_files[@]}"; do
   fi
 done
 
+wave27_extra_files=(
+  "v10/src/core/runtime/modding/package/selectors/resourcePolicyMerge/applyLayer.ts"
+  "v10/src/core/runtime/modding/package/selectors/resourceItemMerge/merge/runLayerItem.ts"
+  "v10/src/core/runtime/modding/package/selectors/resourceCommandMerge/merge/runLayerRule.ts"
+)
+
+for file in "${wave27_extra_files[@]}"; do
+  if [[ ! -f "$file" ]]; then
+    echo "[check_v10_large_file_budget] FAIL: missing target file: $file"
+    exit 1
+  fi
+done
+
 app_layout_lines="$(wc -l < "${target_files[0]}")"
 ext_runtime_lines="$(wc -l < "${target_files[1]}")"
 data_input_lines="$(wc -l < "${target_files[2]}")"
@@ -818,6 +837,7 @@ package_types_ui_policy_lines="$(wc -l < "${extra_target_files[16]}")"
 selectors_resource_policy_merge_facade_lines="$(wc -l < "${extra_target_files[17]}")"
 selectors_resource_policy_merge_helpers_lines="$(wc -l < "${extra_target_files[18]}")"
 selectors_resource_policy_merge_merge_lines="$(wc -l < "${extra_target_files[19]}")"
+selectors_resource_policy_merge_apply_layer_lines="$(wc -l < "v10/src/core/runtime/modding/package/selectors/resourcePolicyMerge/applyLayer.ts")"
 selectors_resource_shortcut_merge_facade_lines="$(wc -l < "${extra_target_files[20]}")"
 selectors_resource_shortcut_merge_helpers_lines="$(wc -l < "${extra_target_files[21]}")"
 selectors_resource_shortcut_merge_merge_lines="$(wc -l < "${extra_target_files[22]}")"
@@ -841,8 +861,10 @@ registry_class_registry_register_lines="$(wc -l < "v10/src/core/runtime/modding/
 registry_class_registry_queries_lines="$(wc -l < "v10/src/core/runtime/modding/package/registry/classRegistry/registryClass/queries.ts")"
 selectors_resource_command_merge_operations_lines="$(wc -l < "${extra_target_files[39]}")"
 selectors_resource_command_merge_run_lines="$(wc -l < "${extra_target_files[40]}")"
+selectors_resource_command_merge_run_layer_rule_lines="$(wc -l < "v10/src/core/runtime/modding/package/selectors/resourceCommandMerge/merge/runLayerRule.ts")"
 selectors_resource_item_merge_operations_lines="$(wc -l < "${extra_target_files[41]}")"
 selectors_resource_item_merge_run_lines="$(wc -l < "${extra_target_files[42]}")"
+selectors_resource_item_merge_run_layer_item_lines="$(wc -l < "v10/src/core/runtime/modding/package/selectors/resourceItemMerge/merge/runLayerItem.ts")"
 selectors_resource_item_merge_operations_remove_lines="$(wc -l < "v10/src/core/runtime/modding/package/selectors/resourceItemMerge/merge/operations/remove.ts")"
 selectors_resource_item_merge_operations_upsert_lines="$(wc -l < "v10/src/core/runtime/modding/package/selectors/resourceItemMerge/merge/operations/upsert.ts")"
 selectors_resource_item_merge_operations_result_lines="$(wc -l < "v10/src/core/runtime/modding/package/selectors/resourceItemMerge/merge/operations/result.ts")"
@@ -1130,6 +1152,11 @@ printf '[check_v10_large_file_budget] wave26 registry_class_register=%s/%s regis
   "$guards_validate_definition_activation_lines" "$guards_validate_definition_activation_max" \
   "$guards_validate_definition_activation_entry_lines" "$guards_validate_definition_activation_entry_max" \
   "$selectors_resource_input_behavior_merge_apply_layer_lines" "$selectors_resource_input_behavior_merge_apply_layer_max"
+
+printf '[check_v10_large_file_budget] wave27 policy_merge_apply_layer=%s/%s item_merge_run_layer_item=%s/%s command_merge_run_layer_rule=%s/%s\n' \
+  "$selectors_resource_policy_merge_apply_layer_lines" "$selectors_resource_policy_merge_apply_layer_max" \
+  "$selectors_resource_item_merge_run_layer_item_lines" "$selectors_resource_item_merge_run_layer_item_max" \
+  "$selectors_resource_command_merge_run_layer_rule_lines" "$selectors_resource_command_merge_run_layer_rule_max"
 
 if (( app_layout_lines > app_layout_max )); then
   echo "[check_v10_large_file_budget] FAIL: AppLayout.tsx exceeded budget"
@@ -1481,6 +1508,11 @@ if (( selectors_resource_policy_merge_merge_lines > selectors_resource_policy_me
   exit 1
 fi
 
+if (( selectors_resource_policy_merge_apply_layer_lines > selectors_resource_policy_merge_apply_layer_max )); then
+  echo "[check_v10_large_file_budget] FAIL: selectors/resourcePolicyMerge/applyLayer.ts exceeded budget"
+  exit 1
+fi
+
 if (( selectors_resource_shortcut_merge_facade_lines > selectors_resource_shortcut_merge_facade_max )); then
   echo "[check_v10_large_file_budget] FAIL: selectors/resourceShortcutMerge.ts exceeded budget"
   exit 1
@@ -1586,6 +1618,11 @@ if (( selectors_resource_command_merge_run_lines > selectors_resource_command_me
   exit 1
 fi
 
+if (( selectors_resource_command_merge_run_layer_rule_lines > selectors_resource_command_merge_run_layer_rule_max )); then
+  echo "[check_v10_large_file_budget] FAIL: resourceCommandMerge/merge/runLayerRule.ts exceeded budget"
+  exit 1
+fi
+
 if (( selectors_resource_item_merge_operations_lines > selectors_resource_item_merge_operations_max )); then
   echo "[check_v10_large_file_budget] FAIL: resourceItemMerge/merge/operations.ts exceeded budget"
   exit 1
@@ -1608,6 +1645,11 @@ fi
 
 if (( selectors_resource_item_merge_run_lines > selectors_resource_item_merge_run_max )); then
   echo "[check_v10_large_file_budget] FAIL: resourceItemMerge/merge/run.ts exceeded budget"
+  exit 1
+fi
+
+if (( selectors_resource_item_merge_run_layer_item_lines > selectors_resource_item_merge_run_layer_item_max )); then
+  echo "[check_v10_large_file_budget] FAIL: resourceItemMerge/merge/runLayerItem.ts exceeded budget"
   exit 1
 fi
 
