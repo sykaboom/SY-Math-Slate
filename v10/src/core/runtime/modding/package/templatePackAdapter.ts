@@ -161,19 +161,27 @@ export const adaptTemplatePackManifestToModPackageDefinition = (
 ): ModPackageDefinition => {
   const runtimeModId = buildTemplatePackRuntimeModId(manifest.packId);
   const toolbarDefinition = selectTemplatePackToolbarDefinition(manifest);
-  const activationToolbarModeMap = toolbarDefinition
-    ? Object.fromEntries(
-        toolbarDefinition.modeDefinitions.map((definition) => [
-          definition.id,
-          definition.fallbackModId,
-        ])
-      )
-    : undefined;
+  const toolbarModeMapEntries = toolbarDefinition
+    ? toolbarDefinition.modeDefinitions.map((definition) => [
+        definition.id,
+        definition.fallbackModId,
+      ] as const)
+    : [];
+  const activationToolbarModeMap =
+    toolbarModeMapEntries.length > 0
+      ? Object.fromEntries(toolbarModeMapEntries)
+      : undefined;
+  const modIds =
+    toolbarModeMapEntries.length > 0
+      ? Array.from(
+          new Set([runtimeModId, ...toolbarModeMapEntries.map(([, modId]) => modId)])
+        )
+      : [runtimeModId];
   return {
     packId: manifest.packId,
     version: `template-pack-manifest-v${manifest.manifestVersion}`,
     label: manifest.title,
-    modIds: [runtimeModId],
+    modIds,
     activation: {
       ...(activationToolbarModeMap
         ? { toolbarModeMap: activationToolbarModeMap }

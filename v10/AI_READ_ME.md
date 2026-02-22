@@ -211,6 +211,7 @@ Toolbar dedup verifier expectation:
 Guardrail warning scan note:
 - `scripts/scan_guardrails.sh` step [3] overlay warning은 dynamic pointer policy(`pointerClass`), color-input hit-target overlay(`cursor-pointer`), 인접 라인 pointer-events 제어를 false-positive로 취급해 제외한다.
 - `scripts/scan_guardrails.sh` step [4] NEXT_PUBLIC 토큰 검사는 allowlist 항목만 발견되면 `PASS`(informational)로 처리하고, allowlist 외 항목만 `FAIL`로 처리한다.
+- `scripts/check_v10_feature_flag_registry.sh`는 `v10/src` + `v10/tests` + `scripts/check_v10_phase5_flag_cutover.sh` 기준으로 사용 플래그를 집계한다.
 
 When touching `v10/src/**`, update this file (`v10/AI_READ_ME.md`) in same change set.
 

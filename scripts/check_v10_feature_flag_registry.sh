@@ -13,7 +13,20 @@ fi
 tmp_dir="$(mktemp -d)"
 trap 'rm -rf "$tmp_dir"' EXIT
 
-rg -o --no-filename 'NEXT_PUBLIC_[A-Z0-9_]+' v10/src | sort -u > "$tmp_dir/used_flags.txt"
+scan_paths=(
+  "v10/src"
+  "v10/tests"
+  "scripts/check_v10_phase5_flag_cutover.sh"
+)
+
+: > "$tmp_dir/used_flags.raw"
+for path in "${scan_paths[@]}"; do
+  if [[ -e "$path" ]]; then
+    rg -o --no-filename 'NEXT_PUBLIC_[A-Z0-9_]+' "$path" >> "$tmp_dir/used_flags.raw" || true
+  fi
+done
+
+sort -u "$tmp_dir/used_flags.raw" > "$tmp_dir/used_flags.txt"
 grep -E '^NEXT_PUBLIC_[A-Z0-9_]+=' "$registry_file" | cut -d= -f1 | sort -u > "$tmp_dir/registered_flags.txt"
 
 comm -23 "$tmp_dir/used_flags.txt" "$tmp_dir/registered_flags.txt" > "$tmp_dir/unregistered.txt"
